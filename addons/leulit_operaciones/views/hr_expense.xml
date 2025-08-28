@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+    
+        <record model="ir.ui.view" id="leulit_20250113_1718_form">
+			<field name="name">leulit_20250113_1718_form</field>
+			<field name="model">hr.expense</field>
+			<field name="type">form</field>
+            <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='is_editable']" position="after">
+                    <field name="is_dieta_pernocta" invisible="1"/>
+                </xpath>
+				<xpath expr="//field[@name='price_unit']" position="replace">
+					<field name="price_unit" required="1" widget="monetary" options="{'currency_field': 'currency_id', 'field_digits': True}"  readonly="((is_dieta_pernocta))"  force_save="1"/>
+				</xpath>
+			</field>
+		</record>
+
+
+    </data>
+</odoo>

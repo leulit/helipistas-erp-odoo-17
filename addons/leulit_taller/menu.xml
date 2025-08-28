@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <!-- Menú Taller -->
+        <menuitem
+            id="leulit_20250207_1026_menuitem" 
+            name="Mantenimiento"
+            parent="leulit.leulit_20201120_1140_menuitem"
+            sequence="30"
+        />
+        <menuitem
+            id="leulit_20231020_1222_menuitem" 
+            name="Peticiones de Mantenimiento"
+            parent="leulit_20250207_1026_menuitem"
+            action="leulit_20231020_1222_action"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20230706_1118_menuitem" 
+            name="Listado de Forms One"
+            parent="leulit_20250207_1026_menuitem"
+            action="leulit_20230706_1118_action"
+            sequence="20"
+        />
+        <menuitem
+            id="leulit_20250207_1056_menuitem" 
+            name="Listado de CRS"
+            parent="leulit_20250207_1026_menuitem"
+            action="leulit_20250207_1056_action"
+            sequence="30"
+        />
+        <menuitem
+            id="leulit_20240212_1600_menuitem" 
+            name="Listado de Boroscopias"
+            parent="leulit_20250207_1026_menuitem"
+            action="leulit_20240212_1600_action"
+            sequence="40"
+        />
+        <menuitem
+            id="leulit_20231024_1133_menuitem" 
+            name="Configuración"
+            parent="leulit.leulit_20201120_1140_menuitem"
+            sequence="999"
+        />
+        
+            <menuitem
+                id="leulit_20230620_1234_menuitem"
+                name="Tareas de mantenimiento"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230620_1234_action"
+                sequence="10"/>
+            <menuitem
+                id="leulit_20230705_1332_menuitem"
+                name="Manuales de mantenimiento"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230705_1332_action"
+                sequence="20"/>
+            <menuitem 
+                id="leulit_20230705_1235_menuitem"
+                name="Categorias manual"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230705_1235_action"
+                sequence="30"/>
+            <menuitem 
+                id="leulit_20230623_1617_menuitem"
+                name="Limitaciones de aeronavegabilidad u operaciones"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230623_1617_action"
+                sequence="40"/>
+            <menuitem
+                id="leulit_20231002_1615_menuitem"
+                name="Tareas Sensibles para la Seguridad"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20231002_1615_action"
+                sequence="50"/>
+            <menuitem
+                id="leulit_20231106_1040_menuitem"
+                name="Listado de Job Cards"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230726_1419_action"
+                sequence="60"/>
+            <menuitem
+                id="leulit_20230720_1549_menuitem"
+                name="Listado de Items de Job Card"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20230720_1549_action"
+                sequence="65"/>
+            <menuitem
+                id="leulit_20231127_0855_menuitem"
+                name="Listado de ATAs"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20231127_0846_action"
+                sequence="70"/>
+            <menuitem
+                id="leulit_20231127_0940_menuitem"
+                name="Listado de Certificaciones"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20231127_0940_action"
+                sequence="80"/>
+            <menuitem
+                id="leulit_20240403_1020_menuitem"
+                name="Listado de Certificaciones por Aeronave"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20240403_1020_action"
+                sequence="90"/>
+            <menuitem
+                id="leulit_20250207_1033_menuitem" 
+                name="Plantillas de Forms One"
+                parent="leulit_20231024_1133_menuitem"
+                action="leulit_20250207_1033_action"
+                sequence="100"
+            />
+
+        <menuitem
+            id="leulit_20221128_1144_menuitem" 
+            name="Mecánicos"
+            parent="leulit.leulit_20201120_1140_menuitem"
+            sequence="90"
+        />
+            <menuitem
+                id="leulit_20231024_1055_menuitem" 
+                name="Listado mecánicos"
+                parent="leulit_20221128_1144_menuitem"
+                action="leulit_20221128_1144_action"
+                sequence="10"
+            />
+            <menuitem 
+                id="leulit_20231121_1605_menuitem"
+                name="Mi tiempo imputado"
+                parent="leulit_20221128_1144_menuitem"
+                action="hr_timesheet.act_hr_timesheet_line"
+                sequence="40"
+            />
+            <menuitem 
+                id="leulit_20240710_1212_menuitem"
+                name="Tiempo imputado todos"
+                parent="leulit_20221128_1144_menuitem"
+                action="hr_timesheet.timesheet_action_all"
+                sequence="45"
+                groups="leulit_tarea.RT_administrador"
+            />
+
+
+        <menuitem
+            id="leulit_20221125_1241_menuitem"
+            name="Helicóptero / Pieza"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20221125_1241_action"
+            sequence="70"
+        />
+        <menuitem
+            id="leulit_20201130_1147_menuitem"
+            name="Temperatura / Humedad"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20201130_1149_action"
+            sequence="90"
+        />
+        <menuitem
+            id="leulit_20201130_1159_menuitem"
+            name="Ficha datos seguridad"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20201130_1158_action"
+            sequence="100"
+        />
+        <menuitem
+            id="leulit_20201130_1219_menuitem"
+            name="Análisis aceite"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20201109_1154_action"
+            sequence="140"
+        />
+
+
+        <!-- Menu CAMO -->
+        <menuitem
+            id="leulit_20231115_1215_menuitem"
+            name="Análisis aceite"
+            parent="leulit.leulit_20201109_1042_menuitem"
+            action="leulit_20201109_1154_action"
+            sequence="50"
+        />
+        <menuitem 
+            id="leulit_20231020_1300_menuitem" 
+            name="Plan de mantenimiento" 
+            parent="leulit.leulit_20201109_1035_menuitem" 
+            sequence="20"
+        />
+        <menuitem 
+            id="leulit_20231024_1300_menuitem" 
+            name="Listado de planes de mantenimiento" 
+            parent="leulit_20231020_1300_menuitem" 
+            action="leulit_20231020_1300_action" 
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20230726_1419_menuitem"
+            name="Listado de Job Cards"
+            parent="leulit_20231020_1300_menuitem"
+            action="leulit_20230726_1419_action"
+            sequence="20"
+        />
+        <menuitem
+            id="leulit_20231106_1446_menuitem"
+            name="Equipos"
+            parent="leulit_20231020_1300_menuitem"
+            action="maintenance.hr_equipment_action"
+            sequence="30"
+        />
+        <menuitem
+            id="leulit_20231128_1256_menuitem"
+            name="Tareas de mantenimiento"
+            parent="leulit_20231020_1300_menuitem"
+            action="leulit_20230620_1234_action"
+            sequence="40"
+        />
+        <menuitem
+            id="leulit_20240315_1517_menuitem"
+            name="Service Bulletins"
+            parent="leulit_20231020_1300_menuitem"
+            action="leulit_20240315_1517_action"
+            sequence="50"
+        />
+        <menuitem
+            id="leulit_20240405_1647_menuitem"
+            name="Ariworthiness Directives"
+            parent="leulit_20231020_1300_menuitem"
+            action="leulit_20240405_1647_action"
+            sequence="60"
+        />
+        <menuitem
+            id="leulit_20250403_1049_menuitem" 
+            name="Modificaciones y Reparaciones"
+            parent="leulit_20231020_1300_menuitem"
+            action="leulit_20250403_1049_action"
+            sequence="70"
+        />
+    
+</odoo>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20231127_0940_access_permission" model="ir.model.access">
+        <field name="name">Certificacion</field>
+        <field name="model_id" ref="model_leulit_certificacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240403_1020_access_permission" model="ir.model.access">
+        <field name="name">Certificacion Aeronave</field>
+        <field name="model_id" ref="model_leulit_certificacion_aeronave"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20231127_0846_access_permission" model="ir.model.access">
+        <field name="name">ATAs</field>
+        <field name="model_id" ref="model_leulit_ata"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240315_1519_access_permission" model="ir.model.access">
+        <field name="name">Service Bulletin</field>
+        <field name="model_id" ref="model_leulit_service_bulletin"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240320_1313_access_permission" model="ir.model.access">
+        <field name="name">Airworthiness Directive</field>
+        <field name="model_id" ref="model_leulit_airworthiness_directive"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200723_1721_access_permission" model="ir.model.access">
+        <field name="name">Analisis aceite</field>
+        <field name="model_id" ref="model_leulit_analisis_aceite"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201105_1210_access_permission" model="ir.model.access">
+        <field name="name">Helicoptero pieza</field>
+        <field name="model_id" ref="model_leulit_helicoptero_pieza"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20221128_0908_access_permission" model="ir.model.access">
+        <field name="name">Mecanicos Access</field>
+        <field name="model_id" ref="model_leulit_mecanico"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201130_1151_access_permission" model="ir.model.access">
+        <field name="name">Control TH Access</field>
+        <field name="model_id" ref="model_leulit_control_th"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201130_1155_access_permission" model="ir.model.access">
+        <field name="name">Ficha datos seguridad Access</field>
+        <field name="model_id" ref="model_leulit_ficha_datos_seguridad"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230505_1549_access_permission" model="ir.model.access">
+        <field name="name">wizard_create_maintenance_request</field>
+        <field name="model_id" ref="model_leulit_wizard_create_maintenance_request"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20241113_1600_access_permission" model="ir.model.access">
+        <field name="name">leulit_wizard_copy_plan</field>
+        <field name="model_id" ref="model_leulit_wizard_copy_plan"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240208_1003_access_permission" model="ir.model.access">
+        <field name="name">wizard_add_task_request</field>
+        <field name="model_id" ref="model_leulit_wizard_add_task_request"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240417_1418_access_permission" model="ir.model.access">
+        <field name="name">wizard_ad_task_to_wo</field>
+        <field name="model_id" ref="model_leulit_wizard_ad_task_to_wo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230620_1234_tree_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_task_preventive</field>
+        <field name="model_id" ref="model_leulit_maintenance_task_preventive"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230623_1616_access_permission" model="ir.model.access">
+        <field name="name">leulit_limitaciones_aeronavegabilidad</field>
+        <field name="model_id" ref="model_leulit_limitaciones_aeronavegabilidad"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240212_1523_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_boroscopia</field>
+        <field name="model_id" ref="model_leulit_maintenance_boroscopia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230623_1633_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_crs</field>
+        <field name="model_id" ref="model_leulit_maintenance_crs"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230705_1234_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_manual</field>
+        <field name="model_id" ref="model_leulit_maintenance_manual"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20231122_1035_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_manual_check</field>
+        <field name="model_id" ref="model_leulit_maintenance_manual_check"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230705_1235_access_permission" model="ir.model.access">
+        <field name="name">leulit_categoria_manual</field>
+        <field name="model_id" ref="model_leulit_categoria_manual"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230720_1549_access_permission" model="ir.model.access">
+        <field name="name">leulit_job_card_item</field>
+        <field name="model_id" ref="model_leulit_job_card_item"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230726_1307_access_permission" model="ir.model.access">
+        <field name="name">leulit_job_card</field>
+        <field name="model_id" ref="model_leulit_job_card"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230706_1118_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_form_one access permission</field>
+        <field name="model_id" ref="model_leulit_maintenance_form_one"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250207_1044_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_form_one_template access permission</field>
+        <field name="model_id" ref="model_leulit_maintenance_form_one_template"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230706_1510_access_permission" model="ir.model.access">
+        <field name="name">leulit_rel_formone_lot access permission</field>
+        <field name="model_id" ref="model_leulit_rel_formone_lot"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20231002_1615_access_permission" model="ir.model.access">
+        <field name="name">leulit_checklist_tareas_sensibles_seguridad access permission</field>
+        <field name="model_id" ref="model_leulit_checklist_tareas_sensibles_seguridad"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20231002_1616_access_permission" model="ir.model.access">
+        <field name="name">leulit_tarea_sensible_seguridad access permission</field>
+        <field name="model_id" ref="model_leulit_tarea_sensible_seguridad"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20241103_1026_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_double_check access permission</field>
+        <field name="model_id" ref="model_leulit_maintenance_double_check"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20241103_1027_access_permission" model="ir.model.access">
+        <field name="name">leulit_maintenance_security_inspect access permission</field>
+        <field name="model_id" ref="model_leulit_maintenance_security_inspect"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250120_1113_access_permission" model="ir.model.access">
+        <field name="name">project_task acess</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="group_id" ref="leulit.RTaller_base"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250403_1049_access_permission" model="ir.model.access">
+        <field name="name">leulit_modifications_and_repairs acess</field>
+        <field name="model_id" ref="model_leulit_modifications_and_repairs"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

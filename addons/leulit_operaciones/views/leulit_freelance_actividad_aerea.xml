@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+        <record id="leulit_20250318_1437_tree" model="ir.ui.view">
+            <field name="name">leulit_20250318_1437_tree</field>
+            <field name="model">leulit.freelance_actividad_aerea</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad Aerea Piltos Freelance" create="false" edit="false" delete="false">
+                    <field name="user"/>
+                    <field name="date"/>
+                    <field name="text"/>
+                    <button name="print_certificate_actividad_aerea" type="object" string="Imprimir" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20250318_1437_action" model="ir.actions.act_window">
+            <field name="name">Actividad Aerea Pilotos Freelance</field>
+            <field name="res_model">leulit.freelance_actividad_aerea</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <report
+            id="leulit_20250318_1638_report"
+            string="Informe Actividad Aerea"
+            model="leulit.freelance_actividad_aerea"
+            report_type="qweb-pdf"
+            file="leulit_operaciones.leulit_20250318_1638_informe"
+            name="leulit_operaciones.leulit_20250318_1638_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="leulit_20250318_1638_informe">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(o.company.logo_reports)" style="width:auto;height:60px;"/>
+                            <h2>Certificado de Actividad Aerea</h2>
+                        </div>
+                        <p><br/><br/><strong><span t-field="o.user.name"/></strong> certifica a fecha <span t-field="o.date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> que:</p>
+                        <p><br/><br/>Declaro que, teniendo en cuenta la circular operativa 16B y su Anexo I, y el RD 1561/1195, RD 294/2004 a fecha de hoy no he alcanzado los siguientes límites.<br/>
+                        -1800 h de actividad aérea.<br/>
+                        -700 h de vuelo en los últimos 12 meses.<br/>
+                        -80 h de vuelo en los últimos 28 días.<br/><br/>
+                        Y cumplo los descansos obligatorios detallados a continuación.<br/>
+                        -96 días de descanso al año<br/>
+                        -8 días de descanso al mes<br/>
+                        -10,5 h de descanso en casa<br/><br/>
+                        Por lo tanto manifiesto que el departamento de planificación puede programarme el día de hoy, sin limitación adicional a la propia normativa.<br/><br/><br/>
+                        </p>
+                        <t t-if="o.text">
+                            <p>
+                                <strong>Motivo de justificación de exceso de la 16b:</strong>
+                            </p>
+                            <p><span t-field="o.text"/></p>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

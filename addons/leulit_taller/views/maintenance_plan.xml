@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231020_1300_form" model="ir.ui.view">
+            <field name="name">leulit_20231020_1300_form</field>
+            <field name="model">maintenance.plan</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="add_task_in_wo" string="Añadir tarea a WO" type="object" class="oe_highlight"  invisible="((state != 'activo'))" />
+                        <button name="open_wizard_create_request" type="object" class="oe_highlight oe_left" string="Crear Orden de Trabajo"  invisible="((state != 'activo'))" />
+                        <field name="is_activable" invisible="1"/>
+                        <button name="activate_plan" type="object" class="oe_highlight oe_left" string="Activar Plan de Mantenimiento"  invisible="((not is_activable))" />
+                        <button name="pending_status_plan" type="object" class="oe_highlight oe_left" string="Colocar en Pendiente"  invisible="((state != 'activo'))" />
+                        <button name="copy_for_new_helicopter" type="object" class="oe_highlight oe_left" string="Duplicar para nuevo Helicoptero"/>
+                        <button name="create_all_job_cards" type="object" class="oe_highlight oe_left" string="Generar todas las Job Cards"  invisible="((not equipment_id))" />
+                        <field name="state" widget="statusbar" class="oe_right"/>
+                    </header>
+                    <!-- <sheet> -->
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"  invisible="((active))" />
+                        <field name="active"  invisible="1" />
+                        <div class="oe_button_box" name="button_box">
+                            <button name="open_maintenance_request" type="object" class="oe_stat_button" icon="fa-ticket">
+                                <field string="Mantenimiento" name="maintenance_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="p.ej. Calibración"  required="((not equipment_id))" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="equipment_id" invisible="context.get('hide_equipment_id', 0)"/>
+                                <field name="maintenance_kind_id"/>
+                                <field name="maintenance_team_id"  required="((not equipment_id))" />
+                            </group>
+                            <group>
+                                <field name="company_id"/>
+                                <field name="parent_id"/>
+                            </group>
+                        </group>
+                        <group  invisible="((maintenance_kind_id == 1))" >
+                            <group>
+                                <field name="start_maintenance_date"/>
+                                <field name="next_maintenance_date"/>
+                            </group>
+                            <group>
+                                <field name="duration"/>
+                                <label for="interval"/>
+                                <div class="o_row">
+                                    <field name="interval"/>
+                                    <field name="interval_step"/>
+                                </div>
+                                <label for="maintenance_plan_horizon" string="Horizonte de planning"/>
+                                <div class="o_row">
+                                    <field name="maintenance_plan_horizon"/>
+                                    <field name="planning_step"/>
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Actividades Programadas" name="page_actividades_programadas">
+                                <button name="create_plan_activity" type="object" class="oe_highlight" string="Agregar Item"/>
+                                <field name="planned_activity_ids" open="false">
+                                    <tree limit="100">
+                                        <field name="sequence" widget="handle"/>
+                                        <button name="open_planned_activity" string="Editar" type="object" class="oe_highlight"/>
+                                        <field name="int_h"/>
+                                        <field name="interval"/>
+                                        <field name="descripcion"/>
+                                        <field name="referencia"/>
+                                        <field name="horas_last_done"/>
+                                        <field name="fecha_last_done"/>
+                                        <field name="horas_next_due"/>
+                                        <field name="fecha_next_due"/>
+                                        <field name="horas_remaining"/>
+                                        <field name="semaforo_horas" widget="semaforo_char"/>
+                                        <field name="days_remaining"/>
+                                        <field name="semaforo_dias" widget="semaforo_char"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Instructions" name="page_instrucciones">
+                                <field name="note" placeholder="Describe the maintenance to do..."/>
+                            </page>
+                        </notebook>
+                    <!-- </sheet> -->
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20231020_1300_tree" model="ir.ui.view">
+            <field name="name">leulit_20231020_1300_tree</field>
+            <field name="model">maintenance.plan</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Plans" default_order='state' decoration-muted="state == 'archivado'" decoration-success="state == 'activo'" decoration-info="state == 'pendiente'">
+                    <field name="equipment_id" />
+                    <field name="name" />
+                    <field name="maintenance_kind_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state"/>
+                    <field name="is_activable" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+
+	    <record model="ir.actions.act_window" id="leulit_20231020_1300_action">
+            <field name="name">Planes de mantenimiento</field>
+            <field name="res_model">maintenance.plan</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('active','=',True),('active','=',False)]</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20231020_1300_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20231020_1300_tree"/>
+            <field name="act_window_id" ref="leulit_20231020_1300_action"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20231020_1300_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20231020_1300_form"/>
+            <field name="act_window_id" ref="leulit_20231020_1300_action"/>
+        </record>
+
+    </data>
+</odoo>

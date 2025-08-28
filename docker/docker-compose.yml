@@ -1,0 +1,40 @@
+services:
+  db:
+    container_name: helipistas_psql_15
+    image: postgres:15
+    volumes:
+      - db-data-odoo17:/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432/tcp
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    logging:
+      driver: "json-file"
+      options:
+            max-size: "100k"
+            max-file: "3"
+  web:
+    container_name: helipistas_odoo_17
+    image: wbms/odoo-17.0
+    command: --dev=all
+    depends_on:
+      - db
+    ports:
+      - "8070:8069/tcp"
+    volumes:
+      - web-data-odoo17:/var/lib/odoo
+      - ../config:/etc/odoo
+      - ../addons:/mnt/extra-addons
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "3"
+volumes:
+  db-data-odoo17:
+    driver: local
+  web-data-odoo17:
+    driver: local

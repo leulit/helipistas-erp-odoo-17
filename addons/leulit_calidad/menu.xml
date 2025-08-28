@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="leulit_20250211_1110_menuitem"
+        name="Personal Calidad"
+        parent="leulit.leulit_20201118_1606_menuitem"
+        action="leulit_20250211_1110_action"
+        sequence="30"
+    />
+
+    <menuitem
+        id="leulit_20201124_1259_menuitem"
+        name="Inf. carga y centrado"
+        parent="leulit.leulit_20201118_1744_menuitem"
+        action="leulit_20201124_1248_helicoptero_wb_control_form_action"
+        sequence="20"
+    />
+
+</odoo>

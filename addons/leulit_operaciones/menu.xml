@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem 
+        id="leulit_20201023_1053_menuitem" 
+        name="Vuelos" 
+        parent="leulit.leulit_20200618_1104_menuitem"
+        sequence="10"
+    />
+        <menuitem 
+            id="leulit_20200618_1105_menuitem"
+            name="Todos los partes de vuelo"
+            parent="leulit_20201023_1053_menuitem"
+            action="leulit_20230906_1505_action"
+            groups="leulit.ROperaciones_responsable"
+            sequence="10"
+        />
+        <menuitem 
+            id="leulit_20250520_1024_menuitem" 
+            name="Partes de vuelo" 
+            parent="leulit_20201023_1053_menuitem" 
+            action="leulit_20250520_1024_action" 
+            sequence="15"
+        />
+        <menuitem 
+            id="leulit_20220818_1621_menuitem" 
+            name="Partes de vuelo Futuro"
+            parent="leulit_20201023_1053_menuitem" 
+            action="leulit_20220818_1621_action" 
+            sequence="20"
+        />
+        <menuitem 
+            id="leulit_20201023_1040_menuitem" 
+            name="En pre-vuelo" 
+            parent="leulit_20201023_1053_menuitem" 
+            action="leulit_20201023_1040_action"
+            groups="leulit.ROperaciones_responsable"
+            sequence="30"
+        />
+        <menuitem 
+            id="leulit_20201023_1101_menuitem" 
+            name="En post-vuelo" 
+            parent="leulit_20201023_1053_menuitem" 
+            action="leulit_20201023_1101_action" 
+            groups="leulit.ROperaciones_responsable"
+            sequence="40"
+        />
+        <menuitem 
+            id="leulit_20201023_1110_menuitem" 
+            name="Realizados" 
+            parent="leulit_20201023_1053_menuitem" 
+            action="leulit_20201023_1110_action" 
+            groups="leulit.ROperaciones_responsable"
+            sequence="50"
+        />
+        <menuitem 
+            id="leulit_20201023_1120_menuitem" 
+            name="Tipos" 
+            parent="leulit_20201023_1053_menuitem"
+            sequence="70"
+            groups="leulit.ROperaciones_responsable"
+        />
+            <menuitem 
+                id="leulit_20201023_1138_menuitem" 
+                name="Todos" 
+                parent="leulit_20201023_1120_menuitem" 
+                action="leulit_20201023_1138_action" 
+                sequence="1"
+            />
+            <menuitem 
+                id="leulit_20201023_1144_menuitem" 
+                name="AOC" 
+                parent="leulit_20201023_1120_menuitem" 
+                action="leulit_20201023_1144_action" 
+                sequence="2"
+            />
+            <menuitem 
+                id="leulit_20201023_1145_menuitem" 
+                name="Trabajo aéreo" 
+                parent="leulit_20201023_1120_menuitem" 
+                action="leulit_20201023_1145_action" 
+                sequence="3"
+            />
+            <menuitem 
+                id="leulit_20201023_1146_menuitem" 
+                name="Escuela" 
+                parent="leulit_20201023_1120_menuitem" 
+                action="leulit_20201023_1146_action" 
+                sequence="4"
+            />
+            <menuitem 
+                id="leulit_20201023_1147_menuitem" 
+                name="NCO" 
+                parent="leulit_20201023_1120_menuitem" 
+                action="leulit_20201023_1147_action" 
+                sequence="5"
+            />
+
+    <menuitem 
+        id="leulit_20230901_1253_menuitem" 
+        name="Presupuestos Activos" 
+        parent="leulit.leulit_20200618_1104_menuitem"
+        action="leulit_20230901_1253_action"
+        sequence="100"
+        groups="leulit.ROperaciones_responsable"
+    />
+
+    <menuitem 
+        id="leulit_20201026_1040_menuitem" 
+        name="Rutas y aerovías" 
+        parent="leulit.leulit_20200618_1104_menuitem"  
+        sequence="20"
+        groups="leulit.ROperaciones_piloto"
+    />
+        <menuitem 
+            id="leulit_20201026_1041_menuitem" 
+            name="Rutas" 
+            parent="leulit_20201026_1040_menuitem"  
+            sequence="1"
+        />
+            <menuitem 
+                id="leulit_20201026_1043_menuitem" 
+                name="Rutas activas" 
+                parent="leulit_20201026_1041_menuitem" 
+                action="leulit_20201026_1034_action" 
+                sequence="1"
+            />
+            <menuitem 
+                id="leulit_20201026_1042_menuitem" 
+                name="Rutas inactivas" 
+                parent="leulit_20201026_1041_menuitem" 
+                action="leulit_20201026_1033_action" 
+                sequence="2"
+            />
+        <menuitem 
+            id="leulit_20201026_1045_menuitem" 
+            name="Aerovías" 
+            parent="leulit_20201026_1040_menuitem"  
+            sequence="2"
+        />
+            <menuitem 
+                id="leulit_20201026_1153_menuitem" 
+                name="Aerovías activas" 
+                parent="leulit_20201026_1045_menuitem" 
+                action="leulit_20201026_1153_action" 
+                sequence="1"
+            />
+            <menuitem 
+                id="leulit_20201026_1154_menuitem" 
+                name="Aerovías inactivas" 
+                parent="leulit_20201026_1045_menuitem" 
+                action="leulit_20201026_1154_action" 
+                sequence="2"
+            />
+        <menuitem 
+            id="leulit_20201026_1156_menuitem"
+            name="Puntos"
+            parent="leulit_20201026_1040_menuitem"
+            action="leulit_20201026_1156_action"
+            sequence="3"
+        />
+        <menuitem 
+            id="leulit_20201026_1222_menuitem"
+            name="Helipuertos"
+            parent="leulit_20201026_1040_menuitem"
+            action="leulit_20201026_1222_action"
+            sequence="4"
+        />
+        <menuitem 
+            id="leulit_20230608_1631_menuitem"
+            name="Tipos de Operaciones / Performance"
+            parent="leulit_20201026_1040_menuitem"
+            action="leulit_20230608_1631_action"
+            sequence="50"
+        />
+
+    <menuitem
+        id="leulit_20201027_1053_menuitem"
+        name="Pilotos"
+        parent="leulit.leulit_20200618_1104_menuitem"
+        sequence="90"
+        groups="leulit.ROperaciones_piloto"
+    />
+        <menuitem
+            id="leulit_20201027_1054_menuitem"
+            name="Pilotos helipistas"
+            parent="leulit_20201027_1053_menuitem"
+            action="leulit_20201027_1054_action"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20220117_1331_menuitem"
+            name="Todos los Pilotos"
+            parent="leulit_20201027_1053_menuitem"
+            action="leulit_20220117_1331_action"
+            sequence="20"
+        />
+        <menuitem
+            id="leulit_20211007_0953_menuitem"
+            name="Operadores"
+            parent="leulit_20201027_1053_menuitem"
+            action="leulit_20211007_0953_action"
+            sequence="30"
+        />
+        <menuitem
+            id="leulit_20201028_1010_menuitem"
+            name="Tareas"
+            parent="leulit_20201027_1053_menuitem"
+            action="project.action_view_all_task"
+            sequence="40"
+        />
+    <menuitem 
+        id="leulit_20201104_0823_menuitem" 
+        name="Informes" 
+        parent="leulit.leulit_20200618_1104_menuitem"  
+        sequence="70"
+        groups="leulit.ROperaciones_piloto"
+    />
+        <menuitem
+            id="leulit_20201104_0812_menuitem"
+            name="Piloto log book"
+            parent="leulit_20201104_0823_menuitem"
+            action="leulit_20201104_0812_action"
+            sequence="10"
+            groups="leulit.ROperaciones_piloto"
+        />
+        <menuitem
+            id="leulit_20201104_0828_menuitem"
+            name="PTV"
+            parent="leulit_20201104_0823_menuitem"
+            action="leulit_20201104_0828_action"
+            sequence="20"
+            groups="leulit.ROperaciones_piloto"
+        />
+        <menuitem
+            id="leulit_20201104_0830_menuitem"
+            name="Registro vuelos aeronave"
+            parent="leulit_20201104_0823_menuitem"
+            action="leulit_20201104_0830_action"
+            sequence="30"
+            groups="leulit.RBase_hide"
+        />
+        <menuitem
+            id="leulit_20201105_0840_menuitem"
+            name="Consumos por vuelo"
+            parent="leulit_20201104_0823_menuitem"
+            action="leulit_20201105_0840_action"
+            sequence="50"
+            groups="leulit.RBase_hide"
+        />
+        <menuitem
+            id="leulit_20201105_1704_menuitem"
+            name="Informe seguro"
+            parent="leulit_20201104_0823_menuitem"
+            action="leulit_20201105_1704_action"
+            sequence="60"
+            groups="leulit.ROperaciones_piloto"
+        />
+    
+
+    <menuitem
+        id="leulit_20201021_1648_menuitem"
+        name="Partes de vuelo (A)"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        action="leulit_20201021_1648_action"
+        sequence="120"
+        groups="leulit.ROperaciones_piloto_externo"
+    />
+    <menuitem
+        id="leulit_20211130_1825_menuitem"
+        name="Piloto Log Book (A)"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        action="leulit_20211130_1822_action"
+        sequence="130"
+        groups="leulit.ROperaciones_piloto_externo"
+    />
+
+    <!-- Menu CAMO -->
+        <menuitem 
+            id="leulit_20201118_1547_menuitem" 
+            name="Partes de vuelo" 
+            parent="leulit.leulit_20201109_1035_menuitem" 
+            action="leulit_20230906_1505_action" 
+            sequence="90"
+        />
+        <menuitem
+            id="leulit_20220208_1052_menuitem"
+            name="Weight And Balance"
+            parent="leulit.leulit_20201109_1042_menuitem"
+            action="leulit_20220208_1052_action"
+            sequence="40"
+        />
+        <menuitem
+            id="leulit_20220208_1052_menuitem2"
+            name="Weight And Balance"
+            parent="leulit.leulit_20201118_1606_menuitem"
+            action="leulit_20220208_1052_action"
+            sequence="20"
+        />
+
+
+        <!-- Menu Taller -->
+        <menuitem 
+            id="leulit_20201123_1036_menuitem" 
+            name="Vuelos" 
+            parent="leulit.leulit_20250207_1052_menuitem" 
+            action="leulit_20201023_1110_action" 
+            sequence="30"
+        />
+
+
+</odoo>

@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20220211_1150_tree">
+            <field name="name">leulit_20220211_1150_tree</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="inherit_id" ref="leulit_parte_145.leulit_20200626_1201_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='airtime']" position="after">
+                    <field name="motor_tsn" widget="float_time" string="TSN Motor"/>
+                    <field name="motor_tso" widget="float_time" string="TSO Motor"/>
+                </xpath>
+                <xpath expr="//field[@name='oil']" position="after">
+                    <field name="ng"/>
+                    <field name="nf"/>
+                </xpath>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="leulit_20220211_1150_form">
+            <field name="name">leulit_20220211_1150_form</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="inherit_id" ref="leulit_parte_145.leulit_20200626_1201_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='datos_tecnicos_helicoptero']" position="after">
+                    <page string="Motor" name="motor_helicoptero">
+                        <group>
+                            <h2>Datos motor instalado</h2>
+                        </group>
+                        <group col="3">
+                            <group name="datos_generales_motor">
+                                <field name="tipo_motor" readonly="1" string="Tipo"/>
+                                <field name="modelomotor" readonly="1" string="Modelo"/>
+                                <field name="numseriemotor" readonly="1" string="Número serie"/>
+                            </group>
+                            <group name="fechas_datos_motor">
+                                <field name="fecha_oh_motor" readonly="1" string="Fecha overhaul"/>
+                                <field name="anofabmotor" readonly="1" string="Fecha fabricación"/>
+                            </group>
+                            <group name="tsn_tso_datos_motor">
+                                <field name="motor_tsn" readonly="1" string="TSN Actual"/>
+                                <field name="motor_tso" readonly="1" string="TSO Actual"/>
+                            </group>
+                            <group name="ng_nf_datos_motor">
+                                <field name="ng" readonly="1" string="NG Actual"/>
+                                <field name="nf" readonly="1" string="NF Actual"/>
+                            </group>
+                        </group>
+                    </page>
+                    <!-- <page string="Life Limits / Rotables" name="life_limits_rotables_helicoptero">
+                        <group>
+                            <h2>Datos life limits / rotables instalados</h2>
+                        </group>
+                        <group col="8" colspan="8">
+                            <field name="life_limits_now" nolabel="1" readonly="1">
+                                <tree version="7.0" colors="green:instalado_actualmente == True;">
+                                    <field name="instalado_actualmente" invisible="1"/>
+                                    <field name="helicoptero" invisible="1"/>
+                                    <field name="modelo" invisible="1"/>
+                                    <field name="is_life_limit" string="L.L." />
+                                    <field name="pieza"/>
+                                    <field name="from_date" string="Inst."/>
+                                    <field name="fecha_overhaul" string="OVH"/>
+                                    <field name="airtime" string="Airtime" widget="float_time" />
+                                    <field name="horas_inicio" string="TSN Inst." widget="float_time" />
+                                    <field name="tsn" string="TSN" widget="float_time" />
+                                    <field name="hours_remaining" string="H. R." widget="float_time" />
+                                    <field name="ng_start" string="NG Start"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="ng_acumulado" string="NG"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="ng" string="NG total"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf_start" string="NF Start"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf_acumulado" string="NF"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf" string="NF total"  invisible="((modelo != 'EC120B'))"  />
+                                    <button name="update_airtime_pieza" type="object" string="Upd." class="oe_highlight"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page> -->
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

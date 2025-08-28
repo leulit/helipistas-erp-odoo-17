@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231002_1615_tree" model="ir.ui.view">
+            <field name="name">leulit_20231002_1615_tree</field>
+            <field name="model">leulit.checklist_tareas_sensibles_seguridad</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20231002_1615_form" model="ir.ui.view">
+            <field name="name">leulit_20231002_1615_form</field>
+            <field name="model">leulit.checklist_tareas_sensibles_seguridad</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <field name="tareas">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="flag_doble_check"/>
+                                <field name="flag_security_inspection"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="leulit_20231002_1615_action" model="ir.actions.act_window">
+            <field name="name">Tareas Sensibles para la Seguridad</field>
+            <field name="res_model">leulit.checklist_tareas_sensibles_seguridad</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

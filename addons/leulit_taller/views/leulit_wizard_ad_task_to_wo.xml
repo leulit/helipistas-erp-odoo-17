@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20240417_1418_form" model="ir.ui.view">
+            <field name="name">leulit_20240417_1418_form</field>
+            <field name="model">leulit.wizard_ad_task_to_wo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Añadir Tarea a Orden de Trabajo">
+                    <group>
+                        <field name="task" readonly="1"/>
+                        <field name="maintenance_request"/>
+                    </group>
+                    <footer>
+                        <button name="set_task_to_wo" type="object" string="Guardar" class="oe_right oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

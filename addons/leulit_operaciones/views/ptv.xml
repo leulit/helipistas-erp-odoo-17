@@ -1,0 +1,319 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+		<report string="Partes de vuelo"
+            id="hlp_20190709_1846_report"
+            model="leulit.vuelo"
+            file="leulit_operaciones.leulit_20211119_1030_informe"
+            name="leulit_operaciones.leulit_20211119_1030_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_landscape_without_cabecera"/>
+
+
+
+        <template id="ptv_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                * {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 8px;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 29.7cm;
+                    height: 19cm;
+                    margin: 0.5cm 0.5cm 0.5cm 0.5cm;                 
+                }
+                .titleheight {height:0.6cm}
+                .titulostablas {
+                    font-size: 10px;
+                    font-weight:bold;
+                }
+                p {
+                    font-size:9pt;
+                    font-weight: bold;
+                }
+                table {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;		    
+                    border-spacing: 0;		       
+                }
+                th, tbody td, tfoot td {
+                    border: 1px solid #EEEEEE;;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:10px;
+                    font-weight:bold;
+                    word-break: keep-all;
+                }		
+                tr .smalltext th, tr .smalltext td, .smalltext {font-size: 5px;}
+                td{
+                    vertical-align: middle
+                    word-break: keep-all;
+                }
+                td .hcenter{
+                    text-align: center;   
+                    word-break: keep-all;     	
+                }
+                .bgcolored {
+                    background-color: #808080;
+                    color: white;
+                }       
+                tbody td {
+                    text-align:center;
+                    font-size:8px;
+                    font-weight:normal;
+                    word-break: keep-all;
+                }
+            </style>
+        </template>
+
+        
+        <template id="leulit_20211119_1030_informe">
+            <t t-call="web.html_container">      
+                <t t-foreach="fechas" t-as="fecha">
+                    <t t-foreach="fecha['paginas']" t-as="pagina">
+                        <t t-call="leulit_operaciones.ptv_report_css"/>                    
+                        <table align="right" style="margin-right:38px;margin-bottom:10px">
+                            <tr>
+                                <td style="white-space: nowrap;" class="noborde"><b>Código:</b></td>
+                                <td style="white-space: nowrap;" class="noborde">HLP-DOC-0001</td>
+                                <td style="white-space: nowrap;" class="noborde"><b>Versión:</b></td>
+                                <td style="white-space: nowrap;" class="noborde">3.2.0</td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td colspan="6" style="width:78.2%" class="titulostablas bgcolored">DATOS GENERALES</td>
+                                <td rowspan="2">
+                                    <img t-att-src="'data:image/png;base64,%s' % to_text(fecha['logo_hlp'])" style="width:auto;height:50px;"/><br/>
+                                </td>			
+                            </tr>			
+                            <tr>
+                                <td style="widht:7.5%; text-align:left;"><b>Matrícula</b><br/><span t-esc="fecha['helicoptero']"/></td>
+                                <td style="width:7.6%;text-align:left;"><b>Tipo aeronave:</b><br/><span t-esc="fecha['tipoaeronave']"/></td>
+                                <td style="width:16.1%;text-align:left;">
+                                    <b>Horas totales:</b><span t-esc="fecha['before_airtime']"/><br/>
+                                    <t t-if="fecha['tipoaeronave'] == 'EC120B'">
+                                        <b>Total NG:</b><span t-esc="fecha['before_ng']"/><br/><b>Total NF:</b><span t-esc="fecha['before_nf']"/><br/>
+                                    </t>
+                                    <t t-else="">
+                                        <b>Total NG:</b>N/A<br/><b>Total NF:</b>N/A<br/>
+                                    </t>
+                                </td>
+                                <td style="width:8.3%;text-align:left;"><b>Fecha:</b><br/><span t-esc="fecha['fecha']"/></td>
+                                <td style="width:11.3%;text-align:left;"><b>Operador:</b><br/>HELIPISTAS S.L.</td>
+                                <td style="width:27.4%;text-align:left;">
+                                    <table style="border: white 0px">
+                                        <tr style="border: white 0px">
+                                            <td style="text-align:left; vertical-align:top; border: white 0px"><b>Dirección</b></td>
+                                            <td style="text-align:left; vertical-align:top; border: white 0px">Helipuerto Teresa Vilà<br/>
+                                                Ullastrell 08231 - España<br/>
+                                                TELF: 0034 937 304<br/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td colspan="21" class="titulostablas bgcolored">DATOS DE VUELO</td>
+                            </tr>
+                            <tr style="height:0.75cm">
+                                <td rowspan="2" style="width:5.7%" class="columnhead"><b>Vuelo nº</b></td>
+                                <td rowspan="2" style="width:4.6%" class="columnhead"><b>Fuel add(l.)</b></td>
+                                <td rowspan="2" style="width:4.2%" class="columnhead"><b>Oil add(l.)</b></td>
+                                <td rowspan="2" style="width:9.1%" class="columnhead"><b>Tipo de vuelo</b></td>
+                                <td rowspan="2" style="width:3%" class="columnhead"><b>nº AL./PAE</b></td>
+                                <td rowspan="2" style="width:3%" class="columnhead"><b>Pax / AESA</b></td>
+                                <td rowspan="2" style="width:3%" class="columnhead"><b>C.G.</b></td>
+                                <td rowspan="2" style="width:4.9%" class="columnhead"><b>Masa al despegue</b></td>
+                                <td rowspan="2" style="width:8.4%" class="columnhead"><b>Firma prevuelo</b></td>
+                                <td colspan="3" style="width:10.6%" class="columnhead"><b>Salida</b></td>
+                                <td colspan="5" style="width:21.2%" class="columnhead"><b>Llegada</b></td>
+                                <td style="width:4.6%" class="columnhead"><b>Total</b></td>
+                                <td rowspan="2" style="width:4.6%" class="columnhead"><b>O.V.</b></td>
+                                <td rowspan="2" style="width:8.4%" class="columnhead"><b>Piloto</b></td>
+                                <td rowspan="2" class="columnhead"><b>Alumno/Verificado</b></td>
+                            </tr>
+                            <tr style="height:0.75cm">
+                                <td style="width:3.8%" class="columnhead"><b>Ind.</b></td>
+                                <td style="width:3%" class="columnhead"><b>Hora UTC</b></td>
+                                <td style="width:3.8%" class="columnhead"><b>Fuel(l.)</b></td>
+                                <td style="width:3.8%" class="columnhead"><b>Ind.</b></td>
+                                <td style="width:3%" class="columnhead"><b>Hora UTC</b></td>
+                                <td style="width:5.3%" class="columnhead"><b>Tacom/NG</b></td>
+                                <td style="width:5.3%" class="columnhead"><b>Tacom/NF</b></td>
+                                <td style="width:3.8%" class="columnhead"><b>Fuel(l.)</b></td>
+                                <td style="width:4.6%" class="columnhead"><b>Airtime</b></td>
+                            </tr>
+                            <t t-foreach="pagina['vuelos']" t-as="vuelo">
+                                <tr style="height:0.5cm">
+                                    <td rowspan="2"><span t-esc="vuelo['codigo']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['fuelqty']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['oilqty']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['vuelo_tipo_main']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['numpae']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['numpax']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['wb_ok']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['takeoff_gw']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['piloto_name']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['lugarsalida']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['strutchorasalida']"/></td>
+                                    <td rowspan="2"><span t-esc="vuelo['fuelsalida']"/></td>
+                                    <t t-if="vuelo['estado'] == 'postvuelo'">                                    
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                        <td></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"></td>
+                                    </t>
+                                    <t t-else="">
+                                        <td rowspan="2"><span t-esc="vuelo['lugarllegada']"/></td>
+                                        <td rowspan="2"><span t-esc="vuelo['strutchorallegada']"/></td>
+                                        <td rowspan="2">
+                                            <span t-esc="vuelo['tacomllegada']"/>
+                                            <span t-esc="vuelo['ngvuelo']"/>
+                                        </td>
+                                        <td rowspan="2">
+                                            <span t-esc="vuelo['tacomsalida']"/>
+                                            <span t-esc="vuelo['nfvuelo']"/>
+                                        </td>					
+                                        <td rowspan="2"><span t-esc="vuelo['fuelllegada']"/></td>
+                                        <td><span t-esc="vuelo['strtiemposervicio']"/></td>
+                                        <td rowspan="2"></td>
+                                        <td rowspan="2"><span t-esc="vuelo['piloto_name']"/></td>
+                                        <td rowspan="2"><span t-esc="vuelo['nombre_alumno_verificado']"/></td>
+                                    </t>
+                                </tr>
+                                <tr style="height:0.5cm">
+                                    <td><span t-esc="vuelo['strairtime']"/></td>
+                                </tr>
+                            </t>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td rowspan="2" colspan="7" style="width:83.2%" class="titulostablas">REGISTRO DE ANOMALÍAS Y DEFECTOS</td>
+                                <td class="" style="width:4.75%"><b>T.T.</b></td>
+                                <td style="width:4.75%"><span t-esc="fecha['totaltiemposervicio']"/></td>
+                                <td class="" style="width:4.75%"><b>TOTAL NG</b></td>
+                                <td style="width:4.75%"><span t-esc="fecha['totaltacomng']"/></td>
+                                <td rowspan="2" colspan="4"></td>
+                            </tr>
+                            <tr>
+                                <td class="" style="width:4.75%"><b>T.A.T.</b></td>
+                                <td style="width:4.75%"><span t-esc="fecha['totalairtime']"/></td>
+                                <td class="" style="width:4.75%"><b>TOTAL NF</b></td>
+                                <td style="width:4.75%"><span t-esc="fecha['totaltacomnf']"/></td>
+                            </tr>
+                            <tr style="height:0.7cm;">
+                                <td class="" style="width:6%"><b>Ref.</b></td>
+                                <td class="" style="width:17.5%"><b>Discrepancia</b></td>
+                                <td class="" style="width:6%"><b>Fecha</b></td>
+                                <td class="" style="width:9.5%"><b>Piloto</b></td>
+                                <td class="" style="width:7.6%"><b>Estado</b></td>
+                                <td class="" style="width:20.2%"><b>Acción tomada</b></td>
+                                <td colspan="3" class="" style="width:12.5%"><b>Certificación</b></td>
+                                <td class="" style="width:6.5%"><b>Fecha</b></td>
+                                <td class="" style="width:5.7%"><b>CAS</b></td>
+                                <td class=""><b>Certificador</b></td>
+                            </tr>
+                            <t t-foreach="pagina['anomalias']" t-as="anomalia">
+                                <tr style="height:0.7cm;">
+                                    <td><span t-esc="anomalia['codigo']"/></td>
+                                    <td><span t-esc="anomalia['discrepancia']"/></td>
+                                    <td><span t-esc="anomalia['fecha']"/></td>
+                                    <td><span t-esc="anomalia['informado_por']"/></td>
+                                    <td><span t-esc="anomalia['estado']"/></td>
+                                    <td><span t-esc="anomalia['accion']"/></td>
+                                    <td colspan="3" ></td>
+                                    <td><span t-esc="anomalia['fecha_accion']"/></td>
+                                    <td><span t-esc="anomalia['cas']"/></td>
+                                    <td><span t-esc="anomalia['cerrado_por']"/></td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="12" style="height:0.7cm;">En caso de problemas mecánicos contactar con: Helipistas Operaciones o CAMO. Telf: 0034 937 304 911</td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td colspan="3" class="titulostablas bgcolored">SAFETY MANAGEMENT SYSTEM</td>
+                            </tr>
+                            <tr style="height:0.5cm;">
+                                <td style="width:6.5%" class=""><b>Vuelo nº</b></td>
+                                <td style="width:6.5%" class=""><b>Hora</b></td>
+                                <td class=""><b>Incidente</b></td>
+                            </tr>
+                            <t t-foreach="pagina['smss']" t-as="sms">
+                                <tr style="height:0.5cm;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="3">En caso de incidencia operacional enviar copia del parte al Responsable de Seguridad</td>
+                            </tr>
+                        </table>
+                        <table  class="fullwidth" style="margin-top:15px; page-break-after: always;">
+                            <tr>
+                                <td class="noborde">(c) Helipistas</td>
+                                <td class="noborde">
+                                    Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                    <t t-if="not fecha['hashcode']">
+                                        <br/><i><span>Documentación para uso interno.</span></i>
+                                    </t>
+                                </td>
+                                <td class="noborde">
+                                    <i>Fecha creación documento</i><br/>
+                                    <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>                                
+                                </td>
+                                <td class="noborde">
+                                    <t t-if="fecha['hashcode']">
+                                        <i>Firmado por:</i><br/>
+                                        <i><span t-esc="fecha['firmado_por']"/></i>                                                                        
+                                    </t>
+                                </td>
+                                <td class="noborde">
+                                    <t t-if="fecha['hashcode']">
+                                        <i>CSV/CID</i><br/>
+                                        <span t-esc="fecha['hashcode']"/>
+                                    </t>
+                                    <t t-if="not fecha['hashcode']">
+                                        <i>Referencia</i><br/>
+                                        <span t-esc="fecha['hashcode_interno']"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201023_1040_tree">
+            <field name="name">leulit_20201023_1040_tree</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="arch" type="xml">
+                <tree string="Vuelos">
+                    <field name="revisar" invisible="1"/>
+                    <field name="codigo"/>
+                    <field name="helicoptero_id" string="Helicóptero" />
+                    <field name="foto_piloto" widget="image" class="foto_piloto_tree"/>
+                    <field name="piloto_id" />
+                    <field name="estado" invisible="1"/>
+                    <field name="strfechasalida" string="Fecha Salida"/>
+                    <field name="horasalida" widget="float_time" />
+                    <field name="tiempoprevisto" widget="float_time" sum="Horas previstas (hh:mm)" />
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1040_action">
+            <field name="name">Pre-vuelo/s</field>
+            <field name="res_model">leulit.vuelo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('estado','=','prevuelo')]</field>
+        </record>
+        <record id="leulit_20201023_1040_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201023_1040_tree" />
+            <field name="act_window_id" ref="leulit_20201023_1040_action" />
+        </record>
+        <record id="leulit_20201023_1040_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20230906_1505_form" />
+            <field name="act_window_id" ref="leulit_20201023_1040_action" />
+        </record>
+
+    </data>
+</odoo>

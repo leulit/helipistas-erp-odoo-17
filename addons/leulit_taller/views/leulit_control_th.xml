@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1149_tree">
+			<field name="name">leulit_20201130_1149_tree</field>
+			<field name="model">leulit.control_th</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Helipistas">
+                    <field name="descripcion"/>
+					<field name="from_date"/>
+					<field name="to_date"/>
+					<field name="hr_employee"/>
+					<field name="attachment_ids"/>
+				</tree>
+			</field>
+		</record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1149_form">
+            <field name="name">leulit_20201130_1149_form</field>
+            <field name="model">leulit.control_th</field>
+            <field name="arch" type="xml">
+                <form string="Helipistas">
+					<sheet>
+						<group col="6">
+							<group col="2" colspan="2">
+								<field name="descripcion"/>
+								<field name="from_date"/>
+								<field name="to_date"/>
+								<field name="hr_employee"/>
+								<field name="observaciones"/>
+								<field name="attachment_ids" widget="many2many_binary"/>
+							</group>
+							<group col="1" colspan="2"></group>
+						</group>
+					</sheet>
+                </form>
+            </field>
+        </record>
+
+		<record id="leulit_20201130_1149_action" model="ir.actions.act_window">
+			<field name="name">Control de temperatura y humedad</field>
+			<field name="res_model">leulit.control_th</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+    </data>
+</odoo>

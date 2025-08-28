@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20200626_1201_form">
+            <field name="name">leulit_20200626_1201_form</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="arch" type="xml">
+                <form string="Helicóptero">
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <field name="baja" invisible="1"/>
+                        <!-- DATOS GENERALES -->
+                        <notebook>
+                            <page string="Datos Generales">
+                                <group col="8">
+                                    <field name="ctrlmantenimiento" />
+                                    <field name="ctrloperaciones" />
+                                    <field name="ctrlcamo" />
+                                    <field name="datelastflight" reaonly="1"/>
+                                </group>
+                                <group col="3">
+                                    <group col="2">
+                                        <field name="fabricante" />
+                                        <field name="modelo" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                        <field name="tipo" invisible="1"/>
+                                        <field name="name" />
+                                        <field name="serialnum" />
+                                        <field name="fechafab" />
+                                        <field name="owner" />
+                                        <field name="is_privado" />
+                                        <field name="caducidadseguro" />
+                                        <field name="colormarks" />
+                                        <field name="codoperador" />
+                                    </group>
+                                    <group col="2">
+                                        <field name="airtimestart" widget="float_time"/>
+                                        <field name="airtime" widget="float_time"/>
+                                        <field name="date_tso"/>
+                                        <field name="tso" widget="float_time"/>
+                                    </group>
+                                    <group col="2">
+                                        <field name="doitov" invisible="tipo == 'EC120B'"/>
+                                    </group>
+                                </group>
+                                <h1>Mantenimiento</h1>
+                                <group col="2">
+                                    <field name="statemachine" />
+                                    <field name="proximarev" widget="float_time"/>
+                                    <field name="strhoras_remanente" reaonly="1"/>
+                                    <field name="fechaproximarev"/>
+                                    <field name="dias_remanente" reaonly="1"/>
+                                </group>
+                            </page>
+                            <!-- DATOS TECNICOS -->
+                            <page string="Datos Técnicos" name="datos_tecnicos_helicoptero">
+                                <group col="3">
+                                    <group col="2">
+                                        <h1 colspan="2">Velocidad y Consumo</h1>
+                                        <field name="velocidad" />
+                                        <field name="consumomedio" />
+                                        <field name="oil"/>
+                                    </group>
+                                    <group col="2">
+                                        <h1 colspan="2">Weight and Balance</h1>
+                                        <field name="pesomax" readonly="1"/>
+                                        <field name="emptyweight"/>
+                                        <field name="longarm"/>
+                                        <field name="latarm"/>
+                                        <field name="fechalastWB"/>
+                                    </group>
+                                    <group col="2">
+                                        <h1 colspan="2">Aterrizajes</h1>
+                                        <field name="landingsstart"/>
+                                        <field name="landings"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <!-- Otros -->
+                            <page string="Otros">
+                                <group col="2">
+                                    <group col="2">
+                                        <field name="se"/>
+                                        <field name="me"/>
+                                    </group>
+                                    <group col="2">
+                                        <field name="ubicacion" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                        <group col="2">
+                            <field name="write_uid" string="Modificado por:" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20200626_1201_tree">
+            <field name="name">leulit_20200626_1201_tree</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="arch" type="xml">
+                <tree string="Helicópteros">
+                    <field name="statemachine"/>
+                    <field name="horas_remanente" invisible="1"/>
+                    <field name="baja" invisible="1"/>
+                    <field name="semaforo" widget="semaforo_char" string=""/>
+                    <field name="strhoras_remanente"/>
+                    <field name="semaforo_fecha" widget="semaforo_char" string=""/>
+                    <field name="dias_remanente" type="char"/>
+                    <field name="name" />
+                    <field name="airtime" widget="float_time" string="TSN aeronave"/>
+                    <field name="datelastflight" />
+                    <field name="fechalastWB" />
+                    <field name="oil" string="Oil (l/h)"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20230516_1258_tree">
+            <field name="name">leulit_20230516_1258_tree</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="arch" type="xml">
+                <tree string="Helicópteros" create="false" edit="false">
+                    <field name="name" />
+                    <field name="statemachine"/>
+                    <field name="semaforo" widget="semaforo_char" string=""/>
+                    <field name="strhoras_remanente"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20200626_1201_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20200626_1201_tree"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20230516_1258_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20230516_1258_tree"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201103_1049_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20200626_1201_tree"/>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201109_1043_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20200626_1201_tree"/>
+            <field name="domain">[('baja', '=', False)]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201109_1058_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20200626_1201_tree"/>
+            <field name="domain">[('baja', '=', True)]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201125_1125_action">
+            <field name="name">Helicópteros</field>
+            <field name="res_model">leulit.helicoptero</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('baja', '=', False)]</field>
+        </record>
+
+    </data>
+</odoo>

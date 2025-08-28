@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record model="ir.ui.view" id="leulit_20220805_1213_tree">
+            <field name="name">leulit_20220805_1213_tree</field>
+            <field name="model">leulit.seguro_report</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Informe seguros" create="false" edit="false">
+                    <field name="helicoptero"/>
+                    <field name="vuelo"/>
+                    <field name="fecha_anterior_vuelo"/>
+                    <field name="fecha"/>
+                    <field name="hora_salida" widget="float_time"/>
+                    <field name="airtime" widget="float_time"/>
+                    <field name="diferencia"/>
+                </tree>
+            </field>
+        </record>
+
+
+	   <record model="ir.actions.act_window" id="leulit_20201105_1704_action">
+            <field name="name">Informe Seguro</field>
+            <field name="res_model">leulit.seguro_report</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20220805_1213_tree"/>
+        </record>
+        
+    </data>
+</odoo>

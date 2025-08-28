@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230505_1518_form" model="ir.ui.view">
+            <field name="name">leulit_20230505_1518_form</field>
+            <field name="model">leulit.wizard_create_maintenance_request</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Crear Orden de Trabajo">
+                    <field name="rel_maintenance_plan" invisible="1"/>
+                    <group>
+                        <field name="name_request"/>
+                        <field name="fecha_prevista"/>
+                    </group>
+                    <field name="tasks" domain="[('maintenance_plan_id','=',rel_maintenance_plan)]" context="{'tree_view_ref': 'leulit_taller.maintenance_planned_activity_view_tree'}" options="{'no_create': True, 'create': False, 'edit': False, 'no_open': True, 'no_quick_create': True}">
+                        <tree>
+                            <field name="tarea"/>
+                            <field name="int_h"/>
+                            <field name="interval"/>
+                            <field name="descripcion"/>
+                            <field name="referencia"/>
+                            <field name="horas_last_done"/>
+                            <field name="fecha_last_done"/>
+                            <field name="horas_next_due"/>
+                            <field name="fecha_next_due"/>
+                            <field name="horas_remaining"/>
+                            <field name="semaforo_horas" widget="semaforo_char"/>
+                            <field name="days_remaining"/>
+                            <field name="semaforo_dias" widget="semaforo_char"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="create_maintenance_request" type="object" string="Guardar" class="oe_right oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

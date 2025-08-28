@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="webclient_bootstrap" name="webclient_bootstrap gmaps" inherit_id="web.webclient_bootstrap">
+        <xpath expr="//t[@t-call-assets='web.assets_common']" position="before">
+            <!--script src="/web_google_maps/static/lib/markerclusterer/markerclusterer.min.js"></script-->
+            <script src="https://maps.googleapis.com/maps/api/js?v=quarterly&amp;key=AIzaSyCh4m4h_SZyhCxLxZ_3jmmApRLI2hBndmE&amp;libraries=geometry,drawing" type="text/javascript" ></script>
+        </xpath>
+    </template>
+</odoo>

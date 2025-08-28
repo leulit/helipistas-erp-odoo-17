@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id='leulit_20201104_0812_form'>
+            <field name="name">leulit_20201104_0812_form</field>
+            <field name="model">leulit.vuelo_wizard_report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Pilot Log Book">
+                    <group col="4">
+                        <field name='piloto_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                    </group>
+                    <footer>
+                        <button type="object" name="create_log_book_report"  string="Imprimir" class="oe_highlight"/>
+                        <button special="cancel"  string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201104_0812_action">
+            <field name="name">leulit_20201104_0812_action</field>
+            <field name="res_model">leulit.vuelo_wizard_report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201104_0812_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+
+
+        <record model="ir.ui.view" id='leulit_20201104_0828_form'>
+            <field name="name">leulit_20201104_0828_form</field>
+            <field name="model">leulit.vuelo_wizard_report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Technical Log">
+                    <group col="4" fill="0">
+                        <field name='helicoptero_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name='informe' colspan="4" readonly="1"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                    </group>
+                    <footer>
+                        <button type="object" name="create_report" string="Imprimir" class="oe_highlight"/>
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201104_0828_action">
+            <field name="name">leulit_20201104_0828_action</field>
+            <field name="res_model">leulit.vuelo_wizard_report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201104_0828_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_informe': 'leulit_20190709_1846_report'}</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201104_0830_action">
+            <field name="name">leulit_20201104_0830_action</field>
+            <field name="res_model">leulit.vuelo_wizard_report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201104_0828_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_informe': 'leulit_registro_vuelosaeronave_report'}</field>
+        </record>
+        <record model="ir.actions.act_window" id="leulit_20201105_0840_action">
+            <field name="name">leulit_20201105_0840_action</field>
+            <field name="res_model">leulit.vuelo_wizard_report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201104_0828_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_informe': 'leulit_registro_consumosaeronave_report'}</field>
+        </record>
+
+        <record id='leulit_20211130_1822_form' model="ir.ui.view">
+            <field name="name">leulit_20211130_1822_form</field>
+            <field name="model">leulit.vuelo_wizard_report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Pilot Log Book">
+                    <group col="4" fill="0">
+                        <field name="from_date" />
+                        <field name="to_date" />
+                    </group>
+                    <footer>
+                        <button type="object" name="create_alumno_log_book_report" string="Imprimir" class="oe_highlight"/>
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record> 
+
+
+        <record model="ir.actions.act_window" id="leulit_20211130_1822_action">
+            <field name="name">Helipistas Pilot Log Book</field>
+            <field name="res_model">leulit.vuelo_wizard_report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20211130_1822_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

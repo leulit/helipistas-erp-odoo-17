@@ -1,0 +1,38 @@
+<odoo>
+  <data>
+
+    <record id="res_config_settings_view_form_inherit_leulit" model="ir.ui.view">
+      <field name="name">res.config.settings.inherit.leulit</field>
+      <field name="model">res.config.settings</field>
+      <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+      <field name="arch" type="xml">
+        <!-- Insertamos dentro del app "General Settings" -->
+        <xpath expr="//app[@name='general_settings']" position="inside">
+          <block title="Módulos Leulit" name="leulit_modules_block">
+            <setting string="Proyectos predeterminados para registro de horas">
+              <div class="content-group">
+                <div class="row mt16">
+                  <label for="flight_hours_project" string="Horas de vuelo" class="col-lg-4 o_light_label"/>
+                  <field name="flight_hours_project" options="{'no_create': True, 'no_create_edit': True}" class="col"/>
+                </div>
+                <div class="row mt16">
+                  <label for="school_hours_project" string="Horas de escuela" class="col-lg-4 o_light_label"/>
+                  <field name="school_hours_project" options="{'no_create': True, 'no_create_edit': True}" class="col"/>
+                </div>
+                <div class="row mt16">
+                  <label for="meeting_hours_project" string="Horas de reuniones" class="col-lg-4 o_light_label"/>
+                  <field name="meeting_hours_project" options="{'no_create': True, 'no_create_edit': True}" class="col"/>
+                </div>
+                <div class="row mt16">
+                  <label for="maintenance_hours_project" string="Horas de mantenimiento" class="col-lg-4 o_light_label"/>
+                  <field name="maintenance_hours_project" options="{'no_create': True, 'no_create_edit': True}" class="col"/>
+                </div>
+              </div>
+            </setting>
+          </block>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>

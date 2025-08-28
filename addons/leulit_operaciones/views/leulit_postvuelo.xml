@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1101_action">
+            <field name="name">Post-vuelo/s</field>
+            <field name="res_model">leulit.vuelo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('estado','=','postvuelo')]</field>
+        </record>
+        <record id="leulit_20201023_1101_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201021_1648_tree" />
+            <field name="act_window_id" ref="leulit_20201023_1101_action" />
+        </record>
+        <record id="leulit_20201023_1101_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20230906_1505_form" />
+            <field name="act_window_id" ref="leulit_20201023_1101_action" />
+        </record>
+
+
+    </data>
+</odoo>

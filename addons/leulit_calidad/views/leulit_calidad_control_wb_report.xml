@@ -1,0 +1,1517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201124_1248_helicoptero_wb_control_form">
+            <field name="name">leulit_20201124_1248_helicoptero_wb_control_form</field>
+            <field name="model">leulit.calidad_control_wb_report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <sheet>
+                        <group col="4">
+                            <h4 colspan="4">Helicóptero</h4>
+                            <field colspan="4" name="helicoptero_ids" nolabel="1" domain="[('ctrlmantenimiento','=',True)]"/>
+                            <h4 colspan="4">Información</h4>
+                            <field colspan="4" name="texto" nolabel="1"/>
+                            <field name="fecha"/>
+                            <field name="lugar"/>
+                            <h4 colspan="4">Vuelos</h4>
+                            <field colspan="4" name="vuelo_ids" nolabel="1" domain="[('estado','=','cerrado')]"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="imprimir" type="object" string="Imprimir" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201124_1248_helicoptero_wb_control_form_action">
+            <field name="name">Informe Control de Integridad de datos de Carga y Centrado</field>
+            <field name="res_model">leulit.calidad_control_wb_report</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <report 
+            id="leulit_inf_wb_control_report" 
+            string="Control de Carga y Centrado" 
+            model="leulit.calidad_control_wb_report" 
+            report_type="qweb-pdf" 
+            file="leulit_calidad.leulit_20220120_1510_informe" 
+            name="leulit_calidad.leulit_20220120_1510_informe" 
+            paperformat="leulit.paperformat_A4_landscape_without_cabecera" />
+
+
+        <template id="carga_centrado_report_css">
+            <style>
+                .numbervalue {
+                    text-align:right;
+                }
+                .negrita {
+                    font-weight: bold;
+                    font-size: 12px;
+                }
+                
+                table {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;		    
+                    border-spacing: 0;			
+                }
+                th, tbody td, tfoot td {
+                    border: 1px solid #000000;
+                    padding-right:3px;
+                    padding-left:3px;
+                }
+                .sinbordes {
+                    border: 1px solid white;
+                }
+                .pie_pag {
+                    position: relative;
+                    top: 300px;
+                }
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                * {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 8px;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 29.7cm;
+                    height: 19cm;
+                    margin: 0.5cm 0.5cm 0.5cm 0.5cm;                 
+                }
+                .titleheight {height:0.6cm}
+                .titulostablas {
+                    font-size: 12px;
+                    font-weight:bold;
+                }
+                p {
+                    font-size:9pt;
+                    font-weight: bold;
+                }	
+                tr .smalltext th, tr .smalltext td, .smalltext {font-size: 5px;}
+                td{
+                    vertical-align: middle
+                    word-break: keep-all;
+                }
+                td .hcenter{
+                    text-align: center;   
+                    word-break: keep-all;     	
+                }
+                .bgcolored {
+                    background-color: #808080;
+                    color: white;
+                }
+                tbody td {
+                    text-align:center;
+                    font-size:8px;
+                    font-weight:normal;
+                    word-break: keep-all;
+                }
+                .table {
+                    border-collapse:collapse;
+                    border-spacing: 0;
+                    width:100%;
+                    table-layout: fixed;
+                }
+                thead { display: table-header-group }
+			    tfoot { display: table-row-group }
+			    tr { page-break-inside: avoid }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 12px;
+                }
+                
+                .numericfieldvalue {
+                    font-size: 14px;
+                    font-weight: normal;
+                    text-align: right;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+
+                .literal {
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                .va-middle {
+                	vertical-align:middle;
+                }
+                .centertext {
+                	text-align:center;
+                }
+            </style>
+        </template>
+
+
+        <template id="leulit_20220120_1510_informe">
+            <t t-call="web.html_container">
+                <t t-call="leulit_calidad.carga_centrado_report_css"/>
+                <table class="fullwidth">
+                    <tbody>
+                        <tr>
+                            <td style="width:190px;text-align:center;vertical-align: middle;border:none;" rowspan="2">
+                                <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                            </td>
+                            <td class="literal theadtitle centertext" style="font-size:14px;" rowspan="2">Control de integridad de datos de carga y centrado</td>
+                            <td class="literal" rowspan="2">
+                                <span style="font-size:12px;text-align:right;" t-esc="year"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <table class="fullwidth">
+                    <tr>
+                        <th class="literal centertext" style="font-size:12px;">Matrícula</th>
+                        <th class="literal centertext" style="font-size:12px;">Modelo</th>
+                        <th class="literal centertext" style="font-size:12px;">Último informe <br/>
+                        peso y centrado</th>
+                        <th class="literal centertext" style="font-size:12px;">Peso máximo kgs.</th>
+                        <th class="literal centertext" style="font-size:12px;">Peso vacío kgs.</th>
+                        <th class="literal centertext" style="font-size:12px;">CG Long. cms.</th>
+                        <th class="literal centertext" style="font-size:12px;">CG Lat. cms.</th>
+                        <th class="literal centertext" style="font-size:12px;">Fecha comprobación</th>
+                        <th class="literal centertext" style="font-size:12px;">Comprobado por</th>
+                    </tr>
+                    <t t-foreach="helicopteros" t-as="helicoptero">
+                        <tr>
+                            <td class="fieldvalue va-middle" style="height:25px">
+                                <span style="font-size:12px;" t-esc="helicoptero['matricula']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['modeloname']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['fechalastWB']"/>
+                            </td>
+                            <td class="fieldvalue righttext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['pesomax']"/>
+                            </td>
+                            <td class="fieldvalue righttext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['emptyweight']"/>
+                            </td>
+                            <td class="fieldvalue righttext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['longarm']"/>
+                            </td>
+                            <td class="fieldvalue righttext va-middle">
+                                <span style="font-size:12px;" t-esc="helicoptero['latarm']"/>
+                            </td>
+                            <td class="fieldvalue va-middle"></td>
+                            <td class="fieldvalue va-middle"></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td colspan="10" class="negrita sinbordes">Los datos de peso y centro de gravedad se han obtenido de los informes de peso y centrado que se encuentran en el FHM de cada aeronave</td>
+                    </tr>
+                </table>
+                <div style="page-break-after: always;"/>
+                <t t-if="texto">
+                    <table class="fullwidth">
+                        <tbody>
+                            <tr>
+                                <td style="width:190px;text-align:center;vertical-align: middle;border:none;" rowspan="2">
+                                    <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                                </td>
+                                <td class="literal theadtitle centertext" style="font-size:14px;" rowspan="2">Control de integridad de datos de carga y centrado</td>
+                                <td class="literal" rowspan="2">
+                                    <span style="text-align:right;font-size:12px;" t-esc="year"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <table class="fullwidth sinbordes">
+                        <tr>
+                            <td class="fieldvalue va-middle sinbordes">
+                                <span style="font-size:12px;" t-esc="texto"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="fullwidth pie_pag sinbordes">
+                        <tr>
+                            <td class="fieldvalue va-middle sinbordes">
+                                <t t-if="lugar">
+                                    <span style="font-size:12px;" t-esc="lugar"/>
+                                </t>
+                                <t t-if="fecha">
+                                    <span style="font-size:12px;" t-esc="fecha"/>
+                                </t>
+                            </td>
+                            <td class="fieldvalue va-middle sinbordes" style="width:35%; "></td>
+                            <td class="fieldvalue va-middle sinbordes"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle sinbordes" style="width:35%;"></td>
+                            <td class="fieldvalue centertext va-middle sinbordes" style="width:35%; "></td>
+                            <td class="fieldvalue va-middle sinbordes" style="width:30%"></td>
+                        </tr>
+                    </table>
+                </t>
+                <div style="page-break-after: always;"/>
+                <t t-set="cont" t-value="0"/>
+                <t t-foreach="vuelos" t-as="vuelo">
+                    <table class="fullwidth">
+                        <tbody>
+                            <tr>
+                                <td style="width:190px;text-align:center;vertical-align: middle;border:none;" rowspan="2">
+                                    <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                                </td>
+                                <td class="literal theadtitle centertext" style="font-size:14px;" rowspan="2">Control de integridad de datos de carga y centrado</td>
+                                <td class="literal centertext" rowspan="2">
+                                    <span style="font-size:12px;" t-esc="year"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <table class="fullwidth">
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Aeronave</td>
+                            <td class="fieldvalue va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['helicoptero_modelo']"/>
+                            </td>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Matricula</td>
+                            <td class="fieldvalue va-middle" style="height:25px">
+                                <span style="font-size:12px;" t-esc="vuelo['helicoptero_name']"/>
+                            </td>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Parte de Vuelo:</td>
+                            <td class="fieldvalue va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['codigo']"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="border:0"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle" style="height:25px; border:0"></td>
+                            <td class="fieldvalue centertext va-middle negrita">Kgs</td>
+                            <td class="fieldvalue centertext va-middle negrita">Long(en cms)</td>
+                            <td class="fieldvalue centertext va-middle negrita">Lat(en cms)</td>
+                            <td class="fieldvalue centertext va-middle negrita">Momento Long</td>
+                            <td class="fieldvalue centertext va-middle negrita">Momento Lat</td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">BEM</td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['emptyweight']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['emptyweight_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['emptyweight_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['emptyweight_long_moment']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['emptyweight_lat_moment']"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Piloto</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['frs_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['frs_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Copiloto</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fls_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fls_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Compartimento equipaje principal </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['main_baggage_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['main_baggage_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Compartimento equipaje frontal</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['front_baggage_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['front_baggage_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Masa con combustible 0</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Masa de combustible al despegue</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fueltakeoff_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fueltakeoff_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Masa y CG al despegue</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Masa de combustible prevista al aterrizaje</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fuellanding_long_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle">
+                                <span style="font-size:12px;" t-esc="vuelo['wb']['fuellanding_lat_arm']"/>
+                            </td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue va-middle negrita" style="height:25px">Masa y CG previsto al aterrizaje</td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                            <td class="fieldvalue centertext va-middle"></td>
+                        </tr>
+                    </table>
+
+                    <div style="page-break-after: always;"/>
+                    <table class="fullwidth">
+                        <tbody>
+                            <tr>
+                                <td style="width:190px;text-align:center;vertical-align: middle;border:none;" rowspan="2">
+                                    <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                                </td>
+                                <td class="literal theadtitle centertext" style="font-size:14px;" rowspan="2">Control de integridad de datos de carga y centrado</td>
+                                <td class="literal" rowspan="2">
+                                    <span style="font-size:12px;text-align:right;" t-esc="year"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <table class="fullwidth">
+                        <tbody>
+                            <tr>
+                                <td style="width:90%%">
+                                    <table class="fullwidth">
+                                        <tbody>
+                                            <tr>
+                                                <td class="fieldvalue va-middle negrita" style="font-size:14px;height:25px">Aeronave</td>
+                                                <td class="fieldvalue va-middle">
+                                                    <t t-if="vuelo['wb']['helicoptero_tipo']">
+                                                        <span style="font-size:14px;" t-esc="vuelo['wb']['helicoptero_tipo']"/>
+                                                    </t>
+                                                </td>
+                                                <td class="fieldvalue va-middle negrita" style="font-size:14px;height:25px">Matricula</td>
+                                                <td class="fieldvalue va-middle">
+                                                    <span style="font-size:14px;" t-esc="vuelo['helicoptero_name']"/>
+                                                </td>
+                                                <td class="fieldvalue va-middle negrita" style="font-size:14px;height:25px">Parte de Vuelo:</td>
+                                                <td class="fieldvalue va-middle">
+                                                    <span style="font-size:14px;" t-esc="vuelo['codigo']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="border:0"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="fullwidth">
+                                        <tbody>
+                                            <tr>
+                                                <td class="literal" rowspan="2" style="text-align:center">Item</td>
+                                                <td class="literal" rowspan="2" style="text-align:center">Masa (kg.)</td>
+                                                <td class="literal" colspan="2" style="text-align:center">Localización</td>
+                                                <td class="literal" colspan="2" style="text-align:center">Momento</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:center">Long. (cm)</td>
+                                                <td class="literal" style="text-align:center">Lat. (cm)</td>
+                                                <td class="literal" style="text-align:center">Long.</td>
+                                                <td class="literal" style="text-align:center">Lat.</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa básica vacío</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['emptyweight']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['emptyweight_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['emptyweight_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['emptyweight_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['emptyweight_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Piloto</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['frs']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['frs_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['frs_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['frs_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['frs_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Copiloto</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fls']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fls_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fls_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fls_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fls_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Pasajeros lado derecho</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftrp']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftrp_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftrp_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftrp_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftrp_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Pasajeros lado izquierdo</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftlp']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftlp_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftlp_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftlp_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftlp_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','R44','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Pasajeros centro</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftcp']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftcp_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftcp_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftcp_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aftcp_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','R44','EC120B')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Compartimento equipaje frontal</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['front_baggage']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['front_baggage_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['front_baggage_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['front_baggage_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['front_baggage_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Compartimento equipaje principal</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['main_baggage']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['main_baggage_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['main_baggage_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['main_baggage_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['main_baggage_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','R44','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Carga y Zona C</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonac']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonac_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonac_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonac_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonac_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Carga y Zona D</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonad']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonad_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonad_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonad_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_zonad_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('EC120B','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Equipaje bajo el asiento delantero derecho</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufrs']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufrs_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufrs_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufrs_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufrs_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Equipaje bajo el asiento delantero izquierdo</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufls']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufls_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufls_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufls_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['bufls_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','EC120B','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Equipaje bajo el asiento del lado derecho</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftrs']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftrs_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftrs_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftrs_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftrs_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Equipaje bajo el asiento del lado izquierdo</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftls']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftls_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftls_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftls_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['buaftls_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Puerta delantera derecha</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_right_door']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_right_door_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_right_door_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_right_door_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_right_door_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Puerta delantera izquierda</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_left_door']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_left_door_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_left_door_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_left_door_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['forward_left_door_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','EC120B','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Puerta lado derecho</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_right_door']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_right_door_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_right_door_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_right_door_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_right_door_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Puerta lado izquierdo</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_left_door']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_left_door_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_left_door_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_left_door_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['aft_left_door_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','R44','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Puerta corrediza</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['sliding_door']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['sliding_door_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['sliding_door_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['sliding_door_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['sliding_door_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Puerta de carga trasera</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rear_cargo_door']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rear_cargo_door_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rear_cargo_door_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rear_cargo_door_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rear_cargo_door_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('EC120B','CABRI G2')">
+                                                <t t-if="vuelo['wb']['cyclic'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Cíclico</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['cyclic']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['cyclic_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['cyclic_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['cyclic_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['cyclic_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="vuelo['wb']['collective'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Colectivo</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['collective']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['collective_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['collective_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['collective_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['collective_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="vuelo['wb']['pedals'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Pedales</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['pedals']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['pedals_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['pedals_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['pedals_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['pedals_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('EC120B','CABRI G2')">
+                                                <t t-if="vuelo['wb']['dualcontrols'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Controles Removibles(Cíclico,Colectivo,Pedales)</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="vuelo['wb']['items_on_mount_bar_right_long_arm'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Elementos en la barra derecha de montaje de accesorios</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_right']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_right_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_right_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_right_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_right_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="vuelo['wb']['items_on_mount_bar_left_long_arm'] != 0">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Elementos en la barra izquierda de montaje de accesorios</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_left']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_left_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_left_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_left_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['items_on_mount_bar_left_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','EC120B','CABRI G2') and vuelo['wb']['tyler_long_arm'] == 0">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Cineflex</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['cineflex']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['cineflex_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['cineflex_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['cineflex_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['cineflex_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','EC120B','CABRI G2') and vuelo['wb']['tyler_long_arm'] != 0">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Tyler</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['tyler']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['tyler_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['tyler_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['tyler_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['tyler_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','EC120B','CABRI G2') and vuelo['wb']['gss_long_arm'] != 0">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">GSS</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gss']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gss_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gss_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gss_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gss_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('R22','R44','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">AF120 Camera Mount</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['af120_camera_mount']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['af120_camera_mount_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['af120_camera_mount_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['af120_camera_mount_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['af120_camera_mount_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Controles duales</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['dualcontrols_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Asiento delantero izquierdo</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['frontseat']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['frontseat_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['frontseat_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['frontseat_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['frontseat_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Asiento trasero de 3 plazas</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rearseat']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rearseat_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rearseat_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rearseat_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['rearseat_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Carga y el equipaje ( sin asientos traseros )</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_noseats']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_noseats_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_noseats_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_noseats_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['baggage_noseats_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <t t-if="vuelo['helicoptero_name'] in ('EC-HIL')">
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Cargo load</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Cargo hook</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="literal" style="text-align:left;height:20px">Mirror</td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['espejo']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['espejo_long_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['espejo_lat_arm']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['espejo_long_moment']"/>
+                                                        </td>
+                                                        <td class="numericfieldvalue">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['espejo_lat_moment']"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-if="vuelo['wb']['helicoptero_tipo'] not in ('EC120B','CABRI G2')">
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Cargo load</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['carga_externa_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="literal" style="text-align:left;height:20px">Cargo hook</td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_long_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_lat_arm']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_long_moment']"/>
+                                                    </td>
+                                                    <td class="numericfieldvalue">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['gancho_carga_lat_moment']"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Misc....</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc1']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc1_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc1_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc1_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc1_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Misc....</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc2']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc2_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc2_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc2_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['misc2_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa con combustible 0</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['maswithoutfuel']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['maswithoutfuel_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['maswithoutfuel_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['maswithoutfuel_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['maswithoutfuel_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa de combustible al despegue</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fueltakeoff']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fueltakeoff_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fueltakeoff_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fueltakeoff_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fueltakeoff_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa y CG al despegue</td>
+                                                <td class="numericfieldvalue">
+                                                    <t t-if="vuelo['wb']['takeoff_gw']">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw']"/>
+                                                    </t>
+                                                </td>
+                                                <t t-if="vuelo['wb']['valid_takeoff_longcg']">
+                                                    <td class="numericfieldvalue" style="background-color: #ffffff">
+                                                        <t t-if="vuelo['wb']['takeoff_gw_long_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_long_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="numericfieldvalue" style="background-color: #E9967A">
+                                                        <t t-if="vuelo['wb']['takeoff_gw_long_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_long_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <t t-if="vuelo['wb']['valid_takeoff_latcg']">
+                                                    <td class="numericfieldvalue" style="background-color: #ffffff">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_lat_arm']"/>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="numericfieldvalue" style="background-color: #E9967A">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_lat_arm']"/>
+                                                    </td>
+                                                </t>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['takeoff_gw_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa de combustible prevista al aterrizaje</td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fuellanding']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fuellanding_long_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fuellanding_lat_arm']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fuellanding_long_moment']"/>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <span style="font-size: 14px;" t-esc="vuelo['wb']['fuellanding_lat_moment']"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="text-align:left;height:20px">Masa y CG previsto al aterrizaje</td>
+                                                <td class="numericfieldvalue">
+                                                    <t t-if="vuelo['wb']['landing_gw']">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw']"/>
+                                                    </t>
+                                                </td>
+                                                <t t-if="vuelo['wb']['valid_landing_longcg']">
+                                                    <td class="numericfieldvalue" style="background-color: #ffffff">
+                                                        <t t-if="vuelo['wb']['landing_gw_long_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_long_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="numericfieldvalue" style="background-color: #E9967A">
+                                                        <t t-if="vuelo['wb']['landing_gw_long_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_long_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <t t-if="vuelo['wb']['valid_landing_longcg']">
+                                                    <td class="numericfieldvalue" style="background-color: #ffffff">
+                                                        <t t-if="vuelo['wb']['landing_gw_lat_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_lat_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="numericfieldvalue" style="background-color: #E9967A">
+                                                        <t t-if="vuelo['wb']['landing_gw_lat_arm']">
+                                                            <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_lat_arm']"/>
+                                                        </t>
+                                                    </td>
+                                                </t>
+                                                <td class="numericfieldvalue">
+                                                    <t t-if="vuelo['wb']['landing_gw_long_moment']">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_long_moment']"/>
+                                                    </t>
+                                                </td>
+                                                <td class="numericfieldvalue">
+                                                    <t t-if="vuelo['wb']['landing_gw_lat_moment']">
+                                                        <span style="font-size: 14px;" t-esc="vuelo['wb']['landing_gw_lat_moment']"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table style="border:0;">
+                                        <tr>
+                                            <td style="font-size: 14px;border:0px;">Longitudinal CG</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:0px;">
+                                                <img t-attf-src="#{vuelo['wb']['canvas_long']}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height:20px;border:0px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 14px;border:0px;">Lateral CG</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:0px;">
+                                                <img t-attf-src="#{vuelo['wb']['canvas_lat']}"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <t t-if="vuelos_cont > cont">
+                        <div style="page-break-after: always;"/>
+                    </t>
+                    <t t-set="cont" t-value="cont+1"/>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

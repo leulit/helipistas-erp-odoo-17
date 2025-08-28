@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20230705_1332_tree" model="ir.ui.view">
+            <field name="name">leulit_20230705_1332_tree</field>
+            <field name="model">leulit.maintenance_manual</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="categoria_id"/>
+                    <field name="descripcion"/>
+                    <field name="pn"/>
+                    <field name="rev_n"/>
+                    <field name="rev"/>
+                    <field name="caducidad"/>
+                    <field name="check"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20230705_1332_form" model="ir.ui.view">
+            <field name="name">leulit_20230705_1332_form</field>
+            <field name="model">leulit.maintenance_manual</field>
+            <field name="arch" type="xml">
+                <form string="Manual">
+                    <header>
+                        <button name="modificar_manual" string="Modificar" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="categoria_id" options="{'no_create': True, 'no_open': True, 'no_quick_create': True}"/>
+                            <field name="name"/>
+                        </group>
+                        <group col="4">
+                            <field name="descripcion"/>
+                            <field name="pn"/>
+                        </group>
+                        <group col="8">
+                            <field name="rev_n"/>
+                            <field name="rev"/>
+                            <field name="caducidad"/>
+                            <field name="check"/>
+                        </group>
+                        <group col="2">
+                            <group>
+                                <field name="datas" filename="name" string="Documento"/>
+                                <field name="link_web" widget="url"/>
+                            </group>
+                            <notebook>
+                                <page string="Histórico Check">
+                                    <field name="historic_check">
+                                        <tree create="false" editable="bottom">
+                                            <field name="check" string="Check fecha"/>
+                                            <field name="descripcion"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20230705_1332_action" model="ir.actions.act_window">
+            <field name="name">Manuales de mantenimiento</field>
+            <field name="res_model">leulit.maintenance_manual</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

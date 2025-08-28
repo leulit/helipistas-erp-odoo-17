@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Menu Operaciones -->
+    <menuitem 
+        id="leulit_20201103_1049_menuitem"
+        name="Aeronaves"
+        parent="leulit.leulit_20200618_1104_menuitem"
+        action="leulit_20230516_1258_action"
+        sequence="50"
+        groups="leulit.ROperaciones_piloto,leulit.RCampaña_piloto"
+    />
+
+    <!-- Menu Helipistas -->
+    <menuitem 
+        id="leulit_20210110_1158_menuitem"
+        name="Aeronaves"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        action="leulit_20201103_1049_action"
+        sequence="160"
+        groups="leulit.RTaller_base"
+    />
+
+    <!-- Menu CAMO -->
+        <menuitem 
+            id="leulit_20201109_1043_menuitem"
+            name="Helicopters in of service"
+            parent="leulit.leulit_20201109_1042_menuitem"
+            action="leulit_20201109_1043_action"
+            sequence="10"
+        />
+        <menuitem 
+            id="leulit_20201109_1058_menuitem"
+            name="Helicopters out of service"
+            parent="leulit.leulit_20201109_1042_menuitem"
+            action="leulit_20201109_1058_action"
+            sequence="20"
+        />
+    <menuitem 
+        id="leulit_20200629_1051_menuitem" 
+        name="Modelos" 
+        parent="leulit.leulit_20201109_1042_menuitem" 
+        action="leulit_20200629_1051_action" 
+        sequence="20"
+    />
+
+    <!-- Menu Calidad -->
+    <menuitem
+        id="leulit_20201118_1745_menuitem"
+        name="Análisis consumo aceite"
+        parent="leulit.leulit_20201118_1744_menuitem"
+        action="leulit_20201109_1131_action"
+        sequence="10"
+    />
+
+    <!-- Menu Taller -->
+    <menuitem 
+        id="leulit_20201125_1132_menuitem" 
+        name="Listado de Aeronaves"
+        parent="leulit.leulit_20250207_1052_menuitem"
+        action="leulit_20201125_1125_action" 
+        sequence="10"
+    />
+
+</odoo>

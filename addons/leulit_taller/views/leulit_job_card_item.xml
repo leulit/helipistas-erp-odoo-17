@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230720_1549_filter" model="ir.ui.view">
+            <field name="name">leulit_20230720_1549_filter</field>
+            <field name="model">leulit.job_card_item</field>
+            <field name="arch" type="xml">
+                <search string="Job Card Items filtros">
+                    <group expand="0" string="Agrupar por...">
+                        <filter name="group_by_job_card" string="Job Card" context="{'group_by': 'job_card_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <record id="leulit_20230720_1549_tree" model="ir.ui.view">
+            <field name="name">leulit_20230720_1549_tree</field>
+            <field name="model">leulit.job_card_item</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="descripcion"/>
+                    <field name="solucion"/>
+                    <field name="equipamiento_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                    <field name="manual_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                    <field name="job_card_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                    <field name="boroscopia"/>
+                    <field name="doble_check"/>
+                    <field name="inspeccion_seguridad"/>
+                    <field name="oblig_form_one"/>
+                    <field name="no_aplica"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20230720_1549_action" model="ir.actions.act_window">
+            <field name="name">Job Card Item</field>
+            <field name="res_model">leulit.job_card_item</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{"search_default_group_by_job_card":1}</field>
+        </record>
+
+    </data>
+</odoo>

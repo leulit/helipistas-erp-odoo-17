@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1158_tree">
+			<field name="name">leulit_20201130_1158_tree</field>
+			<field name="model">leulit.ficha_datos_seguridad</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Helipistas">
+					<field name="producto"/>
+					<field name="proveedor"/>
+					<field name="version"/>
+                    <field name="fecha"/>
+					<field name="attachment_ids"/>
+				</tree>
+			</field>
+	    </record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1158_form">
+            <field name="name">leulit_20201130_1158_form</field>
+            <field name="model">leulit.ficha_datos_seguridad</field>
+            <field name="arch" type="xml">
+                <form string="Helipistas">
+					<sheet>
+						<group col="6">
+							<group col="2" colspan="2">
+								<field name="producto"/>
+								<field name="proveedor"/>
+								<field name="version"/>
+								<field name="fecha"/>
+								<field name="observaciones"/>
+								<field name="attachment_ids" widget="many2many_binary"/>
+							</group>
+							<group col="1" colspan="2"></group>
+						</group>
+					</sheet>
+                </form>
+            </field>
+        </record>
+
+		<record id="leulit_20201130_1158_action" model="ir.actions.act_window">
+			<field name="name">Ficha de datos de seguridad</field>
+			<field name="res_model">leulit.ficha_datos_seguridad</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+    </data>
+</odoo>

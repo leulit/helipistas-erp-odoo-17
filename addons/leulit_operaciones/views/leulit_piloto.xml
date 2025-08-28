@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20200708_1210_form">
+            <field name="name">leulit_20200708_1210_form</field>
+            <field name="model">leulit.piloto</field>
+            <field name="arch" type="xml">
+                <form string="Pilotos">
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <group col="2">
+                            <field name="image_1920" widget="image" class="oe_avatar oe_left" string="Imagen"/>
+                            <field name="name" string="Nombre"/>
+                            <field name="state"/>
+                            <field name="airtime" widget="float_time"/>
+                            <field name="peso_piloto"/>
+                            <field name="n_licencia"/>
+                            <field name="freelance"/>
+                            <field name="partner_id"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="employee" readonly="1"/>
+                            <field name="piloto_helipistas" readonly="1"/>
+                            <field name="firma" widget="image" class="oe_avatar oe_left"/>
+                            <field name="dieta_ta" groups="leulit.ROperaciones_gestor"/>
+                            <field name="dieta_tb" groups="leulit.ROperaciones_gestor"/>
+                            <field name="plus_activacion" groups="leulit.ROperaciones_gestor"/>
+                        </group>
+                        <notebook>
+                            <page name="piloto_documentos" string="Documentos">
+                                <field name="documentos_ids">
+                                    <tree editable="bottom" default_order="date desc">
+                                        <field name="piloto_id" invisible="1"/>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="expiration_date"/>
+                                        <field name="valid"/>
+                                        <button name="add_docs_piloto" type="object" class="oe_highlight" string="Adjuntar Doc."/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="piloto_documentos" string="Histórico 16B">
+                                <field name="hist_16bravo">
+                                    <tree string="Histórico 16 bravo" editable="bottom">
+                                        <field name="fecha_ini" string="Inicio"/>
+                                        <field name="fecha_fin" string="Fin"/>
+                                        <field name="start_hv" string="Totales" widget="float_time"/>
+                                        <field name="start_hv_pm" string="Piloto al mando" widget="float_time"/>
+                                        <field name="start_hv_inst" string="Instructor" widget="float_time"/>
+                                        <field name="start_hv_dm" string="Doble mando" widget="float_time"/>
+                                        <field name="start_hv_me" string="ME" widget="float_time"/>
+                                        <field name="start_hv_se" string="SE" widget="float_time"/>
+                                        <field name="start_hv_night" string="Nocturnas" widget="float_time"/>
+                                        <field name="start_hv_ifr" string="IFR" widget="float_time"/>
+                                        <field name="time_flight_range1" widget="float_time"/>
+                                        <field name="time_flight_range2" widget="float_time"/>
+                                        <field name="time_flight_range3" widget="float_time"/>
+                                        <field name="dias_tabajados_mes"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20200708_1210_tree">
+            <field name="name">leulit_20200708_1210_tree</field>
+            <field name="model">leulit.piloto</field>
+            <field name="arch" type="xml">
+                <tree string="Pilotos">
+                    <field name="name"/>
+                    <field name="airtime" widget="float_time" sum="Total airtime"/>
+                    <field name="piloto_helipistas" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Todos los pilotos -->
+        <record model="ir.actions.act_window" id="leulit_20211202_1119_action">
+            <field name="name">Piloto</field>
+            <field name="res_model">leulit.piloto</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- action para menu Piloto -->
+        <record model="ir.actions.act_window" id="leulit_20200708_1210_action">
+            <field name="name">Piloto</field>
+            <field name="res_model">leulit.piloto</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('user_ids','in',uid)]</field>
+        </record>
+
+        <!-- action para menu Pilotos Helipistas -->
+        <record model="ir.actions.act_window" id="leulit_20201027_1054_action">
+            <field name="name">Pilotos Helipistas</field>
+            <field name="res_model">leulit.piloto</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('piloto_helipistas','=',True)]</field>
+        </record>
+
+        <!-- action para menu Todos los Pilotos -->
+        <record model="ir.actions.act_window" id="leulit_20220117_1331_action">
+            <field name="name">Todos los Pilotos</field>
+            <field name="res_model">leulit.piloto</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- action para menu Pilotos No Helipistas -->
+        <record model="ir.actions.act_window" id="leulit_20201201_0952_action">
+            <field name="name">Pilotos No Helipistas</field>
+            <field name="res_model">leulit.piloto</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_piloto','=',True),('hlptipopiloto','=','externo')]</field>
+        </record>
+
+    </data>
+</odoo>

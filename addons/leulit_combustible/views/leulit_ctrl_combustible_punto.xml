@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20250422_1047_tree">
+            <field name="name">leulit_20250422_1047_tree</field>
+            <field name="model">leulit.ctrl_combustible_punto</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Ctrl. Combustible Puntos">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20250422_1047_form">
+            <field name="name">leulit_20250422_1047_form</field>
+            <field name="model">leulit.ctrl_combustible_punto</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Ctrl. Combustible Punto">
+                    <sheet>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                        </group>
+                        <group col="4">
+                            <field name="control_totalizador"/>
+                            <field name="gestion_propia"/>
+                            <field name="avgas"/>
+                            <field name="jeta"/>
+                            <field name="flag_otro" groups="leulit.RolIT_developer"/>
+                        </group>
+                        <group col="2">
+                            <group>
+                                <separator string="AV-GAS"  invisible="((not avgas))" />
+                                <field name="cantidad_inicial_avgas"  invisible="((not avgas) or (not control_totalizador))" />
+                                <field name="totalizador_inicial_avgas"  invisible="((not avgas) or (not control_totalizador))" />
+                                <field name="fecha_inicial_avgas"  invisible="((not avgas) or (not control_totalizador))" />
+                                <field name="last_totalizador_avgas"  invisible="((not avgas) or (not control_totalizador))" />
+                                <field name="cantidad_ctrl_avgas"  invisible="((not avgas) or (control_totalizador))" />
+                                <field name="cantidad_ctrl_totalizador_avgas"  invisible="((not avgas) or (not control_totalizador))" />
+                                <field name="aviso_avgas"  invisible="((not avgas))" />
+                            </group>
+                            <group>
+                                <separator string="Jet-A1"  invisible="((not jeta))" />
+                                <field name="cantidad_inicial_jeta"  invisible="((not jeta) or (not control_totalizador))" />
+                                <field name="totalizador_inicial_jeta"  invisible="((not jeta) or (not control_totalizador))" />
+                                <field name="fecha_inicial_jeta"  invisible="((not jeta) or (not control_totalizador))" />
+                                <field name="last_totalizador_jeta"  invisible="((not jeta) or (not control_totalizador))" />
+                                <field name="cantidad_ctrl_jeta"  invisible="((not jeta) or (control_totalizador))" />
+                                <field name="cantidad_ctrl_totalizador_jeta"  invisible="((not jeta) or (not control_totalizador))" />
+                                <field name="aviso_jeta"  invisible="((not jeta))" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20250422_1047_action">
+            <field name="name">Ctrl. Combustible Puntos</field>
+            <field name="res_model">leulit.ctrl_combustible_punto</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="leulit_aviso_combustible" model="mail.template">
+            <field name="name">Aviso de Combustible</field>
+            <field name="model_id" ref="model_leulit_ctrl_combustible_punto"/>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">ops@helipistas.com</field>
+            <field name="subject">⚠️ Aviso de bajo nivel de combustible en ${object.name}</field>
+            <field name="body_html" type="html">
+                <p>Se ha detectado un nivel bajo de combustible en <strong>${object.name}</strong>.</p>
+                <p>Detalles:</p>
+                <p>${ctx.get('body')|safe}</p>
+                <br/>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

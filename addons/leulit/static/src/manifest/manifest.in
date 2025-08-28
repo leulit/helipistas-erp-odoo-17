@@ -1,0 +1,7 @@
+web.assets_backend:
+  - /leulit/static/src/css/leulit_base.css
+  - /leulit/static/src/js/canvas2image.js
+  - /leulit/static/src/js/leulit.js
+  - /leulit/static/src/js/widget_semaforo_field.js
+  - /leulit/static/src/js/widget_semaforo_cell.js
+  - /leulit/static/src/js/widget_keyboardDisabled.js

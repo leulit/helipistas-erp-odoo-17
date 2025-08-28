@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+
+        <record id='leulit_20210518_1104_form' model="ir.ui.view">
+            <field name="name">leulit_20210518_1104_form</field>
+            <field name="model">leulit.checklist</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Formulario checklist">
+                    <header>
+                        <button name="checklist_print_report" string="Imprimir" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="finalizado" invisible="not template" readonly="1"/>
+                        </group>
+                        <group col="2">
+                            <field name="template" readonly="finalizado" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                            <field name="project_id" invisible="1"/>
+                            <field name="account_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="descriptor" invisible="not template" readonly="1"/>
+                            <field name="fecha_doit" invisible="not template" readonly="finalizado"/>
+                            <field name="realizado_por" invisible="not template" readonly="1"/>
+                            <field name="comentarios" invisible="not template"/>
+                            <field name="tags" widget="many2many_tags" invisible="not template" readonly="1"/>
+                            <field name="tiempo_previsto" invisible="not template" widget="float_time"/>
+                        </group>
+                        <h2 invisible="not template">Items Checklist</h2>
+                        <field name="items" invisible="not template" options="{'no_create': True, 'create': False, 'edit': False}" readonly="1" nolabel="1">
+                            <tree string="Items" create="false" edit="false" limit="80">
+                                <field name="doit" invisible="1"/>
+                                <field name="orden"/>
+                                <field name="descriptor" class="lt_tree_wrap_line"/>
+                                <field name="fecha_doit"/>
+                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" invisible="doit != False"/>                                
+                            </tree>
+                        </field>
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20210518_1104_tree">
+            <field name="name">leulit_20210518_1104_tree</field>
+            <field name="model">leulit.checklist</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Checklist templates" >
+                    <field name="finalizado" />
+                    <field name="fecha_doit" string="Fecha realización"/>
+                    <field name="realizado_por" />
+                    <field name="descriptor" string="Descripción"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20210518_1108_action">
+            <field name="name">Mis checklists</field>
+            <field name="res_model">leulit.checklist</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('realizado_por','=',uid)]</field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20210518_1109_action">
+            <field name="name">Checklists</field>
+            <field name="res_model">leulit.checklist</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

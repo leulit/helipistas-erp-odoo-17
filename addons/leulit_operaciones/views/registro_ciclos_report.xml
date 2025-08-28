@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <report string="leulit_registro_ciclos_report"
+            id="leulit_registro_ciclos_report"
+            model="leulit.vuelo"
+            name="leulit_operaciones.leulit_registro_ciclos_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_landscape_without_cabecera"
+        />
+
+        <template id="leulit_registro_ciclos_informe">
+            <t t-call="web.html_container">
+			<!--
+                % for row in range(0,(numgroups+1)):
+			<%
+			    start = 0+(38*row)
+			%>
+			% for pos in range(start, start+38):
+				% if pos < numitems:
+				<%
+					data = objects[pos]
+				%>
+				% if pos == start:
+				<table class="fullwidth">
+				
+					<tr>
+			            <td style="text-align:center;vertical-align: middle;" rowspan="3" colspan="2">
+			                <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg"/>
+			            </td>
+			            <td class="title_style" colspan="3">Registro Ciclos</td>
+			        </tr>
+			        <tr>
+			            <td class="bold_title_style" colspan="3" >Documento ref: ${docref}</td>
+				   </tr>
+				   <tr>
+				   		<td class="bold_title_style" colspan="3" >Matrícula: ${helicoptero}</td>
+				   </tr>
+				   <tr>
+				    	<td style="border-left: hidden; border-right: hidden;" colspan="5"></td>
+				    	<td style="border-left: hidden; border-right: hidden;" colspan="5"></td>
+					</tr>
+					<tr>
+						<td class="bold_table_style nowrap" rowspan="2">Vuelo Nº</td>
+						<td class="bold_table_style" rowspan="2">NG Vuelo</td>
+						<td class="bold_table_style" rowspan="2">NF Vuelo</td>
+						<td class="bold_table_style" colspan="2">Aterrizajes</td>
+					</tr>
+					<tr>
+						<td class="bold_table_style">Día</td>
+						<td class="bold_table_style">Noche</td>
+					</tr>
+				% endif
+					<tr>
+						<td class="normal_table_style">${data.codigo}</td>
+						<td class="normal_table_style">${data.ngvuelo}</td>
+						<td class="normal_table_style">${data.nfvuelo}</td>
+						<td class="normal_table_style">${data.landings}</td>
+						<td class="normal_table_style">${data.nightlandings}</td>
+					</tr>
+					% endif
+				  % endfor
+		       	</table>
+	       	<div class="saltodepagina"></div>
+	       	% endfor
+			   -->
+            </t>
+        </template>
+
+    </data>
+</odoo>

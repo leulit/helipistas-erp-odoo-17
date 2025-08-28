@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20231011_1250_form" model="ir.ui.view">
+            <field name="name">leulit_20231011_1250_form</field>
+            <field name="model">maintenance.equipment</field>
+            <field name="arch" type="xml">
+                <form string="Cambiar pieza">
+                    <group col="2">
+                        <field name="production_lot" context="{'tree_view_ref': 'leulit_almacen.leulit_20230404_1151_tree'}"/>
+                        <field name="effective_date"/>
+                    </group>
+                    <footer>
+                        <button string="Guardar" special="save" class="oe_highlight" confirm="¿Estás seguro de querer cambiar la pieza de este equipamiento?"/>
+                        <button special="cancel" string="Cancelar" class="oe_link" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20220210_1528_form" model="ir.ui.view">
+            <field name="name">leulit_20220210_1528_form</field>
+            <field name="model">maintenance.equipment</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before">
+                    <header>
+                        <button name="action_change_production_lot" string="Cambiar Pieza" type="object" class="oe_highlight"/>
+                    </header>
+                </xpath>
+                <xpath expr="//field[@name='model']" position="after">
+                    <field name="is_motor"/>
+                    <field name="production_lot" readonly="1"/>
+                    <field name="first_parent" invisible="1"/>
+                </xpath>
+                <xpath expr="//sheet/group" position="after">
+                    <group>
+                        <field name="aviso"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='serial_no']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='assign_date']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="helicoptero_pieza" invisible="1"/>
+                    <field name="external_aircraft"  invisible="((category_id != 1))" />
+                    <field name="helicoptero"  invisible="((category_id != 1))" />
+                </xpath>
+                <xpath expr="//page[@name='maintenance']" position="after">
+                    <page string="Helicóptero Pieza" name="helicoptero_pieza_helipistas"  invisible="((not helicoptero_pieza))"  groups="leulit.RolIT_developer">
+                        <group>
+                            <field name="is_motor"/>
+                            <field name="tipomotor"/>
+                            <field name="marca_motor"/>
+                            <field name="modelomotor"/>
+                            <field name="sn"/>
+                            <field name="from_date"/>
+                            <field name="to_date"/>
+                            <field name="fecha_overhaul"/>
+                            <field name="anofabmoto"/>
+                            <field name="tsn" widget="float_time"/>
+                            <field name="horas_inicio" widget="float_time"/>
+                            <field name="airtime" widget="float_time"/>
+                            <field name="tso_inicio" widget="float_time"/>
+                            <field name="tso" widget="float_time"/>
+                            <field name="tsi" widget="float_time"/>
+                            <field name="instalado_actualmente"/>
+                            <field name="ng" />
+                            <field name="ng_acumulado" />
+                            <field name="ng_start"/>
+                            <field name="tacometro_start"/>
+                            <field name="tacometro"/>
+                            <field name="nf"/>
+                            <field name="nf_start"/>
+                            <field name="nf_acumulado"/>
+                            <field name="hours_remaining" widget="float_time"/>
+                            <field name="days_remaining"/>
+                        </group>
+                    </page>
+                    <page string="Datos Generales" name="datos_generales_helipistas"  invisible="((not helicoptero))" >
+                        <group>
+                            <field name="airtime_helicopter"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20221125_1241_tree" model="ir.ui.view">
+            <field name="name">leulit_20221125_1241_tree</field>
+            <field name="model">maintenance.equipment</field>
+            <field name="arch" type="xml">
+                <tree string="Helicóptero / Pieza" sample="1">
+                    <field name="helicoptero"/>
+                    <field name="production_lot" string="Pieza"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                    <field name="fecha_overhaul"/>
+                    <field name="instalado_actualmente"/>
+                    <field name="tsn"/>
+                    <field name="tso"/>
+                    <field name="ng"/>
+                    <field name="nf"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="hr_equipment_view_tree" model="ir.ui.view">
+            <field name="model">maintenance.equipment</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_view_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="replace">
+                    <field name="parent_id" />
+                </xpath>
+                <xpath expr="//field[@name='project_id']" position="replace">
+                    <field name="helicoptero" />
+                </xpath>
+                <xpath expr="//field[@name='serial_no']" position="replace">
+                    <field name="production_lot" />
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20221125_1241_action" model="ir.actions.act_window">
+            <field name="name">Helicóptero / Pieza</field>
+            <field name="res_model">maintenance.equipment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_20221125_1241_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('maintenance.hr_equipment_view_form')})]"/>
+            
+        </record>
+
+    </data>
+</odoo>

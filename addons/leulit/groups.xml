@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="base_rol_category">
+            <field name="name">Rol Base</field>
+            <field name="description">Rol Base</field>
+            <field name="sequence">7</field>
+        </record>
+
+
+        <record id="RBase" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="base_rol_category"/>
+        </record>
+        
+        <record id="RBase_hide" model="res.groups">
+            <field name="name">Hide</field>
+            <field name="implied_ids" eval="[(4, ref('RBase'))]"/>
+            <field name="category_id" ref="base_rol_category"/>
+        </record>
+
+
+        <record model="ir.module.category" id="leulit_checklist_category">
+            <field name="name">LEULIT - Gestión checklist</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="leulit_user_checklist" model="res.groups">
+            <field name="name">User Checklist</field>
+            <field name="category_id" ref="leulit_checklist_category"/>
+        </record>
+
+        <record id="leulit_manager_checklist" model="res.groups">
+            <field name="name">Gestor/manager Checklist</field>
+            <field name="implied_ids" eval="[(4, ref('leulit_user_checklist'))]"/>
+            <field name="category_id" ref="leulit_checklist_category"/>
+        </record>
+
+
+
+        <!-- Rol Operaciones -->
+        <record model="ir.module.category" id="operaciones_rol_category">
+            <field name="name">Rol Operaciones</field>
+            <field name="description">Rol Operaciones</field>
+        </record>
+        <record id="ROperaciones_piloto_externo" model="res.groups">
+            <field name="name">Piloto Externo</field>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+        <record id="ROperaciones_alumno" model="res.groups">
+            <field name="name">Alumno</field>
+            <field name="implied_ids" eval="[(4, ref('ROperaciones_piloto_externo'))]"/>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+        <record id="ROperaciones_operador" model="res.groups">
+            <field name="name">Operador</field>
+            <field name="implied_ids" eval="[(4, ref('ROperaciones_alumno'))]"/>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+        <record id="ROperaciones_piloto" model="res.groups">
+            <field name="name">Piloto</field>
+            <field name="implied_ids" eval="[(4, ref('ROperaciones_operador'))]"/>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+        <record id="ROperaciones_responsable" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="implied_ids" eval="[(4, ref('ROperaciones_piloto'))]"/>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+        <record id="ROperaciones_gestor" model="res.groups">
+            <field name="name">Gestor</field>
+            <field name="implied_ids" eval="[(4, ref('ROperaciones_responsable'))]"/>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+
+        <!-- Rol Campaña Bomberos -->
+        <record model="ir.module.category" id="campaña_bomberos_rol_category">
+            <field name="name">Rol Campaña Bomberos</field>
+            <field name="description">Rol para el personal relacionado con la Campaña de Bomberos</field>
+        </record>
+        <record id="RCampaña_operador" model="res.groups">
+            <field name="name">Operador</field>
+            <field name="category_id" ref="campaña_bomberos_rol_category"/>
+        </record>
+        <record id="RCampaña_piloto" model="res.groups">
+            <field name="name">Piloto</field>
+            <field name="implied_ids" eval="[(4, ref('RCampaña_operador'))]"/>
+            <field name="category_id" ref="campaña_bomberos_rol_category"/>
+        </record>
+
+
+        <!-- Rol Taller -->
+        <record model="ir.module.category" id="taller_rol_category">
+            <field name="name">Rol Taller</field>
+            <field name="description">Rol Taller</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="RTaller_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="taller_rol_category"/>
+        </record>
+        <record id="RTaller_responsable" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="implied_ids" eval="[(4, ref('RTaller_base'))]"/>
+            <field name="category_id" ref="taller_rol_category"/>
+        </record>
+
+
+        <!-- Rol CAMO -->
+        <record model="ir.module.category" id="camo_rol_category">
+            <field name="name">Rol CAMO</field>
+            <field name="description">Rol CAMO</field>
+        </record>
+        <record id="RCAMO_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="camo_rol_category"/>
+        </record>
+
+
+        <!-- Rol Calidad -->
+        <record model="ir.module.category" id="calidad_rol_category">
+            <field name="name">Rol Calidad</field>
+            <field name="description">Rol Calidad</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="RCalidad_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="calidad_rol_category"/>
+        </record>
+
+
+        <!-- Rol Migración -->
+        <record model="ir.module.category" id="migracion_rol_category">
+            <field name="name">Rol Migración</field>
+            <field name="description">Rol Migración</field>
+        </record>
+        <record id="RMigracion_responsable" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="category_id" ref="migracion_rol_category"/>
+        </record>
+
+
+        <record model="ir.module.category" id="it_rol_category">
+            <field name="name">Rol IT</field>
+            <field name="description">Rol IT</field>
+        </record>
+        <record id="RolIT_predev" model="res.groups">
+            <field name="name">IT Pre Developer</field>
+            <field name="category_id" ref="it_rol_category"/>
+        </record>
+        <record id="RolIT_developer" model="res.groups">
+            <field name="name">Herramientas Developer</field>
+            <field name="implied_ids" eval="[(4, ref('RolIT_predev'))]"/>
+            <field name="category_id" ref="it_rol_category"/>
+        </record>
+
+        
+    </data>
+</odoo>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+
+      <record model="ir.ui.view" id="leulit_20220208_1052_tree">
+         <field name="name">leulit_20210128_1642_tree</field>
+         <field name="model">leulit.hist_weight_and_balance</field>
+         <field name="arch" type="xml">
+            <tree string="Silabus">
+               <field name="helicoptero_tipo"/>
+               <field name="helicoptero_matricula"/>
+               <field name="fecha"/>
+            </tree>
+         </field>
+      </record>
+
+
+      <record model="ir.ui.view" id="leulit_20220208_1052_form">
+         <field name="name">leulit_20210128_1642_form</field>
+         <field name="model">leulit.hist_weight_and_balance</field>
+         <field name="arch" type="xml">
+            <form string="Silabus">
+               <sheet>
+                  <group col="4">
+                     <field name="helicoptero_tipo"/>
+                     <field name="fecha"/>
+                     <field name="helicoptero_matricula"/>
+                     <field name="is_carga"/>
+                  </group>
+                  <table>
+                     <tr>
+                        <th>Item</th>
+                        <th>Mass (Kg.)</th>
+                        <th>Long Arm (cm.)</th>
+                        <th>Lat Arm (cm.)</th>
+                     </tr>
+                     <tr>
+                        <td>Pilot</td>
+                        <td><field name="frs_mass"/></td>
+                        <td><field name="frs_long"/></td>
+                        <td><field name="frs_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Copilot</td>
+                        <td><field name="fls_mass"/></td>
+                        <td><field name="fls_long"/></td>
+                        <td><field name="fls_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2']))" >
+                        <td>Aft right passenger</td>
+                        <td><field name="aftrp_mass"/></td>
+                        <td><field name="aftrp_long"/></td>
+                        <td><field name="aftrp_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2']))" >
+                        <td>Aft left passenger</td>
+                        <td><field name="aftlp_mass"/></td>
+                        <td><field name="aftlp_long"/></td>
+                        <td><field name="aftlp_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Aft center passenger</td>
+                        <td><field name="aftcp_mass"/></td>
+                        <td><field name="aftcp_long"/></td>
+                        <td><field name="aftcp_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Baggage under forward right seat</td>
+                        <td><field name="bufrs_mass"/></td>
+                        <td><field name="bufrs_long"/></td>
+                        <td><field name="bufrs_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Baggage under forward left seat</td>
+                        <td><field name="bufls_mass"/></td>
+                        <td><field name="bufls_long"/></td>
+                        <td><field name="bufls_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'EC120B']))" >
+                        <td>Baggage under aft right seat</td>
+                        <td><field name="buaftrs_mass"/></td>
+                        <td><field name="buaftrs_long"/></td>
+                        <td><field name="buaftrs_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'EC120B']))" >
+                        <td>Baggage under aft left seat</td>
+                        <td><field name="buaftls_mass"/></td>
+                        <td><field name="buaftls_long"/></td>
+                        <td><field name="buaftls_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Freight and baggage (without rear seats)</td>
+                        <td><field name="baggage_noseats_mass"/></td>
+                        <td><field name="baggage_noseats_long"/></td>
+                        <td><field name="baggage_noseats_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Freight and Zona C</td>
+                        <td><field name="baggage_zonac_mass"/></td>
+                        <td><field name="baggage_zonac_long"/></td>
+                        <td><field name="baggage_zonac_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Freight and Zona D</td>
+                        <td><field name="baggage_zonad_mass"/></td>
+                        <td><field name="baggage_zonad_long"/></td>
+                        <td><field name="baggage_zonad_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'EC120B']))" >
+                        <td>Main baggage (max 40kg)</td>
+                        <td><field name="main_baggage_mass"/></td>
+                        <td><field name="main_baggage_long"/></td>
+                        <td><field name="main_baggage_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'EC120B']))" >
+                        <td>Front baggage (max 5kg)</td>
+                        <td><field name="front_baggage_mass"/></td>
+                        <td><field name="front_baggage_long"/></td>
+                        <td><field name="front_baggage_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Forward right door</td>
+                        <td><field name="forward_right_door_mass"/></td>
+                        <td><field name="forward_right_door_long"/></td>
+                        <td><field name="forward_right_door_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Forward left door</td>
+                        <td><field name="forward_left_door_mass"/></td>
+                        <td><field name="forward_left_door_long"/></td>
+                        <td><field name="forward_left_door_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'EC120B']))" >
+                        <td>Aft right door</td>
+                        <td><field name="aft_right_door_mass"/></td>
+                        <td><field name="aft_right_door_long"/></td>
+                        <td><field name="aft_right_door_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'EC120B']))" >
+                        <td>Aft left door</td>
+                        <td><field name="aft_left_door_mass"/></td>
+                        <td><field name="aft_left_door_long"/></td>
+                        <td><field name="aft_left_door_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Sliding door </td>
+                        <td><field name="sliding_door_mass"/></td>
+                        <td><field name="sliding_door_long"/></td>
+                        <td><field name="sliding_door_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Rear cargo door</td>
+                        <td><field name="rear_cargo_door_mass"/></td>
+                        <td><field name="rear_cargo_door_long"/></td>
+                        <td><field name="rear_cargo_door_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Cyclic</td>
+                        <td><field name="cyclic_mass"/></td>
+                        <td><field name="cyclic_long"/></td>
+                        <td><field name="cyclic_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Collective</td>
+                        <td><field name="collective_mass"/></td>
+                        <td><field name="collective_long"/></td>
+                        <td><field name="collective_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Pedals (both)</td>
+                        <td><field name="pedals_mass"/></td>
+                        <td><field name="pedals_long"/></td>
+                        <td><field name="pedals_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Removable controls (cyclic, collective, pedals)</td>
+                        <td><field name="dualcontrols_mass"/></td>
+                        <td><field name="dualcontrols_long"/></td>
+                        <td><field name="dualcontrols_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Items on accessory mount bar right</td>
+                        <td><field name="items_on_mount_bar_right_mass"/></td>
+                        <td><field name="items_on_mount_bar_right_long"/></td>
+                        <td><field name="items_on_mount_bar_right_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
+                        <td>Items on accessory mount bar left</td>
+                        <td><field name="items_on_mount_bar_left_mass"/></td>
+                        <td><field name="items_on_mount_bar_left_long"/></td>
+                        <td><field name="items_on_mount_bar_left_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo != 'R44') or (tyler_long != 0))" >
+                        <td>Cineflex</td>
+                        <td><field name="cineflex_mass"/></td>
+                        <td><field name="cineflex_long"/></td>
+                        <td><field name="cineflex_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo != 'R44'))" >
+                        <td>Tyler</td>
+                        <td><field name="tyler_mass"/></td>
+                        <td><field name="tyler_long"/></td>
+                        <td><field name="tyler_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo != 'R44'))" >
+                        <td>GSS</td>
+                        <td><field name="gss_mass"/></td>
+                        <td><field name="gss_long"/></td>
+                        <td><field name="gss_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo != 'EC120B'))" >
+                        <td>AF120 Camera Mount</td>
+                        <td><field name="af120_camera_mount_mass"/></td>
+                        <td><field name="af120_camera_mount_long"/></td>
+                        <td><field name="af120_camera_mount_lat"/></td>
+                     </tr>
+                     <tr  invisible="((not is_carga))" >
+                        <td>Carga Externa</td>
+                        <td><field name="carga_externa_mass"/></td>
+                        <td><field name="carga_externa_long"/></td>
+                        <td><field name="carga_externa_lat"/></td>
+                     </tr>
+                     <tr  invisible="((not is_carga))" >
+                        <td>Gancho</td>
+                        <td><field name="gancho_carga_mass"/></td>
+                        <td><field name="gancho_carga_long"/></td>
+                        <td><field name="gancho_carga_lat"/></td>
+                     </tr>
+                     <tr  invisible="((not is_carga) or (helicoptero_tipo != 'EC120B'))" >
+                        <td>Espejo</td>
+                        <td><field name="espejo_mass"/></td>
+                        <td><field name="espejo_long"/></td>
+                        <td><field name="espejo_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Front left seat</td>
+                        <td><field name="frontseat_mass"/></td>
+                        <td><field name="frontseat_long"/></td>
+                        <td><field name="frontseat_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Rear 3 places seat</td>
+                        <td><field name="rearseat_mass"/></td>
+                        <td><field name="rearseat_long"/></td>
+                        <td><field name="rearseat_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2', 'R44']))" >
+                        <td>Dual controls</td>
+                        <td><field name="dualcontrols_mass"/></td>
+                        <td><field name="dualcontrols_long"/></td>
+                        <td><field name="dualcontrols_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Misc...</td>
+                        <td><field name="misc1_mass"/></td>
+                        <td><field name="misc1_long"/></td>
+                        <td><field name="misc1_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Misc...</td>
+                        <td><field name="misc2_mass"/></td>
+                        <td><field name="misc2_long"/></td>
+                        <td><field name="misc2_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Fuel mass take off</td>
+                        <td><field name="fueltakeoff_mass"/></td>
+                        <td><field name="fueltakeoff_long"/></td>
+                        <td><field name="fueltakeoff_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Take off gross mass and CG ***</td>
+                        <td><field name="takeoff_gw_mass"/></td>
+                        <td><field name="takeoff_gw_long"/></td>
+                        <td><field name="takeoff_gw_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Estimated landing fuel mass</td>
+                        <td><field name="fuellanding_mass"/></td>
+                        <td><field name="fuellanding_long"/></td>
+                        <td><field name="fuellanding_lat"/></td>
+                     </tr>
+                     <tr>
+                        <td>Estimated landing gross mass and CG ***</td>
+                        <td><field name="landing_gw_mass"/></td>
+                        <td><field name="landing_gw_long"/></td>
+                        <td><field name="landing_gw_lat"/></td>
+                     </tr>
+                     <tr  invisible="((helicoptero_tipo != 'R44'))" >
+                        <td>Mass without fuel</td>
+                        <td><field name="maswithoutfuel_mass"/></td>
+                        <td><field name="maswithoutfuel_long"/></td>
+                        <td><field name="maswithoutfuel_lat"/></td>
+                     </tr>
+                  </table>
+               </sheet>   
+            </form>
+         </field>
+      </record>
+
+
+      <record id="leulit_20220208_1052_action" model="ir.actions.act_window">
+            <field name="name">Histórico Weight And Balance</field>
+            <field name="res_model">leulit.hist_weight_and_balance</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="leulit_20220208_1052_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20220208_1052_tree" />
+            <field name="act_window_id" ref="leulit_20220208_1052_action" />
+        </record>
+        <record id="leulit_20220208_1052_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20220208_1052_form" />
+            <field name="act_window_id" ref="leulit_20220208_1052_action" />
+        </record>
+
+   </data>
+</odoo>

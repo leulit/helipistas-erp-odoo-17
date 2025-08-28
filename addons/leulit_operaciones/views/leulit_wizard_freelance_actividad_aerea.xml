@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+        <record id="leulit_20250320_1123_form" model="ir.ui.view">
+            <field name="name">leulit_20250320_1123_form</field>
+            <field name="model">leulit.wizard_freelance_actividad_aerea</field>
+            <field name="arch" type="xml">
+                <form string="Actividad Aerea Piltos Freelance">
+                    <p>Declaro que, teniendo en cuenta la circular operativa 16B y su Anexo I, y el RD 1561/1195, RD 294/2004  a fecha de hoy no he alcanzado los siguientes límites.<br/>
+                    -1800 h de actividad aérea.<br/>
+                    -700 h de vuelo en los últimos 12 meses.<br/>
+                    -80 h de vuelo en los últimos 28 días.<br/><br/>
+                    Y cumplo los descansos obligatorios detallados a continuación.<br/>
+                    -96 días de descanso al año<br/>
+                    -8 días de descanso al mes<br/>
+                    -10,5 h de descanso en casa<br/><br/>
+                    Por lo tanto manifiesto que el departamento de planificación puede programarme el día de hoy, sin limitación adicional a la propia normativa.<br/><br/><br/><br/>
+                    Motivo de justificación de exceso de la 16b:
+                    </p>
+                    <field name="text"/>
+                    <p><br/><br/><strong>Firma:</strong></p>
+                    <button name="send_code_mail" type="object" string="Enviar Codigo al Mail para Firmar" class="oe_highlight"  invisible="((code_sent != 0))" />
+                    <p><strong>Código:</strong></p>
+                    <field name="code"  invisible="((code_sent == 0))" />
+                    <field name="code_sent" invisible="1"/>
+                    <field name="date" invisible="1"/>
+                    <footer>
+                        <button name="accept_certificate_actividad_aerea" type="object" string="Si" class="oe_highlight"  invisible="((code == 0))" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20250320_1123_template" model="mail.template">
+            <field name="name">Certificado Actividad Aerea - Código de Seguridad</field>
+            <field name="model_id" ref="model_leulit_wizard_freelance_actividad_aerea"/>
+            <field name="subject">Código de Seguridad para Firmar el Certificado Actividad Aerea</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">${object.env.user.email}</field>
+            <field name="body_html"><![CDATA[
+                <p>Estimado/a ${object.env.user.name},</p>
+                <p>Su código de seguridad para firmar la actividad aérea es: <strong>${object.code_sent}</strong></p>
+                <p>Por favor, ingrese este código en el formulario para completar el proceso.</p>
+                <p>Gracias,</p>
+                <p>El equipo de Helipistas</p>
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

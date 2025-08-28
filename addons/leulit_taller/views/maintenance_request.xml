@@ -1,0 +1,738 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231020_1222_search" model="ir.ui.view">
+            <field name="name">leulit_20231020_1222_search</field>
+            <field name="model">maintenance.request</field>
+            <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="after">
+                    <filter string='Helicóptero' name='equipamiento' domain="[]" context="{'group_by': 'equipment_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20231020_1222_form" model="ir.ui.view">
+            <field name="name">leulit_20231020_1222_form</field>
+            <field name="model">maintenance.request</field>
+            <field name="arch" type="xml">
+                <form string="Petición de mantenimiento">
+                    <header>
+                        <button string="Cancelar" name="archive_equipment_request" type="object"  invisible="((archive))" />
+                        <button string="Reabrir solicitud" name="reset_equipment_request" type="object"  invisible="((not archive))"  modifiers="{'invisible':[['archive','=',false]]}" />
+                        <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"  invisible="((archive))" />
+                        <button name="action_create_internal_task" type="object" class="oe_highlight" string="Crear Tarea interna"  invisible="((archive) or (maintenance_plan_id))" />
+                        <button name="action_create_defect_found" type="object" class="oe_highlight" string="Crear Defecto encontrado"  invisible="((archive))" />
+                        <button name="action_create_task_sb" type="object" class="oe_highlight" string="Crear Tarea Service Bulletin"  invisible="((archive))" />
+                        <button name="action_create_task_ad" type="object" class="oe_highlight" string="Crear Tarea Airworthiness directive"  invisible="((archive))" />
+                        <button name="action_open_tasks" type="object" class="oe_highlight" string="Tareas"  invisible="((archive))"  context="{'create':False}"/>        
+                        <button string="Validación CAMO" name="validate_order_by_camo" type="object"  invisible="(((stage_id != 3) or (not maintenance_plan_id)) or (validated))"  groups="leulit.RCAMO_base"/>
+                        <field name="maintenance_plan_id" invisible="1"/>
+                        <field name="validated" invisible="1"/>
+                        <button string="Expediente de Mantenimiento" name="print_expediente_mantenimiento" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <div  invisible="((not archive))" >
+                            <span class="badge badge-warning float-right">Cancelado</span>
+                        </div>
+                        <div class="oe_right">
+                            <field name="kanban_state" class="oe_inline" widget="state_selection"/>
+                        </div>
+                        <div class="oe_button_box" name="button_box" style="margin-right: 10px;">
+                            <button class="oe_stat_button" type="object" name="action_view_timesheet_ids" icon="fa-calendar" >
+                                <field name="timesheet_total_hours" widget="timesheet_uom"/><span class="o_label" style="padding-left: 5px;">horas</span>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Título"/>
+                            <h1><field name="name" placeholder="Petición de mantenimiento" modifiers="{'required':true}" id="name"  readonly="((done))" /></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id" string="Creado por" options="{'no_create_edit': True, 'no_open': True}"  readonly="((done))" />
+                                <field name="equipment_id" string="Equipamiento" context="{'default_company_id':company_id, 'default_category_id':category_id}"  readonly="((done))" />
+                                <field name="lot_id"  readonly="((done))" />
+                                <field name="category_id" context="{'default_company_id':company_id}"  invisible="((not equipment_id))" />
+                                <field name="request_date"  readonly="((done))" />
+                                <field name="done" invisible="1"/>
+                                <field name="accepted" invisible="1"/>
+                                <field name="fecha_aceptacion" widget="date"  invisible="((not accepted))" readonly="((done))" />
+                                <field name="close_date"  invisible="((not done))"  groups="leulit.RCAMO_base"/>
+                                <field name="archive" invisible="1"/>
+                                <field name="maintenance_type" invisible="1"/>
+                                <field name="maintenance_kind_id"  readonly="((done))" />
+                                <field name="horometro"  readonly="((done))" />
+                                <field name="referencia_programa_mantenimiento"  invisible="((maintenance_plan_id))" />
+                                <field name="overhaul_tasks"/>
+                            </group>
+                            <group>
+                                <field name="location"  readonly="((done))" />
+                                <field name="maintenance_team_id" options="{'no_create': True, 'no_open': True}"  readonly="((done))" />
+                                <field name="user_id" string="Responsable"  readonly="((done))" />
+                                <field name="schedule_date"  readonly="((done))" />
+                                <label for="duration"/>
+                                <div>
+                                    <field name="duration" widget="float_time" class="oe_inline"  readonly="((done))" /><span class="ml8">horas</span>
+                                </div>
+                                <field name="priority" widget="priority"  readonly="((done))" />
+                                <field name="project_id"  readonly="((done))" />
+                                <field name="task_id" invisible="1"/>
+                                <field name="email_cc" string="Correo electrónico cc"  readonly="((done))" />
+                                <field name="company_id" options="{'no_create': True}"  readonly="((done))" />
+                            </group>
+                        </group>
+                        <group>
+                            <button name="print_wo" type="object" class="oe_highlight" string="Imprimir Work Order"  invisible="((archive))"   />
+                            <button name="print_inspeccion_seguridad" type="object" class="oe_highlight" string="Imprimir Inspección de Seguridad"  invisible="((archive))"   />
+                            <button name="print_defectos" type="object" class="oe_highlight" string="Imprimir Defectos encontrados durante el mantenimiento"  invisible="((archive))"   />
+                            <button name="print_doble_check" type="object" class="oe_highlight" string="Imprimir Control de Doble Check"  invisible="((archive))"   />
+                        </group>
+                        <notebook>
+                            <page name="page_datos_helicoptero" string="Datos Helicóptero">
+                                <group col="4">
+                                    <field name="helicoptero"/>
+                                    <field name="fabricante"/>
+                                    <field name="modelo"/>
+                                    <field name="serialnum"/>
+                                    <field name="tsn"/>
+                                    <field name="tso"/>
+                                </group>
+                            </page>
+                            <page name="page_material" string="Material">
+                                <button name="print_material" type="object" class="oe_highlight" string="Imprimir Material"  invisible="((not material_ids))" />
+                                <button name="create_sale_order_from_material_utilizado" type="object" class="" string="Crear Presupuesto de Venta"  invisible="((not material_ids) or (sale_order_id))" />
+                                <button name="open_sale_order" type="object" class="" string="Abrir Presupuesto de Venta"  invisible="((not sale_order_id))" />
+                                <group>
+                                    <field name="sale_order_id"/>
+                                    <!-- <field name="sale_order_id" groups="leulit.RolIT_developer"/> -->
+                                </group>
+                                <field name="material_ids">
+                                    <tree create="false" edit="false">
+                                        <field name="date"/>
+                                        <field name="reference"/>
+                                        <field name="product_id"/>
+                                        <field name="lot_id"/>
+                                        <field name="location_id"/>
+                                        <field name="location_dest_id"/>
+                                        <field name="quantity"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="page_tareas_sensibles_seguridad" string="Tareas Sensibles para la Seguridad">
+                                <button name="print_tareas_sensibles_seguridad" type="object" class="oe_highlight" string="Imprimir Control de Tareas Sensibles para la Seguridad"  invisible="((archive))" />        
+                                <group><field name="checklist_tss"/></group>
+                                <field name="tareas_sensibles_seguridad_ids">
+                                    <tree editable="false" create="false" delete="false">
+                                        <field name="name" readonly="1"/>
+                                        <field name="no_aplica"/>
+                                        <field name="check"/>
+                                        <field name="user_check"  options="{'no_create': True, 'create': False, 'edit': False}"/>
+                                        <field name="datetime_check"/>
+                                        <field name="d_check"/>
+                                        <field name="user_d_check"  options="{'no_create': True, 'create': False, 'edit': False}"/>
+                                        <field name="datetime_d_check"/>
+                                        <field name="flag_doble_check" invisible="1"/>
+                                        <field name="flag_security_inspection" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="page_boroscopia" string="Boroscopias">
+                                <button name="action_create_boroscopia" type="object" class="oe_highlight" string="Crear Boroscopia"  invisible="((archive))" />
+                                <field name="boroscopia_ids">
+                                    <tree editable="false" create="false">
+                                        <field name="estado" readonly="1"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="lugar" readonly="1"/>
+                                        <field name="fecha" readonly="1"/>
+                                        <field name="mecanico" readonly="1"/>
+                                        <button name="edit_boroscopia" string="Editar" class="oe_highlight" type="object"/>
+                                        <button name="print_boroscopia" string="Imprimir" type="object" class="oe_highlight"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="page_crs" string="CRS">
+                                <button name="action_create_maintenance_crs_incompleto" type="object" class="oe_highlight" string="Crear CRS Incompleto"  invisible="((archive))" />
+                                <button name="action_create_maintenance_crs_completo" type="object" class="" string="Crear CRS Completo"  invisible="((archive))" />
+                                <field name="crs">
+                                    <tree editable="false" create="false">
+                                        <field name="estado" readonly="1"/>
+                                        <field name="tipo_crs" readonly="1"/>
+                                        <field name="n_cas" readonly="1"/>
+                                        <field name="lugar" readonly="1"/>
+                                        <field name="fecha" readonly="1"/>
+                                        <field name="certificador" readonly="1"/>
+                                        <field name="ref_em" readonly="1"/>
+                                        <button name="edit_crs" string="Editar" class="oe_highlight" type="object"/>
+                                        <button name="print_crs" string="Imprimir" type="object" class="oe_highlight"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="page_form_one" string="Form One">
+                                <button name="action_create_form_one" type="object" class="oe_highlight" string="Crear Form One"  invisible="((archive))" />
+                                <field name="form_one_ids">
+                                    <tree editable="false" create="false">
+                                        <field name="estado" readonly="1"/>
+                                        <field name="tracking_number" readonly="1"/>
+                                        <field name="task_id" readonly="1"/>
+                                        <field name="fecha" readonly="1"/>
+                                        <button name="edit_form_one" string="Editar" class="oe_highlight" type="object"/>
+                                        <button name="print_form_one" string="Imprimir" type="object" class="oe_highlight"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Instructions" name="page_instrucciones">
+                                <field name="note" placeholder="Describe el mantenimiento que harás..."/>
+                            </page>
+                            <page string="Notes" name="page_notas">
+                                <field name="description" placeholder="Notas internas..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" id="message_follower_ids"/>
+                        <field name="activity_ids" id="activity_ids"/>
+                        <field name="message_ids" id="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+	    <record model="ir.actions.act_window" id="leulit_20231020_1222_action">
+            <field name="name">Peticiones de Mantenimiento</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_mode">kanban,tree,form,pivot,graph,calendar</field>
+            <field name="view_id" ref="maintenance.hr_equipment_request_view_kanban"/>
+            <field name="context">{'default_user_id': uid}</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20231020_1222_action_kanban">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="maintenance.hr_equipment_request_view_kanban"/>
+            <field name="act_window_id" ref="leulit_20231020_1222_action"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20231020_1222_action_tree">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="maintenance.hr_equipment_request_view_tree"/>
+            <field name="act_window_id" ref="leulit_20231020_1222_action"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20231020_1222_action_form">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20231020_1222_form"/>
+            <field name="act_window_id" ref="leulit_20231020_1222_action"/>
+        </record>
+
+
+        <!-- REPORT WORK ORDER -->
+        <report
+            id="leulit_20230905_1226_report"
+            string="Work Order"
+            model="maintenance.request"
+            report_type="qweb-pdf"
+            file="leulit_taller.leulit_20230905_1226_informe"
+            name="leulit_taller.leulit_20230905_1226_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="wo_report_header_icarus">
+            <div style="width:100%;" class="header">
+                <t t-call="leulit_taller.wo_report_css"/>
+                <table class="fullwidth" style="margin-bottom: 30px">
+                    <tr>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(logo_ica)" style="width:auto;height:30px;"/><br/>
+                            <span>ES. 145.173</span>
+                        </td>
+                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                            <span><b>WORK ORDER</b></span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                            <span>Referencia:</span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                            <span>M.O.E. 2.13</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>Formato:</span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>2.0</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  style="font-size:18px; white-space: nowrap; text-align:center">
+                            <span t-esc="name"/>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>Revisión:</span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>Rev. 3-2023</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+
+        <template id="wo_report_header_hlp">
+            <div style="width:100%;" class="header">
+                <t t-call="leulit_taller.wo_report_css"/>
+                <table class="fullwidth" style="margin-bottom: 30px">
+                    <tr>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/><br/>
+                            <span>ES.CAMO.005</span>    
+                        </td>
+                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;">
+                            <span><b>WORK ORDER</b></span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;">
+                            <span>Formato 6</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  style="font-size:18px; white-space: nowrap; text-align:center">
+                            <span t-esc="name"/>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>Ed.4 Rev: 2</span><br/>
+                            <span>28/09/2022</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>   
+
+        <template id="wo_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 3.5687mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-size: 3.5687mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 230mm;
+                    height: 320mm;
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                    page-break-after: always;
+                }
+                .pagecontent {
+                    width: 230mm;
+                    height: 320mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .heightrow {height: 50px;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    border: 1px solid #B0B0B0;
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:12px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: middle
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20230905_1226_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_header_spacing" t-value="25"/>
+                <t t-set="data_report_margin_top" t-value="30"/>
+                <div class="page">
+                    <t t-call="leulit_taller.wo_report_css"/>
+                    <t t-if="logo_hlp">
+                        <t t-call="leulit_taller.wo_report_header_hlp" />
+                    </t>
+                    <t t-if="logo_ica">
+                        <t t-call="leulit_taller.wo_report_header_icarus" />
+                    </t>
+                    <div class="row">
+                        <table class="fullwidth">
+                            <tr>
+                                <td rowspan="2" colspan="2" style="width:22%">
+                                    <span style="vertical-align: text-top;"><b>Firma: </b><span t-esc="name_user"/></span>
+                                </td>
+                                <th class="centertext tdcolored literal" style="width:18%">Fecha Emisión</th>
+                                <th class="centertext tdcolored literal" style="width:18%">Fecha Aceptación</th>
+                                <td rowspan="2" style="border-right: none;">
+                                    <b>Firma:</b>
+                                    <span>ES. 145.173</span><br/>
+                                    <span t-esc="responsable_mant"/>
+                                </td>
+                                <td rowspan="2" style="border-left: none;">
+                                    <img t-att-src="'data:image/png;base64,%s' % to_text(logo_p145)" style="width:auto;height:25px;"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fieldvalue">
+                                    <span t-esc="fecha_emision"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="fecha_aceptacion"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="centertext tdcolored literal">Matricula:</td>
+                                <td class="fieldvalue">
+                                    <span t-esc="matricula"/>
+                                </td>
+                                <td colspan="2" class="centertext tdcolored literal">Propietario/Operador:</td>
+                                <td colspan="2" class="fieldvalue">
+                                    <span t-esc="propietario_operador"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth" style="margin-top:10px; border-bottom:none;">
+                            <tr class="noborde">
+                                <td class="centertext tdcolored literal" style="width:10%;"></td>
+                                <td class="centertext tdcolored literal" style="width:20%;">Aeronave</td>
+                                <td class="centertext tdcolored literal" style="width:20%;">Motor</td>
+                                <td colspan="4" rowspan="3" style="width:50%;" class="noborde">
+                                    <div style="margin-left:20%; border:1px solid #B0B0B0; border-collapse:collapse; text-align:center; padding-top:10px; padding-bottom:10px;">
+                                        <span>Referencia Programa Mantenimiento:</span><br/><br/>
+                                        <span t-esc="plan_mantenimiento"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tdcolored literal">Marca:</td>
+                                <td class="fieldvalue">
+                                    <span t-esc="marca_aeronave"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="marca_motor"/>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom:none;">
+                                <td class="tdcolored literal" style="border-bottom:none;">Modelo:</td>
+                                <td class="fieldvalue" style="border-bottom:none;">
+                                    <span t-esc="modelo_aeronave"/>
+                                </td>
+                                <td class="fieldvalue" style="border-bottom:none;">
+                                    <span t-esc="modelo_motor"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored literal" style="width:10%;">S/N:</td>
+                                <td class="fieldvalue" style="width:20%;">
+                                    <span t-esc="sn_aeronave"/>
+                                </td>
+                                <td class="fieldvalue" style="width:20%;">
+                                    <span t-esc="sn_motor"/>
+                                </td>
+                                <td class="centertext tdcolored literal" style="width:10%;">C. Totales</td>
+                                <td class="centertext tdcolored literal" style="width:10%;">Ciclos NG</td>
+                                <td class="centertext tdcolored literal" style="width:10%;">Ciclos NF</td>
+                                <td style="width:20%;" class="noborde"></td>
+                            </tr>
+                            <tr>
+                                <td class="tdcolored literal">TSN:</td>
+                                <td class="fieldvalue">
+                                    <span t-esc="tsn_aeronave"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="tsn_motor"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_tsn"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_ng_tsn"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_nf_tsn"/>
+                                </td>
+                                <td class="noborde"></td>
+                            </tr>
+                            <tr>
+                                <td class="tdcolored literal">TSO:</td>
+                                <td class="fieldvalue">
+                                    <span t-esc="tso_aeronave"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="tso_motor"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_tso"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_ng_tso"/>
+                                </td>
+                                <td class="fieldvalue">
+                                    <span t-esc="ciclos_nf_tso"/>
+                                </td>
+                                <td class="noborde"></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td colspan="5" class="centertext fullwidth tdcoloredmain theadtitle">TRABAJOS A REALIZAR</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="centertext fullwidth tdcolored literal">Revisiones Programadas</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="centertext fullwidth literal">Flight-Hours or month Intervals - Inspections / Checks</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:58%;">Descripción de los trabajos a efectuar</td>
+                                <td class="centertext literal" style="width:13%;">Referencia</td>
+                                <td class="centertext literal" style="width:12%;">Realizado por</td>
+                                <td class="centertext literal" style="width:12%;">Supervisado por</td>
+                            </tr>
+                            <t t-set="cont" t-value="1"/>
+                            <t t-foreach="trabajos_realizar" t-as="trabajo_tag">
+                                <tr>
+                                    <td class="fieldvalue centertext"><span t-esc="cont"/></td>
+                                    <t t-if="trabajo_tag not in ['Others','']">
+                                        <td class="fieldvalue" colspan="4">Rev. <span t-esc="trabajo_tag"/>h</td>
+                                    </t>
+                                    <t t-else="">
+                                        <td class="fieldvalue" colspan="4"><span t-esc="trabajo_tag"/></td>
+                                    </t>
+                                </tr>
+                                <t t-foreach="trabajos_realizar[trabajo_tag]" t-as="tarea">
+                                    <tr>
+                                        <td class="fieldvalue centertext heightrow"><span t-esc="tarea[0]"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="tarea[1]"/></td>
+                                        <td class="fieldvalue centertext heightrow"><span t-esc="tarea[2]"/></td>
+                                        <td class="fieldvalue heightrow">
+                                            <t t-if="tarea[5]">
+                                                <h3>N/A</h3>
+                                                <span t-esc="tarea[3]"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="tarea[3]"/>
+                                            </t>
+                                        </td>
+                                        <td class="fieldvalue heightrow">
+                                            <t t-if="tarea[5]">
+                                                <h3>N/A</h3>
+                                                <span t-esc="tarea[4]"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="tarea[4]"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-set="cont" t-value="cont+1"/>
+                            </t>
+                        </table>
+                        <br/><br/><br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="4">Boletines de Servicio y Directivas de Aeronavegabilidad</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:60%;">Descripción de los trabajos a efectuar</td>
+                                <td class="centertext literal" style="width:20%;">Referencia</td>
+                                <td class="centertext literal" style="width:15%;">Realizado por</td>
+                            </tr>
+                            <t t-if="service_bulletins">
+                                <t t-foreach="service_bulletins" t-as="tarea">
+                                    <tr>
+                                        <td class="fieldvalue centertext heightrow"><span t-esc="tarea['item']"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="tarea['name']"/></td>
+                                        <td class="fieldvalue centertext heightrow"><span t-raw="tarea['referencia']"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="tarea['asignado']"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                </tr>
+                            </t>
+                        </table>
+                        <br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="4">Instrucciones Especiales y o Anomalías reportadas</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:60%;">Descripción de los trabajos a efectuar</td>
+                                <td class="centertext literal" style="width:20%;">Referencia</td>
+                                <td class="centertext literal" style="width:15%;">Realizado por</td>
+                            </tr>
+                            <t t-if="anomalias">
+                                <t t-foreach="anomalias" t-as="anomalia">
+                                    <tr>
+                                        <td class="fieldvalue centertext heightrow"><span t-esc="anomalia['item']"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="anomalia['name']"/></td>
+                                        <td class="fieldvalue centertext heightrow"><span t-raw="anomalia['referencia']"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="anomalia['asignado']"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue centertext heightrow"></td>
+                                    <td class="fieldvalue heightrow"></td>
+                                </tr>
+                            </t>
+                        </table>
+                        <br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="9">Sustitución de Componentes</td>
+                            </tr>
+                            <tr>
+                                <td class="" style="width:5%;"></td>
+                                <td class="centertext literal" style="width:15%;">P/N</td>
+                                <td class="centertext literal" style="width:15%;">S/N</td>
+                                <td class="centertext literal" style="width:34%;">Descripción</td>
+                                <td class="centertext literal" style="width:8%;">TSN</td>
+                                <td class="centertext literal" style="width:8%;">TSO</td>
+                                <td class="centertext literal" style="width:20%;">Realizado por</td>
+                            </tr>
+                            <t t-if="moves_componentes">
+                                <t t-foreach="moves_componentes" t-as="move_componente">
+                                    <tr>
+                                        <td class="centertext literal">OFF</td>
+                                        <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['off_pn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_sn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_descripcion']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_tsn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_tso']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_realizado_por']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="centertext literal">ON</td>
+                                        <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['on_pn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_sn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_descripcion']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_tsn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_tso']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_realizado_por']"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td class="centertext literal">OFF</td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                </tr>
+                                <tr>
+                                    <td class="centertext literal">ON</td>
+                                    <td class="fieldvalue heightrow"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                    <td class="fieldvalue"></td>
+                                </tr>
+                            </t>
+                        </table>
+                        <br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
+                            </tr>
+                            <tr>
+                                <td class="fieldvalue" style="height: 100px;">
+                                    <span t-esc="observaciones"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div> 
+                    <div class="footer">
+                        <div class="row text-center" style="border-top: 1px solid black;">
+                            <div class="col col-3 offset-9 text-right">
+                                <ul class="list-inline mt-2">
+                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">A-</span><span class="page" style="font-size:10px;"/>
+                                    </li>
+                                    <li class="list-inline-item" style="font-size:10px;">de</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">A-</span><span class="topage" style="font-size:10px;"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

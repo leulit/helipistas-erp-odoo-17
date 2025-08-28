@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_view_order_form" model="ir.ui.view">
+            <field name="name">leulit_view_order_form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='order_lines']" position="after">
+                    <page string="Vuelos" name="vuelos">
+                        <field name="vuelos" readonly="1">
+                            <tree decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'" default_order="fechavuelo desc, horasalida desc">
+                                <field name="estado" invisible="1"/>
+                                <field name="fechavuelo" invisible="1"/>
+                                <field name="horasalida" invisible="1"/>
+                                <field name="codigo"/>
+                                <field name="helicoptero_id"/>
+                                <field name="piloto_id"/>
+                                <field name="strfechasalida"/>
+                                <field name="tiemposervicio" widget="float_time" sum="Total"/>
+                                <field name="airtime" widget="float_time" sum="Total"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230901_1253_tree" model="ir.ui.view">
+            <field name="name">leulit_20230901_1253_tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="state" invisible="1"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        
+        <record id="leulit_20230901_1253_form" model="ir.ui.view">
+            <field name="name">leulit_20230901_1253_form</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="100"/>
+            <field name="arch" type="xml">
+                <form string="Presupuestos" create="false">
+                    <sheet>
+                        <field name="state" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group name="sale_header">
+                            <group>
+                                <field name="partner_id" widget="res_partner_many2one" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            </group>
+                            <group>
+                                <field name="origin" readonly="1" string="Información"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Datos Operacionales" name="datos_operacionales_so">
+                                <group>
+                                    <group>
+                                        <field name="tipo_aeronave"/>
+                                        <field name="pasajeros"/>
+                                        <field name="fecha_servicio"/>
+                                    </group>
+                                    <group>
+                                        <field name="tipo_operativo"/>
+                                        <field name="aumento_presupuesto"/>
+                                        <field name="tiempo_servicio"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group col="1">
+                                        <separator string="Ruta de vuelo"/>
+                                        <field name="ruta_servicio" nolabel="1"/>
+                                    </group>
+                                    <group col="1">
+                                        <separator string="Ruta de detallada"/>
+                                        <field name="ruta_detallada" nolabel="1"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group col="1">
+                                        <separator string="Desarrollo del servicio"/>
+                                        <field name="desarrollo_servicio" nolabel="1"/>
+                                    </group>
+                                    <group col="1">
+                                        <separator string="Personal y Equipamiento para el servicio"/>
+                                        <field name="personal_equipamiento" nolabel="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Vuelos" name="vuelos_so">
+                                <group>
+                                    <field name="vuelos" readonly="1">
+                                        <tree decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'">
+                                            <field name="estado" invisible="1"/>
+                                            <field name="codigo"/>
+                                            <field name="helicoptero_id"/>
+                                            <field name="piloto_id"/>
+                                            <field name="strfechasalida"/>
+                                            <field name="tiemposervicio" widget="float_time" sum="Horas servicio"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230901_1253_action" model="ir.actions.act_window">
+            <field name="name">Presupuestos activos</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('flag_flight_part','=',True),('state','=','sale'),('tag_ids','=',False),('task_done','=',False)]</field>
+        </record>
+        <record id="leulit_20230901_1253_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20230901_1253_tree" />
+            <field name="act_window_id" ref="leulit_20230901_1253_action" />
+        </record>
+        <record id="leulit_20230901_1253_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20230901_1253_form" />
+            <field name="act_window_id" ref="leulit_20230901_1253_action" />
+        </record>
+
+
+    </data>
+</odoo>

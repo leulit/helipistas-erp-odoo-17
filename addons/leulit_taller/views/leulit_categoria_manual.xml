@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230705_1235_tree" model="ir.ui.view">
+            <field name="name">leulit_20230705_1235_tree</field>
+            <field name="model">leulit.categoria_manual</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20230705_1235_action" model="ir.actions.act_window">
+            <field name="name">Categoria manual</field>
+            <field name="res_model">leulit.categoria_manual</field>
+            <field name="view_mode">tree</field>
+        </record>
+        
+    </data>
+</odoo>

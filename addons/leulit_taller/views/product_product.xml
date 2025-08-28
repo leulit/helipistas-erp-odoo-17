@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20221129_1527_search" model="ir.ui.view">
+            <field name="name">product.product.search.leulit</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <search string="Product">
+                    <field name="name" string="Producto" filter_domain="['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="leulit_20221129_1527_action" model="ir.actions.act_window">
+            <field name="name">Productos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="search_view_id" ref="leulit_20221129_1527_search"/>
+            <field name="context">{'default_type': 'product','default_categ_id': 15,'default_tracking': 'lot','default_property_account_income_id': 481,'default_property_account_expense_id': 375}</field>
+            <field name="domain">[('is_product_taller', '=', True)]</field>
+        </record>
+
+
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product_normal_form_view_leulit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="replace">
+                    <field name="default_code" string="Referencia interna / PN"/>
+                    <field name="rotable_lifelimit"/>
+                    <field name="is_motor"/>
+                    <field name="tipo_motor"  invisible="((not is_motor))" />
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="product_product_tree_view" model="ir.ui.view">
+            <field name="name">product_product_tree_view_leulit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_code']" position="replace">
+                    <field name="default_code" string="Referencia interna / PN"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

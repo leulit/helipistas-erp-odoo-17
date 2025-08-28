@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231124_143_filter" model="ir.ui.view">
+            <field name="name">leulit_20231124_143_filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="vat"/>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="leulit_20221229_1056_tree" model="ir.ui.view">
+            <field name="name">leulit_20221229_1056_tree</field>
+            <field name="model">res.partner</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Contactos + cuentas" >
+                    <field name="company_type"/>
+                    <field name="display_name"/>
+                    <field name="vat"/>
+                    <field name="property_account_receivable_id"/>
+                    <field name="property_account_payable_id"/>
+                    <field name="comment"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20221229_1056_action" model="ir.actions.act_window">
+            <field name="name">Contactos + cuentas</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="leulit_20221229_1056_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20221229_1056_tree" />
+            <field name="act_window_id" ref="leulit_20221229_1056_action" />
+        </record>
+
+        
+        <menuitem
+            id="leulit_20221229_1056_menuitem"
+            name="contactos + cuentas"
+            action="leulit_20221229_1056_action"
+            parent="contacts.menu_contacts"
+            sequence="10"
+            groups="RBase_hide"
+        />
+
+
+        <record id="leulit_20201202_1107_action" model="ir.actions.act_window">
+            <field name="name">Clientes</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form,activity</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="domain">[('customer_rank','>',0),('parent_id','=',False),('is_company','=',True)]</field>
+            <field name="context">{'default_is_company': True}</field>
+        </record>
+        <record id="leulit_20201202_1107_action_kanban" model="ir.actions.act_window.view">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="base.res_partner_kanban_view"/>
+            <field name="act_window_id" ref="leulit_20201202_1107_action"/>
+        </record>
+        <record id="leulit_20201202_1107_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="base.view_partner_tree"/>
+            <field name="act_window_id" ref="leulit_20201202_1107_action"/>
+        </record>
+        <record id="leulit_20201202_1107_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="base.view_partner_form"/>
+            <field name="act_window_id" ref="leulit_20201202_1107_action"/>
+        </record>
+
+        <record id="leulit_20230101_1015_form" model="ir.ui.view">
+            <field name="name">leulit_20230101_1015_form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="bool_cuentas_custom" invisible="1"/>
+                    <button name="get_next_accounts" type="object" class="oe_highlight" string="Asignar cuentas" invisible="bool_cuentas_custom"/>
+                </xpath>
+                <xpath expr="//page[@name='internal_notes']" position="after">
+                    <page name="it_developers" string="IT" groups="leulit.RolIT_developer">
+                        <button name="create_user_by_partner" type="object" class="oe_highlight oe_edit" string="Create User from Partner" invisible="user_ids != []"/>
+                        <group>
+                            <field name="user_ids"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+
+    </data>
+</odoo>

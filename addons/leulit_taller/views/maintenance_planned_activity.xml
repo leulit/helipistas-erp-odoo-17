@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="maintenance_planned_activity_view_form" model="ir.ui.view">
+            <field name="name">maintenance.planned.activity.form</field>
+            <field name="model">maintenance.planned.activity</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_generar_job_card" string="Generar Job Card" type="object" class="oe_highlight"  invisible="((job_card_id))" />
+                    </header>
+                    <sheet>
+                        <div class="d-flex align-content-start flex-wrap">
+                            <div class="p-2 flex-fill">
+                                <div class="card h-100">
+                                    <div class="card-title">
+                                        <b>Datos Generales:</b><br/>
+                                    </div>
+                                    <div class="card-body">
+                                        <group col="4">
+                                            <field name="equipment_id" domain="[('parent_id', '=', equipment_id_maintenance_plan)]"/>
+                                            <field name="tarea_preventiva_id"/>
+                                            <field name="tarea"/>
+                                            <field name="referencia"/>
+                                            <field name="left_h"/>
+                                            <field name="right_h"/>
+                                            <field name="equipment_id_maintenance_plan" invisible="1"/>
+                                        </group>
+                                        <group col="2">
+                                            <field name="comentario_descripcion"/>
+                                            <field name="notas"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-content-start flex-wrap">
+                            <div class="p-2 flex-fill">
+                                <div class="card h-100">
+                                    <div class="card-title">
+                                        <b>Intervalos:</b><br/>
+                                    </div>
+                                    <div class="card-body">
+                                        <group col="4">
+                                            <field name="int_h"/>
+                                            <field name="char_interval"/>
+                                            <field name="float_interval"/>
+                                            <field name="tag_interval"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-content-start flex-wrap">
+                            <div class="p-2 flex-fill">
+                                <div class="card h-100">
+                                    <div class="card-title">
+                                        <b>Last done / Next due / Remaining:</b><br/>
+                                    </div>
+                                    <div class="card-body">
+                                        <group col="6">
+                                            <field name="horas_last_done"/>
+                                            <field name="horas_next_due"/>
+                                            <field name="horas_remaining"/>
+                                            <field name="fecha_last_done"/>
+                                            <field name="fecha_next_due"/>
+                                            <field name="days_remaining"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-content-start flex-wrap">
+                            <div class="p-2 flex-fill">
+                                <div class="card h-100">
+                                    <div class="card-title">                                                           
+                                        <b>Job Card / Service Bulletin / Airworthiness Directive / Tipo tarea:</b><br/>                        
+                                    </div>
+                                    <div class="card-body">
+                                        <group>
+                                            <field name="job_card_id"/>
+                                            <field name="service_bulletin_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':True}"/>
+                                            <field name="airworthiness_directive_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':True}"/>
+                                            <field name="tipo"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2 flex-fill">
+                                <div class="card h-100">
+                                    <div class="card-title">
+                                        <b>Avisos y alarmas:</b><br/>
+                                    </div>
+                                    <div class="card-body">
+                                        <group col="4">
+                                            <field name="aviso_horas"/>
+                                            <field name="aviso_dias"/>
+                                            <field name="alarma_horas"/>
+                                            <field name="alarma_dias"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <notebook>
+                            <page string="Historial de Tareas" name="tareas_historico_in_planned_activity">
+                                <field name="task_ids" readonly="1">
+                                    <tree>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="user_ids"/>
+                                        <field name="effective_hours"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="maintenance_planned_activity_view_tree" model="ir.ui.view">
+            <field name="name">maintenance.planned.activity.tree</field>
+            <field name="model">maintenance.planned.activity</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="int_h"/>
+                    <field name="interval"/>
+                    <field name="descripcion"/>
+                    <field name="referencia"/>
+                    <field name="horas_last_done"/>
+                    <field name="fecha_last_done"/>
+                    <field name="horas_next_due"/>
+                    <field name="fecha_next_due"/>
+                    <field name="horas_remaining"/>
+                    <field name="semaforo_horas" widget="semaforo_char"/>
+                    <field name="days_remaining"/>
+                    <field name="semaforo_dias" widget="semaforo_char"/>
+                    <field name="tarea"/>
+                    <field name="equipment_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20230620_1445_tree" model="ir.ui.view">
+            <field name="name">leulit_20230620_1445_tree</field>
+            <field name="model">maintenance.planned.activity</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="descripcion"/>
+                    <field name="maintenance_plan_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="maintenance_planned_activity_action" model="ir.actions.act_window">
+            <field name="name">Solicitudes en planes de mantenimiento</field>
+            <field name="res_model">maintenance.planned.activity</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_20230620_1445_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('maintenance_planned_activity_view_form')})]"/>
+        </record>
+
+    </data>
+</odoo>

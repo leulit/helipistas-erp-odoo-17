@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20201202_0856_action" model="ir.actions.act_window">
+            <field name="name">Albaranes de entrada</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_code','=','incoming')]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+
+
+        <record id="leulit_20240220_1631_action" model="ir.actions.act_window">
+            <field name="name">Albaranes de salida</field>
+            <field name="res_model">stock.picking</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_code','=','outgoing')]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}</field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+    
+        <record model="ir.ui.view" id="leulit_20201026_1156_form">
+            <field name="name">leulit_20201026_1156_form</field>
+            <field name="model">leulit.ruta_punto</field>
+            <field name="arch" type="xml">
+                <form string="Punto de ruta">
+                    <sheet>
+                        <group col="2">
+                            <group col="2">
+                                <field name="indicativo"/>
+                                <field name="descripcion"/>
+                                <field name="alternativo_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="tz"/>
+                            </group>
+                            <group col="2">
+                                <field name="latitud"/><field name="lat" invisible="1"/>
+                                <field name="longitud"/><field name="lng" invisible="1"/>
+                                <field name="altitud"/>
+                                <field name="helipuerto_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>        
+
+        <record model="ir.ui.view" id="leulit_20201026_1156_tree">
+            <field name="name">leulit_20201026_1156_tree</field>
+            <field name="model">leulit.ruta_punto</field>
+            <field name="arch" type="xml">
+                <tree string="Puntos de ruta">
+                    <field name="indicativo"/>
+                    <field name="descripcion"/>
+                    <field name="latitud"/>
+                    <field name="longitud"/>
+                    <field name="altitud"/>
+                    <field name="alternativo_id"/>
+                </tree>
+            </field>
+        </record>
+        
+	    <record model="ir.actions.act_window" id="leulit_20201026_1156_action">
+            <field name="name">Puntos geográficos</field>
+            <field name="res_model">leulit.ruta_punto</field>
+            <field name="view_mode">tree,form</field>
+        </record>        
+
+
+    </data>
+</odoo>

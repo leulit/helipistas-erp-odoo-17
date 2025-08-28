@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20230706_1533_form" model="ir.ui.view">
+            <field name="name">leulit_20230706_1533_form</field>
+            <field name="model">leulit.rel_formone_lot</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group col="4">
+                            <field name="item"/>
+                            <field name="form_one"/>
+                            <field name="pieza_id"/>
+                            <field name="qty"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+		<record model="ir.ui.view" id="leulit_20211026_1033_tree">
+            <field name="name">Leulit - Tree errores importacion</field>
+            <field name="model">leulit.error_import</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="create_date" />                    
+                    <field name="tabla"/>
+                    <field name="comments"/>
+                    <field name="datos"/>
+                </tree>
+            </field>
+        </record>
+
+
+		<record model="ir.actions.act_window" id="leulit_20211026_1033_action">
+            <field name="name">leulit - Errores importación</field>
+            <field name="res_model">leulit.error_import</field>            
+            <field name="view_mode">tree,form</field>
+        </record>   
+
+        <menuitem
+            id="leulit_20210216_0940_menuitem"
+            name="Migración"
+            web_icon="leulit_migracion,static/description/icon.png"
+            sequence="310"
+            groups="RMigracion_responsable"
+        />
+
+        <menuitem 
+            id="leulit_20201026_1025_menuitem"
+            name="Errores de importación"            
+            parent="leulit_20210216_0940_menuitem"
+            sequence="7"
+            action="leulit_20211026_1033_action"
+        />
+
+        <record model="ir.actions.act_url" id="leulit_20220103_1018_action">
+            <field name="name">Open erp2021.helipistas.com</field>
+            <field name="url">https://erp2021.helipistas.com</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_url" id="leulit_20230224_1041_action">
+            <field name="name">Open sites documentación</field>
+            <field name="url">https://sites.google.com/helipistas.com/documebtacinhelipistas</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.actions.act_url" id="leulit_20230328_1139_action">
+            <field name="name">Open documentación ATO</field>
+            <field name="url">https://sites.google.com/helipistas.com/documentacion-ato/presentaciones</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-name="leulit_operaciones.weight_and_balance">
+        <input type="text" class="o_field_float"/>
+    </t>
+
+</templates>

@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20240405_1647_form" model="ir.ui.view">
+            <field name="name">leulit_20240405_1647_form</field>
+            <field name="model">leulit.airworthiness_directive</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar" clickable="1" statusbar_colors='{"cancel": "red", "active": "green"}'/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Cancel" bg_color="bg-danger"  invisible="((state != 'cancel'))" />
+                        <widget name="web_ribbon" title="Superseded" bg_color="bg-primary"  invisible="((state != 'superseded'))" />
+                        <group>
+                            <group>
+                                <field name="aircraft"/>
+                                <field name="name_easa"/>
+                                <field name="name_faa"/>
+                                <field name="subject"/>
+                                <field name="date"/>
+                                <field name="rev"/>
+                            </group>
+                            <group>
+                                <field name="apply"/>
+                                <field name="type_component"/>
+                                <field name="type_aircraft"  invisible="((type_component != 'aeronave'))" />
+                                <field name="pieza_id"  invisible="((type_component != 'motor'))" />
+                                <field name="recursive"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="date_effective"/>
+                                <field name="tsn_aircraft"/>
+                                <field name="limit_h"/>
+                                <field name="limit_date"/>
+                                <field name="remianing_hours"/>
+                                <field name="remianing_days"/>
+                            </group>
+                            <group>
+                                <field name="result"/>
+                                <field name="date_applyed"/>
+                                <field name="hours_applyed"/>
+                                <field name="superseded_by"  invisible="((state != 'superseded'))" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Service Bulletins">
+                                <field name="sb_ids" nolabel="1"/>
+                            </page>
+                            <page string="Tasks">
+                                <group col="8">
+                                    <button name="action_create_task" string="Crear tarea CAMO" type="object" class="oe_highlight"  invisible="((state != 'active'))" />
+                                    <button colspan="7" name="action_create_task_maintenance" string="Crear tarea mantenimiento" type="object" class="oe_highlight"  invisible="((state != 'active'))" />
+                                </group>
+                                <field name="tasks">
+                                    <tree>
+                                        <field name="code" string="Código"/>
+                                        <field name="name"/>
+                                        <field name="user_ids"/>
+                                        <field name="finish_date"/>
+                                        <field name="tag_ids" widget="many2many_tags"/>
+                                        <field name="maintenance_request_id" string="WO"/>
+                                        <field name="stage_id"/>
+                                        <field name="task_maintenance" invisible="1"/>
+                                        <button name="set_into_workorder" string="Añadir a WO" type="object" class="oe_highlight"  invisible="((not task_maintenance))" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="leulit_20240405_1647_tree" model="ir.ui.view">
+            <field name="name">leulit_20240405_1647_tree</field>
+            <field name="model">leulit.airworthiness_directive</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="state=='cancel'" decoration-success="state=='active'">
+                    <field name="state" invisible="1"/>
+                    <field name="aircraft"/>
+                    <field name="name_easa"/>
+                    <field name="name_faa"/>
+                    <field name="date"/>
+                    <field name="rev"/>
+                    <field name="type_component" invisible="1"/>
+                    <field name="type_aircraft" invisible="1"/>
+                    <field name="subject"/>
+                    <field name="recursive"/>
+                    <field name="date_applyed"/>
+                    <field name="limit_tsn"/>
+                    <field name="remianing_hours"/>
+                    <field name="limit_date"/>
+                    <field name="remianing_days"/>
+                    <field name="apply"/>
+                    <field name="result"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20240405_1647_action" model="ir.actions.act_window">
+            <field name="name">Ariworthiness Directives</field>
+            <field name="res_model">leulit.airworthiness_directive</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

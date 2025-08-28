@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_performance_EC120B_form" model="ir.ui.view">
+            <field name="name">leulit.performance_EC120B_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance EC120B">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_ec_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_ec_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_performance_ECHIL_form" model="ir.ui.view">
+            <field name="name">leulit.performance_ECHIL_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance EC-HIL">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_hil_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_hil_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_performance_R22_form">
+            <field name="name">leulit.performance_R22_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance R22">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style=" height: 500px; overflow:scroll;border:1px solid #000000;" id="micanvas_r22_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_performance_R22_2_form">
+            <field name="name">leulit.performance_R22_2_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance R22 II">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_2_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style=" height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_2_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_performance_R44_form">
+            <field name="name">leulit.performance_R44_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance R44">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r44_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r44_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_performance_R44_2_form">
+            <field name="name">leulit.performance_R44_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance R44 II">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r44_2_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r44_2_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_performance_CABRI_G2_form">
+            <field name="name">leulit.performance_CABRI_G2_form</field>
+            <field name="model">leulit.performance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Performance CABRI G2">
+                    <group class="d-flex align-items-center">
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="peso" widget="keyboard_disabled"/>
+                            </group>
+                            <group>
+                                <field name="temperatura"/>
+                            </group>
+                        </group>
+                        <div>
+                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
+                            <field name="vuelo" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="ige" invisible="1"/>
+                            <field name="oge" invisible="1"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="IN GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_cabri_in_div">
+                            </div>
+                        </page>
+                        <page string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_cabri_out_div">
+                            </div>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

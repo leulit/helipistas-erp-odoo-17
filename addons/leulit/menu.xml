@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="leulit_20220103_1018_menuitem"
+        name="ERP Antic"
+        action="leulit_20220103_1018_action"
+        web_icon="leulit,static/description/icon_new.png"
+        sequence="190"
+        groups="hr.group_hr_user"
+    />
+    <menuitem
+        id="leulit_20230224_1041_menuitem"
+        name="Gestión Documental"
+        action="leulit_20230224_1041_action"
+        web_icon="leulit,static/description/documentacion_compartida_.png"
+        sequence="191"
+        groups="hr.group_hr_user"
+    />
+    <menuitem
+        id="leulit_20230328_1139_menuitem"
+        name="Documentación ATO"
+        action="leulit_20230328_1139_action"
+        web_icon="leulit,static/description/documentacion_ato_.png"
+        groups="hr.group_hr_user,leulit.ROperaciones_alumno"
+        sequence="192"
+    />
+    <!-- Menu Helipistas -->
+    <menuitem 
+        id="leulit_20200818_1028_menuitem" 
+        name="Helipistas"
+        web_icon="leulit,static/description/helipistas_.png"
+        sequence="30"
+    />
+
+        <menuitem 
+            id="leulit_20210518_1057_menuitem" 
+            name="Checklists" 
+            sequence="60" 
+            parent="leulit_20200818_1028_menuitem" 
+            groups="ROperaciones_operador,leulit_user_checklist"
+        />
+            <menuitem 
+                id="leulit_20210518_1058_menuitem" 
+                name="Mis checklists" 
+                sequence="1" 
+                parent="leulit_20210518_1057_menuitem" 
+                action="leulit_20210518_1108_action"
+                groups="leulit_user_checklist"
+            />
+            <menuitem 
+                id="leulit_20210518_1059_menuitem" 
+                name="Checklists" 
+                sequence="2" 
+                parent="leulit_20210518_1057_menuitem" 
+                action="leulit_20210518_1109_action"
+                groups="leulit.leulit_manager_checklist" 
+            />
+            <menuitem 
+                id="leulit_20210518_1100_menuitem" 
+                name="Plantillas" 
+                sequence="3" 
+                parent="leulit_20210518_1057_menuitem" 
+                action="leulit_20210518_1112_action"
+                groups="leulit.leulit_manager_checklist" 
+            />
+        <menuitem
+            id="leulit_20201006_1023_menuitem"
+            name="Circulares"
+            parent="leulit_20200818_1028_menuitem"
+            sequence="70"
+            groups="ROperaciones_alumno,hr.group_hr_user,RCampaña_operador"
+        />
+            <menuitem 
+                id="leulit_20201006_1024_menuitem"
+                name="Mis circulares"
+                parent="leulit_20201006_1023_menuitem"
+                action="leulit_20201006_1024_action"
+                sequence="10"
+                groups="ROperaciones_alumno,hr.group_hr_user,RCampaña_operador"
+            />
+
+        <menuitem 
+            id="leulit_20201014_1008_menuitem"
+            name="Hojas de gastos"
+            parent="leulit_20200818_1028_menuitem"
+            sequence="80"
+            groups="ROperaciones_operador,leulit_user_checklist"
+        />
+            <menuitem 
+                id="leulit_20201014_1010_menuitem"
+                name="Gastos"
+                parent="leulit_20201014_1008_menuitem"
+                action="hr_expense.action_hr_expense_sheet_my_all"
+                sequence="1"
+                groups="ROperaciones_operador,leulit_user_checklist"
+            />
+
+        
+    
+    <!-- Menu Operaciones -->
+    <menuitem
+        id="leulit_20200618_1104_menuitem"
+        name="Operaciones"
+        web_icon="leulit,static/description/operaciones-aeronauticas_.png"
+        sequence="40"
+        groups="ROperaciones_operador,RCampaña_operador"
+    />
+
+
+    <!-- Menu Camo -->
+    <menuitem
+        id="leulit_20201109_1035_menuitem"
+        name="Camo"
+        web_icon="leulit,static/description/camo_.png"
+        sequence="100"
+        groups="RCAMO_base"
+    />
+        <menuitem
+            id="leulit_20201109_1042_menuitem"
+            name="Helicópteros"
+            parent="leulit_20201109_1035_menuitem"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20241018_1517_menuitem"
+            name="Facturas de venta"
+            parent="leulit_20201109_1035_menuitem"
+            action="account.action_move_out_invoice_type"
+            sequence="25"
+        />
+
+
+    <!-- Menu Calidad -->
+    <menuitem
+        id="leulit_20201118_1606_menuitem"
+        name="Calidad"
+        web_icon="leulit,static/description/calidad_.png"
+        sequence="170"
+        groups="RCalidad_base"
+    />    
+        <menuitem
+            id="leulit_20201118_1744_menuitem"
+            name="Informes"
+            parent="leulit_20201118_1606_menuitem"
+            sequence="10"
+        />
+    
+    
+    <!-- Menu Taller -->
+    <menuitem
+        id="leulit_20201120_1140_menuitem"
+        name="Taller"
+        web_icon="leulit,static/description/taller_.png"
+        sequence="110"
+        groups="RTaller_base"
+    />
+        <menuitem
+            id="leulit_20201130_1135_menuitem"
+            name="Almacén"
+            parent="leulit_20201120_1140_menuitem"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20231024_1141_menuitem"
+            name="Proveedores y Clientes"
+            parent="leulit_20201120_1140_menuitem"
+            sequence="20"
+        />
+            <menuitem
+                id="leulit_20201126_1054_menuitem"
+                name="Proveedores"
+                parent="leulit_20231024_1141_menuitem"
+                sequence="10"
+            />
+                <menuitem
+                    id="leulit_20201126_1055_menuitem"
+                    name="Pedidos de compra"
+                    parent="leulit_20201126_1054_menuitem"
+                    action="purchase.purchase_rfq"
+                    sequence="10"
+                />
+                <menuitem
+                    id="leulit_20240220_1631_menuitem"
+                    name="Albaranes de salida"
+                    parent="leulit_20201126_1054_menuitem"
+                    action="leulit_20240220_1631_action"
+                    sequence="20"
+                />
+                <menuitem
+                    id="leulit_20201202_0845_menuitem"
+                    name="Albaranes de entrada"
+                    parent="leulit_20201126_1054_menuitem"
+                    action="leulit_20201202_0856_action"
+                    sequence="30"
+                />
+                <menuitem
+                    id="leulit_20201202_0908_menuitem"
+                    name="Facturas de compra"
+                    parent="leulit_20201126_1054_menuitem"
+                    action="account.action_move_in_invoice_type"
+                    sequence="40"
+                />
+                <menuitem
+                    id="leulit_20230127_1247_menuitem"
+                    name="Proveedores"
+                    parent="leulit_20201126_1054_menuitem"
+                    action="account.res_partner_action_supplier"
+                    sequence="100"
+                />
+            <menuitem
+                id="leulit_20201202_0910_menuitem"
+                name="Clientes"
+                parent="leulit_20231024_1141_menuitem"
+                sequence="20"
+            />
+                <menuitem
+                    id="leulit_20201202_0912_menuitem"
+                    name="Pedidos de venta"
+                    parent="leulit_20201202_0910_menuitem"
+                    action="leulit_20201202_1010_action"
+                    sequence="10"
+                />
+                <menuitem
+                    id="leulit_20230313_1256_menuitem"
+                    name="Reparaciones hechas por Icarus"
+                    parent="leulit_20201202_0910_menuitem"
+                    action="repair.action_repair_order_tree"
+                    sequence="20"
+                />
+                <menuitem
+                    id="leulit_20201202_0914_menuitem"
+                    name="Facturas de venta"
+                    parent="leulit_20201202_0910_menuitem"
+                    action="account.action_move_out_invoice_type"
+                    sequence="30"
+                />
+                <menuitem
+                    id="leulit_20230127_1246_menuitem"
+                    name="Clientes"
+                    parent="leulit_20201202_0910_menuitem"
+                    action="account.res_partner_action_customer"
+                    sequence="100"
+                />
+        <menuitem 
+            id="leulit_20250207_1052_menuitem" 
+            name="Aeronaves"
+            parent="leulit_20201120_1140_menuitem"
+            sequence="50"
+        />
+
+
+    <!-- Menu Formacion -->
+    <menuitem
+        id="leulit_20201125_1200_menuitem"
+        name="Formación"
+        web_icon="leulit,static/description/formacion_.png"
+        sequence="70"
+        groups="ROperaciones_piloto"
+    />
+    
+</odoo>

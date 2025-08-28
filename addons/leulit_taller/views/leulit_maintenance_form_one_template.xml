@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20250207_1033_form" model="ir.ui.view">
+            <field name="name">leulit_20250207_1033_form</field>
+            <field name="model">leulit.maintenance_form_one_template</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="remarks" widget="html"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20250207_1033_tree" model="ir.ui.view">
+            <field name="name">leulit_20250207_1033_tree</field>
+            <field name="model">leulit.maintenance_form_one_template</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+	    <record model="ir.actions.act_window" id="leulit_20250207_1033_action">
+            <field name="name">Plantillas Form One</field>
+            <field name="res_model">leulit.maintenance_form_one_template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

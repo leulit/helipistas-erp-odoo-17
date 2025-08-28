@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20240315_1517_form" model="ir.ui.view">
+            <field name="name">leulit_20240315_1517_form</field>
+            <field name="model">leulit.service_bulletin</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar" clickable="1" statusbar_colors='{"cancel": "red", "active": "green"}'/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Cancel" bg_color="bg-danger"  invisible="((state == 'active'))" />
+                        <group>
+                            <group>
+                                <field name="aircraft"/>
+                                <field name="name"/>
+                                <field name="subject"/>
+                                <field name="type_sb"/>
+                                <field name="date"/>
+                                <field name="rev"/>
+                            </group>
+                            <group>
+                                <field name="apply"/>
+                                <field name="type_component"/>
+                                <field name="type_aircraft"  invisible="((type_component != 'aeronave'))" />
+                                <field name="pieza_id"  invisible="((type_component != 'motor'))" />
+                                <field name="recursive"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="date_effective"/>
+                                <field name="tsn_aircraft"/>
+                                <field name="limit_h"/>
+                                <field name="limit_date"/>
+                                <field name="remianing_hours"/>
+                                <field name="remianing_days"/>
+                            </group>
+                            <group>
+                                <field name="result"/>
+                                <field name="date_applyed"/>
+                                <field name="hours_applyed"/>
+                            </group>
+                        </group>
+                        <group col="1">
+                            <label for="ad_ids" string="Airworthiness Directives"/>
+                            <field name="ad_ids" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="leulit_20240315_1517_tree" model="ir.ui.view">
+            <field name="name">leulit_20240315_1517_tree</field>
+            <field name="model">leulit.service_bulletin</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="state=='cancel'" decoration-success="state=='active'">
+                    <field name="state" invisible="1"/>
+                    <field name="aircraft"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="rev"/>
+                    <field name="type_sb"/>
+                    <field name="type_component" invisible="1"/>
+                    <field name="type_aircraft" invisible="1"/>
+                    <field name="subject"/>
+                    <field name="recursive"/>
+                    <field name="date_applyed"/>
+                    <field name="limit_tsn"/>
+                    <field name="remianing_hours"/>
+                    <field name="limit_date"/>
+                    <field name="remianing_days"/>
+                    <field name="apply"/>
+                    <field name="result"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20240315_1517_action" model="ir.actions.act_window">
+            <field name="name">Service Bulletins</field>
+            <field name="res_model">leulit.service_bulletin</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project.access_project_task" model="ir.model.access">
+        <field name="name">project.task</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="group_id" ref="project.group_project_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20230209_1117_access_permission" model="ir.model.access">
+        <field name="name">project_task acess</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="group_id" ref="leulit_tarea.RT_base"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20230209_1118_access_permission" model="ir.model.access">
+        <field name="name">project_task acess</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="group_id" ref="leulit_tarea.RT_administrador"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+</odoo>

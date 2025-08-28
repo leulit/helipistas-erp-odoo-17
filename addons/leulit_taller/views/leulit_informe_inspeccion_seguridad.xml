@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <!-- REPORT INSPECCION DE SEGURIDAD -->
+        <report
+            id="leulit_20230926_1322_report"
+            string="Inspección de Seguridad"
+            model="maintenance.request"
+            report_type="qweb-pdf"
+            file="leulit_taller.leulit_20230926_1323_informe"
+            name="leulit_taller.leulit_20230926_1323_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="inspeccion_seguridad_report_header">
+            <div style="width:100%;" class="header">
+                <t t-call="leulit_taller.inspeccion_seguridad_report_css"/>
+                <table class="fullwidth">
+                    <tr>
+                        <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                            <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                        </td>
+                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                            <span><b>Inspección de Seguridad</b></span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                            <span>Nº Exp de Mant:</span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                            <span t-esc="n_exp"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span>Nº de OT:</span>
+                        </td>
+                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                            <span t-esc="n_orden_trabajo"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+
+        <template id="inspeccion_seguridad_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 3.5687mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-size: 3.5687mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 230mm;
+                    height: 320mm;
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                    page-break-after: always;
+                }
+                .pagecontent {
+                    width: 230mm;
+                    height: 320mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .thheightrow {height: 70px;}
+                .heightrow {height: 120px;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    border: 1px solid #B0B0B0;
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:12px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: middle
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20230926_1323_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_header_spacing" t-value="20"/>
+                <t t-set="data_report_margin_top" t-value="30"/>
+                <div class="page">
+                    <t t-call="leulit_taller.inspeccion_seguridad_report_css"/>
+                    <t t-call="leulit_taller.inspeccion_seguridad_report_header" />
+                    <div class="row">
+                        <t t-if="tareas_is">
+                            <t t-foreach="tareas_is" t-as="tarea">
+                                <table class="fullwidth" style="width: 100%;">
+                                    <tr>
+                                        <td class="theadtitle centertext thheightrow tdcolored" colspan="4">
+                                            <span>Efectuada inspección de seguridad en el sistema</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="heightrow" style="vertical-align:top;" colspan="4">
+                                            <span>Descripción del sistema inspeccionado:</span><br/><br/>
+                                            <b><span t-esc="tarea['name']"/></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 15%">
+                                            <span>1er Nombre:</span>
+                                        </td>
+                                        <td style="width: 50%">
+                                            <span t-esc="tarea['primera_persona']"/>
+                                        </td>
+                                        <td class="tdcolored">
+                                            <span>Fecha y Hora:</span>
+                                        </td>
+                                        <td class="centertext">
+                                            <span t-esc="tarea['primera_fecha']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 15%">
+                                            <span>2º Nombre:</span>
+                                        </td>
+                                        <td style="width: 50%">
+                                            <span t-esc="tarea['segunda_persona']"/>
+                                        </td>
+                                        <td class="tdcolored">
+                                            <span>Fecha y Hora:</span>
+                                        </td>
+                                        <td class="centertext">
+                                            <span t-esc="tarea['segunda_fecha']"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <t t-set="items" t-value="1"/>
+                            <t t-foreach="items" t-as="item">
+                                <table class="fullwidth" style="width: 100%;">
+                                    <tr>
+                                        <td class="theadtitle centertext thheightrow tdcolored" colspan="4">
+                                            <span>Efectuada inspección de seguridad en el sistema</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="heightrow" style="vertical-align:top;" colspan="4">
+                                            <span>Descripción del sistema inspeccionado:</span><br/><br/>
+                                            <b>N/A</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 15%">
+                                            <span>1er Nombre:</span>
+                                        </td>
+                                        <td style="width: 50%">
+                                        </td>
+                                        <td class="tdcolored" style="width: 13%">
+                                            <span>Fecha y Hora:</span>
+                                        </td>
+                                        <td class="centertext">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 15%">
+                                            <span>2º Nombre:</span>
+                                        </td>
+                                        <td style="width: 50%">
+                                        </td>
+                                        <td class="tdcolored" style="width: 13%">
+                                            <span>Fecha y Hora:</span>
+                                        </td>
+                                        <td class="centertext">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                            </t>
+                        </t>
+                    </div> 
+                    <div class="footer">
+                        <div class="row text-center" style="border-top: 1px solid black;">
+                            <div class="col col-3 offset-9 text-right">
+                                <ul class="list-inline mt-2">
+                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">F-</span><span class="page" style="font-size:10px;"/>
+                                    </li>
+                                    <li class="list-inline-item" style="font-size:10px;">de</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">F-</span><span class="topage" style="font-size:10px;"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </t>
+        </template>
+
+        
+    </data>
+</odoo>

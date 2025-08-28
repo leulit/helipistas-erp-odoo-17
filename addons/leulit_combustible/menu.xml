@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem 
+        id="leulit_20201106_1727_menuitem" 
+        name="Combustible" 
+        parent="leulit.leulit_20200618_1104_menuitem"
+        sequence="110"
+    />
+        <menuitem 
+            id="leulit_20201106_1728_menuitem" 
+            name="Listado" 
+            parent="leulit_20201106_1727_menuitem"
+            action="leulit_20201106_1728_action"
+            sequence="10"
+        />
+        <menuitem 
+            id="leulit_20250422_1047_menuitem" 
+            name="Puntos" 
+            parent="leulit_20201106_1727_menuitem"
+            action="leulit_20250422_1047_action"
+            sequence="20"
+            groups="leulit.ROperaciones_responsable"
+        />
+    
+</odoo>

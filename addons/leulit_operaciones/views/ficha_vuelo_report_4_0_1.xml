@@ -1,0 +1,1017 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <report
+            id="ficha_vuelo_report_4_0_1"
+            string="ficha_vuelo_report"
+            model="leulit.vuelo"
+            report_type="qweb-pdf"
+            file="leulit_operaciones.leulit_20211119_1615_informe"
+            name="leulit_operaciones.leulit_20211119_1615_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />     
+
+
+        <template id="ficha_vuelo_report_footercontrol_4_0_1">
+            <table >
+                <tr>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                        <i>Fecha creación documento</i><br/>
+                        <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>
+                    </td>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                        <t t-if="hashcode">
+                            <i>Firmado por:</i><br/>
+                            <i><span t-esc="firmado_por"/></i>
+                        </t>
+                    </td>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                        <t t-if="hashcode">
+                            <i>CSV/CID</i><br/>
+                            <span t-esc="hashcode"/>
+                        </t>
+                        <t t-if="not hashcode">
+                            <i>Referencia</i><br/>
+                            <span t-esc="hashcode_interno"/>
+                        </t>
+                    </td>
+                </tr>
+            </table>
+        </template>
+
+        <template id="ficha_vuelo_report_controlversion_4_0_1">
+            <table align="right">
+                <tr>
+                    <td style="white-space: nowrap;" class="noborde"><b>Código:</b></td>
+                    <td style="white-space: nowrap;" class="noborde">HLP-DOC-0004</td>
+                    <td style="white-space: nowrap;" class="noborde"><b>Versión:</b></td>
+                    <td style="white-space: nowrap;" class="noborde">4.0.1</td>
+                </tr>
+            </table>
+        </template>
+
+        <template id="ficha_vuelo_report_header_4_0_1">
+            <table class="fullwidth">
+                <tbody>
+                <tr>
+                        <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                            Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet.
+                        </td>
+                </tr>
+                    <tr>
+                        <td style="text-align:center;vertical-align: middle">
+                            <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                        </td>
+                        <td class="literal theadtitle centertext" style="width:100%">
+                            F I C H A P A R T E D E V U E L O<br/>
+                            <span class="theadtitle" style="font-size: 6mm !important;"><span t-esc="vuelo['codigo']"/> - <span t-esc="vuelo['fecha']"/></span>
+                            <!-- <span class="theadtitle" style="font-size: 6mm !important;">${codigo} - ${fecha if fecha else ""}</span> -->
+                            <!-- %if not hashcode: -->
+                            <br/><i><span style="font-size:10px">Documentación para uso interno.</span></i>
+                            <!-- %endif -->
+                        </td>
+                </tr>
+                </tbody>
+            </table>
+        </template>        
+
+        <template id="ficha_vuelo_report_cabecerapagina_4_0_1">
+            <table class="fullwidth">
+                <tr>
+                    <th>                                        
+                        <t t-call="leulit_operaciones.ficha_vuelo_report_footercontrol_4_0_1" />
+                    </th>
+                    <th>
+                        <t t-call="leulit_operaciones.ficha_vuelo_report_controlversion_4_0_1" />
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2">
+                        <t t-call="leulit_operaciones.ficha_vuelo_report_header_4_0_1" />
+                    </th>
+                </tr>
+            </table>        
+        </template>
+
+        <template id="ficha_vuelo_report_css_4_0_1">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 4.49786mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-weight: bold;
+                    font-size: 3.9687mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.9687mm;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    text-align: right;
+                    font-size: 3.9687mm;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 230mm;
+                    height: 320mm;
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                    page-break-after: always;
+                }
+                .pagecontent {
+                    width: 230mm;
+                    height: 320mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.25);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,0.5);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    border: 1px solid #EEEEEE;
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:10px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: middle
+                }
+            </style>      
+        </template>
+
+        <template id="leulit_20211119_1615_informe">
+            <t t-call="web.html_container">     
+                <t t-foreach="vuelos" t-as="vuelo">
+                    <div class="page">
+                        <t t-call="leulit_operaciones.ficha_vuelo_report_css_4_0_1" />
+                        <div class="row">                            
+                            <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                            <table class="fullwidth">
+                                <tr>
+                                    <td class="fullwidth tdcoloredmain theadtitle" >
+                                        Plan operacional
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fullwidth tdcolored theadtitle" >
+                                        Datos tripulación
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="fullwidth">
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                            <tr>
+                                                <td class="literal" style="width:25%">Piloto:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['piloto_name']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Piloto supervisor:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['piloto_supervisor_name']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Num. tipulantes</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['numtripulacion']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Num. AL/PA/PE/PAE/PO</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['numpae']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Pax / AESA:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['numpax']"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fullwidth tdcolored theadtitle">
+                                        Datos areonave
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                            <tr>
+                                                <td class="literal">Matrícula:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['helicoptero_name']"/></td>
+                                                <td class="literal">Tipo:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['helicoptero_tipo']"/></td>
+                                                <td class="literal">Modelo:</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['helicoptero_modelo']"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fullwidth tdcolored theadtitle">Datos previstos vuelo</td>
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                            <tr>
+                                                <td colspan="4" class="centertext literal">Despegue</td>
+                                                <td colspan="4" class="centertext literal">Aterrizaje</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal"  style="white-space: nowrap;width:12%">Lugar:</td>
+                                                <td class="fieldvalue"  style="width:14%"><span t-esc="vuelo['lugarsalida']"/></td>
+                                                <td class="literal" style="width:12%">Hora:</td>
+                                                <td class="numericfieldvalue" style="width:12%"><span t-esc="vuelo['strhorasalida']"/></td>
+                                                <td class="literal" style="white-space: nowrap;width:12%">Lugar:</td>
+                                                <td class="fieldvalue" style="width:14%"><span t-esc="vuelo['lugarllegada']"/></td>
+                                                <td class="literal" style="width:12%">Hora:</td>
+                                                <td class="numericfieldvalue" style="width:12%"><span t-esc="vuelo['horallegadaprevista']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Alternativo:</td>
+                                                <td class="fieldvalue" colspan="2">
+                                                    <t t-foreach="vuelo['alternativos']" t-as="alternativo">
+                                                        <span t-esc="alternativo"/>
+                                                    </t>
+                                                </td>
+                                                <td class="literal">Distancia:</td>
+                                                <td class="fieldvalue" colspan="2"><span t-esc="vuelo['distancia_alternativo']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="centertext literal">Tiempo</td>
+                                                <td colspan="4" class="centertext"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal" style="white-space: nowrap;">vuelo (hh:mm):</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['strtiempoprevisto']"/></td>
+                                                <td class="literal" style="white-space: nowrap;">máximo (hh:mm):</td>
+                                                <td class="numericfieldvalue"><span t-esc="vuelo['tiempo_vuelo_max']"/></td>
+                                                <td class="literal" style="white-space: nowrap;">Distancia (NM):</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['distanciatotalprevista']"/></td>
+                                                <td class="literal" style="white-space: nowrap;">Velocidad (KT):</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['velocidadprevista']"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fullwidth tdcolored theadtitle">
+                                        Datos para cálculos
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Densidad combustible:</td>
+                                            <td class="numericfieldvalue"><span t-esc="vuelo['DENSIDAD_COMBUSTIBLE']"/> kg/L</td>
+                                            <td class="literal">Consumo medio:</td>
+                                            <td class="numericfieldvalue" colspan="3">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['consumomedio_vuelo']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['consumomedio_vuelo_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['consumomedio_vuelo_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>                        
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fullwidth tdcolored theadtitle">
+                                        Datos combustible <span class="theadtitle" style="text-transform: none;"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Aceite añadido (l.):</td>
+                                            <td class="numericfieldvalue"><span t-esc="vuelo['oilqty']"/> l.</td>
+                                            <td class="literal">Combustible añadido:</td>
+                                            <td class="numericfieldvalue" colspan="3">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelqty']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelqty_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelqty_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>                        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal" colspan="6">Reservas combustible:</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal" style="white-space: nowrap;">Reserva:</td>
+                                            <td class="numericfieldvalue"><span t-esc="vuelo['reservasfuel']"/> min.</td>
+                                            <td class="literal" style="white-space: nowrap;">Rodaje:</td>
+                                            <td class="numericfieldvalue"><span t-esc="vuelo['rodaje']"/> min.</td>
+                                            <td class="literal" style="white-space: nowrap;">Contingencia:</td>
+                                            <td class="numericfieldvalue"><span t-esc="vuelo['contingencia']"/> %</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Combustible al alternativo:</td>
+                                            <td style="text-align:right" colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustiblealternativo']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustiblealternativo_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustiblealternativo_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Combustible vuelo:</td>
+                                            <td style="text-align:right" colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibletrayecto']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibletrayecto_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibletrayecto_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Combustible mínimo:</td>
+                                            <td style="text-align:right" colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleminimo']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleminimo_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleminimo_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Combustible extra:</td>
+                                            <td style="text-align:right" colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleextra']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleextra_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['combustibleextra_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Combustible a bordo:</td>
+                                            <td style="text-align:right" colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelsalida']"/> l.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelsalida_kg']"/> kg.</td>
+                                                        <td class="numericfieldvalue" style="width:100px;"><span t-esc="vuelo['fuelsalida_gal']"/> gal.</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>                        
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td class="fullwidth tdcolored theadtitle">PLAN ATS</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="fullwidth">
+                                            <tr>
+                                                <td class="literal">Verificado</td>
+                                                <td class="fieldvalue"><span t-esc="vuelo['planvueloATS_notneeded']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="literal">Motivo</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fieldvalue"><span t-esc="vuelo['planvueloATS_notneeded_desc']"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>-->
+                            </table>
+                        </div>
+                        <t t-if="vuelo['aerovia_ids']">
+                            <div class="row" style="page-break-before:always;">
+                                <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                                <table class="fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <td class="fullwidth tdcoloredmain theadtitle"  colspan="6">
+                                                Plan operacional
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="fullwidth tdcolored theadtitle" colspan="6">
+                                                RUTA
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal" colspan="1">Comentario</td>
+                                            <td class="fieldvalue" colspan="5"><span t-esc="vuelo['comentario_ruta']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Descripción</td>
+                                            <td class="literal">Distancia</td>
+                                            <td class="literal">Rumbo</td>
+                                            <td class="literal">Tiempo prev.</td>
+                                            <td class="literal">Altitud prev.</td>
+                                            <td class="literal">Altitud seg.</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="vuelo['aerovia_ids']" t-as="aerovia">
+                                            <tr>
+                                                <td class="fieldvalue"><span t-esc="aerovia['name']"/></td>
+                                                <td class="numericfieldvalue"><span t-esc="aerovia['distancia']"/></td>
+                                                <td class="numericfieldvalue"><span t-esc="aerovia['rumbo']"/></td>
+                                                <td class="numericfieldvalue"><span t-esc="aerovia['strtiempoprevisto']"/></td>
+                                                <td class="numericfieldvalue"><span t-esc="aerovia['altitudprevista']"/></td>
+                                                <td class="numericfieldvalue"><span t-esc="aerovia['altitudseguridad']"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-if="vuelo['silabus_ids']">
+                            <div class="row" style="page-break-before:always;">
+                                <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                                <table class="fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th class="fullwidth tdcolored theadtitle" colspan="2">
+                                                Información silabus
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="literal">Alumno / Verificado:</th>
+                                            <th class="fieldvalue">
+                                                <span t-esc="vuelo['alumno_name']"/>
+                                                <span t-esc="vuelo['verificado_name']"/>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:40%" class="literal">Curso</th>
+                                            <th style="width:50%" class="literal">Sílabus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="vuelo['silabus_ids']" t-as="silabus">
+                                            <tr>
+                                                <td class="fieldvalue"><span t-esc="silabus['curso']"/></td>
+                                                <td class="fieldvalue"><span t-esc="silabus['name']"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <div class="row" style="page-break-before:always;">
+                            <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                            <style>
+                                table.weight_and_balance td.literal {
+                                    font-size:10px;
+                                }
+                                table.weight_and_balance td.numericfieldvalue {
+                                    font-size:10px;
+                                }                                    
+                            </style>
+                            <table class="fullwidth">
+                                <thead>                       
+                                    <tr>
+                                        <th class="fullwidth tdcolored theadtitle" colspan="6">MASA Y CENTRADO</th>
+                                    </tr>
+                                </thead> 
+                                <tbody>
+                                    <tr>
+                                        <td class="literal">Cálculo peso pasajeros:</td>
+                                        <td class="fieldvalue" colspan="5">
+                                            <span t-esc="wandb['tipocalculopasajeros']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal">Modelo helicóptero:</td>
+                                        <td class="fieldvalue"  colspan="5">
+                                            <span t-esc="wandb['helicoptero_tipo']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal">Realizado por:</td>
+                                        <td class="fieldvalue"  colspan="5">
+                                            <span t-esc="vuelo['piloto_name']"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal">Aceptado por:</td>
+                                        <td class="fieldvalue"  colspan="5">
+                                            <span t-esc="vuelo['piloto_name']"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="fullwidth weight_and_balance">
+                                <tbody>
+                                    <tr>
+                                        <td class="literal" rowspan="2" style="text-align:center">Item</td>
+                                        <td class="literal" rowspan="2" style="text-align:center">Check</td>
+                                        <td class="literal" rowspan="2" style="text-align:center">Masa (kg.)</td>
+                                        <td class="literal" colspan="2" style="text-align:center">Localización (cm.)</td>
+                                        <td class="literal" colspan="2" style="text-align:center">Momento</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap" style="text-align:center">Long. Arm</td>
+                                        <td class="literal nowrap" style="text-align:center">Lat. Arm</td>
+                                        <td class="literal nowrap" style="text-align:center">Long.</td>
+                                        <td class="literal nowrap" style="text-align:center">Lat.</td>                
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap">Masa básica vacío</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['emptyweight']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['emptyweight_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['emptyweight_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['emptyweight_long_moment']"/></td>
+                                        <td class="numericfieldvalue nowrap"><span t-esc="wandb['emptyweight_lat_moment']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap">Piloto</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['frs']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['frs_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['frs_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['frs_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['frs_lat_moment']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap">Masa operativa en seco</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['masa_mop']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['masa_mop_long_moment2']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['masa_mob_lat_moment2']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['masa_mop_long_moment']"/></td>
+                                        <td class="numericfieldvalue nowrap"><span t-esc="wandb['masa_mob_lat_moment']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap">Pasajero / Alumno / PA / PE / PAE / PO</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fls']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fls_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fls_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fls_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fls_lat_moment']"/></td>
+                                    </tr>
+                                    <t t-if="vuelo['wandb_isR44andEC120']">
+                                        <tr>
+                                            <td class="literal nowrap">Pasajeros lado derecho</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftrp']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftrp_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftrp_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftrp_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftrp_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Pasajeros lado izquierdo</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftlp']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftlp_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftlp_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftlp_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftlp_lat_moment']"/></td>
+                                        </tr>       
+                                    </t>                         
+                                    <t t-if="vuelo['wandb_isEC120']">
+                                        <tr>
+                                            <td class="literal nowrap">Pasajeros centro</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftcp']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftcp_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftcp_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftcp_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aftcp_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isCABRIG2']">
+                                        <tr>
+                                            <td class="literal nowrap">Compartimento equipaje frontal</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['front_baggage']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['front_baggage_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['front_baggage_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['front_baggage_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['front_baggage_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Compartimento equipaje principal</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['main_baggage']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['main_baggage_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['main_baggage_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['main_baggage_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['main_baggage_lat_moment']"/></td>
+
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isEC120']">
+                                        <tr>
+                                            <td class="literal nowrap">Carga y Zona C</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonac']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonac_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonac_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonac_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonac_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Carga y Zona D</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonad']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonad_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonad_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonad_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_zonad_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isR22andR44']">
+                                        <tr>
+                                            <td class="literal nowrap">Equipaje bajo el asiento delantero derecho</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufrs']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufrs_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufrs_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufrs_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufrs_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Equipaje bajo el asiento delantero izquierdo</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufls']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufls_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufls_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufls_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['bufls_lat_moment']"/></td>
+
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isR44']">
+                                        <tr>
+                                            <td class="literal nowrap">Equipaje bajo el asiento del lado derecho</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftrs']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftrs_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftrs_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftrs_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftrs_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Equipaje bajo el asiento del lado izquierdo</td>
+                                            <td class="numericfieldvalue"></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftls']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftls_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftls_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftls_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['buaftls_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td class="literal nowrap">Puerta delantera derecha</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['forward_right_door_cb']">√</t><t t-else="">X</t></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_right_door']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_right_door_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_right_door_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_right_door_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_right_door_lat_moment']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="literal nowrap">Puerta delantera izquierda</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['forward_left_door_cb']">√</t><t t-else="">X</t></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_left_door']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_left_door_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_left_door_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_left_door_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['forward_left_door_lat_moment']"/></td>
+                                    </tr>
+                                    <t t-if="vuelo['wandb_isR44']">
+                                        <tr>
+                                            <td class="literal nowrap">Puerta lado derecho</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['aft_right_door_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_right_door']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_right_door_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_right_door_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_right_door_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_right_door_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Puerta lado izquierdo</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['aft_left_door_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_left_door']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_left_door_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_left_door_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_left_door_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['aft_left_door_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isEC120']">
+                                        <tr>
+                                            <td class="literal nowrap">Puerta corrediza</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['sliding_door_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['sliding_door']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['sliding_door_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['sliding_door_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['sliding_door_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['sliding_door_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Puerta de carga trasera</td>
+                                        <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['rear_cargo_door_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rear_cargo_door']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rear_cargo_door_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rear_cargo_door_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rear_cargo_door_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rear_cargo_door_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isR22andR44']">
+                                        <tr>
+                                            <td class="literal nowrap">Cíclico</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['cyclic_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cyclic']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cyclic_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cyclic_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cyclic_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cyclic_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Colectivo</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['collective_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['collective']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['collective_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['collective_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['collective_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['collective_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Pedales</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['pedals_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['pedals']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['pedals_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['pedals_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['pedals_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['pedals_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isR44']">
+                                        <tr>
+                                            <td class="literal nowrap">Cineflex</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['cineflex_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cineflex']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cineflex_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cineflex_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cineflex_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['cineflex_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isEC120']">
+                                        <tr>
+                                            <td class="literal nowrap">Controles duales</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['dualcontrols_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['dualcontrols']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['dualcontrols_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['dualcontrols_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['dualcontrols_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['dualcontrols_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Asiento delantero izquierdo</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['frontseat_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['frontseat']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['frontseat_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['frontseat_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['frontseat_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['frontseat_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Asiento trasero de 3 plazas</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['rearseat_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rearseat']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rearseat_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rearseat_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rearseat_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['rearseat_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Carga y el equipaje ( sin asientos traseros )</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['baggage_noseats_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_noseats']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_noseats_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_noseats_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_noseats_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['baggage_noseats_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="vuelo['wandb_isHIL']">
+                                        <tr>
+                                            <td class="literal nowrap">Carga Externa </td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['carga_externa_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['carga_externa']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['carga_externa_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['carga_externa_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['carga_externa_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['carga_externa_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Gancho Carga Externa</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['gancho_carga_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['gancho_carga']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['gancho_carga_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['gancho_carga_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['gancho_carga_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['gancho_carga_lat_moment']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal nowrap">Espejo Carga Externa</td>
+                                            <td class="numericfieldvalue" style="text-align:center"><t t-if="wandb['espejo_cb']">√</t><t t-else="">X</t></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['espejo']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['espejo_long_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['espejo_lat_arm']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['espejo_long_moment']"/></td>
+                                            <td class="numericfieldvalue"><span t-esc="wandb['espejo_lat_moment']"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td class="literal nowrap">Misc....</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc1']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc1_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc1_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc1_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc1_lat_moment']"/></td>
+                                    </tr>                
+                                    <tr>
+                                        <td class="literal nowrap">Misc....</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc2']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc2_long_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc2_lat_arm']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc2_long_moment']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['misc2_lat_moment']"/></td>
+                                    </tr>    
+                                    <tr>
+                                        <td class="literal nowrap">Masa con combustible 0</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['maswithoutfuel']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['maswithoutfuel_long_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['maswithoutfuel_lat_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['maswithoutfuel_long_moment'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['maswithoutfuel_lat_moment'],2)"/></td>
+                                    </tr>        
+                                    <tr>
+                                        <td class="literal nowrap">Masa de combustible al despegue</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fueltakeoff']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fueltakeoff_long_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fueltakeoff_lat_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fueltakeoff_long_moment'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fueltakeoff_lat_moment'],2)"/></td>
+                                    </tr>                
+                                    <tr>
+                                        <td class="literal nowrap">Masa y CG al despegue</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['takeoff_gw']"/></td>
+                                        <td class="numericfieldvalue" style="background-color: ${color}"><span t-esc="round(wandb['takeoff_gw_long_arm'],2)"/></td>
+                                        <td class="numericfieldvalue" style="background-color: ${color}"><span t-esc="round(wandb['takeoff_gw_lat_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['takeoff_gw_long_moment'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['takeoff_gw_lat_moment'],2)"/></td>
+                                    </tr>                
+                                    <tr>
+                                        <td class="literal nowrap">Masa de combustible prevista al aterrizaje</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['fuellanding']"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fuellanding_long_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fuellanding_lat_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fuellanding_long_moment'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['fuellanding_lat_moment'],2)"/></td>
+                                    </tr>    
+                                    <tr>
+                                        <td class="literal nowrap">Masa y CG previsto al aterrizaje</td>
+                                        <td class="numericfieldvalue"></td>
+                                        <td class="numericfieldvalue"><span t-esc="wandb['landing_gw']"/></td>
+                                        <td class="numericfieldvalue" style="background-color: ${color}"><span t-esc="round(wandb['landing_gw_long_arm'],2)"/></td>
+                                        <td class="numericfieldvalue" style="background-color: ${color}"><span t-esc="round(wandb['landing_gw_lat_arm'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['landing_gw_long_moment'],2)"/></td>
+                                        <td class="numericfieldvalue"><span t-esc="round(wandb['landing_gw_lat_moment'],2)"/></td>
+                                    </tr>                        
+                                    <tr>
+                                        <td colspan="6" align="center">
+                                            <table class="fullwidth">
+                                                <tr>
+                                                    <td style="with:50%;" align="center">
+                                                        <!--div style="with:400px; margin-to:20px;border: 1px solid black;padding:10px" id="longcanvasdiv"-->
+                                                        <img t-attf-src="#{wandb['canvas_long']}"/>
+                                                        <!--/div-->
+                                                    </td>
+                                                    <td style="with:50%;"  align="center">                                                
+                                                        <!--div style="with:400px; margin-to:20px;border: 1px solid black;padding:10px" id="latcanvasdiv"-->
+                                                        <img t-attf-src="#{wandb['canvas_lat']}"/>                                                    
+                                                        <!--/div-->
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <t t-if="performance_ige and performance_oge">
+                            <div class="row" style="page-break-before:always;">
+                                <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                                <table class="fullwidth">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:50%" align="top">
+                                                <img t-attf-src="#{performance_ige}" style="width:100%;height:auto;"/>
+                                            </td>
+                                            <td style="width:50%" align="top">
+                                                <img t-attf-src="#{performance_oge}" style="width:100%;height:auto"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="border: 1px solid white; height:2cm;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="numericfieldvalue" style="border: 1px solid white; text-align: right;">
+                                                <b>Relizado por:</b><br/>
+                                                <span t-esc="vuelo['piloto_name']"/>
+                                            </td>
+                                        </tr>   
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <t t-if="vuelo['meteo_imprimir_report']">
+                            <div class="row" style="page-break-before:always;">
+                                <t t-call="leulit_operaciones.ficha_vuelo_report_cabecerapagina_4_0_1" />
+                                <table class="fullwidth">
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight: bold;">Indicativo meteorología</td>
+                                            <td style="font-weight: normal;"><span t-esc="vuelo['indicativometeo']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;" colspan="2">Meteorología</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: normal;"><span t-raw="vuelo['meteo']"/></td>                                            
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;" colspan="2">Notam</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: normal;"><span t-raw="vuelo['notaminfo']"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

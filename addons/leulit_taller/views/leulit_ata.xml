@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20231127_0846_tree" model="ir.ui.view">
+            <field name="name">leulit_20231127_0846_tree</field>
+            <field name="model">leulit.ata</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="ata_number"/>
+                    <field name="ata_name"/>
+                    <field name="doble_check"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20231127_0846_action" model="ir.actions.act_window">
+            <field name="name">ATAs</field>
+            <field name="res_model">leulit.ata</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+    </data>
+</odoo>

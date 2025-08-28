@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20201124_1253_access_permission" model="ir.model.access">
+        <field name="name">Informes Report Access</field>
+        <field name="model_id" ref="model_leulit_calidad_control_wb_report"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20250211_1119_access_permission" model="ir.model.access">
+        <field name="name">Calidad Worker Access</field>
+        <field name="model_id" ref="model_leulit_calidad_worker"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+
+</odoo>

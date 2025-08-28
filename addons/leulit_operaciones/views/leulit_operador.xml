@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20211007_0953_form">
+            <field name="name">leulit_20211007_0953_form</field>
+            <field name="model">leulit.operador</field>
+            <field name="arch" type="xml">
+                <form string="Operador">
+                    <sheet>
+                        <group col="2">
+                            <field name="image_1920" widget="image" class="oe_avatar oe_left" string="Imagen"/>
+                            <field name="name" string="Nombre"/>
+                            <field name="email" />
+                            <field name="partner_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="peso_piloto" />
+                            <field name="firma" widget="image" class="oe_avatar oe_left"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20211007_0953_tree">
+            <field name="name">leulit_20211007_0953_tree</field>
+            <field name="model">leulit.operador</field>
+            <field name="arch" type="xml">
+                <tree string="Operadores">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- action para menu Operador -->
+        <record model="ir.actions.act_window" id="leulit_20211007_0953_action">
+            <field name="name">Operadores</field>
+            <field name="res_model">leulit.operador</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</odoo>

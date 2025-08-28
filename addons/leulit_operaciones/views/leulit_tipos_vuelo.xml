@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20201023_1138_filter" model="ir.ui.view">
+            <field name="name">leulit_20201023_1138_filter</field>
+            <field name="model">leulit.vuelostipo</field>
+            <field name="arch" type="xml">
+                <search string="Tipos de vuelo filtros">
+                    <field name="name" string="Nombre"/>
+                    <separator/>
+                    <filter string="Archivado" name="inactivo" domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201023_1138_form">
+            <field name="name">leulit_20201023_1138_form</field>
+            <field name="model">leulit.vuelostipo</field>
+            <field name="arch" type="xml">
+                <form string="Tipos de vuelo">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <group col="4">
+                            <field name="name" />
+                            <field name="descripcion" />
+                            <field name="tipo_trabajo"/>
+                            <field name="vuelos" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201023_1138_tree">
+            <field name="name">leulit.vuelos_tipo.tree</field>
+            <field name="model">leulit.vuelostipo</field>
+            <field name="arch" type="xml">
+                <tree string="Tipos de vuelo">
+                    <field name="name" />
+                    <field name="descripcion" />
+                    <field name="tipo_trabajo" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1138_action">
+            <field name="name">Tipos de vuelos</field>
+            <field name="res_model">leulit.vuelostipo</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1144_action">
+            <field name="name">Tipos de vuelos AOC</field>
+            <field name="res_model">leulit.vuelostipo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_trabajo','=','AOC')]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1145_action">
+            <field name="name">Tipos de vuelos Trabajo Aéreo</field>
+            <field name="res_model">leulit.vuelostipo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_trabajo','=','Trabajo Aereo')]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1146_action">
+            <field name="name">Tipos de vuelos Escuela</field>
+            <field name="res_model">leulit.vuelostipo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_trabajo','=','Escuela')]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201023_1147_action">
+            <field name="name">Tipos de vuelos NCO</field>
+            <field name="res_model">leulit.vuelostipo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tipo_trabajo','=','NCO')]</field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <report string="leulit_registro_consumosaeronave_report"
+            id="leulit_registro_consumosaeronave_report"
+            model="leulit.vuelo"
+            name="leulit_operaciones.leulit_registro_consumosaeronave_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+		
+
+		<template id="registro_consumosaeronave_css">
+            <style>
+                .fullwidth {
+                    width: 100%;
+                }
+                .numbervalue {
+            	    text-align:right;
+                }
+                table {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;		    
+                    border-spacing: 0;			
+                }
+                th, tbody td, tfoot td {
+                    border: 1px solid #000000;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:10px;
+                }
+                .bgcolored {
+                    background-color: #585858;
+                }  
+                .titleheight {
+                    height:0.6cm
+                }
+                .title_style{
+                    border: 1px solid #000000;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:20px;
+                    font-weight:bold;
+                    vertical-align: middle;
+                }
+                .bold_title_style{
+                    border: 1px solid #000000;
+                    padding-right:1px;
+                    padding-left:1px;
+                    text-align:center;
+                    font-size:12px;
+                    font-weight:bold;
+                }
+                .bold_title_style2{
+                    border-top: hidden;
+                    border-right: hidden;
+                    border-bottom: hidden;
+                    border-left: 1px solid #000000;
+                    padding-right:1px;
+                    padding-left:1px;
+                    text-align:left;
+                    font-weight:bold;
+                    font-size:12px;
+                }
+                .bold_table_style{
+                    border: 1px solid #000000;
+                    padding:2px;
+                    text-align:center;
+                    font-size:10px;
+                    font-weight:bold;
+                }
+                .normal_table_style{
+                    border: 1px solid #000000;
+                    padding:6px;
+                    text-align:center;
+                    font-size:10px;
+                }
+                .small_table_style{
+                    border: 1px solid #000000;
+                    padding:6px;
+                    text-align:center;
+                    font-size:8px;
+                }
+            </style>
+        </template>
+
+
+        <template id="leulit_registro_consumosaeronave_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="5"/>
+                <t t-call="leulit.Registro_consumosaeronave_css"/>
+				<table class="fullwidth">
+					<thead>
+						<tr>
+							<td class="title_style" style="text-align:center;vertical-align: middle;" rowspan="3" colspan="5">
+								<img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg"/>
+							</td>
+							<td class="title_style" colspan="6">Registro Consumos en Vuelos</td>
+						</tr>
+						<tr>
+							<td class="bold_title_style" colspan="6" >Documento ref: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y%m%d%I%M%S')"/></td>
+					</tr>
+					<tr>
+							<td class="bold_title_style" colspan="6" >Matrícula: <span t-esc="docs[0].helicoptero_id.name"/></td>
+					</tr>
+						<tr>
+							<td style="border-left: hidden; border-right: hidden;" colspan="16"></td>
+							<td style="border-left: hidden; border-right: hidden; border-top: hidden;" colspan="2"></td>
+						</tr>
+						<tr>
+							<td class="bold_table_style nowrap">Vuelo Nº</td>
+							<td class="bold_table_style">Aceite añadido</td>
+							<td class="bold_table_style">Consumo medio</td>
+							<td class="bold_table_style">Reservas</td>
+							<td class="bold_table_style">Combustible mínimo (l.)</td>
+							<td class="bold_table_style">Remanente (l.)</td>
+							<td class="bold_table_style">Añadido (l.)</td>
+							<td class="bold_table_style">Salida (l.)</td>
+							<td class="bold_table_style">Previsto aterrizaje (l.)</td>
+							<td class="bold_table_style">Tiempo servicio</td>
+							<td class="bold_table_style">Combustible llegada (l.)</td>
+						</tr>
+					</thead>
+					<tbody>
+                        <t t-foreach="docs" t-as="o">
+							<tr>
+								<td class="normal_table_style"><span t-field="o.codigo"/></td>
+								<td class="normal_table_style"><span t-field="o.oilqty"/></td>
+								<td class="normal_table_style"><span t-field="o.consumomedio_vuelo"/></td>
+								<td class="normal_table_style"><span t-field="o.reservasfuel"/></td>
+								<td class="normal_table_style"><span t-field="o.combustibleminimo"/></td>
+								<td class="normal_table_style"><span t-field="o.fuelremanente"/></td>
+								<td class="normal_table_style"><span t-field="o.fuelqty"/></td>
+								<td class="normal_table_style"><span t-field="o.fuelsalida"/></td>
+								<td class="normal_table_style"><span t-field="o.combustiblelanding"/></td>
+								<td class="normal_table_style"><span t-field="o.strtiemposervicio"/></td>
+								<td class="normal_table_style"><span t-field="o.fuelllegada"/></td>
+							</tr>
+						</t>
+					</tbody>
+		       	</table>
+            </t>
+        </template>
+
+    </data>
+</odoo>

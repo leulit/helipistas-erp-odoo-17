@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record forcecreate="True" id="dp_actividad" model="decimal.precision">
+            <field name="name">Actividad precisión 2 dígitos</field>
+            <field name="digits">2</field>
+        </record>
+
+        <record forcecreate="True" id="dp_coordenadas" model="decimal.precision">
+            <field name="name">Actividad precisión 8 dígitos</field>
+            <field name="digits">8</field>
+        </record>
+
+    </data>
+</odoo>

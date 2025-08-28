@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20231127_0940_tree" model="ir.ui.view">
+            <field name="name">leulit_20231127_0940_tree</field>
+            <field name="model">leulit.certificacion</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20231127_0940_action" model="ir.actions.act_window">
+            <field name="name">Certificaciones</field>
+            <field name="res_model">leulit.certificacion</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+    </data>
+</odoo>

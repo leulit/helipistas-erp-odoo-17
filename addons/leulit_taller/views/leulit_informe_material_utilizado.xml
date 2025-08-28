@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="leulit_20230118_1037_report"
+            string="Material Utilizado"
+            model="maintenance.request"
+            report_type="qweb-pdf"
+            file="leulit_taller.leulit_20241127_1528_informe"
+            name="leulit_taller.leulit_20241127_1528_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera2"
+        />
+
+
+        <template id="material_report_css">
+            <style>
+                html {
+                    font-family: sans-serif;
+                    -ms-text-size-adjust: 100%;
+                    -webkit-text-size-adjust: 100%;
+                }
+                
+                @page {
+                    size: A4 portrait;
+                    margin: 0;
+                }
+                
+                .page-container {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0mm 0mm;
+                    position: relative;
+                }
+
+                .content-wrapper {
+                    flex: 1;
+                    overflow: hidden;
+                }
+                
+                .page-number-container {
+                    position: absolute;
+                    bottom: -15mm;      /* Posicionamiento ajustado */
+                    right: 0;
+                    text-align: right;
+                }
+                
+                .page-number {
+                    font-size: 10px;
+                    padding-top: 5px;
+                    border-top: 1px solid black;
+                    display: inline-block;
+                    min-width: 100px;
+                }
+                
+                .fullwidth {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 100%;
+                }
+                
+                .main-table {
+                    width: 100%;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                }
+
+                .report-header {
+                    display: table-header-group !important;
+                    break-inside: avoid;
+                }
+
+                .report-header table {
+                    margin-bottom: 10px;
+                }
+
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                
+                .centertext {
+                    text-align: center;
+                }
+                
+                thead { 
+                    display: table-header-group;
+                }
+                
+                tr { 
+                    page-break-inside: avoid;
+                }
+                
+                th, tbody td, thead td {
+                    border: 1px solid #B0B0B0;
+                    padding: 2px;
+                    text-align: left;
+                    font-size: 11px;
+                    font-weight: normal;
+                    vertical-align: middle;
+                }
+
+                .header-table td {
+                    border: 1px solid #B0B0B0;
+                    padding: 2px;
+                }
+                
+                tbody tr {
+                    height: 25px;
+                }
+
+                /* Ajustes específicos para la cabecera */
+                .header-table td[style*="font-size:20px"] {
+                    font-size: 18px !important;
+                }
+
+                .header-table td[style*="font-size:12px"] {
+                    font-size: 11px !important;
+                }
+
+                .header-table img {
+                    height: 30px !important;
+                }
+
+                /* Ajustes para el contenido de las celdas */
+                td[style*="max-height"] {
+                    height: 30px;
+                    max-height: 30px;
+                }
+
+                span[style*="max-height"] {
+                    max-height: 26px;
+                    -webkit-line-clamp: 2;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20241127_1528_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_header_spacing" t-value="1"/>
+                <t t-set="contador" t-value="1"/>
+                <t t-foreach="pages" t-as="page">
+                    <t t-call="leulit_taller.material_report_css"/>
+                    <t t-if="contador > 1">
+                        <div class="page-container" style="margin-top: -20mm;">
+                            <div class="content-wrapper">
+                                <table class="main-table">
+                                    <thead class="report-header">
+                                        <tr>
+                                            <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                                <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                                            </td>
+                                            <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                                <span><b>Relación de <br/>Material Utilizado</b></span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                                <span>Nº Exp de Mant:</span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                                <span t-esc="n_exp"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                                <span>Nº de OT:</span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                                <span t-esc="n_orden_trabajo"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:0px;height: 30px;"></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="page" t-as="material">
+                                            <tr>
+                                                <td colspan="100%" style="border:0px;">
+                                                    <table class="fullwidth">
+                                                        <tr>
+                                                            <td class="tdcolored" style="width:30px">P/N:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['pn']"/></td>
+                                                            <td class="tdcolored">Rev:</td>
+                                                            <td class="centertext"><span t-esc="material['revision']"/></td>
+                                                            <td class="tdcolored">Lote:</td>
+                                                            <td class="centertext" colspan="2"><span t-esc="material['lote']"/></td>
+                                                            <td class="tdcolored">Nombre</td>
+                                                            <td class="centertext" colspan="4"><span t-esc="material['name']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="tdcolored">S/N:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['sn']"/></td>
+                                                            <td class="tdcolored" colspan="2">Cantidad:</td>
+                                                            <td class="centertext" style="width:30px"><span t-esc="material['qty']"/></td>
+                                                            <td class="tdcolored" colspan="2">Referencia:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['ref_origen']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="tdcolored" colspan="4">Baja del almacén</td>
+                                                            <td class="tdcolored" colspan="2">Nombre:</td>
+                                                            <td class="centertext" colspan="7" style="width:130px"><span t-esc="material['empleado']"/></td>
+                                                            <td class="tdcolored" style="width:40px">Fecha:</td>
+                                                            <td class="centertext" colspan="2"><span t-esc="material['fecha']"/></td>
+                                                        </tr>
+                                                        <tr style="height:15px;">
+                                                            <td style="border:0px;"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <br/>
+                                        </t>
+                                        <table class="fullwidth">
+                                            <tr style="height: 5px;">
+                                                <td style="border:0px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fieldvalue fullwidth" style="height: 100px;"><span t-raw="observaciones"/></td>
+                                            </tr>
+                                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="page-number-container">
+                                <span class="page-number">
+                                    Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
+                                </span>
+                            </div>
+                            <t t-set="contador" t-value="contador + 1"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="page-container" style="margin-top: -40mm;">
+                            <div class="content-wrapper">
+                                <table class="main-table">
+                                    <thead class="report-header">
+                                        <tr>
+                                            <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                                <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                                            </td>
+                                            <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                                <span><b>Relación de <br/>Material Utilizado</b></span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                                <span>Nº Exp de Mant:</span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                                <span t-esc="n_exp"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                                <span>Nº de OT:</span>
+                                            </td>
+                                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                                <span t-esc="n_orden_trabajo"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:0px;height: 30px;"></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="page" t-as="material">
+                                            <tr>
+                                                <td colspan="100%" style="border:0px;">
+                                                    <table class="fullwidth">
+                                                        <tr>
+                                                            <td class="tdcolored" style="width:30px">P/N:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['pn']"/></td>
+                                                            <td class="tdcolored">Rev:</td>
+                                                            <td class="centertext"><span t-esc="material['revision']"/></td>
+                                                            <td class="tdcolored">Lote:</td>
+                                                            <td class="centertext" colspan="2"><span t-esc="material['lote']"/></td>
+                                                            <td class="tdcolored">Nombre</td>
+                                                            <td class="centertext" colspan="4"><span t-esc="material['name']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="tdcolored">S/N:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['sn']"/></td>
+                                                            <td class="tdcolored" colspan="2">Cantidad:</td>
+                                                            <td class="centertext" style="width:30px"><span t-esc="material['qty']"/></td>
+                                                            <td class="tdcolored" colspan="2">Referencia:</td>
+                                                            <td class="centertext" colspan="5"><span t-esc="material['ref_origen']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="tdcolored" colspan="4">Baja del almacén</td>
+                                                            <td class="tdcolored" colspan="2">Nombre:</td>
+                                                            <td class="centertext" colspan="7" style="width:130px"><span t-esc="material['empleado']"/></td>
+                                                            <td class="tdcolored" style="width:40px">Fecha:</td>
+                                                            <td class="centertext" colspan="2"><span t-esc="material['fecha']"/></td>
+                                                        </tr>
+                                                        <tr style="height:15px;">
+                                                            <td style="border:0px;"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <br/>
+                                        </t>
+                                        <table class="fullwidth">
+                                            <tr style="height: 10px;">
+                                                <td style="border:0px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fieldvalue fullwidth" style="height: 100px;"><span t-raw="observaciones"/></td>
+                                            </tr>
+                                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="page-number-container">
+                                <span class="page-number">
+                                    Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
+                                </span>
+                            </div>
+                            <t t-set="contador" t-value="contador + 1"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+
+        <!-- <template id="material_report_header">
+            <div style="width:100%;" class="header">
+                <div class="row">
+                    <t t-call="leulit_taller.material_report_css"/>
+                    <table class="fullwidth">
+                        <tr>
+                            <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                            </td>
+                            <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                <span><b>Relación de <br/>Material Utilizado</b></span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                <span>Nº Exp de Mant:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                <span t-esc="n_exp"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>Nº de OT:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span t-esc="n_orden_trabajo"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template id="material_report_footer">
+            <div class="footer">
+                <div class="row text-center" style="border-top: 1px solid black;">
+                    <div class="col col-3 offset-9 text-right">
+                        <ul class="list-inline mt-2">
+                            <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                            <li class="list-inline-item">
+                                <span style="font-size:10px;">D-</span>
+                                <t t-if="current_page">
+                                    <span style="font-size:10px;"><t t-esc="current_page"/></span>
+                                </t>
+                                <t t-else="">
+                                    <span class="page" style="font-size:10px;"/>
+                                </t>
+                            </li>
+                            <li class="list-inline-item" style="font-size:10px;">de</li>
+                            <li class="list-inline-item">
+                                <span style="font-size:10px;">D-</span>
+                                <t t-if="total_pages">
+                                    <span style="font-size:10px;"><t t-esc="total_pages"/></span>
+                                </t>
+                                <t t-else="">
+                                    <span class="topage" style="font-size:10px;"/>
+                                </t>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template> -->
+   
+        
+        <!-- <template id="leulit_20230118_1037_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_header_spacing" t-value="20"/>
+                <t t-set="data_report_margin_top" t-value="30"/>
+                <div class="page">
+                    <t t-call="leulit_taller.material_report_css"/>
+                    <t t-call="leulit_taller.material_report_header" />
+                    <div class="row">
+                        <t t-if="materiales">
+                            <t t-foreach="materiales" t-as="material">
+                                <table class="fullwidth">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tdcolored" style="width:30px">P/N:</td>
+                                            <td class="centertext" colspan="5"><span t-esc="material['pn']"/></td>
+                                            <td class="tdcolored">Rev:</td>
+                                            <td class="centertext"><span t-esc="material['revision']"/></td>
+                                            <td class="tdcolored">Lote:</td>
+                                            <td class="centertext" colspan="2"><span t-esc="material['lote']"/></td>
+                                            <td class="tdcolored">Nombre</td>
+                                            <td class="centertext" colspan="4"><span t-esc="material['name']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdcolored">S/N:</td>
+                                            <td class="centertext" colspan="5"><span t-esc="material['sn']"/></td>
+                                            <td class="tdcolored" colspan="2">Cantidad:</td>
+                                            <td class="centertext" style="width:30px"><span t-esc="material['qty']"/></td>
+                                            <td class="tdcolored" colspan="2">Referencia:</td>
+                                            <td class="centertext" colspan="5"><span t-esc="material['ref_origen']"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdcolored" colspan="4">Baja del almacén</td>
+                                            <td class="tdcolored" colspan="2">Nombre:</td>
+                                            <td class="centertext" colspan="7" style="width:130px"><span t-esc="material['empleado']"/></td>
+                                            <td class="tdcolored" style="width:40px">Fecha:</td>
+                                            <td class="centertext" colspan="2"><span t-esc="material['fecha']"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <t t-set="items" t-value="1"/>
+                            <t t-foreach="items" t-as="item">
+                                <table class="fullwidth">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tdcolored" style="width:30px">P/N:</td>
+                                            <td colspan="5" style="width:70px"></td>
+                                            <td class="tdcolored" style="width:70px">Rev:</td>
+                                            <td></td>
+                                            <td class="tdcolored" colspan="1">Lote:</td>
+                                            <td colspan="2"></td>
+                                            <td class="tdcolored" colspan="1">Nombre</td>
+                                            <td colspan="4"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdcolored">S/N:</td>
+                                            <td colspan="5"></td>
+                                            <td class="tdcolored" colspan="2">Cantidad:</td>
+                                            <td style="width:30px"></td>
+                                            <td class="tdcolored" colspan="2">Referencia:</td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdcolored" colspan="4">Baja del almacén</td>
+                                            <td class="tdcolored" colspan="2">Nombre:</td>
+                                            <td colspan="7" style="width:130px"></td>
+                                            <td class="tdcolored" style="width:40px">Fecha:</td>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                            </t>
+                        </t>
+                        <br/>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
+                            </tr>
+                            <tr>
+                                <td class="fieldvalue" style="height: 100px;"><span t-raw="observaciones"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <t t-call="leulit_taller.material_report_footer" />
+                </div> 
+            </t>
+        </template> -->
+        
+    </data>
+</odoo>

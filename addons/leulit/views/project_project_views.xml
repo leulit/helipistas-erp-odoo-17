@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+        <record id="project_form_leulit" model="ir.ui.view">
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project" />
+            <field name="arch" type="xml">
+                <field name="message_follower_ids" position="after">
+                    <field name="message_ids" widget="mail_thread"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

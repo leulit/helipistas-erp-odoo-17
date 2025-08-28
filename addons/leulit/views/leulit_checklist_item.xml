@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id='leulit_20210518_1113_form' model="ir.ui.view">
+            <field name="name">leulit_20210518_1113_form</field>
+            <field name="model">leulit.checklist_item</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Formulario checklist items">
+                    <sheet>
+                        <field name="orden"/>
+                        <field name="descriptor"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>    
+
+    </data>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- leulit.maintenance_task_preventive tree view -->
+    <record id="leulit_20230620_1234_tree" model="ir.ui.view">
+        <field name="name">leulit_20230620_1234_tree</field>
+        <field name="model">leulit.maintenance_task_preventive</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="descripcion"/>
+                <field name="referencia"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- leulit.maintenance_task_preventive form view -->
+    <record id="leulit_20230620_1234_form" model="ir.ui.view">
+        <field name="name">leulit_20230620_1234_form</field>
+        <field name="model">leulit.maintenance_task_preventive</field>
+        <field name="arch" type="xml">
+            <form string="Tarea de mantenimiento">
+                <sheet>
+                    <group>
+                        <field name="descripcion"/>
+                        <field name="referencia"/>
+                    </group>
+                    <separator string="Planes de mantenimiento"/>
+                    <field name="planned_activity_ids" readonly="1">
+                        <tree>
+                            <field name="maintenance_plan_id"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- leulit.maintenance_task_preventive action window -->
+    <record id="leulit_20230620_1234_action" model="ir.actions.act_window">
+        <field name="name">Tareas de mantenimiento</field>
+        <field name="res_model">leulit.maintenance_task_preventive</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+</odoo>

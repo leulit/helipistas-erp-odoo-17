@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="view_order_form_leulit" model="ir.ui.view">
+            <field name="name">view_order_form_leulit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="task_done"/>
+                </xpath>
+                <xpath expr="//field[@name='require_signature']" position="before">
+                    <field name="partner_bank_id"/>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="after">
+                    <button name="action_confirm_without_delivery" groups="leulit.RTaller_base"
+                        string="Confirmar sin Albarán" class="btn-primary" type="object" invisible="state not in ['sent']"/>
+                    <button name="action_confirm_without_delivery" groups="leulit.RTaller_base"
+                        string="Confirmar sin Albarán" type="object"
+                         invisible="state not in ['draft']"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20201202_1010_action" model="ir.actions.act_window">
+            <field name="name">Pedidos de venta</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="context">{}</field>
+        </record>
+
+    </data>
+</odoo>

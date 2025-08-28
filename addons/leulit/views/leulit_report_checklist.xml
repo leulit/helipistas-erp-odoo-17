@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>  
+
+        <report
+            id="report_leulit_checklist"
+            string="Informe checklist"
+            model="leulit.checklist"
+            report_type="qweb-pdf"
+            file="leulit.leulit_20220607_1511_informe"
+            name="leulit.leulit_20220607_1511_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="leulit_20220607_1511_informe">
+            <t t-call="web.html_container">
+                <style type="text/css">
+                    .page {}
+                    .fullwidth {
+                        width: 100%;
+                    }
+                    .numbervalue {
+                        text-align:right;
+                    }
+                    table {
+                        text-align:center;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        overflow: visible !important;
+                    }
+                    thead { display: table-header-group !important}
+                    tfoot { 
+                        display: table-footer-group !important
+                    }
+                    .footer-bottom {                
+                    }
+                    tr { page-break-inside: avoid }
+
+                    th, tbody td, tfoot td {
+                        border: 1px solid #000000;
+                        text-align:center;
+                        font-size:12px;
+                        font-weight:bold;
+                        padding:5px;
+                    }
+                    .bgcolored {
+                        background-color: #585858;
+                        color: #ffffff
+                    }
+                    .titleheight {
+                    }
+                    .noborder {
+                        border: 0px none #000000;
+                    }   
+                    .lefttext {
+                        text-align: left;
+                    }  
+                </style>
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <table class="table table-bordered fullwidth" data-pagebreak="after">
+                    <thead>
+                        <tr>
+                            <th colspan="6">
+                                <table class="table table-bordered fullwidth">
+                                    <tr>
+                                        <td style="text-align:center;vertical-align: middle; width:20%">
+                                            <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                                        </td>
+                                        <td class="literal theadtitle centertext" style="width:80%;font-size:20px;">
+                                            <span t-esc="descriptor"/>
+                                        </td>                
+                                    </tr>
+                                </table>                                                              
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="literal centertext bgcolored titleheight" style="width:10%" >Orden</th>
+                            <th class="literal centertext bgcolored titleheight" style="width:85%" >Descripción</th>
+                            <th class="literal centertext bgcolored titleheight" style="width:5%" >Check</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="items" t-as="item">
+                            <tr>
+                                <td><span t-esc="item['orden']"/></td>
+                                <td><span t-esc="item['descriptor']"/></td>
+                                <td></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+        </template>
+
+
+        <report
+            id="report_leulit_checklist_template"
+            string="Informe plantilla checklist"
+            model="leulit.checklist_template"
+            report_type="qweb-pdf"
+            file="leulit.leulit_20221107_1702_informe"
+            name="leulit.leulit_20221107_1702_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="leulit_20221107_1702_informe">
+            <t t-call="web.html_container">
+                <style type="text/css">
+                    .page {}
+                    .fullwidth {
+                        width: 100%;
+                    }
+                    .numbervalue {
+                        text-align:right;
+                    }
+                    table {
+                        text-align:center;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        overflow: visible !important;
+                    }
+                    thead { display: table-header-group !important}
+                    tfoot { 
+                        display: table-footer-group !important
+                    }
+                    .footer-bottom {                
+                    }
+                    tr { page-break-inside: avoid }
+
+                    th, tbody td, tfoot td {
+                        border: 1px solid #000000;
+                        text-align:center;
+                        font-size:12px;
+                        font-weight:bold;
+                        padding:5px;
+                    }
+                    .bgcolored {
+                        background-color: #585858;
+                        color: #ffffff
+                    }
+                    .titleheight {
+                    }
+                    .noborder {
+                        border: 0px none #000000;
+                    }   
+                    .lefttext {
+                        text-align: left;
+                    }  
+                </style>
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <table class="table table-bordered fullwidth" data-pagebreak="after">
+                    <thead>
+                        <tr>
+                            <th colspan="6">
+                                <table class="table table-bordered fullwidth">
+                                    <tr>
+                                        <td style="text-align:center;vertical-align: middle; width:20%">
+                                            <img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
+                                        </td>
+                                        <td class="literal theadtitle centertext" style="width:80%;font-size:20px;">
+                                            <span t-esc="descriptor"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="literal centertext bgcolored titleheight" style="width:10%" >Orden</th>
+                            <th class="literal centertext bgcolored titleheight" style="width:90%" >Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="items" t-as="item">
+                            <tr>
+                                <td><span t-esc="item['orden']"/></td>
+                                <td><span t-esc="item['descriptor']"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+        </template>
+
+    </data>
+</odoo>

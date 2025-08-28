@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    
+    <record id="leulit_20230623_1613_tree" model="ir.ui.view">
+        <field name="name">leulit_20230623_1613_tree</field>
+        <field name="model">maintenance.stage</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_stage_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='done']" position="after">
+                <field name="accepted"/>
+                <field name="flight"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

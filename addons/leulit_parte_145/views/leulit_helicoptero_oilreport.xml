@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20201109_1131_search" model="ir.ui.view">
+            <field name="name">leulit_20201109_1131_search</field>
+            <field name="model">leulit.helicoptero_oilreport</field>
+            <field name="arch" type="xml">
+                <search string="Helipistas">
+                    <filter string="EC-GUC" name="helipistas_helicoptero_oil_control_filter_EC_GUC"  domain="[('matricula','=','EC-GUC')]" />
+                    <filter string="EC-GVG" name="helipistas_helicoptero_oil_control_filter_EC_GVG"  domain="[('matricula','=','EC-GVG')]" />
+                    <filter string="EC-HHT" name="helipistas_helicoptero_oil_control_filter_EC_HHT"  domain="[('matricula','=','EC-HHT')]" />
+                    <filter string="EC-HZP" name="helipistas_helicoptero_oil_control_filter_EC_HZP"  domain="[('matricula','=','EC-HZP')]" />
+                    <filter string="EC-ILV" name="helipistas_helicoptero_oil_control_filter_EC_ILV"  domain="[('matricula','=','EC-ILV')]" />
+                    <filter string="EC-JHY" name="helipistas_helicoptero_oil_control_filter_EC_JHY"  domain="[('matricula','=','EC-JHY')]" />
+                    <filter string="EC-JNE" name="helipistas_helicoptero_oil_control_filter_EC_JNE"  domain="[('matricula','=','EC-JNE')]" />
+                    <separator/>
+                    <group expand="0" string="Agrupar por...">
+                        <filter name="" string="Helicóptero" domain="[]" context="{'group_by': 'helicoptero_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201109_1131_tree" model="ir.ui.view">
+            <field name="name">leulit_20201109_1131_tree</field>
+            <field name="model">leulit.helicoptero_oilreport</field>
+            <field name="arch" type="xml">
+            <tree string="Análisis consume aceite" create="false">
+                <field name="matricula"/>
+                <field name="baja_helicoptero" invisible="1"/>
+                <field name="fecha"/>
+                <field name="oilqty" sum="Total"/>
+                <field name="acumulado"/>
+                <field name="airtimeacumulado" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20201109_1131_action">
+            <field name="name">Helicópteros control aceite</field>
+            <field name="res_model">leulit.helicoptero_oilreport</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('baja_helicoptero','=',False)]</field>
+        </record>
+
+        
+    </data>
+</odoo>

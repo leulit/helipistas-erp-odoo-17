@@ -1,0 +1,629 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <!-- Vista unica para las tareas de la parte 145 -->
+        <record id="leulit_20250724_1244_form" model="ir.ui.view">
+            <field name="name">leulit_20250724_1244_form</field>
+            <field name="model">project.task</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tareas" class="o_form_project_tasks">
+                    <field name="recurrence_id" invisible="1"/>
+                    <field name="allow_billable" invisible="1"/>
+                    <field name="sale_line_id" invisible="1"/>
+                    <field name="allow_task_dependencies" invisible="1"/>
+                    <field name="rating_last_value" invisible="1"/>
+                    <field name="rating_count" invisible="1"/>
+                    <field name="allow_milestones" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="project_id" invisible="1"/>
+                    <header>
+                        <field name="stage_id" widget="statusbar_duration" options="{'clickable': '1', 'fold_field': 'fold'}" invisible="not project_id and not stage_id"/>
+                        <field name="state" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}" invisible="1"/>
+                        <field name="personal_stage_type_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}" invisible="project_id" domain="[('user_id', '=', uid)]" string="Personal Stage"/>
+                    </header>
+                    <sheet string="Task">
+                        <div class="oe_button_box" name="button_box">
+                            <!-- Dummy tag for organizing buttons, using position='replace' when inheriting -->
+                            <span id="button_products" invisible="1"/>
+                            <span id="button_worksheet" invisible="1"/>
+                            <!-- Dummy tag used to organize buttons, englobing the 3 buttons modifies the width of the button -->
+                            <span id="start_rating_buttons" invisible="1"/>
+                            <field name="rating_avg" invisible="1"/>
+                            <field name="rating_active" invisible="1"/>
+                            <button name="action_open_ratings" type="object" invisible="rating_count == 0 or not rating_active" class="oe_stat_button" groups="project.group_project_rating">
+                                <i class="fa fa-fw o_button_icon fa-smile-o text-success" invisible="rating_avg &lt; 3.66" title="Satisfied"/>
+                                <i class="fa fa-fw o_button_icon fa-meh-o text-warning" invisible="rating_avg &lt; 2.33 or rating_avg &gt;= 3.66" title="Okay"/>
+                                <i class="fa fa-fw o_button_icon fa-frown-o text-danger" invisible="rating_avg &gt;= 2.33" title="Dissatisfied"/>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value"><field name="rating_avg_text" nolabel="1"/></span>
+                                    <span class="o_stat_text">Last Rating</span>
+                                </div>
+                            </button>
+                            <!-- Dummy tag used to organize buttons -->
+                            <span id="end_rating_buttons" invisible="1"/>
+                            <button name="action_open_parent_task" type="object" class="oe_stat_button" icon="fa-tasks" invisible="not parent_id">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Parent Task</span>
+                                </div>
+                            </button>
+                            <button name="action_recurring_tasks" type="object" invisible="not active or not recurrence_id" class="oe_stat_button" icon="fa-repeat" groups="project.group_project_recurring_tasks">
+                                <field name="recurring_count" widget="statinfo" string="Recurring Tasks"/>
+                            </button>
+                            <button name="419" type="action" class="oe_stat_button" icon="fa-tasks" invisible="not id or subtask_count == 0" context="{'default_user_ids': user_ids, 'default_milestone_id': milestone_id, 'subtask_action': True}">
+                                <div class="o_field_widget o_stat_info">
+                                    <div class="d-flex align-items-baseline gap-1">
+                                        <span class="o_stat_value order-1">
+                                            <field name="subtask_count" widget="statinfo" nolabel="1"/>
+                                        </span>
+                                        <span class="o_stat_text order-2">Sub-tasks</span>
+                                    </div>
+                                    <div class="d-flex align-items-baseline gap-1">
+                                        <span class="o_stat_value">
+                                            <field name="closed_subtask_count" widget="statinfo" nolabel="1"/>
+                                        </span>
+                                        <span class="o_stat_text order-2">Closed</span>
+                                    </div>
+                                </div>
+                            </button>
+                            <button name="action_dependent_tasks" type="object" invisible="dependent_tasks_count == 0" class="oe_stat_button" icon="fa-tasks" groups="project.group_project_task_dependencies">
+                                <field name="dependent_tasks_count" widget="statinfo" string="Blocking Tasks"/>
+                            </button>
+                            <!-- Dummy tag used to organize buttons -->
+                            <span id="end_button_box" invisible="1"/>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <div class="oe_title pr-0" attrs="{'invisible' : ['|','|',('maintenance_request_id','=',False),('tipo_tarea_taller','!=','tarea'),('maintenance_planned_activity_id','!=',False)],'readonly': [('maintenance_request_done', '=', True)]}">
+                            <h1 class="d-flex flex-row justify-content-between">
+                                <group>
+                                    <field name="item_job_card_id" string="Plantilla Tarea" attrs="{'readonly': [('maintenance_request_done', '=', True)]}" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                    <field name="job_card_id" string="Plantilla Job Card" attrs="{'readonly': [('maintenance_request_done', '=', True)]}" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                </group>
+                            </h1>
+                        </div>
+                        <div class="oe_title pr-0" attrs="{'invisible' : [('tipo_tarea_taller','!=','defecto_encontrado')],'readonly': [('maintenance_request_done', '=', True)]}">
+                            <h1 class="d-flex flex-row justify-content-between">
+                                <group>
+                                    <field name="item_job_card_id" string="Plantilla Tarea" attrs="{'readonly': [('maintenance_request_done', '=', True)]}" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                </group>
+                            </h1>
+                        </div> 
+                        <div class="oe_title pr-0" attrs="{'invisible' : [('tipo_tarea_taller','!=','service_bulletin')],'readonly': [('maintenance_request_done', '=', True)]}">
+                            <h1 class="d-flex flex-row justify-content-between">
+                                <group>
+                                    <field name="service_bulletin_id" string="Service Bulletin" attrs="{'readonly': [('maintenance_request_done', '=', True)]}" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                </group>
+                            </h1>
+                        </div>
+                        <div class="oe_title pr-0" attrs="{'invisible' : [('tipo_tarea_taller','!=','airworthiness_directive')],'readonly': [('maintenance_request_done', '=', True)]}">
+                            <h1 class="d-flex flex-row justify-content-between">
+                                <group>
+                                    <field name="airworthiness_directive_id" string="Airworthiness Directive" attrs="{'readonly': [('maintenance_request_done', '=', True)]}" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                </group>
+                            </h1>
+                        </div>
+                        <div class="oe_title pe-0">
+                            <h1 class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex w-100">
+                                    <field name="priority" widget="priority_switch" class="me-3"/>
+                                    <field name="name" options="{'line_breaks': False}" widget="text" class="o_task_name text-truncate w-md-75 w-100 pe-2" placeholder="Título de tarea..." attrs="{'invisible' : [('tipo_tarea_taller','=','defecto_encontrado')]}"/>
+                                    <field name="name" options="{'line_breaks': False}" widget="text" class="o_task_name text-truncate w-md-75 w-100 pe-2" placeholder="Defecto encontrado..." attrs="{'invisible' : [('tipo_tarea_taller','!=','defecto_encontrado')]}"/>
+                                </div>
+                                <div class="d-flex justify-content-end o_state_container" invisible="not active">
+                                    <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                                </div>
+                                <div class="d-flex justify-content-start o_state_container w-100 w-md-50 w-lg-25" invisible="active">
+                                    <field name="state" widget="project_task_state_selection" class="o_task_state_widget"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="display_in_project" invisible="1" force_save="1"/>
+                                <field name="project_id" domain="[('active', '=', True), '|', ('company_id', '=', False), ('company_id', '=?', company_id)]" widget="project"/>
+                                <field name="milestone_id" placeholder="e.g. Product Launch" context="{'default_project_id': project_id}" invisible="not project_id or not allow_milestones"/>
+                                <field name="user_ids" class="o_task_user_field" options="{'no_open': True, 'no_quick_create': True}" widget="many2many_avatar_user"/>
+                                <field name="is_project_map_empty" invisible="1" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                <field name="has_multi_sol" invisible="1" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                <field name="supervisado_por" attrs="{'invisible' : [('maintenance_request_id', '=', False)]}"/>
+                                <field name="solucion_defecto" attrs="{'invisible' : ['|',('maintenance_request_id', '=', False),('tipo_tarea_taller','!=','defecto_encontrado')]}"/>
+                                <field name="parent_id" options="{'no_create_edit': True,'no_create': True}"/>
+                                <field name="date_deadline" attrs="{'invisible': [('is_closed', '=', True)]}"/>
+                                <field name="recurring_task" attrs="{'invisible': [('allow_recurring_tasks', '=', False)]}"/>
+                                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" context="{'project_id': project_id}" required="1"/>
+                                <field name="tipo_tarea_taller" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}" readonly="1"/>
+                                <field name="finish_date" widget="date" attrs="{'invisible' : [('maintenance_request_id', '=', False)]}" force_save="1"/>
+                                <field name="doble_check_intern" attrs="{'invisible' : ['|',('maintenance_request_id', '=', False),('maintenance_planned_activity_id','!=',False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                            </group>
+                            <group>
+                                <field name="active" invisible="1"/>
+                                <field name="partner_id" nolabel="0" widget="res_partner_many2one" class="o_task_customer_field" invisible="not project_id" context="{'res_partner_search_mode': 'customer'}"/>
+                                <field name="pricing_type" invisible="1" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                <field name="encode_uom_in_days" invisible="1"/>
+                                <field name="subtask_count" invisible="1"/>
+                                <label for="allocated_hours" invisible="not allow_timesheets" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                <div class="text-nowrap" invisible="not allow_timesheets" groups="hr_timesheet.group_hr_timesheet_user">
+                                    <field name="allocated_hours" class="oe_inline o_field_float_time o_task_planned_hours" widget="timesheet_uom_no_toggle"/>
+                                    <span invisible="subtask_count == 0">
+                                        (incl. <field name="subtask_allocated_hours" nolabel="1" widget="timesheet_uom_no_toggle" class="oe_inline"/> on
+                                        <span class="fw-bold text-dark"> Sub-tasks</span>)
+                                    </span>
+                                    <span invisible="not project_id">(<field name="progress" class="oe_inline" nolabel="1" widget="integer"/> %)</span>
+                                </div>
+                                <label for="date_deadline"/>
+                                <div id="date_deadline_and_recurring_task" class="d-inline-flex w-100">
+                                    <field name="date_deadline" nolabel="1" decoration-danger="date_deadline and date_deadline &lt; current_date and state not in ['1_done', '1_canceled']"/>
+                                    <field name="recurring_task" nolabel="1" class="ms-0" style="width: fit-content;" widget="boolean_icon" options="{'icon': 'fa-repeat'}" invisible="not active or parent_id" groups="project.group_project_recurring_tasks"/>
+                                </div>
+                                <field name="maintenance_request_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="maintenance_equipment_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="external_aircraft" invisible="1"/>
+                                <field name="production_lot_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="type_maintenance" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="ata_ids" widget="many2many_tags" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="certificacion_ids" widget="many2many_tags" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}" attrs="{'invisible' : [('maintenance_request_id', '=', False)],'readonly': [('maintenance_request_done', '=', True)]}"/>
+                                <field name="maintenance_planned_activity_id" invisible="1"/>
+                                <field name="maintenance_request_done" invisible="1"/>
+                                <field name="sb_ad_one_time" invisible="1"/>
+                            </group>
+                        </group>
+                        <div id="manuales_project_task" attrs="{'invisible' : [('maintenance_request_id', '=', False)]}">
+                            <separator string="Manuales"/>
+                            <field name="manuales_ids" nolabel="1" colspan="2">
+                                <tree string="Manuales" create="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="categoria_id"/>
+                                    <field name="descripcion"/>
+                                    <field name="pn"/>
+                                    <field name="rev_n"/>
+                                    <field name="rev"/>
+                                </tree>
+                            </field>
+                        </div>
+                        <field name="inspeccion_seguridad_jb" invisible="1"/>
+                        <field name="doble_check_jb" invisible="1"/>
+                        <field name="doble_check_ata" invisible="1"/>
+                        <div id="doble_check_project_task" attrs="{'invisible' : [('doble_check_jb', '=', False),('doble_check_ata','=',False),('doble_check_intern','=',False)]}">
+                            <separator string="Doble Check"/>
+                            <field name="double_check_ids" attrs="{'readonly': [('maintenance_request_done', '=', True)]}">
+                                <tree editable="bottom">
+                                    <field name="name" required="True"/>
+                                    <field name="first_doble_check"/>
+                                    <field name="first_user_doble_check"/>
+                                    <field name="first_datetime_doble_check"/>
+                                    <field name="second_doble_check"/>
+                                    <field name="second_user_doble_check"/>
+                                    <field name="second_datetime_doble_check"/>
+                                </tree>
+                            </field>
+                        </div>
+                        <div id="inspeccion_seguridad_project_task" attrs="{'invisible' : [('inspeccion_seguridad_jb', '=', False),('doble_check_ata','=',False),('doble_check_intern','=',False)]}">
+                            <separator string="Inspección de Seguridad"/>
+                            <field name="security_inspection_ids" attrs="{'readonly': [('maintenance_request_done', '=', True)]}">
+                                <tree editable="bottom">
+                                    <field name="name" required="True"/>
+                                    <field name="first_inspeccion_seguridad"/>
+                                    <field name="first_user_inspeccion_seguridad"/>
+                                    <field name="first_datetime_inspeccion_seguridad"/>
+                                    <field name="second_inspeccion_seguridad"/>
+                                    <field name="second_user_inspeccion_seguridad"/>
+                                    <field name="second_datetime_inspeccion_seguridad"/>
+                                </tree>
+                            </field>
+                        </div>
+                        <notebook>
+                            <page name="description_page" string="Description">
+                                <field name="description" type="html" options="{'collaborative': true, 'resizable': false}" placeholder="Add details about this task..."/>
+                            </page>
+                            <field name="allow_timesheets" invisible="1"/>
+                            <t groups="hr_timesheet.group_hr_timesheet_user">
+                                <field name="analytic_account_active" invisible="1"/>
+                            </t>
+                            <page string="Timesheets" name="page_timesheets" id="timesheets_tab" invisible="not allow_timesheets" groups="hr_timesheet.group_hr_timesheet_user">
+                                <group name="timesheet_error" invisible="analytic_account_active">
+                                    <div class="alert alert-warning mb-n4 mt-3" role="alert" colspan="2">
+                                        You cannot log timesheets on this project since it is linked to an inactive analytic account. Please change this account, or reactivate the current one to timesheet on the project.
+                                    </div>
+                                </group>
+                                <field name="timesheet_ids" mode="tree,kanban" invisible="not analytic_account_active" context="{'default_project_id': project_id, 'default_name':''}" widget="so_line_one2many">
+                                    <tree editable="bottom" string="Timesheet Activities" default_order="date" decoration-muted="readonly_timesheet == True">
+                                        <field name="readonly_timesheet" column_invisible="True"/>
+                                        <field name="date" readonly="readonly_timesheet"/>
+                                        <field name="user_id" column_invisible="True"/>
+                                        <field name="employee_id" widget="many2one_avatar_employee" context="{'active_test': True}" required="1" readonly="readonly_timesheet"/>
+                                        <field name="name" required="0" readonly="readonly_timesheet"/>
+                                        <field name="unit_amount" widget="timesheet_uom" decoration-danger="unit_amount &gt; 24 or unit_amount &lt; 0" readonly="readonly_timesheet"/>
+                                        <field name="timesheet_invoice_id" column_invisible="True"/>
+                                        <field name="so_line" widget="so_line_field" groups="!sales_team.group_sale_salesman" column_invisible="not parent.allow_billable" readonly="readonly_timesheet" context="{'with_remaining_hours': True, 'with_price_unit': True}" options="{'no_create': True, 'no_open': True}" domain="[('is_service', '=', True), ('order_partner_id.commercial_partner_id.id', 'parent_of', parent.partner_id), ('is_expense', '=', False), ('state', '=', 'sale')]" optional="hide"/>
+                                        <field name="so_line" widget="so_line_field" groups="sales_team.group_sale_salesman" column_invisible="not parent.allow_billable" readonly="readonly_timesheet" context="{'with_remaining_hours': True, 'with_price_unit': True}" options="{'no_create': True, 'no_open': True}" domain="[('is_service', '=', True), ('order_partner_id.commercial_partner_id.id', 'parent_of', parent.partner_id), ('is_expense', '=', False), ('state', '=', 'sale')]" optional="hide"/>
+                                        <field name="project_id" column_invisible="True"/>
+                                        <field name="task_id" column_invisible="True"/>
+                                        <field name="company_id" column_invisible="True"/>
+                                        <field name="is_so_line_edited" column_invisible="True"/>
+                                    </tree>
+                                    <kanban class="o_kanban_mobile">
+                                        <field name="readonly_timesheet"/>
+                                        <field name="date"/>
+                                        <field name="user_id"/>
+                                        <field name="name"/>
+                                        <field name="unit_amount" decoration-danger="unit_amount &gt; 24"/>
+                                        <field name="project_id"/>
+                                        <field name="task_id"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="row">
+                                                        <div class="col-6 d-flex">
+                                                            <field name="employee_id" class="me-1" widget="many2one_avatar_employee" context="{'active_test': True}" readonly="readonly_timesheet"/>
+                                                            <strong><span><t t-esc="record.employee_id.value"/></span></strong>
+                                                        </div>
+                                                        <div class="col-6 float-end text-end">
+                                                            <strong><t t-esc="record.date.value"/></strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-6 text-muted">
+                                                            <span><t t-esc="record.name.value"/></span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <span class="float-end text-end">
+                                                                <field name="unit_amount" widget="float_time"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <form string="Timesheet Activities">
+                                        <sheet>
+                                            <group>
+                                                <field name="readonly_timesheet" invisible="1"/>
+                                                <field name="date" readonly="readonly_timesheet"/>
+                                                <field name="user_id" invisible="1" readonly="readonly_timesheet"/>
+                                                <field name="employee_id" widget="many2one_avatar_employee" context="{'active_test': True}" required="1" readonly="readonly_timesheet"/>
+                                                <field name="name" required="0" readonly="readonly_timesheet"/>
+                                                <field name="unit_amount" string="Duration" widget="float_time" decoration-danger="unit_amount &gt; 24" readonly="readonly_timesheet"/>
+                                                <field name="project_id" invisible="1"/>
+                                                <field name="task_id" invisible="1"/>
+                                                <field name="company_id" invisible="1"/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                                <group invisible="not analytic_account_active">
+                                    <group class="oe_subtotal_footer" name="project_hours">
+                                        <span class="o_td_label float-start">
+                                            <label class="fw-bold" for="effective_hours" string="Hours Spent" invisible="encode_uom_in_days"/>
+                                            <label class="fw-bold" for="effective_hours" string="Days Spent" invisible="not encode_uom_in_days"/>
+                                        </span>
+                                        <field name="effective_hours" widget="timesheet_uom" nolabel="1"/>
+                                        <button name="action_view_subtask_timesheet" type="object" class="ps-0 border-0 oe_inline oe_link mb-2 o_td_label float-start" invisible="subtask_effective_hours == 0.0">
+                                            <span class="text-nowrap" invisible="encode_uom_in_days">Hours Spent on Sub-tasks:</span>
+                                            <span class="text-nowrap" invisible="not encode_uom_in_days">Days Spent on Sub-tasks:</span>
+                                        </button>
+                                        <field name="subtask_effective_hours" class="mt-2" widget="timesheet_uom" invisible="subtask_effective_hours == 0.0" nolabel="1"/>
+                                        <span invisible="subtask_effective_hours == 0.0" class="o_td_label float-start my-1">
+                                            <label class="fw-bold" for="total_hours_spent" string="Total Hours" invisible="subtask_effective_hours == 0.0 or encode_uom_in_days"/>
+                                            <label class="fw-bold" for="total_hours_spent" string="Total Days" invisible="subtask_effective_hours == 0.0 or not encode_uom_in_days"/>
+                                        </span>
+                                        <field name="total_hours_spent" widget="timesheet_uom" class="oe_subtotal_footer_separator" nolabel="1" invisible="subtask_effective_hours == 0.0"/>
+                                        <span class="o_td_label float-start my-1" invisible="allocated_hours == 0.0">
+                                            <label class="fw-bold" for="remaining_hours" string="Remaining Hours" invisible="encode_uom_in_days or remaining_hours &lt; 0"/>
+                                            <label class="fw-bold" for="remaining_hours" string="Remaining Days" invisible="not encode_uom_in_days or remaining_hours &lt; 0"/>
+                                            <label class="fw-bold text-danger" for="remaining_hours" string="Remaining Hours" invisible="encode_uom_in_days or remaining_hours &gt;= 0"/>
+                                            <label class="fw-bold text-danger" for="remaining_hours" string="Remaining Days" invisible="not encode_uom_in_days or remaining_hours &gt;= 0"/>
+                                        </span>
+                                        <field name="remaining_hours" widget="timesheet_uom" class="oe_subtotal_footer_separator" invisible="allocated_hours == 0.0" nolabel="1" decoration-danger="remaining_hours &lt; 0"/>
+                                        <t groups="hr_timesheet.group_hr_timesheet_user">
+                                            <field name="sale_order_id" invisible="1"/>
+                                            <field name="remaining_hours_available" invisible="1"/>
+                                            <span id="remaining_hours_so_label" invisible="not allow_billable or not sale_order_id or not partner_id or not sale_line_id or not remaining_hours_available" class="o_td_label float-start">
+                                                <label class="fw-bold" for="remaining_hours_so" string="Remaining Hours on SO" invisible="encode_uom_in_days or remaining_hours_so &lt; 0"/>
+                                                <label class="fw-bold" for="remaining_hours_so" string="Remaining Days on SO" invisible="not encode_uom_in_days or remaining_hours_so &lt; 0"/>
+                                                <label class="fw-bold text-danger" for="remaining_hours_so" string="Remaining Hours on SO" invisible="encode_uom_in_days or remaining_hours_so &gt;= 0"/>
+                                                <label class="fw-bold text-danger" for="remaining_hours_so" string="Remaining Days on SO" invisible="not encode_uom_in_days or remaining_hours_so &gt;= 0"/>
+                                            </span>
+                                            <field name="remaining_hours_so" nolabel="1" widget="timesheet_uom" invisible="not allow_billable or not sale_order_id or not partner_id or not sale_line_id or not remaining_hours_available" decoration-danger="remaining_hours_so &lt; 0"/>
+                                        </t>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="sub_tasks_page" string="Sub-tasks" invisible="not project_id">
+                                <field name="child_ids" context="{'default_project_id': project_id, 'default_display_in_project': False, 'default_user_ids': user_ids, 'default_parent_id': id, 'default_partner_id': partner_id, 'default_milestone_id': allow_milestones and milestone_id}" widget="subtasks_one2many">
+                                    <tree editable="bottom" decoration-muted="state in ['1_done','1_canceled']" open_form_view="True">
+                                        <field name="allow_milestones" column_invisible="True"/>
+                                        <field name="display_in_project" column_invisible="True" force_save="1"/>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="id" optional="hide"/>
+                                        <field name="parent_id" column_invisible="True"/>
+                                        <field name="priority" widget="priority" nolabel="1" options="{'autosave': False}" width="40px"/>
+                                        <field name="state" widget="project_task_state_selection" nolabel="1" options="{'autosave':  False}" width="40px"/>
+                                        <field name="name" widget="name_with_subtask_count"/>
+                                        <field name="subtask_count" column_invisible="True"/>
+                                        <field name="closed_subtask_count" column_invisible="True"/>
+                                        <field name="project_id" string="Project" optional="hide" options="{'no_open': 1}" widget="project"/>
+                                        <field name="milestone_id" optional="hide" context="{'default_project_id': project_id}" column_invisible="not parent.allow_milestones" invisible="not allow_milestones"/>
+                                        <field name="partner_id" optional="hide" widget="res_partner_many2one" invisible="not project_id" context="{'res_partner_search_mode': 'customer'}"/>
+                                        <field name="user_ids" widget="many2many_avatar_user" optional="show"/>
+                                        <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                                        <field name="company_id" column_invisible="True"/>
+                                        <field name="allocated_hours" widget="timesheet_uom_no_toggle" sum="Total Allocated Time" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="effective_hours" widget="timesheet_uom" sum="Hours Spent" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="subtask_effective_hours" widget="timesheet_uom" sum="Sub-tasks Hours Spent" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="total_hours_spent" widget="timesheet_uom" sum="Total Hours" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="remaining_hours" widget="timesheet_uom" sum="Remaining Hours" optional="hide" decoration-danger="progress &gt;= 100" decoration-warning="progress &gt;= 80 and progress &lt; 100" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="progress" widget="project_task_progressbar" optional="hide" options="{'overflow_class': 'bg-danger'}" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="date_deadline" invisible="state in ['1_done', '1_canceled']" optional="hide" decoration-danger="date_deadline and date_deadline &lt; current_date"/>
+                                        <field name="activity_ids" string="Next Activity" widget="list_activity" optional="hide"/>
+                                        <field name="my_activity_date_deadline" string="My Deadline" widget="remaining_days" options="{'allow_order': '1'}" optional="hide"/>
+                                        <field name="rating_last_text" string="Rating" decoration-danger="rating_last_text == 'ko'" decoration-warning="rating_last_text == 'ok'" decoration-success="rating_last_text == 'top'" class="fw-bold" widget="badge" optional="hide" invisible="rating_last_text == 'none'" column_invisible="True" groups="project.group_project_rating"/>
+                                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+                                        <field name="stage_id" optional="hide" context="{'default_project_id': project_id}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="task_dependencies" string="Blocked By" invisible="not allow_task_dependencies" groups="project.group_project_task_dependencies">
+                                <field name="depend_on_ids" nolabel="1" context="{'default_project_id': project_id, 'search_view_ref' : 'project.view_task_search_form', 'search_default_project_id': project_id, 'tree_view_ref': 'project.open_view_all_tasks_list_view', 'search_default_open_tasks': 1}">
+                                    <tree editable="bottom" decoration-muted="state in ['1_done','1_canceled']" open_form_view="True">
+                                        <field name="allow_milestones" column_invisible="True"/>
+                                        <field name="parent_id" column_invisible="True"/>
+                                        <field name="subtask_count" column_invisible="True"/>
+                                        <field name="closed_subtask_count" column_invisible="True"/>
+                                        <field name="id" optional="hide"/>
+                                        <field name="priority" widget="priority" nolabel="1" options="{'autosave': False}" width="40px"/>
+                                        <field name="state" widget="project_task_state_selection" nolabel="1" options="{'autosave': False}" width="40px"/>
+                                        <field name="name" widget="name_with_subtask_count"/>
+                                        <field name="project_id" optional="hide" options="{'no_open': 1}"/>
+                                        <field name="milestone_id" optional="hide" context="{'default_project_id': project_id}" column_invisible="not parent.allow_milestones" invisible="not allow_milestones"/>
+                                        <field name="partner_id" optional="hide" widget="res_partner_many2one" invisible="not project_id" context="{'res_partner_search_mode': 'customer'}"/>
+                                        <field name="parent_id" optional="hide" groups="base.group_no_one"/>
+                                        <field name="user_ids" widget="many2many_avatar_user" optional="show"/>
+                                        <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                                        <field name="company_id" column_invisible="True"/>
+                                        <field name="progress" column_invisible="True" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="allocated_hours" widget="timesheet_uom_no_toggle" sum="Total Allocated Time" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="effective_hours" widget="timesheet_uom" sum="Effective Hours" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="subtask_effective_hours" widget="timesheet_uom" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="total_hours_spent" widget="timesheet_uom" optional="hide" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="remaining_hours" widget="timesheet_uom" sum="Remaining Hours" optional="hide" decoration-danger="progress &gt;= 100" decoration-warning="progress &gt;= 80 and progress &lt; 100" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="progress" widget="project_task_progressbar" optional="hide" options="{'overflow_class': 'bg-danger'}" groups="hr_timesheet.group_hr_timesheet_user"/>
+                                        <field name="date_deadline" invisible="state in ['1_done', '1_canceled']" optional="hide" decoration-danger="date_deadline and date_deadline &lt; current_date"/>
+                                        <field name="activity_ids" string="Next Activity" widget="list_activity" optional="hide"/>
+                                        <field name="my_activity_date_deadline" string="My Deadline" widget="remaining_days" options="{'allow_order': '1'}" optional="hide"/>
+                                        <field name="rating_last_text" string="Rating" decoration-danger="rating_last_text == 'ko'" decoration-warning="rating_last_text == 'ok'" decoration-success="rating_last_text == 'top'" class="fw-bold" widget="badge" optional="hide" invisible="rating_last_text == 'none'" column_invisible="True" groups="project.group_project_rating"/>
+                                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+                                        <field name="stage_id" optional="hide"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="extra_info" string="Extra Info" groups="base.group_no_one">
+                                <group>
+                                    <group>
+                                        <field name="parent_id" groups="base.group_no_one" context="{'search_view_ref' : 'project.view_task_search_form','search_default_project_id': project_id}"/>
+                                        <field name="analytic_account_id" groups="analytic.group_analytic_accounting" context="{'default_partner_id': partner_id, 'default_company_id': company_id}"/>
+                                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                        <field name="sequence" groups="base.group_no_one"/>
+                                        <field name="email_cc" groups="base.group_no_one"/>
+                                        <field name="displayed_image_id" groups="base.group_no_one" options="{'no_create': True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="date_assign" groups="base.group_no_one"/>
+                                        <field name="date_last_stage_update" groups="base.group_no_one"/>
+                                    </group>
+                                    <group string="Working Time to Assign" invisible="working_hours_open == 0.0">
+                                        <field name="working_hours_open" widget="float_time" string="Hours"/>
+                                        <field name="working_days_open" string="Days"/>
+                                    </group>
+                                    <group string="Working Time to Close" invisible="working_hours_close == 0.0">
+                                        <field name="working_hours_close" widget="float_time" string="Hours"/>
+                                        <field name="working_days_close" string="Days"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" options="{'post_refresh':True}" groups="base.group_user"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista heredada de tarea, con los campos para la parte 145 en caso de que de verse las tareas en otro apartado -->
+        <record id="leulit_20230313_1500_form" model="ir.ui.view">
+            <field name="name">leulit_20230313_1500_form</field>
+            <field name="model">project.task</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_subtask']" position="replace">
+                    <button name="action_subtask" type="object" class="oe_stat_button" icon="fa-tasks"  invisible="(maintenance_request_id)"  context="{'default_user_id': user_id, 'default_parent_id': id, 'default_project_id': subtask_project_id}">
+                        <field string="Sub-tareas" name="subtask_count" widget="statinfo"/>
+                    </button>
+                    <button name="action_open_subtask" type="object" class="oe_stat_button" icon="fa-tasks"  invisible="(not maintenance_request_id)"  context="{'default_user_id': user_id, 'default_parent_id': id, 'default_project_id': subtask_project_id}">
+                        <field string="Sub-tareas" name="subtask_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+                <xpath expr="//widget[@name='web_ribbon']" position="after">
+                    <div class="oe_title pr-0"  invisible="(((not maintenance_request_id) or (tipo_tarea_taller != 'tarea')) or (maintenance_planned_activity_id))" readonly="((maintenance_request_done))" >
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <group>
+                                <field name="item_job_card_id" string="Plantilla Tarea"  readonly="((maintenance_request_done))"  options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                                <field name="job_card_id" string="Plantilla Job Card"  readonly="((maintenance_request_done))"  options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                            </group>
+                        </h1>
+                    </div>
+                    <div class="oe_title pr-0"  invisible="((tipo_tarea_taller != 'defecto_encontrado'))" readonly="((maintenance_request_done))" >
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <group>
+                                <field name="item_job_card_id" string="Plantilla Tarea"  readonly="((maintenance_request_done))"  options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                            </group>
+                        </h1>
+                    </div> 
+                    <div class="oe_title pr-0"  invisible="((tipo_tarea_taller != 'service_bulletin'))" readonly="((maintenance_request_done))" >
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <group>
+                                <field name="service_bulletin_id" string="Service Bulletin"  readonly="((maintenance_request_done))"  options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                            </group>
+                        </h1>
+                    </div>
+                    <div class="oe_title pr-0"  invisible="((tipo_tarea_taller != 'airworthiness_directive'))" readonly="((maintenance_request_done))" >
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <group>
+                                <field name="airworthiness_directive_id" string="Airworthiness Directive"  readonly="((maintenance_request_done))"  options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"/>
+                            </group>
+                        </h1>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="replace">
+                    <field name="name" class="o_task_name text-truncate" placeholder="Título de tarea..."  invisible="((tipo_tarea_taller == 'defecto_encontrado'))" />
+                    <field name="name" class="o_task_name text-truncate" placeholder="Defecto encontrado..."  invisible="((tipo_tarea_taller != 'defecto_encontrado'))" />
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="supervisado_por"  invisible="((not maintenance_request_id))" />
+                    <field name="solucion_defecto"  invisible="((not maintenance_request_id) or (tipo_tarea_taller != 'defecto_encontrado'))" />
+                </xpath>
+                <xpath expr="//field[@name='claim_id']" position="after">
+                    <field name="maintenance_request_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="maintenance_equipment_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="external_aircraft" invisible="1"/>
+                    <field name="production_lot_id" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="type_maintenance"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="ata_ids" widget="many2many_tags" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="certificacion_ids" widget="many2many_tags" options="{'no_open': True, 'no_quick_create': True, 'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                    <field name="maintenance_planned_activity_id" invisible="0"/>
+                    <field name="maintenance_request_done" invisible="1"/>
+                    <field name="sb_ad_one_time" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook" position="before">
+                    <div id="manuales_project_task"  invisible="((not maintenance_request_id))" >
+                        <separator string="Manuales"/>
+                        <field name="manuales_ids" nolabel="1" colspan="2">
+                            <tree string="Manuales" create="false" delete="false">
+                                <field name="name"/>
+                                <field name="categoria_id"/>
+                                <field name="descripcion"/>
+                                <field name="pn"/>
+                                <field name="rev_n"/>
+                                <field name="rev"/>
+                            </tree>
+                        </field>
+                    </div>
+                    <field name="inspeccion_seguridad_jb" invisible="1"/>
+                    <field name="doble_check_jb" invisible="1"/>
+                    <field name="doble_check_ata" invisible="1"/>
+                    <div id="doble_check_project_task"  invisible="((not doble_check_jb) and (not doble_check_ata) and (not doble_check_intern))" >
+                        <separator string="Doble Check"/>
+                        <field name="double_check_ids"  readonly="((maintenance_request_done))" >
+                            <tree editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="first_doble_check"/>
+                                <field name="first_user_doble_check"/>
+                                <field name="first_datetime_doble_check"/>
+                                <field name="second_doble_check"/>
+                                <field name="second_user_doble_check"/>
+                                <field name="second_datetime_doble_check"/>
+                            </tree>
+                        </field>
+                    </div>
+                    <div id="inspeccion_seguridad_project_task"  invisible="((not inspeccion_seguridad_jb) and (not doble_check_ata) and (not doble_check_intern))" >
+                        <separator string="Inspección de Seguridad"/>
+                        <field name="security_inspection_ids"  readonly="((maintenance_request_done))" >
+                            <tree editable="bottom">
+                                <field name="name" required="True"/>
+                                <field name="first_inspeccion_seguridad"/>
+                                <field name="first_user_inspeccion_seguridad"/>
+                                <field name="first_datetime_inspeccion_seguridad"/>
+                                <field name="second_inspeccion_seguridad"/>
+                                <field name="second_user_inspeccion_seguridad"/>
+                                <field name="second_datetime_inspeccion_seguridad"/>
+                            </tree>
+                        </field>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="tipo_tarea_taller"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))"/>
+                    <field name="finish_date" widget="date"  invisible="((not maintenance_request_id))"  force_save="1"/>
+                    <field name="doble_check_intern"  invisible="((not maintenance_request_id) or (maintenance_planned_activity_id))" readonly="((maintenance_request_done))" />
+                </xpath>
+                <xpath expr="//field[@name='timesheet_ids']" position="attributes">
+                    <attribute name="context">{'default_project_id': project_id, 'default_name':'', 'default_maintenance_request_id': maintenance_request_id}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='timesheet_ids']/tree" position="inside">
+                    <field name="maintenance_request_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230313_1500_tree" model="ir.ui.view">
+            <field name="name">leulit_20230313_1500_tree</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree default_order="code asc" decoration-success="estado_tarea_bool_realizada==True" decoration-danger="estado_tarea_bool_noaplica==True">
+                    <field name="estado_tarea_bool_realizada" invisible="1"/>
+                    <field name="estado_tarea_bool_noaplica" invisible="1"/>
+                    <field name="semaforo_subtasks" string="" widget="semaforo_char"/>
+                    <field name="tipo_tarea_taller" string="Tipo de tarea"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="effective_hours" widget="float_time"/>
+                    <field name="stage_id"/>
+                    <field name="show_time_control" invisible="1"/>
+                    <button name="button_start_work" string="Comenzar trabajo" tabindex="-1" type="object" icon="fa-play-circle text-success"  invisible="((show_time_control != 'start'))"  class="oe_stat_button" title="Comenzar trabajo"/>
+                    <button name="button_end_work" string="Detener trabajo" tabindex="-1" type="object" icon="fa-stop-circle text-warning"  invisible="((show_time_control != 'stop'))"  class="oe_stat_button" title="Detener trabajo"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20231024_1458_tree" model="ir.ui.view">
+            <field name="name">leulit_20231024_1458_tree</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree default_order="code asc" decoration-success="estado_tarea_bool_realizada==True" decoration-danger="estado_tarea_bool_noaplica==True">
+                    <field name="estado_tarea_bool_realizada" invisible="1"/>
+                    <field name="estado_tarea_bool_noaplica" invisible="1"/>
+                    <field name="semaforo_subtasks" string="" widget="semaforo_char"/>
+                    <field name="code"/>
+                    <field name="name" string="Tarea"/>
+                    <field name="maintenance_request_id" string="Orden de trabajo"/>
+                    <field name="user_id"/>
+                    <field name="effective_hours"/>
+                    <field name="stage_id"/>
+                    <field name="show_time_control" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230313_1500_action" model="ir.actions.act_window">
+            <field name="name">Tareas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.task</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_taller.leulit_20230313_1500_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_taller.leulit_20250724_1244_form')})]"/>
+        </record>
+
+        <!-- ACTION PARA VER LAS TAREAS DESDE LA PIEZA -->
+        <record id="leulit_20231024_1458_action" model="ir.actions.act_window">
+            <field name="name">Trabajos Realizados</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.task</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_taller.leulit_20231024_1458_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_taller.leulit_20250724_1244_form')})]"/>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="leulit_20230623_1617_tree" model="ir.ui.view">
+        <field name="name">leulit_20230623_1617_tree</field>
+        <field name="model">leulit.limitaciones_aeronavegabilidad</field>
+        <field name="arch" type="xml">
+            <tree editable="top">
+                <field name="name"/>
+                <field name="manual_id"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="leulit_20230623_1617_action" model="ir.actions.act_window">
+        <field name="name">Limitaciones de aeronavegabilidad u operaciones</field>
+        <field name="res_model">leulit.limitaciones_aeronavegabilidad</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+</odoo>

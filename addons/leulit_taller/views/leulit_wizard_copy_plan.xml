@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20241113_1600_form" model="ir.ui.view">
+            <field name="name">leulit_20241113_1600_form</field>
+            <field name="model">leulit.wizard_copy_plan</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Copiar Plan de Mantenimiento">
+                    <field name="maintenance_plan_id" invisible="1"/>
+                    <group>
+                        <field name="equipment_id"/>
+                    </group>
+                    <footer>
+                        <button name="copy_for_new_helicopter" type="object" string="Guardar" class="oe_right oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

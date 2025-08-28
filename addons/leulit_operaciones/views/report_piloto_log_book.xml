@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <report string="leulit_report_piloto_log_book"
+            id="leulit_report_piloto_log_book"
+            model="leulit.vuelo"
+            name="leulit_operaciones.leulit_report_piloto_log_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_landscape_without_cabecera"
+            print_report_name="'LOG-BOOK"
+        />
+
+        <template id="piloto_log_book_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                * {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 8px;
+                }
+                .titleheight {height:0.6cm}
+                .titulostablas {
+                    font-size: 10px;
+                    font-weight:bold;
+                }
+                p {
+                    font-size:9pt;
+                    font-weight: bold;
+                }
+                table {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;		    
+                    border-spacing: 0;		       
+                }
+                th, tbody td, tfoot td {
+                    border: 1px solid #EEEEEE;;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:10px;
+                    font-weight:bold;
+                    word-break: keep-all;
+                }		
+                tr .smalltext th, tr .smalltext td, .smalltext {font-size: 5px;}
+                td{
+                    vertical-align: middle
+                    word-break: keep-all;
+                }
+                td .hcenter{
+                    text-align: center;   
+                    word-break: keep-all;     	
+                }
+                .bgcolored {
+                    background-color: #808080;
+                    color: white;
+                }       
+                tbody td {
+                    text-align:center;
+                    font-size:8px;
+                    font-weight:normal;
+                    word-break: keep-all;
+                }
+                .datarow {
+				    height: 40px;
+			    }
+                .righttext {
+                	text-align:right;
+                }  
+                .backcolor1 {
+				    background-color: #f4f4f4;
+			    }
+                .fontsize1 {
+				    font-size:9px;
+                    font-weight:normal;
+			    }
+			    .fontsize2 {
+				    font-size:6px;
+                    font-weight:normal;
+			    }
+            </style>
+        </template>
+
+
+        <template id="leulit_report_piloto_log_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="5"/>
+                <t t-set="data_report_header_spacing" t-value="1"/>
+                <t t-set="data_report_dpi" t-value="75"/>         
+				<t t-call="leulit_operaciones.piloto_log_book_report_css"/>
+                <t t-foreach="paginas" t-as="pagina">                  
+                    <table class="fullwidth">
+                        <tbody>
+                        <tr>
+                                <th style="width:50%;text-align:left;" class="noborde fontsize2">
+                                    Log Book
+                                </th>
+                                <th style="width:50%;text-align:right" class="noborde fontsize2">
+                                    Document ref: <span class="fontsize2" t-esc="docref" />
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="fullwidth">
+                        <thead>
+                            <tr>
+                                <td colspan="24">
+                                    <table class="fullwidth">
+                                        <thead>
+                                            <tr>
+                                                <th class="bgcolored titleheight" style="text-align: left; font-size: 20px">
+                                                    <b>Piloto: <span t-esc="data['owner']"/></b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th rowspan="2"><b>Fecha</b></th>
+                                <th colspan="2"><b>Salida</b></th>
+                                <th colspan="2"><b>Llegada</b></th>
+                                <th colspan="2"><b>Aeronave</b></th>
+                                <th colspan="2"><b>Tiempo<br/>monopiloto</b></th>
+                                <th rowspan="2"><b>Tiempo<br/>Multipiloto</b></th>
+                                <th rowspan="2"><b>Tiempo<br/>total de<br/>vuelo</b></th>
+                                <th rowspan="2"><b>Nombre del PIC</b></th>
+                                <th colspan="2"><b>Aterrizajes</b></th>
+                                <th colspan="2"><b>Hora y condición</b></th>
+                                <th colspan="5"><b>Función</b></th>
+                                <th colspan="2"><b>Entrenador sintético</b></th>
+                                <th rowspan="2"><b>Observaciones</b></th>
+                            </tr>
+                            <tr>
+                                <th><b>Lugar</b></th>
+                                <th><b>Hora<br/>UTC</b></th>
+                                <th><b>Lugar</b></th>
+                                <th><b>Hora<br/>UTC</b></th>
+                                <th><b>Fab.Mod.</b></th>
+                                <th><b>Matrícula</b></th>
+                                <th><b>SE</b></th>
+                                <th><b>ME</b></th>
+                                <th><b>Día</b></th>
+                                <th><b>Noche</b></th>
+                                <th><b>Noche</b></th>
+                                <th><b>IFR</b></th>
+                                <th><b>Piloto al<br/>mando</b></th>
+                                <th><b>Co-piloto</b></th>
+                                <th><b>Doble mando</b></th>
+                                <th><b>Instructor</b></th>
+                                <th><b>Inst. Act.</b></th>
+                                <th><b>Tipo</b></th>
+                                <th><b>Total horas<br/>sesión</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="pagina['vuelos']" t-as="vuelo">
+                                <tr class="datarow">
+                                    <td class="datarow fontsize1" style="text-align:center;white-space: nowrap;"><span t-if="vuelo" t-esc="vuelo['fechavuelo']"/></td>
+                                    <td class="fontsize1"><span t-if="vuelo" t-esc="vuelo['lugarsalida']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['utc_strhorasalida']"/></td>
+                                    <td class="fontsize1"><span t-if="vuelo" t-esc="vuelo['lugarllegada']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['utc_strhorallegada']"/></td>
+                                    <td class="fontsize1"><span t-if="vuelo" t-esc="vuelo['modelo']"/></td>
+                                    <td class="fontsize1"><span t-if="vuelo" t-esc="vuelo['matricula']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['SE']"/></td>
+                                    <td class="fontsize1"><span t-if="vuelo" t-esc="vuelo['ME']"/></td>
+                                    <td class="fontsize1"></td>
+                                    <td style="text-align:center" class="fontsize1 backcolor1"><span t-if="vuelo" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td class="fontsize2">
+                                        <span t-if="vuelo" t-esc="vuelo['piloto_name']"/><br/>                                        
+                                        <span t-if="vuelo" style="padding-left:0.2cm">
+                                        <img t-if="vuelo and vuelo['piloto_firma']" t-att-src="'data:image/svg ;base64,%s' % vuelo['piloto_firma']" style="width: auto; height:20px"/>
+                                        </span>
+                                    </td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['landings']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['nightlandings']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo and vuelo['nightlandings'] >= 1" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo and vuelo['ifr']" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td style="text-align:center" class="fontsize1 backcolor1"><span t-if="vuelo and vuelo['pilotoalmando']" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td style="text-align:center" class="fontsize1 backcolor1"><span t-if="vuelo and vuelo['copiloto']" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td style="text-align:center" class="fontsize1 backcolor1"><span t-if="vuelo and vuelo['doblemando']" t-esc="vuelo['strtiemposervicio']"/></td>
+                                    <td style="text-align:center" class="fontsize1 backcolor1"><span t-if="vuelo and vuelo['instructor']" t-esc="vuelo['strtiemposervicio']"/></td>					                    
+                                    <td style="text-align:center" class="fontsize1"><span t-if="vuelo and vuelo['instructoractividad']" t-esc="vuelo['strtiemposervicio']"/></td>					                    
+                                    <td class="fontsize1"></td>
+                                    <td class="fontsize1"></td>
+                                    <td class="fontsize2">
+                                        <span style="font-size:6px" t-if="vuelo" t-esc="vuelo['cursos']"/><br/>
+                                        <span style="font-size:6px" t-if="vuelo" t-esc="vuelo['vuelo_tipo_main']"/><br/>
+                                        <img t-if="vuelo and vuelo['supervisor_firma']" t-att-src="'data:image/svg ;base64,%s' % vuelo['supervisor_firma']" style="width: auto; height:20px"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td rowspan="3" colspan="3"></td>
+                                <td colspan="4" class="righttext fontsize1">
+                                    TOTAL DE ESTA PÁGINA<br/>
+                                    Total this page
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['total_pagina']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['total_pagina_night']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['total_pagina_ifr']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['total_pagina_pm']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['total_pagina_dm']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['total_pagina_ins_ato']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['total_pagina_ins_act']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="righttext fontsize1">
+                                    TOTAL HORAS PREVIAS <br/>
+                                    Total previous hours
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_previas_total']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_previas_night']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_previas_ifr']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_previas_pm']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_previas_dm']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_previas_ins_ato']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_previas_ins_act']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="righttext fontsize1">
+                                    TIEMPO TOTAL<br/>
+                                    Total time
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_total']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_night']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_ifr']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_pm']"/></td>
+                                <td class="fontsize1 backcolor1"></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_dm']"/></td>
+                                <td style="text-align:center" class="fontsize1 backcolor1"><span t-esc="pagina['acumulador_paginas_ins_ato']"/></td>
+                                <td style="text-align:center" class="fontsize1"><span t-esc="pagina['acumulador_paginas_ins_act']"/></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <t t-if="pagina['cursoslist']" t-foreach="pagina['cursoslist']" t-as="cursos">
+                                    <td colspan="8" style="height:50px;text-align:left;" class="fontsize2">
+                                        <t t-if="len(cursos) > 0" t-foreach="cursos" t-as="curso">
+                                            <span class="fontsize2" t-if="curso" t-esc="curso['id']"/> <span class="fontsize2" t-if="curso" t-esc="curso['name']"/><br/>
+                                        </t>
+                                    </td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row" style="page-break-after:always;"></div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

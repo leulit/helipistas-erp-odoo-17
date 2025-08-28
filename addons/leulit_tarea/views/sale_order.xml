@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_view_order_tasks_form" model="ir.ui.view">
+            <field name="name">leulit_view_order_tasks_form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='order_lines']" position="after">
+                    <page string="Imputaciones de Tiempo" name="imputaciones_tiempo">
+                        <field name="account_analytic_line" readonly="1">
+                            <tree>
+                                <field name="employee_id"/>
+                                <field name="name"/>
+                                <field name="date" string="Fecha"/>
+                                <field name="unit_amount" widget="float_time" sum="Total" string="Duración"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="leulit_20250227_1122_action" model="ir.actions.act_window">
+            <field name="name">Parametros del Sistema</field>
+            <field name="res_model">ir.config_parameter</field>
+            <field name="domain">[('check_hlp', '=', True)]</field>
+            <field name="context">{'default_check_hlp': True}</field>
+        </record>
+
+</odoo>

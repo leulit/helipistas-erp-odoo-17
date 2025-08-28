@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20201026_1222_search" model="ir.ui.view">
+            <field name="name">leulit_20201026_1222_search</field>
+            <field name="model">leulit.helipuerto</field>
+            <field name="arch" type="xml">
+                <search string="leulit">
+                    <field name="name"/>
+                    <field name="descripcion"/>
+                    <group expand="0" string="Filtrar por tipo de operación">
+                        <filter name="operaciones_aocp3" string="operaciones AOCP3" domain="[('operaciones_AOCP3','=','True')]" />
+                        <filter name="operaciones_aoceh05" string="operaciones AOCEH05" domain="[('operaciones_AOCEH05','=','True')]" />
+                        <filter name="operaciones_ato" string="operaciones ATO" domain="[('operaciones_ATO','=','True')]" />
+                        <filter name="operaciones_ttaa" string="operaciones TTAA" domain="[('operaciones_TTAA','=','True')]" />
+                        <filter name="operaciones_lci" string="operaciones LCI" domain="[('operaciones_LCI','=','True')]" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="leulit_20201026_1222_form">
+            <field name="name">leulit_20201026_1222_form</field>
+            <field name="model">leulit.helipuerto</field>
+            <field name="arch" type="xml">
+                <form string="Helipuerto/Aeródromo">
+                    <field name="puntos_ids" invisible="1"/>
+                    <field name="punto_generado" invisible="1"/>
+                    <header>
+                        <button name="generar_ficha_helipuerto_aerodromo" string="Generar ficha" class="oe_highlight" type="object"/>
+                        <button name="generar_punto" string="Generar punto" class="oe_highlight" type="object"  invisible="((punto_generado))" />
+                    </header>
+                    <sheet>
+                        <div id="control_versiones_helipuerto">
+                            <separator string="Edición y revisión"/>
+                            <group col="2">
+                                <field name="edicion_revision"/>
+                            </group>
+                        </div>
+                        <div id="datos_geograficos_administracion_helipuerto">
+                            <separator string="Datos geográficos y administración del helipuerto/aeródromo"/>
+                            <h3>
+                                <group col="4">
+                                    <field name="descripcion"/>
+                                    <field name="name"/>
+                                </group>
+                            </h3>
+                            <group col="4">
+                                <field name="lat"/>
+                                <field name="telefono"/>
+                                <field name="long"/>
+                                <field name="municipio"/>
+                                <field name="elevacion"/>
+                                <field name="direccion"/>
+                                <field name="superficie"/>
+                                <field name="tz"/>
+                            </group>
+                        </div>
+                        <group col="2">
+                            <div id="servicios_instalaciones_helipuerto">
+                                <separator string="Servicios de Instalaciones"/>
+                                <group col="4">
+                                    <field name="hayjeta1"/>
+                                    <field name="hayavgas"/>
+                                    <field colspan="4" name="asistencia_tierra"/>
+                                </group>
+                            </div>
+                            <div id="horarios_helipuerto">
+                                <separator string="Horarios"/>
+                                <group col="2">
+                                    <field name="horario_operacion"/>
+                                    <field name="horario_combustible"/>
+                                    <field name="procedimiento_activacion"/>
+                                </group>
+                            </div>
+                        </group>
+                        <group col="2">
+                            <div id="detalles_area_movimiento_helipuerto">
+                                <separator string="Detalles del área de movimiento"/>
+                                <group col="2">
+                                    <field name="rumbo_aproximacion"/>
+                                    <field name="rumbo_salida"/>
+                                    <field name="distancia"/>
+                                    <field name="tlof"/>
+                                    <field name="calle_rodaje"/>
+                                    <field name="obstaculos_area_movimiento"/>
+                                </group>
+                            </div>
+                            <div id="senales_balizas_helipuerto">
+                                <separator string="Señales y balizas"/>
+                                <group col="2">
+                                    <field name="viento"/>
+                                    <field name="balizaje"/>
+                                </group>
+                                <separator string="Frecuencias"/>
+                                <group col="2">
+                                    <field name="freq_aerodromo"/>
+                                    <field name="twrcerca"/>
+                                </group>
+                            </div>
+                        </group>
+                        <group col="2">
+                            <div id="meteo_helipuerto">
+                                <separator string="Mínimos meteorológicos para la utilización"/>
+                                <group col="2">
+                                    <field name="minimos_meteo"/>
+                                </group>
+                            </div>
+                            <div id="Categoría_aerodromo_y_performance_helipuerto">
+                                <separator string="Categoría de aeródromo y datos de performance"/>
+                                <group col="2">
+                                    <field name="dificultad"/>
+                                    <field name="operaciones_performance" widget="many2many_tags"/>
+                                </group>
+                            </div>
+                        </group>
+                        <div id="procedimiento_embarque_desembarque_pasajero_helipuerto">
+                            <separator string="Procedimiento para el embarque y desembarque de pasajeros"/>
+                            <field name="procedimiento_des_embarque_pasajeros"/>
+                        </div>
+                        <div id="procedimiento_llegadas_salidas_helipuerto">
+                            <separator string="Procedimiento de llegadas y salidas"/>
+                            <field name="procedimiento_llegadas_salidas"/>
+                        </div>
+                        <div id="imagenes_helipuerto">
+                            <separator string="Imágenes Helipuerto/Aeródromo"/>
+                            <group col="4">
+                                <field name="img_1" widget="image"/>
+                                <field name="img_2" widget="image"/>
+                                <field name="img_3" widget="image"/>
+                                <field name="img_4" widget="image"/>
+                            </group>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="leulit_20201026_1222_tree">
+            <field name="name">leulit_20201026_1222_tree</field>
+            <field name="model">leulit.helipuerto</field>
+            <field name="arch" type="xml">
+                <tree string="Helipuertos/Aerodromos">
+                    <field name="name" />
+                    <field name="descripcion" />
+                    <field name="municipio" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201026_1222_action">
+            <field name="name">Helipuertos/Aerodromos</field>
+            <field name="res_model">leulit.helipuerto</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+        <!-- REPORT FICHA HELIPUERTO -->
+        <report
+            id="ficha_helipuerto_report"
+            string="Ficha Helipuerto"
+            model="leulit.helipuerto"
+            report_type="qweb-pdf"
+            file="leulit_operaciones.leulit_20230612_1009_informe"
+            name="leulit_operaciones.leulit_20230612_1009_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+
+        <template id="ficha_helipuerto_report_versioncontrol">
+            <table>
+                <tr>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center"><span t-esc="edicion_revision"/></td>
+                    <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                        <i>Fecha creación documento</i><br/>
+                        <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>
+                    </td>
+                </tr>
+            </table>
+        </template>
+
+        <template id="ficha_helipuerto_report_header">
+            <table class="fullwidth">
+                <tbody>
+                    <tr>
+                        <td>
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                        </td>
+                        <td class="literal theadtitle" style="width:100%vertical-align: middle;">
+                            <span class="theadtitle" style="font-size: 6mm !important;"><span t-esc="nombre"/></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>        
+
+
+
+        <template id="ficha_helipuerto_report_cabecerapagina">
+            <table class="fullwidth">
+                <tr>
+                    <th>                                        
+                        <t t-call="leulit_operaciones.ficha_helipuerto_report_versioncontrol" />
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="2" style="border-top: 1px solid #575757;">
+                        <t t-call="leulit_operaciones.ficha_helipuerto_report_header" />
+                    </th>
+                </tr>
+            </table>        
+        </template>
+
+        <template id="ficha_helipuerto_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .borde{
+                    border: 1px solid;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 4.49786mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-weight: bold;
+                    font-size: 3.4mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.4mm;
+                    word-wrap: break-word;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    text-align: right;
+                    font-size: 3.4mm;
+                }
+                .page {
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.25);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    text-align: center;
+                    background-color: rgba(0,0,0,0.5);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:10px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: top;
+                }
+            </style>      
+        </template>
+
+        <template id="leulit_20230612_1009_informe">
+            <t t-call="web.html_container">
+                <div class="page" style="page-break-after: always;">
+                    <t t-call="leulit_operaciones.ficha_helipuerto_report_css" />
+                    <div class="row">
+                        <t t-call="leulit_operaciones.ficha_helipuerto_report_cabecerapagina" />
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fullwidth tdcolored theadtitle" >
+                                    DATOS GEOGRÁFICOS Y ADMINISTRACIÓN DEL HELIPUERTO/AERÓDROMO
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="literal">Coordenadas geográficas:</td>
+                                <td class="fieldvalue"> lat:<span t-esc="latitud"/>° long:<span t-esc="longitud"/>°</td>
+                            </tr>
+                            <tr>
+                                <td class="literal">Elevación:</td>
+                                <td class="fieldvalue"><span t-esc="elevacion"/> ft</td>
+                            </tr>
+                            <tr>
+                                <td class="literal">Dirección:</td>
+                                <td class="fieldvalue"><span t-esc="direccion"/></td>
+                            </tr>
+                            <tr>
+                                <td class="literal">Teléfono:</td>
+                                <td class="fieldvalue"><span t-esc="telefono"/></td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    SERVICIOS DE INSTALACIONES
+                                </td>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    HORARIOS
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:50%;border-right:1px solid;">
+                                    <table>
+                                        <tr>
+                                            <td class="literal">Abastecimiento de combustible:</td>
+                                            <td class="fieldvalue"><span t-esc="combus"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Asistencia en tierra:</td>
+                                            <td class="fieldvalue"><span t-esc="asistencia_tierra"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width:50%;">
+                                    <table>
+                                        <tr>
+                                            <td class="literal">Horario operación:</td>
+                                            <td class="fieldvalue"><span t-esc="h_operacion"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Horario combustible:</td>
+                                            <td class="fieldvalue"><span t-esc="h_combus"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Procedimiento de activación:</td>
+                                            <td class="fieldvalue"><span t-esc="procedimiento_activacion"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    DETALLES DEL ÁREA DE MOVIMIENTO
+                                </td>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    SEÑALES Y BALIZAS
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:50%;border-right:1px solid;">
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Rumbo de aproximación:</td>
+                                            <td class="fieldvalue"><span t-esc="rumbo_aprox"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Rumbo de salida:</td>
+                                            <td class="fieldvalue"><span t-esc="rumbo_salida"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">FATO:</td>
+                                            <td class="fieldvalue"><span t-esc="fato"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">TLOF:</td>
+                                            <td class="fieldvalue"><span t-esc="tlof"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Calles de rodaje:</td>
+                                            <td class="fieldvalue"><span t-esc="rodaje"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Obstáculos:</td>
+                                            <td class="fieldvalue"><span t-esc="obstaculos"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width:50%;">
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Viento:</td>
+                                            <td class="fieldvalue"><span t-esc="viento"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Luces de balizaje:</td>
+                                            <td class="fieldvalue"><span t-esc="luces"/></td>
+                                        </tr>
+                                    </table>
+                                    <table class="fullwidth" style="padding-top: 50px">
+                                        <tr><td class="tdcolored theadtitle" style="width:50%;">Frecuencias</td></tr>
+                                    </table>
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Frecuencia helipuerto/aeródromo:</td>
+                                            <td class="fieldvalue"><span t-esc="frec_aerodromo"/> MHz</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">TWR más próxima:</td>
+                                            <td class="fieldvalue"><span t-esc="frec_cercana"/> MHz</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    MÍNIMOS METEOROLÓGICOS PARA LA UTILIZACIÓN
+                                </td>
+                                <td class="tdcolored theadtitle" style="width:50%;">
+                                    CATEGORÍA DE AERÓDROMO Y DATOS DE PERFORMANCE
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:50%;border-right:1px solid;">
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="fieldvalue"><span t-esc="minimos_meteo"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="width:50%;">
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="literal">Categoría:</td>
+                                            <td class="fieldvalue"><span t-esc="categoria"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="literal">Operaciones/Performance:</td>
+                                            <td class="fieldvalue"><span t-esc="operaciones_performance"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fullwidth tdcolored theadtitle" >
+                                    PROCEDIMIENTO PARA EL EMBARQUE Y DESEMBARQUE DE PASAJEROS
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fieldvalue"><span t-esc="procedimiento_des_embarque_pasajeros"/></td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fullwidth tdcolored theadtitle" >
+                                    SALIDA Y LLEGADAS
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fieldvalue"><span t-esc="procedimiento_llegadas_salidas"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="page">
+                    <t t-call="leulit_operaciones.ficha_helipuerto_report_css" />
+                    <div class="row">
+                        <t t-call="leulit_operaciones.ficha_helipuerto_report_cabecerapagina" />
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="fullwidth tdcolored theadtitle" >
+                                    Imágenes
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_1)" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_2)" style="width:100%;height:auto"/></td>
+                            </tr>
+                            <tr>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_3)" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_4)" style="width:100%;height:auto"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

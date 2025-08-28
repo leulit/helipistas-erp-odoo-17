@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230608_1631_tree" model="ir.ui.view">
+            <field name="name">leulit_20230608_1631_tree</field>
+            <field name="model">leulit.operaciones_performance</field>
+            <field name="arch" type="xml">
+                <tree string="Tipos de Operaciones / Performance" editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        
+        <record model="ir.actions.act_window" id="leulit_20230608_1631_action">
+            <field name="name">Tipos de Operaciones / Performance</field>
+            <field name="res_model">leulit.operaciones_performance</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+    </data>
+</odoo>

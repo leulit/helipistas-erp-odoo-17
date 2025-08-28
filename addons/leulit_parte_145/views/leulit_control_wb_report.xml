@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20201109_1149_tree" model="ir.ui.view">
+            <field name="name">leulit_20201109_1149_tree</field>
+            <field name="model">leulit.informes_control_wb_report</field>
+            <field name="arch" type="xml">
+                <tree string="Control Integridad de datos de carga y centrado" create="false">
+                    <field name="matricula"/>
+                    <field name="modeloname"/>
+                    <field name="fechalastWB" string="Último informe masa y centrado"/>
+                    <field name="pesomax" string="Masa max. (kg.)"/>
+                    <field name="emptyweight" string="Masa vacio (kg.)"/>
+                    <field name="longarm"/>
+                    <field name="latarm"/>
+                    <field name="wblastmod" string="Última introducción de datos en ERP"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20201109_1149_action">
+            <field name="name">Control Integridad de datos de carga y centrado</field>
+            <field name="res_model">leulit.informes_control_wb_report</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ctrlmantenimiento','=',True)]</field>
+        </record>
+
+
+    </data>
+</odoo>

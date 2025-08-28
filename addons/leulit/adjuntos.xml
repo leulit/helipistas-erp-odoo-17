@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20211114_2150_view" model="ir.ui.view">
+            <field name="name">Listado adjuntos modelo</field>
+            <field name="model">ir.attachment</field>
+            <field name="arch" type="xml">
+                <tree string="Adjuntos" editable="top" >
+                    <field name="datas" widget="download_link" filename="name" string="File"/>
+                    <field name="name" invisible="1"/>
+                    <!--field name="company_id" groups="base.group_multi_company"/-->
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20211114_2153_action" model="ir.actions.act_window">
+            <field name="name">Listado adjuntos modelo acción</field>
+            <field name="res_model">ir.attachment</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit.leulit_20211114_2150_view"/>
+            <!--field name="domain">[('res_id','=',active_id),('default_res_model': context.get('default_res_model'))]</field-->
+            <!--field name="context">{'default_res_id': active_id, 'default_res_model': 'crm.lead'}</field-->
+        </record>
+    
+    </data>
+</odoo>

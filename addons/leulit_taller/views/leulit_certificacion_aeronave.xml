@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        
+        <record id="leulit_20240403_1020_tree" model="ir.ui.view">
+            <field name="name">leulit_20240403_1020_tree</field>
+            <field name="model">leulit.certificacion_aeronave</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="leulit_20240403_1020_form" model="ir.ui.view">
+            <field name="name">leulit_20240403_1020_form</field>
+            <field name="model">leulit.certificacion_aeronave</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="certificacion_id"/>
+                            <field name="aeronave"/>
+                            <field name="color" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20240403_1020_action" model="ir.actions.act_window">
+            <field name="name">Certificaciones por Aeronave</field>
+            <field name="res_model">leulit.certificacion_aeronave</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

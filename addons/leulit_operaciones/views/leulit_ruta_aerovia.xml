@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20220813_1757_search" model="ir.ui.view">
+            <field name="name">leulit_20220813_1757_search</field>
+            <field name="model">leulit.ruta_aerovia</field>
+            <field name="arch" type="xml">
+                <search string="leulit">
+                    <field name="name"/>
+                    <field name="start_point_id"/>
+                    <field name="end_point_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201026_1153_form">
+            <field name="name">leulit_20201026_1153_form</field>
+            <field name="model">leulit.ruta_aerovia</field>
+            <field name="arch" type="xml">
+                <form string="Aerovía">
+                    <sheet>
+                        <group col="2">
+                            <field name="name"/>
+                            <field name="start_point_id"/><field name="sp_lat" invisible="1" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="sp_lng" invisible="1"/>
+                            <field name="end_point_id"/><field name="ep_lat" invisible="1" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="ep_lng" invisible="1"/>
+                            <field name="distancia"/>
+                            <field name="rumbo"/>
+                            <field name="altitudseguridad"/>
+                            <field name="activo"/>
+                            <field name="water_zone"/>
+                            <field name="doc_id" invisible="1"/>
+                        </group>
+                        <table>
+                            <tr>
+                                <td style="width:800px; height:600px">
+                                    <div class="o_google_map_view" style="width:800px; height:600px">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table> 
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+	   <record model="ir.ui.view" id="leulit_20201026_1153_tree">
+            <field name="name">leulit_20201026_1153_tree</field>
+            <field name="model">leulit.ruta_aerovia</field>
+            <field name="arch" type="xml">
+                <tree string="Aerovías">
+                    <field name="id" string="ID Aerovía"/>
+                    <field name="name"/>
+                    <field name="start_point_id"/>
+                    <field name="end_point_id"/>
+                    <field name="distancia" sum="Total distancia"/>
+                    <field name="rumbo"/>
+                    <field name="altitudseguridad"/>
+                </tree>
+            </field>
+        </record>
+
+	    <record model="ir.actions.act_window" id="leulit_20201026_1153_action">
+            <field name="name">Aerovías activas</field>
+            <field name="res_model">leulit.ruta_aerovia</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('activo','=',True)]</field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="leulit_20201026_1154_action">
+            <field name="name">Aerovías inactivas</field>
+            <field name="res_model">leulit.ruta_aerovia</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('activo','=',False)]</field>
+        </record>
+
+    </data>
+</odoo>

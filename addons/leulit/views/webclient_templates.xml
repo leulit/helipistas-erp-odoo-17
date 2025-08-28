@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <template id="login" inherit_id="web.login" name="Login buttons CSV">
+        <xpath expr="//button[@type='submit']" position="after">
+            <a role="button" href="/verifycsv" class="btn btn-secondary btn-block">Verificar código CSV / CID</a>
+        </xpath>
+    </template>
+
+
+
+    <template id="verify_docs_breadcrumbs" name="Verify docs Breadcrumbs">
+        <div t-attf-class="mt-3" style="border: 1px solid #c4c4c4; background-color:#f2f2f2; width:90%%; padding: 20px">
+            <b>Documentación firmada con código CSV/CID y accesible desde esta pantalla</b><br/>
+            <ul>
+                <li>Parte técnico de vuelo (PTV) - Posteriores al día 12-Noviembre-2020</li>
+                <li>Plan operacional - Posteriores al día 12-Noviembre-2020</li>
+                <li>Informe general cursos</li>
+                <li>Informe clases teóricas</li>
+                <li>Informe clases prácticas</li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="verify_docs_searchbar" name="Verify docs Search Bar">
+        <t t-if="breadcrumbs_searchbar">
+            <t t-call="leulit.verify_docs_breadcrumbs"/>
+        </t>
+        <nav t-attf-class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar {{classes if classes else ''}} {{'mt-3 rounded' if breadcrumbs_searchbar else 'border-top-0' }}">
+            <!--  Collapse button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#o_portal_navbar_content" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle filters">
+                <span class="navbar-toggler-icon small"/>
+            </button>
+
+            <!--  Collapsable content  -->
+            <div class="collapse navbar-collapse" id="o_portal_navbar_content">
+                <form t-if="searchbar_inputs" class="form-inline o_portal_search_panel ml-lg-4 col-xl-4 col-md-5">
+                    <div class="input-group input-group-sm w-100">
+                        <span>CSV Code</span>
+                        <div class="input-group-prepend">
+                            <div class="dropdown-menu" role="menu">
+                                <t t-foreach='searchbar_inputs' t-as='input'>
+                                    <a t-att-href="'#' + searchbar_inputs[input]['input']"
+                                        t-attf-class="dropdown-item#{search_in == searchbar_inputs[input]['input'] and ' active' or ''}">
+                                        <span t-raw="searchbar_inputs[input]['label']"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                        <input type="text" class="form-control form-control-sm" placeholder="Search" t-att-value='search' name="search"/>
+                        <span class="input-group-append">
+                            <button class="btn btn-secondary search-submit" type="button">
+                                <span class="fa fa-search"/>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </template>
+
+    <template id="verify_docs_layout" name="Verify docs Layout">
+        <t t-call="portal.frontend_layout">
+            <t t-set="is_portal" t-value="True"/>
+            <div t-if="not no_breadcrumbs and not my_details and not breadcrumbs_searchbar" class="o_portal container mt-3">
+                
+                <div class="row align-items-center bg-white no-gutters border rounded">
+                    <div class="col-10">
+                        <t t-call="leulit.verify_docs_breadcrumbs"></t>
+                    </div>
+                    <div t-if="prev_record or next_record" class="col-2 flex-grow-0 text-center">
+                        <t t-call='portal.record_pager'/>
+                    </div>
+                </div>
+            </div>
+            <div id="wrap" class='o_portal_wrap'>
+                <div class="container mb64">
+                    <t t-if="my_details">
+                        <div class="row justify-content-between mt-4">
+                            <div t-attf-class="col-12 col-md col-lg-6">
+                                <t t-raw="0"/>
+                            </div>
+                            <div id="o_my_sidebar" class="pt-3 pt-lg-0 col-12 col-md col-lg-4 col-xl-3 o_my_sidebar">
+                                <div class="o_my_contact" t-if="sales_user">
+                                    <t t-call="portal.portal_contact"/>
+                                </div>
+                                <div class="o_portal_my_details">
+                                    <h4>Details <a role="button" href="/my/account" class="btn btn-sm btn-link"><i class="fa fa-pencil"/> Edit</a></h4>
+                                    <hr class="mt-1 mb-0"/>
+                                    <div t-field="user_id.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone", "address", "name"]}'/>
+                                </div>
+                                <div class="o_portal_my_security mt-3">
+                                    <h4>Account Security </h4>
+                                    <hr class="mt-1 mb-1"/>
+                                    <a href="/my/security"><i class="fa fa-pencil mx-1"/>Edit Security Settings</a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-raw="0"/>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="portal_verifycsv" name="Verficar documentos">
+        <t t-call="leulit.verify_docs_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="leulit.verify_docs_searchbar">
+                <t t-set="title">Documentos</t>
+            </t>
+            <t t-if="not grouped_docs">
+                <div class="alert alert-warning mt8" role="alert">
+                    No hay documentos.
+                </div>
+            </t>
+            <t t-if="grouped_docs">
+                <t t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Firmado por</th>
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">CSV / CID</th>
+                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Descargar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="grouped_docs" t-as="doc">
+                            <tr>
+                                <td class="text-center">
+                                    <span t-esc="doc.id"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="doc.firmado_por.name"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="doc.fecha_valid.date()"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-if="doc.hashcode">
+                                        <span t-esc="doc.hashcode"/>
+                                    </t>
+                                    <t t-if="not doc.hashcode">
+                                        <span t-esc="doc.esignature"/>
+                                    </t>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="doc.referencia"/>
+                                </td>
+                                <td class="text-center">
+                                    <a t-attf-href="/web/content/#{doc.attachment_id.id}?unique=46f61b020d274f7a885810a4b0854e59be586c75&amp;download=true" class="o_image" title="#{doc.attachment_id.name}" alt="" data-mimetype="application/pdf"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230726_1419_tree" model="ir.ui.view">
+            <field name="name">leulit_20230726_1419_tree</field>
+            <field name="model">leulit.job_card</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="descripcion"/>
+                    <field name="activity_planned_id"/>
+                    <field name="task_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20230726_1419_form" model="ir.ui.view">
+            <field name="name">leulit_20230726_1419_form</field>
+            <field name="model">leulit.job_card</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group col="2">
+                        <field name="descripcion"/>
+                    </group>
+                    <group col="4">
+                        <field name="activity_planned_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        <field name="task_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        <field name="equipamiento_id" readonly="1"  invisible="((not maintenance_plan_id))" />
+                        <field name="maintenance_plan_id" readonly="1"  invisible="((not maintenance_plan_id))" />
+                        <field name="parent_section_id"  invisible="((maintenance_plan_id))" />
+                    </group>
+                    <separator string="Items de Job Card"/>
+                    <field name="job_card_item_ids">
+                        <tree editable="bottom">
+                            <field name="descripcion"/>
+                            <field name="job_card_id" invisible="1"/>
+                            <field name="equipamiento_id" domain="[('first_parent','=',parent.equipamiento_id)]" options="{'no_create': True, 'create': False, 'edit': False, 'no_open': True, 'no_quick_create': True}"/>
+                            <field name="manual_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open': True, 'no_quick_create': True}"/>
+                            <field name="type_maintenance"/>
+                            <field name="ata_ids" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False, 'no_open': True, 'no_quick_create': True}"/>
+                            <field name="certificacion_ids" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False, 'no_open': True, 'no_quick_create': True}"/>
+                            <field name="boroscopia"/>
+                            <field name="doble_check"/>
+                            <field name="inspeccion_seguridad"/>
+                            <field name="oblig_form_one"/>
+                            <field name="no_aplica"/>
+                            <field name="tiempo_defecto" string="Tiempo" widget="float_time" sum="Total"/>
+                        </tree>
+                    </field>
+                    <separator string="Secciones"/>
+                    <field name="sections_ids">
+                        <tree edit="false" create="false">
+                            <field name="descripcion"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20230726_1419_action" model="ir.actions.act_window">
+            <field name="name">Job Card</field>
+            <field name="res_model">leulit.job_card</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20240625_1100_form" model="ir.ui.view">
+            <field name="name">leulit_20240625_1100_form</field>
+            <field name="model">survey.survey</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='access_mode']" position="after">
+                    <field name="answer_count"/>
+                </xpath>
+                <xpath expr="//field[@name='active']" position="before">
+                    <field name="company_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

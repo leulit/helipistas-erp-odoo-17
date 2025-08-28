@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201109_1154_tree">
+            <field name="name">leulit_20201109_1154_tree</field>
+            <field name="model">leulit.analisis_aceite</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Análisis aceite">
+                    <field name="n_muestra"/>
+                    <field name="descripcion"/>
+                    <!-- <field name="work_order"/> -->
+                    <field name="attachment_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201109_1154_form">
+            <field name="name">leulit_20201109_1154_form</field>
+            <field name="model">leulit.analisis_aceite</field>
+            <field name="arch" type="xml">
+                <form string="leulit">
+                    <sheet>
+                        <group col="2">
+                            <field name="n_muestra"/>
+                            <field name="descripcion"/>
+                            <!-- <field name="work_order" options="{'limit': 20, 'create': false, 'create_edit': false, 'no_open': true}"/> -->
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                            <field name="comentarios"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20201109_1154_action" model="ir.actions.act_window">
+            <field name="name">Análisis de aceite</field>
+            <field name="res_model">leulit.analisis_aceite</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+    </data>
+</odoo>

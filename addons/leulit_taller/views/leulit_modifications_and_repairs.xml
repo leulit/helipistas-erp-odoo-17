@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20250403_1049_tree" model="ir.ui.view">
+            <field name="name">leulit_20250403_1049_tree</field>
+            <field name="model">leulit.modifications_and_repairs</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="modification_doc"/>
+                    <field name="rev"/>
+                    <field name="approval_date"/>
+                    <field name="description"/>
+                    <field name="application_date"/>
+                    <field name="work_order"/>
+                    <field name="preflight_inspection_affectation"/>
+                    <field name="ica_associated"/>
+                    <field name="impact_on_weight_and_balance"/>
+                    <field name="last_weight_and_balance_with_modification"/>
+                    <field name="date_unmodified"/>
+                    <field name="notes"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20250403_1049_form" model="ir.ui.view">
+            <field name="name">leulit_20250403_1049_form</field>
+            <field name="model">leulit.modifications_and_repairs</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="modification_doc"/>
+                            <field name="rev"/>
+                            <field name="approval_date"/>
+                            <field name="description"/>
+                            <field name="application_date"/>
+                            <field name="work_order"/>
+                            <field name="preflight_inspection_affectation"/>
+                            <field name="ica_associated"/>
+                            <field name="impact_on_weight_and_balance"/>
+                            <field name="last_weight_and_balance_with_modification"/>
+                            <field name="date_unmodified"/>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20250403_1049_action" model="ir.actions.act_window">
+            <field name="name">Modificaciones y Reparaciones</field>
+            <field name="res_model">leulit.modifications_and_repairs</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

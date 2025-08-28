@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20230906_1505_access_permission" model="ir.model.access">
+        <field name="name">Vuelo Access</field>
+        <field name="model_id" ref="model_leulit_vuelo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200618_1106_access_permission" model="ir.model.access">
+        <field name="name">Vuelo tipo line Access</field>
+        <field name="model_id" ref="model_leulit_vuelo_tipo_line"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200708_1210_access_permission" model="ir.model.access">
+        <field name="name">Piloto Access</field>
+        <field name="model_id" ref="model_leulit_piloto"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211006_1353_access_permission" model="ir.model.access">
+        <field name="name">Piloto Access</field>
+        <field name="model_id" ref="model_leulit_operador"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200915_1210_access_permission" model="ir.model.access">
+        <field name="name">Helipuerto Access</field>
+        <field name="model_id" ref="model_leulit_helipuerto"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201023_1138_access_permission" model="ir.model.access">
+        <field name="name">Tipos de vuelo Access</field>
+        <field name="model_id" ref="model_leulit_vuelostipo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201026_1033_access_permission" model="ir.model.access">
+        <field name="name">Ruta Access</field>
+        <field name="model_id" ref="model_leulit_ruta"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201026_1153_access_permission" model="ir.model.access">
+        <field name="name">Aerovía Access</field>
+        <field name="model_id" ref="model_leulit_ruta_aerovia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201026_1156_access_permission" model="ir.model.access">
+        <field name="name">Punto Access</field>
+        <field name="model_id" ref="model_leulit_ruta_punto"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210310_1302_access_permission" model="ir.model.access">
+        <field name="name">Rel ruta aerovia Access</field>
+        <field name="model_id" ref="model_leulit_rel_ruta_aerovia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201027_1051_access_permission" model="ir.model.access">
+        <field name="name">16 bravo Access</field>
+        <field name="model_id" ref="model_leulit_hist_16bravo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210128_1658_access_permission" model="ir.model.access">
+        <field name="name">Weight and balance Access</field>
+        <field name="model_id" ref="model_leulit_weight_and_balance"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210210_1028_access_permission" model="ir.model.access">
+        <field name="name">Performance Access</field>
+        <field name="model_id" ref="model_leulit_performance"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210219_1134_access_permission" model="ir.model.access">
+        <field name="name">Rel Plan operacional aerovia Access</field>
+        <field name="model_id" ref="model_leulit_rel_planoperacional_aerovia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211019_1010_access_permission" model="ir.model.access">
+        <field name="name">leulit_technical_log_report</field>
+        <field name="model_id" ref="model_leulit_technical_log_report"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211027_2001_access_permission" model="ir.model.access">
+        <field name="name">leulit_vuelo_wizard_report</field>
+        <field name="model_id" ref="model_leulit_vuelo_wizard_report"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211027_2003_access_permission" model="ir.model.access">
+        <field name="name">leulit_seguro_report</field>
+        <field name="model_id" ref="model_leulit_seguro_report"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20220208_1052_access_permission" model="ir.model.access">
+        <field name="name">leulit_hist_weight_and_balance</field>
+        <field name="model_id" ref="model_leulit_hist_weight_and_balance"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20220817_1259_access_permission" model="ir.model.access">
+        <field name="name">leulit_vuelo_scripts</field>
+        <field name="model_id" ref="model_leulit_vuelo_scripts"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230608_1200_access_permission" model="ir.model.access">
+        <field name="name">leulit_operaciones_performance</field>
+        <field name="model_id" ref="model_leulit_operaciones_performance"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230829_1642_access_permission" model="ir.model.access">
+        <field name="name">leulit_piloto_adjuntos</field>
+        <field name="model_id" ref="model_leulit_piloto_adjunto"/>
+        <field name="group_id" ref="leulit.RBase"/> 
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20250319_1018_access_permission" model="ir.model.access">
+        <field name="name">leulit_freelance_actividad_aerea</field>
+        <field name="model_id" ref="model_leulit_freelance_actividad_aerea"/>
+        <field name="group_id" ref="leulit.RBase"/> 
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250320_1240_access_permission" model="ir.model.access">
+        <field name="name">leulit_wizard_freelance_actividad_aerea</field>
+        <field name="model_id" ref="model_leulit_wizard_freelance_actividad_aerea"/>
+        <field name="group_id" ref="leulit.RBase"/> 
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

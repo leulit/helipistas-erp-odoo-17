@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20230306_1516_form" model="ir.ui.view">
+            <field name="name">leulit_20230306_1516_form</field>
+            <field name="model">hr.expense.sheet</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='expenses']" position="after">
+                    <page name="facturas" string="Facturas">
+                        <button name="create_account_move" string="Crear Factura" class="oe_highlight" type="object"/>
+                        <field name="account_ids" options="{'create': False, 'edit': False, 'delete': False}" context="{'default_move_type':'in_invoice'}">
+                            <tree>
+                                <field name="name" decoration-bf="1"/>
+                                <field name="invoice_partner_display_name" string="Proveedor"/>
+                                <field name="invoice_date"/>
+                                <field name="ref"/>
+                                <field name="amount_total" sum="Total" decoration-bf="1"/>
+                                <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
+                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" invisible="payment_state in ('invoicing_legacy')"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//group[@name='expense_total']" position="replace">
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <group class="oe_subtotal_footer oe_right" colspan="2" name="expense_total">
+                        <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                            <label for="total_amount"/>
+                        </div>
+                        <field name="total_amount" nolabel="1" class="oe_subtotal_footer_separator"/>
+                        <field name="amount_residual" class="oe_subtotal_footer_separator" invisible="state not in ('post', 'done')"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='expense_line_ids']/tree/field[@name='total_amount']" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+
+        <template id="report_expenses_document" inherit_id="hr_expense.report_expense_sheet">
+            <xpath expr="//div[hasclass('page')]/table" position="after">
+                <h3>Facturas</h3>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Nombre</th>
+                            <th class="text-center">Ref.</th>
+                            <th class="text-right">Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.account_ids" t-as="line">
+                            <td><span t-field="line.invoice_date"/></td>
+                            <td>
+                                <span t-field="line.partner_id.name"/>
+                            </td>
+                            <td style="text-center">
+                                <span t-field="line.ref"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="line.amount_total" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </xpath>
+        </template>
+        
+
+    </data>
+</odoo>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20201026_1033_filter" model="ir.ui.view">
+            <field name="name">leulit_20201026_1033_filter</field>
+            <field name="model">leulit.ruta</field>
+            <field name="arch" type="xml">
+                <search string="Filtros">
+                    <field name="nombre"/>
+                    <field name="aerovia_ids"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201026_1033_form">
+            <field name="name">leulit_20201026_1033_form</field>
+            <field name="model">leulit.ruta</field>
+            <field name="arch" type="xml">
+                <form string="Ruta">
+                    <sheet>
+                        <div>
+                            <group col="2">
+                                <field name="id" invisible="1"/>
+                                <field name="nombre"/>
+                            </group>
+                            <group colspan="2" col="6">
+                                <field name="fecha_creacion"/>
+                                <field name="fecha_aprobacion"/>
+                                <field name="activo"/>
+                                <field name="water_zone"/>
+                            </group>
+                            <group col="2">
+                                <field name="comentarios"/>
+                            </group>
+                            <group colspan="2" col="4">
+                                <field name="origen_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="destino_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            </group>
+                            <field name="aerovia_ids" colspan="2" nolabel="1"  readonly="((not id))" >
+                                <tree string="Aerovías" editable="bottom" decoration-info="water_zone==True">
+                                    <field name="sequence"/>
+                                    <field name="aerovia_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                    <field name="idaerovia" readonly="1"/>
+                                    <field name="distancia" readonly="1" sum="Total distancia"/>
+                                    <field name="rumbo" readonly="1"/>
+                                    <field name="altitudprevista"/>
+                                    <field name="altitudseguridad" readonly="1"/>
+                                    <field name="water_zone" invisible="1"/>
+                                </tree>
+                            </field>
+                            <table class="">
+                                <tr>
+                                    <td style="width:800px; height:600px">
+                                        <div class="o_google_map_view" style="width:800px; height:600px">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+		
+        <record model="ir.ui.view" id="leulit_20201026_1033_tree">
+            <field name="name">leulit_20201026_1033_tree</field>
+            <field name="model">leulit.ruta</field>
+            <field name="arch" type="xml">
+                <tree string="Rutas">
+                    <field name="nombre" />
+                    <field name="fecha_creacion" />
+                    <field name="fecha_aprobacion" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201026_1033_action">
+            <field name="name">Rutas inactivas</field>
+            <field name="res_model">leulit.ruta</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('activo','=',False)]</field> 
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201026_1034_action">
+            <field name="name">Ruta activas</field>
+            <field name="res_model">leulit.ruta</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('activo','=',True)]</field> 
+        </record>
+
+    </data>
+</odoo>

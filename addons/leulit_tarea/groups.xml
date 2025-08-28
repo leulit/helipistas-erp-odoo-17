@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="tarea_rol_category">
+            <field name="name">Rol Tarea</field>
+            <field name="description">Rol Tarea</field>
+        </record>
+
+
+        <record id="RT_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="tarea_rol_category"/>
+        </record>
+        
+        <record id="RT_administrador" model="res.groups">
+            <field name="name">Administración</field>
+            <field name="implied_ids" eval="[(4, ref('RT_base'))]"/>
+            <field name="category_id" ref="tarea_rol_category"/>
+        </record>
+
+        <record id="RT_gestor" model="res.groups">
+            <field name="name">Gestor</field>
+            <field name="implied_ids" eval="[(4, ref('RT_administrador'))]"/>
+            <field name="category_id" ref="tarea_rol_category"/>
+        </record>
+
+
+    </data>
+</odoo>

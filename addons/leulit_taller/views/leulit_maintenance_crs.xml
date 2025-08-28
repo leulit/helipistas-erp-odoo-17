@@ -1,0 +1,410 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    
+    <record id="leulit_20230623_1633_form" model="ir.ui.view">
+        <field name="name">leulit_20230623_1633_form</field>
+        <field name="model">leulit.maintenance_crs</field>
+        <field name="arch" type="xml">
+            <form string="CRS" create="false">
+                <header>
+                    <button name="set_estado_firmado" string="Firmar IT" type="object" class="oe_highlight"  invisible="((estado != 'borrador'))"  groups="leulit.RolIT_developer"/>
+                    <button name="set_estado_borrador" string="Pendiente IT" type="object" class="oe_highlight"  invisible="((estado == 'borrador'))"  groups="leulit.RolIT_developer"/>
+                    <button name="set_estado_pendiente_firma" string="Firmar" type="object" class="oe_highlight"  invisible="((estado != 'borrador'))"  confirm="Al firmar este CRS, confirmará que ha supervisado todas las tareas realizadas. ¿Quiere firmar el CRS?"/>
+                    <button name="print_crs" string="Imprimir" type="object" class="oe_highlight"/>
+                    <field name="estado" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="request" invisible="1"/>
+                    <separator string="Datos Aeronave"/>
+                    <group col="4">
+                        <field name="helicoptero"  readonly="((estado != 'borrador'))" />
+                        <field name="modelo"/>
+                        <field name="fabricante"/>
+                        <field name="serialnum"/>
+                        <field name="horas_crs"  readonly="((estado != 'borrador'))" />
+                        <field name="tso_crs"  readonly="((estado != 'borrador'))" />
+                    </group>
+                    <separator string="Datos Motor"/>
+                    <group col="4">
+                        <field name="motor" readonly="1"/>
+                        <field name="marca_motor" readonly="1"/>
+                        <field name="tsn_motor"  invisible="((not motor))" readonly="((estado != 'borrador'))" />
+                        <field name="tso_motor"  invisible="((not motor))" readonly="((estado != 'borrador'))" />
+                        <field name="tsn_motor_str"  invisible="((motor))" readonly="((estado != 'borrador'))" />
+                        <field name="tso_motor_str"  invisible="((motor))" readonly="((estado != 'borrador'))" />
+                    </group>
+                    <separator string="Datos CRS"/>
+                    <group>
+                        <field name="tareas" widget="html"  readonly="((estado != 'borrador'))" />
+                    </group>
+                    <group>
+                        <field name="limitaciones" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))"  required="1"/>
+                    </group>
+                    <group name="last_info_crs">
+                        <field name="tipo_crs"  readonly="((estado != 'borrador'))" />
+                        <field name="rev"/>
+                        <field name="n_cas"/>
+                        <field name="lugar"  readonly="((estado != 'borrador'))" />
+                        <field name="fecha"  readonly="((estado != 'borrador'))" />
+                        <field name="certificador" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))" />
+                        <field name="ref_em"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="leulit_20230623_1633_tree" model="ir.ui.view">
+        <field name="name">leulit_20230623_1633_tree</field>
+        <field name="model">leulit.maintenance_crs</field>
+        <field name="arch" type="xml">
+            <tree string="CRS" create="false">
+                <field name="tipo_crs"/>
+                <field name="n_cas"/>
+                <field name="lugar"/>
+                <field name="fecha"/>
+                <field name="certificador"/>
+                <field name="ref_em"/>
+                <field name="estado"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="leulit_20250207_1056_action">
+        <field name="name">Listado de CRS</field>
+        <field name="res_model">leulit.maintenance_crs</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+        
+
+    <!-- REPORT CRS -->
+    <report
+        id="leulit_20230707_1128_report"
+        string="CRS"
+        model="leulit.maintenance_crs"
+        report_type="qweb-pdf"
+        name="leulit_taller.leulit_20230707_1128_informe"
+        file="leulit_taller.leulit_20230707_1128_informe"
+        paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        print_report_name="'%s' % (object._get_report_filename())"
+    />
+
+
+
+    <template id="crs_report_header">
+        <table class="fullwidth noborde">
+            <tr>
+                <th class="noborde">
+                    <table class="noborde">
+                        <tr>
+                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
+                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                <i>Fecha creación documento</i><br/>
+                                <i><span t-esc="item['fecha']"/></i>
+                            </td>
+                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                <t t-if="hashcode">
+                                    <i>Firmado por:</i><br/>
+                                    <i><span t-esc="firmado_por"/></i>
+                                </t>
+                            </td>
+                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                <t t-if="hashcode">
+                                    <i>CSV/CID</i><br/>
+                                    <span t-esc="hashcode"/>
+                                </t>
+                                <t t-if="not hashcode">
+                                    <i>Referencia</i><br/>
+                                    <span t-esc="hashcode_interno"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                </th>
+                <th class="noborde">
+                    <table align="right">
+                        <tr>
+                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
+                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0009</td>
+                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
+                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
+                        </tr>
+                    </table>
+                </th>
+            </tr>
+            <tr>
+                <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
+                    <table class="fullwidth noborde" style="margin-bottom: 30px">
+                        <tbody>
+                            <tr class="noborde">
+                                <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                                    Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                </td>
+                            </tr>
+                            <tr class="noborde">
+                                <td class="noborde">
+                                    <table class="fullwidth">
+                                        <tr>
+                                            <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
+                                                <img t-att-src="'data:image/png;base64,%s' % to_text(logo_ica)" style="width:auto;height:25px;"/><br/><b>ES.145.173</b>
+                                            </td>
+                                            <td class="noborde" style="font-size:20px; white-space: nowrap; text-align:center">
+                                                <span><b>Certificado de Aptitud al Servicio</b></span><br/>
+                                                <span style="font-size:12px;">Release to service certificate</span>
+                                            </td>
+                                            <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
+                                                <span>M.O.E  2.16</span><br/>
+                                                <span>Formato  2.7</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </th>
+            </tr>
+        </table>
+    </template>   
+
+
+    <template id="crs_report_css">
+        <style>
+            html {
+                font-family: sans-serif; /* 1 */
+                -ms-text-size-adjust: 100%; /* 2 */
+                -webkit-text-size-adjust: 100%; /* 2 */
+            }
+            .fullwidth {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .noborde {
+                border: 0px none;
+            }
+            .theadtitle {
+                font-weight: bold;
+                font-size: 3.5687mm !important;
+                text-transform: uppercase;
+            }
+            .literal {
+                font-size: 3.5687mm;
+            }
+            .fieldvalue {
+                font-weight: normal;
+                font-size: 3.5687mm;
+            }
+            .numericfieldvalue {
+                font-weight: normal;
+                font-size: 3.5687mm;
+            }
+            .page {
+                %if hashcode:
+                    background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                %else:
+                    background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                %endif
+                width: 230mm;
+                height: 320mm;
+                margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                page-break-after: always;
+            }
+            .pagecontent {
+                width: 230mm;
+                height: 320mm;
+            }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
+                }
+            .centertext {text-align:center;}
+            .nowrap {white-space: nowrap;}
+            thead { display: table-header-group }
+            tfoot { display: table-header-group }
+            tr { page-break-inside: avoid }
+            th, tbody td, tfoot td {
+                border: 1px solid #EEEEEE;
+                padding-right:3px;
+                padding-left:3px;
+                padding-top:3px;
+                padding-bottom:3px;
+                text-align:left;
+                font-size:12px;
+                font-weight:normal;
+            }
+            td{
+                vertical-align: middle
+            }
+        </style>
+    </template>
+
+    <template id="leulit_20230707_1128_informe">
+        <t t-call="web.html_container">
+            <div class="page">
+                <t t-set="cont" t-value="1"/>
+                <t t-foreach="crslist" t-as="item">
+                    <t t-call="leulit_taller.crs_report_css"/>
+                    <t t-call="leulit_taller.crs_report_header" />
+                    <div class="row">
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored theadtitle" >
+                                    Datos aeronave / Aircraft data
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <th class="centertext tdcolored literal">Matrícula</th>
+                                <th class="centertext tdcolored literal">Marca</th>
+                                <th class="centertext tdcolored literal">Modelo</th>
+                                <th class="centertext tdcolored literal">S/N</th>
+                                <th class="centertext tdcolored literal">TSN</th>
+                                <th class="centertext tdcolored literal">TSO</th>
+                                <th class="centertext tdcolored literal">O.T.</th>
+                            </tr>
+                            <tr>
+                                <td class="centertext fieldvalue"><span t-esc="item['matricula']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['marca_aeronave']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['modelo_aeronave']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['sn_aeronave']"/></td>
+                                <td class="centertext numericfieldvalue"><span t-esc="item['tsn_aeronave']"/></td>
+                                <td class="centertext numericfieldvalue"><span t-esc="item['tso_aeronave']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['ot']"/></td>
+                            </tr>
+                            <tr>
+                                <td class="centertext fieldvalue">-</td>
+                                <td class="centertext fieldvalue"><span t-esc="item['marca_motor']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['modelo_motor']"/></td>
+                                <td class="centertext fieldvalue"><span t-esc="item['sn_motor']"/></td>
+                                <td class="centertext numericfieldvalue"><span t-esc="item['tsn_motor']"/></td>
+                                <td class="centertext numericfieldvalue"><span t-esc="item['tso_motor']"/></td>
+                                <td class="centertext fieldvalue">-</td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored literal">Referencia Programa de mantenimiento / Maint. Program Reference</td>
+                                <td class="fieldvalue"><span t-esc="item['plan']"/></td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored literal">Detalles de Trabajo / Detailed Works</td>
+                            </tr>
+                            <tr>
+                                <td class="fieldvalue"><span t-raw="item['tareas']"/></td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="tdcolored literal">Limitaciones de aeronavegabilidad u operacionales</td>
+                            </tr>
+                            <tr>
+                                <td class="fieldvalue"><span t-esc="item['limitaciones']"/></td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td style="background-color: #D2DBA9" class="centertext fieldvalue">Certifies that the work specified, except as otherwise specified, was carried out in accordance with Part-145 and in respect to that work the aircraft / aircraft component is considered ready for release to service.</td>
+                            </tr>
+                        </table>
+                        <t t-if="cont == num_pages">
+                            <table class="fullwidth">
+                                <tr>
+                                    <th class="centertext tdcolored literal">Tipo de CAS/CRS</th>
+                                    <th class="centertext tdcolored literal">Nº del CAS/CRS</th>
+                                    <th class="centertext tdcolored literal">Lugar</th>
+                                    <th class="centertext tdcolored literal">Técnico Certificador</th>
+                                    <th class="centertext tdcolored literal">Ref. EM. / W. Pack</th>
+                                </tr>
+                                <tr>
+                                    <td class="centertext fieldvalue"><span t-esc="item['tipo_crs']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['n_cas']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['lugar']"/><br/><span t-esc="item['fecha']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['certificador']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['ref_em']"/></td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <table class="fullwidth" style="page-break-after: always;">
+                                <tr>
+                                    <th class="centertext tdcolored literal">Tipo de CAS/CRS</th>
+                                    <th class="centertext tdcolored literal">Nº del CAS/CRS</th>
+                                    <th class="centertext tdcolored literal">Lugar</th>
+                                    <th class="centertext tdcolored literal">Técnico Certificador</th>
+                                    <th class="centertext tdcolored literal">Ref. EM. / W. Pack</th>
+                                </tr>
+                                <tr>
+                                    <td class="centertext fieldvalue"><span t-esc="item['tipo_crs']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['n_cas']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['lugar']"/><br/><span t-esc="item['fecha']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['certificador']"/></td>
+                                    <td class="centertext fieldvalue"><span t-esc="item['ref_em']"/></td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-set="cont" t-value="cont+1"/>
+                    </div> 
+                    <div class="footer">
+                        <div class="row text-center" style="border-top: 1px solid black;">
+                            <div class="col col-3 offset-9 text-right">
+                                <ul class="list-inline mt-2">
+                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">H-</span><span class="page" style="font-size:10px;"/>
+                                    </li>
+                                    <li class="list-inline-item" style="font-size:10px;">de</li>
+                                    <li class="list-inline-item">
+                                        <span style="font-size:10px;">H-</span><span class="topage" style="font-size:10px;"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <record id="leulit_mail_camo_crs_firmado" model="mail.template">
+        <field name="name">Helipistas mail informa CRS firmado CAMO</field>
+        <field name="email_from">erp@helipistas.com</field>
+        <field name="email_to">${ctx.get('mail_to')}</field>
+        <field name="model_id" ref="model_leulit_maintenance_crs" />
+        <field name="auto_delete" eval="True" />
+        <field name="subject">${ctx.get('subject')}</field>
+        <field name="body_html"><![CDATA[
+            <table>
+                <tr>
+                    <td>
+                        CRS:
+                    </td>
+                    <td>
+                        ${object.n_cas}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Work Order:
+                    </td>
+                    <td>
+                        ${object.request.name}
+                    </td>
+                </tr>
+            </table>
+        ]]>
+        </field>
+    </record>
+
+
+</odoo>

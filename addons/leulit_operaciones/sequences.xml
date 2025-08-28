@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <record model="ir.sequence" id="leulit_seq_vuelos">
+            <field name="name">leulit Sequencia Vuelos</field>
+            <field name="code">leulit.vuelo</field>
+            <field name="prefix">VUL-</field>
+            <field name="padding">7</field>
+            <field name="number_next_actual">11836</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,296 @@
+# -*- encoding: utf-8 -*-
+
+from odoo import models, fields, api, tools, exceptions, registry, _
+from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
+import logging
+from datetime import datetime
+
+_logger = logging.getLogger(__name__)
+
+
+class leulit_calidad_control_wb_report(models.TransientModel):
+    _name = "leulit.calidad_control_wb_report"
+    _description = "leulit_calidad_control_wb_report"
+    
+    def imprimir(self):
+        data = self._get_data_to_print_control_wb()
+        return self.env.ref('leulit_calidad.leulit_inf_wb_control_report').report_action(self, data=data)
+
+    def _get_data_to_print_control_wb(self):
+        data = {}
+        helicopteros = []
+        vuelos = []
+        for item in self:
+            if item.helicoptero_ids:
+                for helicoptero in item.helicoptero_ids:
+                    helicoptero = {
+                        'matricula' : helicoptero.matricula,
+                        'modeloname' : helicoptero.modeloname,
+                        'fechalastWB' : helicoptero.fechalastWB,
+                        'pesomax' : helicoptero.pesomax,
+                        'emptyweight' : helicoptero.emptyweight,
+                        'longarm' : helicoptero.longarm,
+                        'latarm' : helicoptero.latarm,
+                        'wblastmod' : helicoptero.wblastmod
+                    }
+                    helicopteros.append(helicoptero)
+            if item.vuelo_ids:
+                for vuelo_id in item.vuelo_ids:
+                    weight_and_balance = vuelo_id.weight_and_balance_id
+                    wb = {
+                        'emptyweight' : weight_and_balance.emptyweight,
+                        'emptyweight_long_arm' : weight_and_balance.emptyweight_long_arm,
+                        'emptyweight_lat_arm' : weight_and_balance.emptyweight_lat_arm,
+                        'emptyweight_long_moment' : "{0:.2f}".format(weight_and_balance.emptyweight_long_moment),
+                        'emptyweight_lat_moment' : "{0:.2f}".format(weight_and_balance.emptyweight_lat_moment),
+                        'frs_long_arm' : weight_and_balance.frs_long_arm,
+                        'frs_lat_arm' : weight_and_balance.frs_lat_arm,
+                        'fls_long_arm' : weight_and_balance.fls_long_arm,
+                        'fls_lat_arm' : weight_and_balance.fls_lat_arm,
+                        'main_baggage_long_arm' : weight_and_balance.main_baggage_long_arm,
+                        'main_baggage_lat_arm' : weight_and_balance.main_baggage_lat_arm,
+                        'front_baggage_long_arm' : weight_and_balance.front_baggage_long_arm,
+                        'front_baggage_lat_arm' : weight_and_balance.front_baggage_lat_arm,
+                        'fueltakeoff_long_arm' : weight_and_balance.fueltakeoff_long_arm,
+                        'fueltakeoff_lat_arm' : weight_and_balance.fueltakeoff_lat_arm,
+                        'fuellanding_long_arm' : weight_and_balance.fuellanding_long_arm,
+                        'fuellanding_lat_arm' : weight_and_balance.fuellanding_lat_arm,
+                        'helicoptero_tipo' : weight_and_balance.helicoptero_tipo if weight_and_balance.helicoptero_tipo else vuelo_id.helicoptero_modelo,
+                        'frs' : weight_and_balance.frs,
+                        'frs_long_moment' : "{0:.2f}".format(weight_and_balance.frs_long_moment),
+                        'frs_lat_moment' : "{0:.2f}".format(weight_and_balance.frs_lat_moment),
+                        'fls' : weight_and_balance.fls,
+                        'fls_long_moment' : "{0:.2f}".format(weight_and_balance.fls_long_moment),
+                        'fls_lat_moment' : "{0:.2f}".format(weight_and_balance.fls_lat_moment),
+                        'aftrp' : weight_and_balance.aftrp,
+                        'aftrp_long_arm' : weight_and_balance.aftrp_long_arm,
+                        'aftrp_lat_arm' : weight_and_balance.aftrp_lat_arm,
+                        'aftrp_long_moment' : "{0:.2f}".format(weight_and_balance.aftrp_long_moment),
+                        'aftrp_lat_moment' : "{0:.2f}".format(weight_and_balance.aftrp_lat_moment),
+                        'aftlp' : weight_and_balance.aftlp,
+                        'aftlp_long_arm' : weight_and_balance.aftlp_long_arm,
+                        'aftlp_lat_arm' : weight_and_balance.aftlp_lat_arm,
+                        'aftlp_long_moment' : "{0:.2f}".format(weight_and_balance.aftlp_long_moment),
+                        'aftlp_lat_moment' : "{0:.2f}".format(weight_and_balance.aftlp_lat_moment),
+                        'aftcp' : weight_and_balance.aftcp,
+                        'aftcp_long_arm' : weight_and_balance.aftcp_long_arm,
+                        'aftcp_lat_arm' : weight_and_balance.aftcp_lat_arm,
+                        'aftcp_long_moment' : "{0:.2f}".format(weight_and_balance.aftcp_long_moment),
+                        'aftcp_lat_moment' : "{0:.2f}".format(weight_and_balance.aftcp_lat_moment),
+                        'front_baggage' : weight_and_balance.front_baggage,
+                        'front_baggage_long_moment' : "{0:.2f}".format(weight_and_balance.front_baggage_long_moment),
+                        'front_baggage_lat_moment' : "{0:.2f}".format(weight_and_balance.front_baggage_lat_moment),
+                        'main_baggage' : weight_and_balance.main_baggage,
+                        'main_baggage_long_moment' : "{0:.2f}".format(weight_and_balance.main_baggage_long_moment),
+                        'main_baggage_lat_moment' : "{0:.2f}".format(weight_and_balance.main_baggage_lat_moment),
+                        'baggage_zonac' : weight_and_balance.baggage_zonac,
+                        'baggage_zonac_long_arm' : weight_and_balance.baggage_zonac_long_arm,
+                        'baggage_zonac_lat_arm' : weight_and_balance.baggage_zonac_lat_arm,
+                        'baggage_zonac_long_moment' : "{0:.2f}".format(weight_and_balance.baggage_zonac_long_moment),
+                        'baggage_zonac_lat_moment' : "{0:.2f}".format(weight_and_balance.baggage_zonac_lat_moment),
+                        'baggage_zonad' : weight_and_balance.baggage_zonad,
+                        'baggage_zonad_long_arm' : weight_and_balance.baggage_zonad_long_arm,
+                        'baggage_zonad_lat_arm' : weight_and_balance.baggage_zonad_lat_arm,
+                        'baggage_zonad_long_moment' : "{0:.2f}".format(weight_and_balance.baggage_zonad_long_moment),
+                        'baggage_zonad_lat_moment' : "{0:.2f}".format(weight_and_balance.baggage_zonad_lat_moment),
+                        'bufrs' : weight_and_balance.bufrs,
+                        'bufrs_long_arm' : weight_and_balance.bufrs_long_arm,
+                        'bufrs_lat_arm' : weight_and_balance.bufrs_lat_arm,
+                        'bufrs_long_moment' : "{0:.2f}".format(weight_and_balance.bufrs_long_moment),
+                        'bufrs_lat_moment' : "{0:.2f}".format(weight_and_balance.bufrs_lat_moment),
+                        'bufls' : weight_and_balance.bufls,
+                        'bufls_long_arm' : weight_and_balance.bufls_long_arm,
+                        'bufls_lat_arm' : weight_and_balance.bufls_lat_arm,
+                        'bufls_long_moment' : "{0:.2f}".format(weight_and_balance.bufls_long_moment),
+                        'bufls_lat_moment' : "{0:.2f}".format(weight_and_balance.bufls_lat_moment),
+                        'buaftrs' : weight_and_balance.buaftrs,
+                        'buaftrs_long_arm' : weight_and_balance.buaftrs_long_arm,
+                        'buaftrs_lat_arm' : weight_and_balance.buaftrs_lat_arm,
+                        'buaftrs_long_moment' : "{0:.2f}".format(weight_and_balance.buaftrs_long_moment),
+                        'buaftrs_lat_moment' : "{0:.2f}".format(weight_and_balance.buaftrs_lat_moment),
+                        'buaftls' : weight_and_balance.buaftls,
+                        'buaftls_long_arm' : weight_and_balance.buaftls_long_arm,
+                        'buaftls_lat_arm' : weight_and_balance.buaftls_lat_arm,
+                        'buaftls_long_moment' : "{0:.2f}".format(weight_and_balance.buaftls_long_moment),
+                        'buaftls_lat_moment' : "{0:.2f}".format(weight_and_balance.buaftls_lat_moment),
+                        'forward_right_door' : weight_and_balance.forward_right_door,
+                        'forward_right_door_long_arm' : weight_and_balance.forward_right_door_long_arm,
+                        'forward_right_door_lat_arm' : weight_and_balance.forward_right_door_lat_arm,
+                        'forward_right_door_long_moment' : "{0:.2f}".format(weight_and_balance.forward_right_door_long_moment),
+                        'forward_right_door_lat_moment' : "{0:.2f}".format(weight_and_balance.forward_right_door_lat_moment),
+                        'forward_left_door' : weight_and_balance.forward_left_door,
+                        'forward_left_door_long_arm' : weight_and_balance.forward_left_door_long_arm,
+                        'forward_left_door_lat_arm' : weight_and_balance.forward_left_door_lat_arm,
+                        'forward_left_door_long_moment' : "{0:.2f}".format(weight_and_balance.forward_left_door_long_moment),
+                        'forward_left_door_lat_moment' : "{0:.2f}".format(weight_and_balance.forward_left_door_lat_moment),
+                        'aft_right_door' : weight_and_balance.aft_right_door,
+                        'aft_right_door_long_arm' : weight_and_balance.aft_right_door_long_arm,
+                        'aft_right_door_lat_arm' : weight_and_balance.aft_right_door_lat_arm,
+                        'aft_right_door_long_moment' : "{0:.2f}".format(weight_and_balance.aft_right_door_long_moment),
+                        'aft_right_door_lat_moment' : "{0:.2f}".format(weight_and_balance.aft_right_door_lat_moment),
+                        'aft_left_door' : weight_and_balance.aft_left_door,
+                        'aft_left_door_long_arm' : weight_and_balance.aft_left_door_long_arm,
+                        'aft_left_door_lat_arm' : weight_and_balance.aft_left_door_lat_arm,
+                        'aft_left_door_long_moment' : "{0:.2f}".format(weight_and_balance.aft_left_door_long_moment),
+                        'aft_left_door_lat_moment' : "{0:.2f}".format(weight_and_balance.aft_left_door_lat_moment),
+                        'sliding_door' : weight_and_balance.sliding_door,
+                        'sliding_door_long_arm' : weight_and_balance.sliding_door_long_arm,
+                        'sliding_door_lat_arm' : weight_and_balance.sliding_door_lat_arm,
+                        'sliding_door_long_moment' : "{0:.2f}".format(weight_and_balance.sliding_door_long_moment),
+                        'sliding_door_lat_moment' : "{0:.2f}".format(weight_and_balance.sliding_door_lat_moment),
+                        'rear_cargo_door' : weight_and_balance.rear_cargo_door,
+                        'rear_cargo_door_long_arm' : weight_and_balance.rear_cargo_door_long_arm,
+                        'rear_cargo_door_lat_arm' : weight_and_balance.rear_cargo_door_lat_arm,
+                        'rear_cargo_door_long_moment' : "{0:.2f}".format(weight_and_balance.rear_cargo_door_long_moment),
+                        'rear_cargo_door_lat_moment' : "{0:.2f}".format(weight_and_balance.rear_cargo_door_lat_moment),
+                        'cyclic' : weight_and_balance.cyclic,
+                        'cyclic_long_arm' : weight_and_balance.cyclic_long_arm,
+                        'cyclic_lat_arm' : weight_and_balance.cyclic_lat_arm,
+                        'cyclic_long_moment' : "{0:.2f}".format(weight_and_balance.cyclic_long_moment),
+                        'cyclic_lat_moment' : "{0:.2f}".format(weight_and_balance.cyclic_lat_moment),
+                        'collective' : weight_and_balance.collective,
+                        'collective_long_arm' : weight_and_balance.collective_long_arm,
+                        'collective_lat_arm' : weight_and_balance.collective_lat_arm,
+                        'collective_long_moment' : "{0:.2f}".format(weight_and_balance.collective_long_moment),
+                        'collective_lat_moment' : "{0:.2f}".format(weight_and_balance.collective_lat_moment),
+                        'pedals' : weight_and_balance.pedals,
+                        'pedals_long_arm' : weight_and_balance.pedals_long_arm,
+                        'pedals_lat_arm' : weight_and_balance.pedals_lat_arm,
+                        'pedals_long_moment' : "{0:.2f}".format(weight_and_balance.pedals_long_moment),
+                        'pedals_lat_moment' : "{0:.2f}".format(weight_and_balance.pedals_lat_moment),
+                        'items_on_mount_bar_right' : weight_and_balance.items_on_mount_bar_right,
+                        'items_on_mount_bar_right_long_arm' : weight_and_balance.items_on_mount_bar_right_long_arm,
+                        'items_on_mount_bar_right_lat_arm' : weight_and_balance.items_on_mount_bar_right_lat_arm,
+                        'items_on_mount_bar_right_long_moment' : "{0:.2f}".format(weight_and_balance.items_on_mount_bar_right_long_moment),
+                        'items_on_mount_bar_right_lat_moment' : "{0:.2f}".format(weight_and_balance.items_on_mount_bar_right_lat_moment),
+                        'items_on_mount_bar_left' : weight_and_balance.items_on_mount_bar_left,
+                        'items_on_mount_bar_left_long_arm' : weight_and_balance.items_on_mount_bar_left_long_arm,
+                        'items_on_mount_bar_left_lat_arm' : weight_and_balance.items_on_mount_bar_left_lat_arm,
+                        'items_on_mount_bar_left_long_moment' : "{0:.2f}".format(weight_and_balance.items_on_mount_bar_left_long_moment),
+                        'items_on_mount_bar_left_lat_moment' : "{0:.2f}".format(weight_and_balance.items_on_mount_bar_left_lat_moment),
+                        'cineflex' : weight_and_balance.cineflex,
+                        'cineflex_long_arm' : weight_and_balance.cineflex_long_arm,
+                        'cineflex_lat_arm' : weight_and_balance.cineflex_lat_arm,
+                        'cineflex_long_moment' : "{0:.2f}".format(weight_and_balance.cineflex_long_moment),
+                        'cineflex_lat_moment' : "{0:.2f}".format(weight_and_balance.cineflex_lat_moment),
+                        'tyler' : weight_and_balance.tyler,
+                        'tyler_long_arm' : weight_and_balance.tyler_long_arm,
+                        'tyler_lat_arm' : weight_and_balance.tyler_lat_arm,
+                        'tyler_long_moment' : "{0:.2f}".format(weight_and_balance.tyler_long_moment),
+                        'tyler_lat_moment' : "{0:.2f}".format(weight_and_balance.tyler_lat_moment),
+                        'gss' : weight_and_balance.gss,
+                        'gss_long_arm' : weight_and_balance.gss_long_arm,
+                        'gss_lat_arm' : weight_and_balance.gss_lat_arm,
+                        'gss_long_moment' : "{0:.2f}".format(weight_and_balance.gss_long_moment),
+                        'gss_lat_moment' : "{0:.2f}".format(weight_and_balance.gss_lat_moment),
+                        'af120_camera_mount' : weight_and_balance.af120_camera_mount,
+                        'af120_camera_mount_long_arm' : weight_and_balance.af120_camera_mount_long_arm,
+                        'af120_camera_mount_lat_arm' : weight_and_balance.af120_camera_mount_lat_arm,
+                        'af120_camera_mount_long_moment' : "{0:.2f}".format(weight_and_balance.af120_camera_mount_long_moment),
+                        'af120_camera_mount_lat_moment' : "{0:.2f}".format(weight_and_balance.af120_camera_mount_lat_moment),
+                        'gancho_carga' : weight_and_balance.gancho_carga,
+                        'gancho_carga_long_arm' : weight_and_balance.gancho_carga_long_arm,
+                        'gancho_carga_lat_arm' : weight_and_balance.gancho_carga_lat_arm,
+                        'gancho_carga_long_moment' : "{0:.2f}".format(weight_and_balance.gancho_carga_long_moment),
+                        'gancho_carga_lat_moment' : "{0:.2f}".format(weight_and_balance.gancho_carga_lat_moment),
+                        'carga_externa' : weight_and_balance.carga_externa,
+                        'carga_externa_long_arm' : weight_and_balance.carga_externa_long_arm,
+                        'carga_externa_lat_arm' : weight_and_balance.carga_externa_lat_arm,
+                        'carga_externa_long_moment' : "{0:.2f}".format(weight_and_balance.carga_externa_long_moment),
+                        'carga_externa_lat_moment' : "{0:.2f}".format(weight_and_balance.carga_externa_lat_moment),
+                        'espejo' : weight_and_balance.espejo,
+                        'espejo_long_arm' : weight_and_balance.espejo_long_arm,
+                        'espejo_lat_arm' : weight_and_balance.espejo_lat_arm,
+                        'espejo_long_moment' : "{0:.2f}".format(weight_and_balance.espejo_long_moment),
+                        'espejo_lat_moment' : "{0:.2f}".format(weight_and_balance.espejo_lat_moment),
+                        'dualcontrols' : weight_and_balance.dualcontrols,
+                        'dualcontrols_long_arm' : weight_and_balance.dualcontrols_long_arm,
+                        'dualcontrols_lat_arm' : weight_and_balance.dualcontrols_lat_arm,
+                        'dualcontrols_long_moment' : "{0:.2f}".format(weight_and_balance.dualcontrols_long_moment),
+                        'dualcontrols_lat_moment' : "{0:.2f}".format(weight_and_balance.dualcontrols_lat_moment),
+                        'frontseat' : weight_and_balance.frontseat,
+                        'frontseat_long_arm' : weight_and_balance.frontseat_long_arm,
+                        'frontseat_lat_arm' : weight_and_balance.frontseat_lat_arm,
+                        'frontseat_long_moment' : "{0:.2f}".format(weight_and_balance.frontseat_long_moment),
+                        'frontseat_lat_moment' : "{0:.2f}".format(weight_and_balance.frontseat_lat_moment),
+                        'rearseat' : weight_and_balance.rearseat,
+                        'rearseat_long_arm' : weight_and_balance.rearseat_long_arm,
+                        'rearseat_lat_arm' : weight_and_balance.rearseat_lat_arm,
+                        'rearseat_long_moment' : "{0:.2f}".format(weight_and_balance.rearseat_long_moment),
+                        'rearseat_lat_moment' : "{0:.2f}".format(weight_and_balance.rearseat_lat_moment),
+                        'baggage_noseats' : weight_and_balance.baggage_noseats,
+                        'baggage_noseats_long_arm' : weight_and_balance.baggage_noseats_long_arm,
+                        'baggage_noseats_lat_arm' : weight_and_balance.baggage_noseats_lat_arm,
+                        'baggage_noseats_long_moment' : "{0:.2f}".format(weight_and_balance.baggage_noseats_long_moment),
+                        'baggage_noseats_lat_moment' : "{0:.2f}".format(weight_and_balance.baggage_noseats_lat_moment),
+                        'misc1' : weight_and_balance.misc1,
+                        'misc1_long_arm' : weight_and_balance.misc1_long_arm,
+                        'misc1_lat_arm' : weight_and_balance.misc1_lat_arm,
+                        'misc1_long_moment' : "{0:.2f}".format(weight_and_balance.misc1_long_moment),
+                        'misc1_lat_moment' : "{0:.2f}".format(weight_and_balance.misc1_lat_moment),
+                        'misc2' : weight_and_balance.misc2,
+                        'misc2_long_arm' : weight_and_balance.misc2_long_arm,
+                        'misc2_lat_arm' : weight_and_balance.misc2_lat_arm,
+                        'misc2_long_moment' : "{0:.2f}".format(weight_and_balance.misc2_long_moment),
+                        'misc2_lat_moment' : "{0:.2f}".format(weight_and_balance.misc2_lat_moment),
+                        'maswithoutfuel' : weight_and_balance.maswithoutfuel,
+                        'maswithoutfuel_long_arm' : "{0:.2f}".format(weight_and_balance.maswithoutfuel_long_arm),
+                        'maswithoutfuel_lat_arm' : "{0:.2f}".format(weight_and_balance.maswithoutfuel_lat_arm),
+                        'maswithoutfuel_long_moment' : "{0:.2f}".format(weight_and_balance.maswithoutfuel_long_moment),
+                        'maswithoutfuel_lat_moment' : "{0:.2f}".format(weight_and_balance.maswithoutfuel_lat_moment),
+                        'fueltakeoff' : weight_and_balance.fueltakeoff,
+                        'fueltakeoff_long_arm' : weight_and_balance.fueltakeoff_long_arm,
+                        'fueltakeoff_lat_arm' : weight_and_balance.fueltakeoff_lat_arm,
+                        'fueltakeoff_long_moment' : "{0:.2f}".format(weight_and_balance.fueltakeoff_long_moment),
+                        'fueltakeoff_lat_moment' : "{0:.2f}".format(weight_and_balance.fueltakeoff_lat_moment),
+                        'takeoff_gw' : weight_and_balance.takeoff_gw,
+                        'valid_takeoff_longcg' : weight_and_balance.valid_takeoff_longcg,
+                        'takeoff_gw_long_arm' : "{0:.2f}".format(weight_and_balance.takeoff_gw_long_arm),
+                        'valid_takeoff_latcg' : weight_and_balance.valid_takeoff_latcg,
+                        'takeoff_gw_lat_arm' : "{0:.2f}".format(weight_and_balance.takeoff_gw_lat_arm),
+                        'takeoff_gw_long_moment' : "{0:.2f}".format(weight_and_balance.takeoff_gw_long_moment),
+                        'takeoff_gw_lat_moment' : "{0:.2f}".format(weight_and_balance.takeoff_gw_lat_moment),
+                        'fuellanding' : weight_and_balance.fuellanding,
+                        'fuellanding_long_arm' : weight_and_balance.fuellanding_long_arm,
+                        'fuellanding_lat_arm' : weight_and_balance.fuellanding_lat_arm,
+                        'fuellanding_long_moment' : "{0:.2f}".format(weight_and_balance.fuellanding_long_moment),
+                        'fuellanding_lat_moment' : "{0:.2f}".format(weight_and_balance.fuellanding_lat_moment),
+                        'landing_gw' : weight_and_balance.landing_gw,
+                        'landing_gw_long_arm' : "{0:.2f}".format(weight_and_balance.landing_gw_long_arm),
+                        'valid_landing_longcg' : weight_and_balance.valid_landing_longcg,
+                        'landing_gw_lat_arm' : "{0:.2f}".format(weight_and_balance.landing_gw_lat_arm),
+                        'landing_gw_long_moment' : "{0:.2f}".format(weight_and_balance.landing_gw_long_moment),
+                        'landing_gw_lat_moment' : "{0:.2f}".format(weight_and_balance.landing_gw_lat_moment),
+                        'canvas_long' : weight_and_balance.canvas_long,
+                        'canvas_lat' : weight_and_balance.canvas_lat
+                    }
+                    vuelo = {
+                        'wb' : wb,
+                        'helicoptero_modelo' : vuelo_id.helicoptero_modelo,
+                        'helicoptero_name' : vuelo_id.helicoptero_id.name,
+                        'codigo' : vuelo_id.codigo,
+                    }
+                    vuelos.append(vuelo)
+                    
+        
+        data = {
+            'year' : datetime.now().strftime("%Y"),
+            'helicopteros' : helicopteros,
+            'vuelos' : vuelos,
+            'vuelos_cont' : len(item.vuelo_ids)
+        }
+        if item.texto:
+            data['texto'] = item.texto
+        if item.fecha:
+            data['fecha'] = item.fecha
+        if item.lugar:
+            data['lugar'] = item.lugar
+
+        return data
+
+    helicoptero_ids = fields.Many2many('leulit.informes_control_wb_report', 'leulit_cal_heli_rel','heli_rel','cal_rel','Helicópteros')
+    vuelo_ids = fields.Many2many('leulit.vuelo', 'leulit_cal_vuelo_rel','vuelo_rel','cal_rel','Vuelos')
+    texto = fields.Text('Información')
+    fecha = fields.Date('Fecha')
+    lugar = fields.Char('Lugar', size=50)
+

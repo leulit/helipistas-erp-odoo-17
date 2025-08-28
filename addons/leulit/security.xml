@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20201006_1024_access_permission" model="ir.model.access">
+        <field name="name">leulit circular</field>
+        <field name="model_id" ref="model_leulit_circular"/>
+        <field name="group_id" ref="RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20210519_1325_access_permission" model="ir.model.access">
+        <field name="name">leulit historial circular</field>
+        <field name="model_id" ref="model_leulit_historial_circular"/>
+        <field name="group_id" ref="RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20210518_1053_model_access" model="ir.model.access">
+        <field name="name">Checklist plantilla</field>
+        <field name="model_id" ref="model_leulit_checklist_template"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_create"/>
+    </record>
+
+    <record id="leulit_20210518_1054_model_access" model="ir.model.access">
+        <field name="name">Checklist plantilla</field>
+        <field name="model_id" ref="model_leulit_checklist_template"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="0" name="perm_unlink"/>
+        <field eval="0" name="perm_write"/>
+        <field eval="0" name="perm_create"/>
+    </record>        
+    
+    <record id="leulit_20210518_1055_model_access" model="ir.model.access">
+        <field name="name">Checklist plantilla</field>
+        <field name="model_id" ref="model_leulit_checklist_template_item"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_create"/>
+    </record>        
+    
+    <record id="leulit_20210518_1056_model_access" model="ir.model.access">
+        <field name="name">Checklist plantilla</field>
+        <field name="model_id" ref="model_leulit_checklist_template_item"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="0" name="perm_unlink"/>
+        <field eval="0" name="perm_write"/>
+        <field eval="0" name="perm_create"/>
+    </record>
+
+    <record id="leulit_20210518_1057_model_access" model="ir.model.access">
+        <field name="name">Checklist</field>
+        <field name="model_id" ref="model_leulit_checklist"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_create"/>
+    </record>
+
+    <record id="leulit_20210518_1058_model_access" model="ir.model.access">
+        <field name="name">Item checklist</field>
+        <field name="model_id" ref="model_leulit_checklist_item"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_create"/>
+    </record>    
+
+    <record id="leulit_20210518_1059_model_access" model="ir.model.access">
+        <field name="name">Checklist tag</field>
+        <field name="model_id" ref="model_leulit_checklist_tag"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_create"/>
+    </record>      
+
+    <record id="leulit_20211026_1023_model_access" model="ir.model.access">
+        <field name="name">Leulit - Errores de importación</field>
+        <field name="model_id" ref="model_leulit_error_import"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230306_1450_filter" model="ir.ui.view">
+            <field name="name">leulit_20230306_1450_filter</field>
+            <field name="model">leulit.checklist_template</field>
+            <field name="arch" type="xml">
+                <search string="Checklist filtros">
+                    <field name="descriptor" string="Descripción"/>
+                    <separator/>
+                    <filter string="Archivado" name="inactivo" domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id='leulit_20210518_1111_form' model="ir.ui.view">
+            <field name="name">leulit_20210518_1111_form</field>
+            <field name="model">leulit.checklist_template</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Formulario checklist plantillas">
+                    <header>
+                        <button name="checklist_print_report" string="Imprimir" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="descriptor"/>
+                            <field name="tags"  widget="many2many_tags"/>
+                            <field name="tiempo_previsto" widget="float_time"/>
+                            <field name="state" />
+                            <field name="project_id" />
+                            <field name="usuarios"  options="{'no_create': True, 'create': False, 'edit': False}" >
+                                <tree string="Usuarios" editable="bottom" create="false" edit="false">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                            <field name="items" >
+                                <tree string="Items" editable="bottom" limit="80">
+                                    <field name="orden"/>
+                                    <field name="descriptor" class="lt_tree_wrap_line"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>    
+
+        <record model="ir.ui.view" id="leulit_20210518_1111_tree">
+            <field name="name">leulit_20210518_1111_tree</field>
+            <field name="model">leulit.checklist_template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Checklist templates">
+                    <field name="state" string="Estado"/>
+                    <field name="descriptor" string="Descripción"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20210518_1112_action">
+            <field name="name">Checklists plantillas</field>
+            <field name="res_model">leulit.checklist_template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+    </data>
+</odoo>

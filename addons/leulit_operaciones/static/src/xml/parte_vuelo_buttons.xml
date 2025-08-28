@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    
+    <t t-name="FormParteVueloButtons">
+        <div role="toolbar" aria-label="Acciones Custom">            
+            <!--button name="wizard_add_wb" type="object" class="btn btn-primary oe_edit_only o_form_button_weigth_and_balance">
+                Weight and Balance
+            </button-->
+        </div>
+    </t>
+
+    <t t-extend="FormView.buttons">
+        <t t-jquery="div.o_form_buttons_edit" t-operation="append">
+            <!--
+            <span class="ml-4"><t t-log="widget"/></span>
+            <button t-if="(widget.modelName === 'leulit.vuelo') and (widget.initialState.data.estado in ['prevuelo','postvuelo'])"
+                class="btn btn-primary btn-sm wizard_cancelar ml-1" 
+            >Cancelar</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo') and (widget.initialState.data.estado === 'prevuelo')"
+                class="btn btn-primary btn-sm wkf_act_postvuelo ml-1" 
+            >Fin PRE-vuelo</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo') and (widget.initialState.data.estado === 'postvuelo')"
+                class="btn btn-primary btn-sm wkf_act_cerrado ml-1"
+            >Fin POST-vuelo</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo') and (widget.initialState.data.estado = ['prevuelo','postvuelo'])"
+                class="btn btn-primary btn-sm wizard_add_wb ml-1"
+            >Weight and balance</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo') and (widget.initialState.data.estado = ['prevuelo','postvuelo'])"
+                class="btn btn-primary btn-sm button_performance_vuelo ml-1"
+            >Performance</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo')"
+                class="btn btn-primary btn-sm vuelo_print ml-1"
+            >Plan operacional</button>
+            <button t-if="(widget.modelName === 'leulit.vuelo')"
+                class="btn btn-primary btn-sm parte_vuelo_print ml-1"
+            >PTV</button>
+            <button type="object" t-if="(widget.modelName === 'leulit.vuelo')" name="parte_vuelo_print"
+                class="btn btn-primary ml-1">PTV</button>
+            -->
+        </t>
+    </t>
+
+</templates>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem 
+        id="leulit_20200907_1307_menuitem"
+        name="Gestión tareas"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        sequence="90"
+        groups="leulit.ROperaciones_piloto,leulit.RTaller_base,RT_base"
+    />
+        <menuitem 
+            id="leulit_20200907_1308_menuitem"
+            name="Mis tareas"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20250206_1019_action"
+            sequence="10"
+        />
+        <menuitem 
+            id="leulit_20230829_1244_menuitem"
+            name="Tareas solicitadas"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20230829_1244_action"
+            sequence="13"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
+            id="leulit_20230829_1245_menuitem"
+            name="Tareas implicado"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20230829_1245_action"
+            sequence="17"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
+            id="leulit_20250519_1017_menuitem"
+            name="Todas las tareas"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20250519_1017_action"
+            sequence="19"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
+            id="leulit_20220105_1109_menuitem"
+            name="Proyectos"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20221220_1522_action"
+            sequence="20"
+        />
+        <menuitem 
+            id="leulit_20230323_1107_menuitem"
+            name="Tiempo imputado todos"
+            parent="leulit_20200907_1307_menuitem"
+            action="hr_timesheet.timesheet_action_all"
+            sequence="25"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
+            id="leulit_20220105_1113_menuitem"
+            name="Mi tiempo imputado"
+            parent="leulit_20200907_1307_menuitem"
+            action="hr_timesheet.act_hr_timesheet_line"
+            sequence="30"
+        />
+
+</odoo>
