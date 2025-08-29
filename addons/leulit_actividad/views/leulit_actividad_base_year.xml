@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+		<!-- <record id="leulit_202012170843_search" model="ir.ui.view">
+            <field name="name">Filtros/grupos actividad base año</field>
+            <field name="model">leulit.actividad_base_year</field>
+            <field name="arch" type="xml">
+                <search>
+                    <group expand="0" string="Filtrar por...">
+                    	<filter string="Mi actividad" name="leulit_202012170843_search_a" domain="[('uid_ok','=','True')]"/>
+                    </group>                   
+                    <separator/>
+                    <group expand="0" string="Agrupar por...">
+                        <filter string="Persona" domain="[]" context="{'group_by': 'partner'}"/>
+                        <filter string="Persona / año" domain="[]" context="{'group_by': ['year','partner']}"/>
+                    </group>                    
+                </search>
+            </field>
+        </record>         -->
+
+        <record model="ir.ui.view" id="leulit_202012170843_tree">
+            <field name="name">Actividad Base año</field>
+            <field name="model">leulit.actividad_base_year</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Helipistas" class="tree_actividad_base_year" create="false" edit="true" >
+                    <field name="year" string="Año"/>
+                    <field name="partner" string="Usuario" />
+                    <field name="tiempo" string="Imputado" widget="float_time"/>
+                    <field name="tiempo_facturable" string="Facturable" widget="float_time"/>
+                    <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_202012170843_action">
+            <field name="name">Actividad Base año</field>
+            <field name="res_model">leulit.actividad_base_year</field>
+            <field name="view_mode">tree</field>
+            <!-- <field name="context">{"search_default_leulit_202012170843_search_a":1}</field> -->
+        </record>
+        <record id="leulit_202012170843_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_202012170843_tree" />
+            <field name="act_window_id" ref="leulit_202012170843_action" />
+        </record>
+
+
+    </data>
+</odoo>

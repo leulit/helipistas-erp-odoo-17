@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="leulit_202204290852_tree">
+            <field name="name">Detalle Actividad aérea</field>
+            <field name="model">leulit.item_actividad_aerea</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Detalle Actividad 16bravo" create="false" edit="false">
+                    <field name="partner" string="Usuario" />
+                    <field name="fecha" string="Fecha"/>
+                    <field name="rol" string="Rol" />
+                    <field name="descripcion" string="Descripción" />
+                    <field name="tipo_actividad" string="Tipo Act." />
+                    <field name="escuela" string="Formación" />
+                    <field name="ato" string="ATO" />
+                    <field name="inicio" string="Inicio" widget="float_time"/>
+                    <field name="fin" string="Fin" widget="float_time"/>
+                    <field name="tiempo" string="Tiempo"  widget="float_time"/>
+                    <field name="airtime" string="Airtime"  widget="float_time"/>
+                    <field name="coe_mayoracion" string="C.M." />
+                    <field name="delta_pre" string="Pre V."  widget="float_time"/>
+                    <field name="tiempo_calc" string="T.A."  widget="semaforo_float_time_cell" />
+                    <field name="valid_flight_time" invisible="1"/>
+                </tree>
+            </field>
+        </record>   
+
+
+        <record model="ir.ui.view" id="leulit_202011281520_tree">
+            <field name="name">Actividad aérea</field>
+            <field name="model">leulit.actividad_aerea</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad 16bravo" create="false" edit="false">                   
+                    <field name="fecha" string="Fecha"/>
+                    <field name="partner" string="Usuario" />
+                    <field name="user_id" invisible="1"/>
+                    <!--field name="airtime" string="Airtime" widget="float_time"/-->
+                    <field name="tiempo_vuelo" string="Tiempo" widget="float_time"/>
+                    <!--field name="ato" string="ATO"/-->
+                    <button name="aplica_descanso_parcial" string="Aplica" type="object" class="btn btn-primary"  invisible="((aplica_desc_parcial))" />
+                    <button name="no_aplica_descanso_parcial" string="No aplica" type="object" class="btn btn-primary"  invisible="((not aplica_desc_parcial))" />
+                    <field name="aplica_desc_parcial" string="Aplica T.D.P." />
+                    <field name="tiempo_desc_parcial" string="T.D.P." widget="float_time"/>
+                    <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
+                    <field name="max_duracion" string="Max. AA" widget="float_time"/>
+                    
+                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" />
+                    <field name="valid_activity_time" invisible="1" />
+                    <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range1" invisible="1" />
+                    <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range3" invisible="1" />
+                    <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range2" invisible="1" />
+                    <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" />
+                    <field name="valid_dias_trabajados_mes" invisible="1" />
+                    <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
+                </tree>
+            </field>
+        </record>     
+
+
+        <record model="ir.ui.view" id="leulit_202209121220_tree">
+            <field name="name">Actividad aérea planificada</field>
+            <field name="model">leulit.actividad_aerea</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad 16bravo" create="false" edit="false" default_order="fecha asc">                   
+                    <field name="fecha" string="Fecha"/>
+                    <field name="partner" string="Usuario" />                    
+                    <!--field name="airtime" string="Airtime" widget="float_time"/-->
+                    <field name="tiempo_vuelo" string="Tiempo" widget="float_time"/>
+                    <!--field name="ato" string="ATO"/-->
+                    <field name="tiempo_desc_parcial" string="T.D.P." widget="float_time"/>
+                    <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
+                    <field name="max_duracion" string="Max. AA" widget="float_time"/>
+
+                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" />
+                    <field name="valid_activity_time" invisible="1" />
+                    <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range1" invisible="1" />
+                    <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range3" invisible="1" />
+                    <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" />
+                    <field name="valid_time_flight_range2" invisible="1" />
+                    <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
+
+                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" />
+                    <field name="valid_dias_trabajados_mes" invisible="1" />
+                    <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20241002_1203_action">
+            <field name="name">Mi Actividad aérea acción</field>
+            <field name="res_model">leulit.actividad_aerea</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('fecha','>=','2020-01-01'), ('prevista','=',False), ('user_id', '=', uid)]</field>
+        </record>
+        <record id="leulit_20241002_1203_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_202011281520_tree" />
+            <field name="act_window_id" ref="leulit_20241002_1203_action" />
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201128_1520_action">
+            <field name="name">Actividad aérea acción</field>
+            <field name="res_model">leulit.actividad_aerea</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('fecha','>=','2020-01-01'),('prevista','=',False)]</field>
+        </record>
+        <record id="leulit_20201128_1520_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_202011281520_tree" />
+            <field name="act_window_id" ref="leulit_20201128_1520_action" />
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20220610_1302_action">
+            <field name="name">Actividad aérea planificada</field>
+            <field name="res_model">leulit.actividad_aerea</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('fecha','>=','2020-01-01'),('prevista','=',True)]</field>
+        </record>
+        <record id="leulit_20220610_1302_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_202209121220_tree" />
+            <field name="act_window_id" ref="leulit_20220610_1302_action" />
+        </record>
+
+    </data>
+</odoo>

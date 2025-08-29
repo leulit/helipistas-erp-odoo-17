@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="leulit_20220531_1155_menuitem"
+        name="Actividad"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        sequence="50"
+        groups="leulit_actividad.RActividad_user"
+    />
+        <menuitem
+            id="leulit_20220531_1156_menuitem"
+            name="Actividad laboral"
+            sequence="10"
+            parent="leulit_20220531_1155_menuitem"
+        />
+            <menuitem
+                id="leulit_20220531_1157_menuitem"
+                name="Diaria"
+                sequence="10"
+                parent="leulit_20220531_1156_menuitem"
+                action="leulit_20201209_1607_action"
+                groups="leulit_actividad.RActividad_gestor"
+            />
+            <menuitem
+                id="leulit_20220531_1158_menuitem"
+                name="Mi Actividad"
+                sequence="20"
+                parent="leulit_20220531_1156_menuitem"
+                action="leulit_20220428_0904_action"
+                groups="hr.group_hr_user,leulit.RCampaña_operador"
+            />
+        <menuitem
+            id="leulit_20220531_1159_menuitem"
+            name="Actividad Aérea"
+            sequence="20"
+            parent="leulit_20220531_1155_menuitem"
+        />
+            <menuitem
+                id="leulit_20241002_1203_menuitem"
+                name="Mi Actividad Aérea"
+                sequence="10"
+                parent="leulit_20220531_1159_menuitem"
+                action="leulit_20241002_1203_action"
+                groups="leulit_actividad.RActividad_user"
+            />
+            <menuitem
+                id="leulit_20220531_1200_menuitem"
+                name="Actividad Aérea"
+                sequence="20"
+                parent="leulit_20220531_1159_menuitem"
+                action="leulit_20201128_1520_action"
+                groups="leulit_actividad.RActividad_gestor"
+            />
+            <menuitem
+                id="leulit_20220610_1302_menuitem"
+                name="Actividad Aérea planificada"
+                sequence="30"
+                parent="leulit_20220531_1159_menuitem"
+                action="leulit_20220610_1302_action"
+                groups="leulit_actividad.RActividad_gestor"
+            />
+            <menuitem
+                id="leulit_20250318_1437_menuitem"
+                name="Actividad Aérea Pilotos Freelance"
+                sequence="40"
+                parent="leulit_20220531_1159_menuitem"
+                action="leulit_operaciones.leulit_20250318_1437_action"
+                groups="leulit_actividad.RActividad_gestor"
+            />
+</odoo>

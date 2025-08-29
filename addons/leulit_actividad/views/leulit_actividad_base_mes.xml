@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201211_1314_tree">
+            <field name="name">leulit_20201211_1314_tree</field>
+            <field name="model">leulit.actividad_base_mes</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad mes" create="false" edit="true">
+                    <field name="year" string="Año"/>
+                    <field name="month" string="Mes"/>
+                    <field name="partner" string="Usuario" />
+                    <field name="tiempo" string="Imputado" widget="float_time"/>
+                    <field name="tiempo_facturable" string="Facturable" widget="float_time"/>
+                    <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201211_1314_action">
+            <field name="name">Actividad Base mes</field>
+            <field name="res_model">leulit.actividad_base_mes</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <record id="leulit_20201211_1314_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201211_1314_tree" />
+            <field name="act_window_id" ref="leulit_20201211_1314_action" />
+        </record>
+        
+
+
+    </data>
+</odoo>

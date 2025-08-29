@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        
+        <!-- Vista Nueva (Parte vuelo views branch) -->
+        <record model="ir.ui.view" id="leulit_20231031_1043_form">
+            <field name="name">leulit_20231031_1043_form</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20230906_1505_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='fin de pag']" position="before">
+                    <div class="card my-2" groups="leulit.RolIT_developer">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex">
+                                <separator string="Imputaciones de Tiempo"></separator>
+                                <span 
+                                    data-toggle="collapse" 
+                                    href="#account_analytic_lines" 
+                                    role="button" 
+                                    aria-expanded="false" 
+                                    aria-controls="account_analytic_lines" 
+                                    class=" d-flex align-items-center p-2 text-primary fa fa-plus-circle fa-lg"
+                                />
+                            </div>
+                            <div class="collapse" style="color: #17a2b8;" colspan="4" id="account_analytic_lines">
+                                <field name="account_analytic_lines" colspan="4" no_label="1">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="partner_id" string="Partner"/>
+                                        <field name="idmodelo" string="Id modelo"/>
+                                        <field name="modelo"/>
+                                        <field name="name"/>
+                                        <field name="unit_amount" widget="timesheet_uom" string="Duración"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+                <!-- Vista Nueva resumen -->
+        <record model="ir.ui.view" id="leulit_20231031_1043_form_vista_resumen">
+            <field name="name">leulit_20231031_1043_form_vista_resumen</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20240313_1513_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='fin de pag']" position="before">
+                    <div class="card my-2" groups="leulit.RolIT_developer">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex">
+                                <separator string="Imputaciones de Tiempo"></separator>
+                                <span 
+                                    data-toggle="collapse" 
+                                    href="#account_analytic_lines" 
+                                    role="button" 
+                                    aria-expanded="false" 
+                                    aria-controls="account_analytic_lines" 
+                                    class=" d-flex align-items-center p-2 text-primary fa fa-plus-circle fa-lg"
+                                />
+                            </div>
+                            <div class="collapse" style="color: #17a2b8;" colspan="4" id="account_analytic_lines">
+                                <field name="account_analytic_lines" colspan="4" no_label="1">
+                                    <tree>
+                                        <field name="employee_id"/>
+                                        <field name="partner_id" string="Partner"/>
+                                        <field name="idmodelo" string="Id modelo"/>
+                                        <field name="modelo"/>
+                                        <field name="name"/>
+                                        <field name="unit_amount" widget="timesheet_uom" string="Duración"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

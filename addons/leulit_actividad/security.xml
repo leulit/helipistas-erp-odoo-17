@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="leulit_20211008_1148_access_permission" model="ir.model.access">
+        <field name="name">Time worked Access</field>
+        <field name="model_id" ref="model_leulit_time_worked"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211008_1150_access_permission" model="ir.model.access">
+        <field name="name">Working time Access</field>
+        <field name="model_id" ref="model_leulit_limit_working_time"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200928_1046_access_permission" model="ir.model.access">
+        <field name="name">Actividad dia Access</field>
+        <field name="model_id" ref="model_leulit_actividad_base"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200929_0953_access_permission" model="ir.model.access">
+        <field name="name">Descanso actividad Access</field>
+        <field name="model_id" ref="model_leulit_actividad_base_dia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200929_1054_access_permission" model="ir.model.access">
+        <field name="name">Actividad Access</field>
+        <field name="model_id" ref="model_leulit_actividad_base_mes"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211103_0921_access_permission" model="ir.model.access">
+        <field name="name">Actividad year Access</field>
+        <field name="model_id" ref="model_leulit_actividad_base_year"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200929_1247_access_permission" model="ir.model.access">
+        <field name="name">Actividad solapamientos Access</field>
+        <field name="model_id" ref="model_leulit_actividad_16bravo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201002_1451_access_permission" model="ir.model.access">
+        <field name="name">Actividad aerea Access</field>
+        <field name="model_id" ref="model_leulit_actividad_16bravo_dia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211103_1126_access_permission" model="ir.model.access">
+        <field name="name">actividad_16bravo_dia_planificada Access</field>
+        <field name="model_id" ref="model_leulit_actividad_16bravo_dia_planificada"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20220404_0925_access_permission" model="ir.model.access">
+        <field name="name">Actividad aéra Access</field>
+        <field name="model_id" ref="model_leulit_actividad_aerea"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20220404_0926_access_permission" model="ir.model.access">
+        <field name="name">Actividad aéra Access</field>
+        <field name="model_id" ref="model_leulit_item_actividad_aerea"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20220405_1240_access_permission" model="ir.model.access">
+        <field name="name">Actividad laboral Access</field>
+        <field name="model_id" ref="model_leulit_account_analytic_line_byday"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+    <record id="leulit_202204291020_access_permission" model="ir.model.access">
+        <field name="name">Time flight range</field>
+        <field name="model_id" ref="model_leulit_time_flight_range"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+    <record id="leulit_202207151550_access_permission" model="ir.model.access">
+        <field name="name">Actividad aerea no introducida</field>
+        <field name="model_id" ref="model_leulit_actividad_aerea_no_introducida"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+    
+
+</odoo>

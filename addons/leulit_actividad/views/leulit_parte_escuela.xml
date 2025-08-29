@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        
+        
+        <record model="ir.ui.view" id="leulit_20250129_1138_form">
+            <field name="name">leulit_20250129_1138_form</field>
+            <field name="model">leulit.parte_escuela</field>
+            <field name="inherit_id" ref="leulit_escuela.leulit_20200908_1552_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='page_presupuestos_esuela']" position="after">
+                    <page groups="leulit.RolIT_developer" string="Imputaciones de Tiempo" name="page_imputaciones_escuela">
+                        <button name="imputar_tiempo_profesor" string="Imputar tiempo profesor" type="object" class="btn-primary"/>
+                        <button name="imputar_tiempo_profesor_adjunto" string="Imputar tiempo profesor adjunto" type="object" class="btn-primary"/>
+                        <field name="tiempo_imputado"/>
+                        <field name="tiempo_imputado_profesor_adjunto"/>
+                        <field name="account_analytic_lines">
+                            <tree>
+                                <field name="employee_id"/>
+                                <field name="partner_id" string="Partner"/>
+                                <field name="idmodelo" string="Id modelo"/>
+                                <field name="modelo"/>
+                                <field name="name"/>
+                                <field name="unit_amount" widget="timesheet_uom" string="Duración"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

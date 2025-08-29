@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231024_1510_search" model="ir.ui.view">
+            <field name="name">leulit_20231024_1510_search</field>
+            <field name="model">leulit.account.analytic.line.byday</field>
+            <field name="arch" type="xml">                
+                <search>
+                    <field name="employee_id" string="Empleado"/>                
+                </search>
+            </field>
+        </record>   
+
+        <record model="ir.ui.view" id="leulit_20201209_1607_tree">
+            <field name="name">leulit_20201209_1607_tree</field>
+            <field name="model">leulit.account.analytic.line.byday</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Helipistas" class="tree_actividad_base_dia" create="false" edit="true" >
+                    <field name="fecha" string="Fecha"/>
+                    <field name="employee_id" string="Empleado" />
+                    <field name="horas_imputadas" string="Imputado" widget="float_time"/>
+                    <field name="horas_facturables" string="Facturable" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_202204051541_pivot" model="ir.ui.view">
+            <field name="name">Imputación diaria grid</field> 
+            <field name="model">leulit.account.analytic.line.byday</field>
+            <field name="arch" type="xml">
+                <pivot string="Invoices Analysis" disable_linking="True" sample="1">
+                    <field name="fecha" type="col"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="total_horas_imputadas" type="measure" string="Tot. Imp." widget="float_time"/>
+                    <field name="horas_imputadas" type="measure" string="Imp." widget="float_time"/>
+                    <field name="horas_facturables" type="measure" string="Fact." widget="float_time"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201209_1607_action">
+            <field name="name">Actividad laboral díaria</field>
+            <field name="res_model">leulit.account.analytic.line.byday</field>
+            <field name="view_mode">pivot,tree</field>
+            <field name="domain">[('fecha','>=','2020-01-01')]</field>
+            <field name="search_view_id" ref="leulit_20231024_1510_search"/>
+        </record>
+        <record id="leulit_20201209_1607_action_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="leulit_202204051541_pivot" />
+            <field name="act_window_id" ref="leulit_20201209_1607_action" />
+        </record>        
+        <record id="leulit_20201209_1607_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201209_1607_tree" />
+            <field name="act_window_id" ref="leulit_20201209_1607_action" />
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20220428_0904_action">
+            <field name="name">Actividad laboral díaria</field>
+            <field name="res_model">leulit.account.analytic.line.byday</field>
+            <field name="view_mode">pivot,tree</field>
+            <field name="domain">[('fecha','>=','2020-01-01'),('user_id','=',uid)]</field>
+            <field name="search_view_id" ref="leulit_20231024_1510_search"/>
+        </record>
+        <record id="leulit_20220428_0904_action_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="leulit_202204051541_pivot" />
+            <field name="act_window_id" ref="leulit_20220428_0904_action" />
+        </record>        
+        <record id="leulit_20220428_0904_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201209_1607_tree" />
+            <field name="act_window_id" ref="leulit_20220428_0904_action" />
+        </record>
+     
+
+        <!--record model="ir.actions.act_window" id="leulit_202012141028_action">
+            <field name="name">Actividad Base día planificada</field>
+            <field name="res_model">leulit.actividad_base_dia</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('prevista','=',True),('fecha','>=',time.strftime('%Y-%m-%d'))]</field>
+        </record>
+        <record id="leulit_202012141028_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201209_1607_tree" />
+            <field name="act_window_id" ref="leulit_202012141028_action" />
+        </record-->
+             
+
+    </data>
+</odoo>        

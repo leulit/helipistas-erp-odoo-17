@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+
+    <record id="leulit_202304131007_tree" model="ir.ui.view">
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.timesheet_view_tree_user" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='unit_amount']" position="after">
+                <field name="ruta" groups="leulit.ROperaciones_piloto"/>
+                <field name="guardia" groups="leulit.RCampaña_operador"/>
+                <field name="partner_id" groups="leulit.RolIT_developer"/>
+                <field name="modelo" groups="leulit.RolIT_developer"/>
+                <field name="idmodelo" groups="leulit.RolIT_developer"/>
+            </xpath>
+        </field>
+    </record>
+    
+
+    <record model="ir.ui.view" id="leulit_202304131007_search">
+        <field name="name">hr_timesheet_line_search_leulit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_search" />
+        <field name="arch" type="xml">
+            <field name="date" position="before">
+                <filter string="Imputado en Checklist" name="checklist" domain="[('checklist_id','!=',False)]"/>
+                <filter string="Imputado como Ruta" name="ruta" domain="[('ruta','!=',False)]"/>
+                <filter string="Imputado como Guardia" name="guardia" domain="[('guardia','!=',False)]"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

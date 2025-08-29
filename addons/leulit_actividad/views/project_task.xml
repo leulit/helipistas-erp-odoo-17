@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+        <record model="ir.ui.view" id="view_task_form2_inherited_leulit_timesheet">
+            <field name="name">project.task.form.inherited.leulit.timesheet</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="hr_timesheet.view_task_form2_inherited" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='unit_amount']" position="after">
+                    <field name="ruta" groups="leulit.ROperaciones_piloto"/>
+                </xpath>
+            </field>
+        </record>
+
+</odoo>

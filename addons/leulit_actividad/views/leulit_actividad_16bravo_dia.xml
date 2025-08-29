@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1806_tree">
+            <field name="name">leulit_20201130_1806_tree</field>
+            <field name="model">leulit.actividad_16bravo_dia</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad 16bravo dia" create="false" edit="true">
+                    <field name="fecha" string="Fecha"/>
+                    <field name="inicio" string="Inicio" />
+                    <field name="fin" string="Fin" />
+                    <field name="partner" string="Usuario" />
+                    <field name="descanso_prev" string="Desc. Prev." />
+                    <field name="valid_descanso_prev" invisible="1"/>
+                    <field name="tiempo" string="Tiempo" />
+                    <field name="max_duracion" />
+                    <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1806_action">
+            <field name="name">Actividad aérea real</field>
+            <field name="res_model">leulit.actividad_16bravo_dia</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('prevista','=',False),('fecha','>=','2020-01-01')]</field>
+            <!-- <field name="context">{"search_default_leulit_202012151231_search_b":1}</field> -->
+        </record>
+        <record id="leulit_20201130_1806_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201130_1806_tree" />
+            <field name="act_window_id" ref="leulit_20201130_1806_action" />
+        </record>
+
+    </data>
+</odoo>

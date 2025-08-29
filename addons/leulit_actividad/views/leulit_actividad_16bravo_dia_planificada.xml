@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- <record id="leulit_202012300953_search" model="ir.ui.view">
+            <field name="name">Filtros/grupos actividad 16bravo día</field>
+            <field name="model">actividad_16bravo_dia_planificada</field>
+            <field name="arch" type="xml">
+                <search>
+                    <group expand="0" string="Filtrar por...">
+                    	<filter string="Mi actividad" name="leulit_202012300953_search_B" domain="[('uid_ok','=','True')]"/>
+                        <filter string="Incidencias" name="leulit_202012300953_search_A"  domain="['|',('valid_descanso_prev','=','red'),('valid_activity_time','=','red')]" />
+                    </group>                   
+                    <separator/>
+                    <group expand="0" string="Agrupar por...">
+                        <filter string="Persona" domain="[]" context="{'group_by': 'user_id'}"/>
+                    </group>                    
+                </search>
+            </field>
+        </record>     -->
+
+        <record model="ir.ui.view" id="leulit_202012161946_tree">
+            <field name="name">Actividad aérea planificada</field>
+            <field name="model">leulit.actividad_16bravo_dia_planificada</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad aérea planificada" class="tree_actividad_16bravo_dia" create="false" edit="true">
+                    <field name="fecha" string="Fecha"/>
+                    <field name="partner" string="Usuario" />
+                    <field name="dias_tabajados_mes" string="Días AV mes" />
+                    <field name="dias_programados_mes" string="Días P. mes"/>
+                    <field name="dias_trab_ano" string="Días AV año"/>
+                    <field name="dias_programados_ano" string="Días P. año"/>
+                    <field name="time_flight_range1_plan" string="TV 28d"/>
+                    <field name="valid_time_flight_range1_plan" invisible="1" />
+                    <field name="time_flight_range2_plan" string="TV 12m"/>
+                    <field name="valid_time_flight_range2_plan" invisible="1" />
+                    <field name="time_flight_range3_plan" string="TV 3m"/>
+                    <field name="valid_time_flight_range3_plan" invisible="1" />
+                    <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>
+                </tree>
+            </field>
+        </record>        
+
+        <record model="ir.actions.act_window" id="leulit_202012141016_action">
+            <field name="name">Actividad aérea planificada</field>
+            <field name="res_model">leulit.actividad_16bravo_dia_planificada</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('fecha','>=',time.strftime('%Y-%m-%d'))]</field>
+            <!-- <field name="context">{"search_default_leulit_202012300953_search_B":1}</field> -->
+        </record>
+        <record id="leulit_202012141016_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_202012161946_tree" />
+            <field name="act_window_id" ref="leulit_202012141016_action" />
+        </record>   
+
+    </data>
+</odoo>

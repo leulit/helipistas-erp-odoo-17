@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+            
+
+        <record model="ir.ui.view" id="leulit_20201211_1750_tree">
+            <field name="name">leulit_20201211_1750_tree</field>
+            <field name="model">leulit.actividad_base</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad" create="false" edit="true">
+                    <field name="prevista" invisible="1"/>
+                    <field name="partner" string="Usuario"/>
+                    <field name="fecha" string="Fecha"/>
+                    <field name="descripcion" string="Desc"/>
+                    <field name="tipo_actividad" string="T.A."/>
+                    <field name="inicio" string="Inicio" />
+                    <field name="fin" string="Fin" />
+                    <field name="tiempo" string="T.O."  sum="Total"/>
+                    <field name="tiempo_calc" string="T.A."  sum="Total"/>
+                    <button name="detalle" type="object" string="Detalle" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201128_1140_tree">
+            <field name="name">leulit_20201128_1140_tree</field>
+            <field name="model">leulit.actividad_base</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Actividad" create="false" edit="true">
+                    <field name="prevista" invisible="1"/>
+                    <field name="partner" string="Usuario"/>
+                    <field name="rol" string="Rol"/>
+                    <field name="fecha" string="Fecha"/>
+                    <field name="descripcion" string="Desc"/>
+                    <field name="tipo_actividad" string="T.A."/>
+                    <field name="actividad_aerea" string="Act. A."/>
+                    <field name="inicio" string="Inicio" />
+                    <field name="fin" string="Fin" />
+                    <field name="tiempo" string="T.O." />
+                    <field name="delta_pre" string="Delta Pre." />
+                    <field name="delta_pos" string="Delta Pos." />
+                    <field name="coe_mayoracion" string="C.M."/>
+                    <field name="tiempo_calc" string="T.A." />
+                    <field name="valid_flight_time" invisible="1" />
+                    <!--button name="detalle" type="object" class="oe_highlight" string="Detalle"/-->
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20201128_1140_action">
+            <field name="name">Actividad base</field>
+            <field name="res_model">leulit.actividad_base</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <record id="leulit_20201128_1140_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201128_1140_tree" />
+            <field name="act_window_id" ref="leulit_20201128_1140_action" />
+        </record>
+
+    </data>
+</odoo>        
