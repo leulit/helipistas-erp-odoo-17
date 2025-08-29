@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20240729_1551_access_permission" model="ir.model.access">
+        <field name="name">Curso Template Access</field>
+        <field name="model_id" ref="model_leulit_curso_template"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200618_1111_access_permission" model="ir.model.access">
+        <field name="name">Curso Access</field>
+        <field name="model_id" ref="model_leulit_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20200618_1112_access_permission" model="ir.model.access">
+        <field name="name">Parte escuela Access</field>
+        <field name="model_id" ref="model_leulit_parte_escuela"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201127_0923_access_permission" model="ir.model.access">
+        <field name="name">Silabus Access</field>
+        <field name="model_id" ref="model_leulit_silabus"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201028_1112_access_permission" model="ir.model.access">
+        <field name="name">Alumno Access</field>
+        <field name="model_id" ref="model_leulit_alumno"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201130_1030_access_permission" model="ir.model.access">
+        <field name="name">Rel Alumno Curso Access</field>
+        <field name="model_id" ref="model_leulit_rel_alumno_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record> 
+    <record id="leulit_20201130_1305_access_permission" model="ir.model.access">
+        <field name="name">Asignatura Access</field>
+        <field name="model_id" ref="model_leulit_asignatura"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201130_1317_access_permission" model="ir.model.access">
+        <field name="name">Profesores Access</field>
+        <field name="model_id" ref="model_leulit_profesor"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210430_1235_access_permission" model="ir.model.access">
+        <field name="name">rel_parte_escuela_cursos_alumnos Access</field>
+        <field name="model_id" ref="model_leulit_rel_parte_escuela_cursos_alumnos"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210504_1000_access_permission" model="ir.model.access">
+        <field name="name">leulit_popup_rel_parte_escuela_cursos_alumnos Access</field>
+        <field name="model_id" ref="model_leulit_popup_rel_parte_escuela_cursos_alumnos"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210528_1208_access_permission" model="ir.model.access">
+        <field name="name">leulit_rel_alumno_evaluacion</field>
+        <field name="model_id" ref="model_leulit_rel_alumno_evaluacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210528_1209_access_permission" model="ir.model.access">
+        <field name="name">leulit_alumno_horas_facturadas</field>
+        <field name="model_id" ref="model_leulit_alumno_horas_facturadas"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210528_1210_access_permission" model="ir.model.access">
+        <field name="name">leulit_alumno_ingreso</field>
+        <field name="model_id" ref="model_leulit_alumno_ingreso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20210528_1211_access_permission" model="ir.model.access">
+        <field name="name">leulit_rel_alumno_documentacion</field>
+        <field name="model_id" ref="model_leulit_rel_alumno_documentacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20201106_0957_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20211011_0930_access_permission" model="ir.model.access">
+        <field name="name">leulit_orden_trabajo_documento</field>
+        <field name="model_id" ref="model_leulit_popup_perfil_formacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+    <record id="leulit_20201106_1255_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación curso Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20201106_1256_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación accion Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_accion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20201106_1257_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación curso last done Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_curso_last_done"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20201106_1258_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación accion last done Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_accion_last_done"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>    
+    <record id="leulit_20210127_1000_access_permission" model="ir.model.access">
+        <field name="name">Actividad vuelo Access</field>
+        <field name="model_id" ref="model_leulit_actividad_vuelo"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211012_1412_access_permission" model="ir.model.access">
+        <field name="name">leulit_wizard_report_practicas_curso Access</field>
+        <field name="model_id" ref="model_leulit_wizard_report_practicas_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211013_1259_access_permission" model="ir.model.access">
+        <field name="name">leulit_wizard_report_teoricas_curso Access</field>
+        <field name="model_id" ref="model_leulit_wizard_report_teoricas_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211014_1137_access_permission" model="ir.model.access">
+        <field name="name">leulit_informes_historial_popup Access</field>
+        <field name="model_id" ref="model_leulit_informes_historial_popup"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211015_1258_access_permission" model="ir.model.access">
+        <field name="name">leulit_perfil_formacion_print_wizard Access</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_print_wizard"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20211105_1254_access_permission" model="ir.model.access">
+        <field name="name">leulit_popup_replicar_cursos_pf Access</field>
+        <field name="model_id" ref="model_leulit_popup_replicar_cursos_pf"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+    <record id="leulit_20220207_1651_access_permission" model="ir.model.access">
+        <field name="name">leulit_popup_replicar_acciones_pf Access</field>
+        <field name="model_id" ref="model_leulit_popup_replicar_acciones_pf"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230125_1116_access_permission" model="ir.model.access">
+        <field name="name">leulit_accion Access</field>
+        <field name="model_id" ref="model_leulit_accion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20230125_1117_access_permission" model="ir.model.access">
+        <field name="name">leulit_pf_accion Access</field>
+        <field name="model_id" ref="model_leulit_pf_accion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20230125_1118_access_permission" model="ir.model.access">
+        <field name="name">leulit_pf_accion_last_done Access</field>
+        <field name="model_id" ref="model_leulit_pf_accion_last_done"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20230125_1119_access_permission" model="ir.model.access">
+        <field name="name">leulit_popup_replicar_pf_acciones Access</field>
+        <field name="model_id" ref="model_leulit_popup_replicar_pf_acciones"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_202302220_1011_acccess_permission" model="ir.model.access">
+        <field name="name">leulit_report_pf_curso Access</field>
+        <field name="model_id" ref="model_leulit_report_pf_curso"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>    
+
+
+    <!-- ROperaciones_gestor -->
+    <record id="leulit_20250310_1249_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250310_1250_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación curso Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_curso"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250310_1251_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación curso last done Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_curso_last_done"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250310_1252_access_permission" model="ir.model.access">
+        <field name="name">leulit_accion Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_accion"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250310_1253_access_permission" model="ir.model.access">
+        <field name="name">leulit_pf_accion Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_pf_accion"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250310_1254_access_permission" model="ir.model.access">
+        <field name="name">leulit_pf_accion_last_done Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_pf_accion_last_done"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20221125_1045_action" model="ir.actions.act_window">
+            <field name="name">Movimientos</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="domain"></field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}</field>
+        </record>
+
+
+        <record id="leulit_20221215_1049_form" model="ir.ui.view">
+            <field name="name">leulit_20221215_1049_form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="is_instalacion" invisible="1"/>
+                    <field name="maintenance_request_id"  invisible="((not is_instalacion))" />
+                    <field name="equipment"  invisible="((not is_instalacion))" />
+                </xpath>
+                <xpath expr="//field[@name='lot_ids']" position="after">
+                    <field name="qty_available"/>
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <div   invisible="((state != 'done'))" >
+                        <group>
+                            <button name="add_docs_stock_production_lot_all"
+                                    string="Añadir documento a todas las piezas"
+                                    type="object"
+                                    class="oe_highlight"
+                                    groups="leulit_almacen.RBase_almacen"
+                            />
+                            <button name="print_etiquetas_all_lots"
+                                    string="Imprimir Etiquetas"
+                                    type="object"
+                                    class="oe_highlight"
+                                    groups="leulit_almacen.RBase_almacen"
+                            />
+                            <button name="create_moves_to_icarus"
+                                    string="Enviar a Icarus (Material Nuevo)"
+                                    type="object"
+                                    class="oe_highlight oe_right"
+                                     invisible="((company_id != 1) or (flag_moves_to_icarus))" 
+                            />
+                        </group>
+                        <h2>Piezas - Docs</h2>
+                        <field name="flag_moves_to_icarus" invisible="1"/>
+                        <field name="rel_stock_production_lot">
+                            <tree>
+                                <field name="name" string="Nombre"/>
+                                <field name="product_id"/>
+                                <field name="sn"/>
+                                <field name="ref_origen"/>
+                                <field name="lote"/>
+                                <field name="can_print" invisible="1"/>
+                                <button type="object" name="add_docs_stock_production_lot" class="oe_highlight" string="Adjuntar Doc."/>
+                                <button type="object" name="print_etiqueta_pieza" class="oe_highlight" string="Imprimir"  invisible="((not can_print))" />
+                                <button type="object" name="add_datos_pieza" class="oe_highlight" string="Datos de pieza"/>
+                            </tree>
+                        </field>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+		<record model="ir.ui.view" id="leulit_20211111_1256_form">
+			<field name="name">leulit_20211111_1256_form</field>
+			<field name="model">leulit.rel_parte_escuela_cursos_alumnos</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Adjuntar Documentos Silabus">
+					<group col="1">
+						<h3>Selecciona todos los archivos que deseas adjuntar:</h3>
+						<field name="rel_docs" no_label="1"/>
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<record model="ir.ui.view" id="leulit_20220223_1446_tree">
+			<field name="name">leulit_20220223_1446_tree</field>
+			<field name="model">leulit.rel_parte_escuela_cursos_alumnos</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Control Partes de Escuela">
+					<field name="verificado" invisible="1"/>
+					<field name="estado" invisible="1"/>
+					<field name="parte_escuela_id"/>
+					<field name="rel_parte_escuela"/>
+					<field name="fecha"/>
+					<field name="rel_curso"/>
+					<field name="rel_silabus"/>
+					<field name="alumno"/>
+					<field name="tiempo" widget="float_time" sum="Total"/>
+				</tree>
+			</field>
+		</record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20220223_1446_action">
+            <field name="name">Control Partes de Escuela</field>
+            <field name="res_model">leulit.rel_parte_escuela_cursos_alumnos</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[]</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_escuela.leulit_20220223_1446_tree')})]"/>
+        </record>        
+
+
+		<record model="ir.ui.view" id="leulit_20221122_1708_tree">
+			<field name="name">leulit_20221122_1708_tree</field>
+			<field name="model">leulit.rel_parte_escuela_cursos_alumnos</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Lineas de silabus" editable="top">
+					<field name="verificado" invisible="1"/>
+					<field name="estado" invisible="1"/>
+					<field name="parte_escuela_id"/>
+					<field name="rel_parte_escuela" options="{'no_open': True}"/>
+					<field name="fecha"/>
+					<field name="rel_curso" options="{'no_open': True}" domain="[('estado','=','activo')]"/>
+					<field name="rel_silabus" options="{'no_open': True}" domain="[('curso_id','=',rel_curso)]"/>
+					<field name="tiempo" widget="float_time" string="T. Dedicado"/>
+					<field name="alumno" options="{'no_open': True}"/>
+				</tree>
+			</field>
+		</record>
+
+
+    </data>
+</odoo>

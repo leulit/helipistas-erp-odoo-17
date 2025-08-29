@@ -56,12 +56,10 @@
             'leulit_operaciones/static/src/js/performance_constants.js',
             'leulit_operaciones/static/src/js/performance.js',
             'leulit_operaciones/static/src/js/pag_cargada.js',
+            'leulit_operaciones/static/src/xml/weight_and_balance.xml',
+            'leulit_operaciones/static/src/xml/parte_vuelo_buttons.xml',
         ],
     },
-    "qweb": [
-        "static/src/xml/weight_and_balance.xml",
-        "static/src/xml/parte_vuelo_buttons.xml"
-    ],
     "installable": True,
     "auto_install": False,
     "application": True,

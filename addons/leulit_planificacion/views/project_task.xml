@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data> 
+
+        <record model="ir.ui.view" id="view_task_form2_inherited_leulit_reunion">
+            <field name="name">project.task.form.inherited.leulit.reunion</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="leulit_tarea.view_task_form2_inherited_leulit"/>
+            <field name="arch" type="xml">
+                <field name="date_deadline" position="after">
+                    <field name="maintenance_request_id" invisible="1"/>
+                    <field name="reunion_id" options="{'no_create_edit': True,'no_create': True}"  invisible="((maintenance_request_id))" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

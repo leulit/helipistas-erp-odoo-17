@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20200925_0913_form">
+			<field name="name">leulit_20200925_0913_form</field>
+			<field name="model">leulit.recurso_disponibilidad</field>
+			<field name="type">form</field>
+            <field name="arch" type="xml">
+            	<form string="Recursos Disponibles">
+                    <sheet>
+                        <group col="2">
+                            <field name="fecha_disp"/>
+                        </group>
+                        <table>
+                            <tr>
+                                <td style="padding-left:100px">
+                                    <separator string="Recursos Ocupados"/>
+                                    <field name="resource_fields_ocupados" readonly="1" nolabel="1">
+                                        <tree>
+                                            <field name="resource"/>
+                                            <field name="hora_ini"/>
+                                            <field name="hora_fin"/>
+                                        </tree>
+                                    </field>
+                                </td>
+                                <td style="padding-left:100px">
+                                    <separator string="Recursos Disponibles"/>
+                                    <field name="resource_fields_disponibles" readonly="1" nolabel="1" domain="[('active','=',True)]">
+                                        <tree>
+                                            <field name="name"/>
+                                            <field name="type"/>
+                                            <field name="active" invisible="1"/>
+                                        </tree>
+                                    </field>
+                                </td>
+                            </tr>
+                        </table>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+         <record id="leulit_20200925_0913_action" model="ir.actions.act_window">
+            <field name="name">Recursos Disponibles</field>
+            <field name="res_model">leulit.recurso_disponibilidad</field>
+            <field name="view_mode">form</field>
+        </record>
+
+    </data>
+</odoo>

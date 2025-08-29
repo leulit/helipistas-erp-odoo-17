@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_notify_expiration_date_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email notificación piezas caducadas</field>
+            <field name="model_id" ref="model_stock_lot"/>
+            <field name="state">code</field>
+            <field name="code">model.notify_expiration_date()</field>
+            <field name="active" eval="False"/>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_notify_expiration_date" model="mail.template">
+            <field name="name">Notificación de Piezas Caducadas</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Notificación de Piezas Caducadas</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">almacen@icarus-manteniment.com</field>
+            <field name="body_html"><![CDATA[
+                % if ctx.get('values_flag'):
+                    <p>A continuación se detallan las siguientes piezas que estan caducadas:</p
+                    % for pieza, datos in ctx.get('email_values', {}).items():
+                        <br/>
+                        <p><strong>${pieza}</strong></p>
+                        <p><strong>Cantidad en Stock:</strong> ${datos['qty']}</p>
+                        <p><strong>Fecha de Caducidad:</strong> ${datos['fecha_caducidad']}</p>
+                    % endfor
+                % else:
+                    <p>No hay ningun pieza caducada.</p>
+                % endif
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

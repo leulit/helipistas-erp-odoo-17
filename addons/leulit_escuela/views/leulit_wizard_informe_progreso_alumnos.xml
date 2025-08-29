@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <!-- REPORT INFORME PROGRESO ALUMNOS -->
+        <report
+            id="leulit_20230927_1657_report"
+            string="Progreso Alumnos"
+            model="leulit.curso"
+            report_type="qweb-pdf"
+            file="leulit_escuela.leulit_20230927_1657_informe"
+            name="leulit_escuela.leulit_20230927_1657_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />
+
+        <template id="progreso_alumnos_report_header">
+            <div style="width:100%;" class="header">
+                <t t-call="leulit_escuela.progreso_alumnos_report_css"/>
+                <table class="fullwidth">
+                    <tr>
+                        <td  style="font-size:20px; white-space: nowrap; text-align:center;">
+                            <span><b>Informe de Progresos de los alumnos activos</b></span><br/>
+                            <b><span t-esc="name"/></b>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+
+        <template id="progreso_alumnos_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 3.5687mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-weight: bold;
+                    font-size: 3.5687mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 230mm;
+                    height: 320mm;
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                    page-break-after: always;
+                }
+                .pagecontent {
+                    width: 230mm;
+                    height: 320mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .heightrow {height: 70px;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    border: 1px solid #B0B0B0;
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:12px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: middle
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20230927_1657_informe">
+            <t t-call="web.html_container">
+                <t t-set="data_report_header_spacing" t-value="20"/>
+                <t t-set="data_report_margin_top" t-value="30"/>
+                <div class="page">
+                    <t t-foreach="alumnos" t-as="alumno">
+                        <t t-call="leulit_escuela.progreso_alumnos_report_css"/>
+                        <t t-call="leulit_escuela.progreso_alumnos_report_header" />
+                        <div class="row">
+                            <table class="fullwidth">
+                                <tr>
+                                    <td class="theadtitle tdcoloredmain centertext"><span t-esc="alumno"/></td>
+                                </tr>
+                            </table>
+                            <table class="fullwidth">
+                                <tr>
+                                    <td class="centertext tdcolored" style="width:50%" colspan="3"><span>Teórica</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdcolored"><span>Asignatura</span></td>
+                                    <td class="tdcolored"><span>Tiempo prev.</span></td>
+                                    <td class="tdcolored"><span>Tiempo clase</span></td>
+                                </tr>
+                                <t t-foreach="alumnos[alumno]['teoricas']" t-as="teorica">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="alumnos[alumno]['teoricas'][teorica]['name']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="alumnos[alumno]['teoricas'][teorica]['strduracion']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="alumnos[alumno]['teoricas'][teorica]['str_total_real']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                            <br/>
+                        </div> 
+                        <div class="footer">
+                            <div class="row text-center" style="border-top: 1px solid black;">
+                                <div class="col col-3 offset-9 text-right">
+                                    <ul class="list-inline mt-2">
+                                        <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                        <li class="list-inline-item">
+                                            <span class="page" style="font-size:10px;"/>
+                                        </li>
+                                        <li class="list-inline-item" style="font-size:10px;">de</li>
+                                        <li class="list-inline-item">
+                                            <span class="topage" style="font-size:10px;"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div> 
+                    </t>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

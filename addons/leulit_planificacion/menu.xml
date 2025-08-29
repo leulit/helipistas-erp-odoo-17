@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <menuitem 
+        id="leulit_20200818_1030_menuitem"
+        name="Calendario"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        groups=""
+        sequence="10"
+    />
+        <menuitem 
+            id="leulit_20200818_1029_menuitem"
+            name="Planificación"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20200818_1536_action"
+            sequence="15"
+            groups=""
+        />
+        <menuitem 
+            id="leulit_20230817_1523_menuitem"
+            name="Calendario de Gestión"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20230817_1523_action"
+            sequence="20"
+            groups="RPlanificacion_all"
+        />
+        <menuitem 
+            id="leulit_20220920_1242_menuitem"
+            name="Planificación Cancelada"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20220920_1242_action"
+            sequence="25"
+            groups="RPlanificacion_all"
+        />
+        <menuitem 
+            id="leulit_20250120_1214_menuitem"
+            name="Tipos de Planificación"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20250120_1214_action"
+            sequence="50"
+            groups="RPlanificacion_manager"
+        />
+        <menuitem 
+            id="leulit_20250120_1215_menuitem"
+            name="Equipamientos para Planificación"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20250120_1215_action"
+            sequence="55"
+            groups="RPlanificacion_manager"
+        />
+        <menuitem 
+            id="leulit_20201113_1016_menuitem"
+            name="Recursos"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20201113_1016_action"
+            sequence="60"
+            groups="RPlanificacion_manager"
+        />
+        <menuitem 
+            id="leulit_20200923_0938_menuitem"
+            name="Ctrl. planificación"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20200923_0938_action"
+            sequence="70"
+            groups="RPlanificacion_manager"
+        />
+        <menuitem 
+            id="leulit_20230201_1429_menuitem"
+            name="Plan. Tabla Dinamica"
+            parent="leulit_20200818_1030_menuitem"
+            action="leulit_20230201_1429_action"
+            sequence="80"
+            groups="RPlanificacion_manager"
+        />
+
+    
+    <menuitem 
+        id="leulit_20200827_1515_menuitem"
+        name="Reuniones"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        sequence="40"
+        groups="hr.group_hr_user"
+    />
+        <menuitem 
+            id="leulit_20200827_1516_menuitem"
+            name="Mis Reuniones"
+            parent="leulit_20200827_1515_menuitem"
+            action="leulit_20200827_1515_action"
+            sequence="10"
+            groups="hr.group_hr_user"
+        />
+        <menuitem 
+            id="leulit_20220815_1111_menuitem"
+            name="Todas las Reuniones"
+            parent="leulit_20200827_1515_menuitem"
+            action="leulit_20220815_1111_action"
+            sequence="20"
+            groups="RPlanificacion_manager"
+        />
+
+
+        <menuitem 
+            id="leulit_20220509_1040_menuitem"
+            name="Todas las circulares"
+            parent="leulit.leulit_20201006_1023_menuitem"
+            action="leulit.leulit_20220509_1040_action"
+            sequence="20"
+            groups="RPlanificacion_manager"
+        />
+    
+</odoo>

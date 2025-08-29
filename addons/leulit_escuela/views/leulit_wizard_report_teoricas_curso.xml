@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20211013_1155_form">
+            <field name="name">leulit_20211013_1155_form</field>
+            <field name="model">leulit.wizard_report_teoricas_curso</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Informe teóricas">
+                    <sheet>
+                        <group>
+                            <field name="alumno" readonly="1"/>
+                            <field name="cursos" domain="[('alumno_id','=',alumno),('cursos_perfil_formacion','=',False)]" >
+                                <tree string="Cursos" create="false" edit="false">
+                                    <field name="curso_id"/>
+                                    <field name="alumno_id" invisible="1"/>
+                                    <field name="cursos_perfil_formacion" invisible="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="imprimir" type="object" string="Imprimir" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <report string="Informe clases teóricas"
+            id="wizard_report_teoricas_curso_report"
+            model="leulit.wizard_report_teoricas_curso"
+            name="leulit_escuela.leulit_20211013_1245_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_landscape_2"/>
+
+
+        <template id="informe_teoricas_css">
+            <style>
+                .literal {
+                    font-weight: bold;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+                .centertext {
+                	text-align:center;
+                }
+                .lefttext {
+                	text-align:left;
+                }
+                .righttext {
+                	text-align:right;
+                }         
+                .bgcolored {
+                    background-color: rgba(0,0,0,0.5);
+                    color: #ffffff;
+                }     
+                table.noborde, table.noborde tr, table.noborde td, table.noborde th {
+                    border: none;
+                    padding: 5px;
+                }
+                table.border1, table.border1 tr, table.border1 td, table.border1 th {
+                    border:thin solid #000000;
+                    text-align:center;
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    font-size: 12px;
+                    padding: 5px;
+                }
+                br {
+                    display: block;
+                    margin-bottom: 2px;
+                    font-size:2px;
+                    line-height: 2px;
+                }
+            </style>
+        </template>
+
+
+        <template id="informe_teoricas_cabecera">
+            <div class="header" style="border:1px solid #000000; min-height:80px; max-height:80px">
+                <div class="row">
+                    <div class="col-3">
+                        <t t-if="firmado">
+                            <div class="row">
+                                <div class="col-12 lh-sm">
+                                    <i><span style="font-size:10px">Firmado por: <span t-if="firmado_por" t-esc="firmado_por"/></span></i>
+                                    <br style="display: block;margin-bottom: 2px;margin-top: 2px;font-size:2px;line-height: 2px;"/>
+                                    <i><span style="font-size:10px">Código CSV/CID: <span t-esc="hashcode"/></span></i>                                                
+                                    <br style="display: block;margin-bottom: 2px;margin-top: 2px;font-size:2px;line-height: 2px;"/>
+                                    <span style="font-size:10px">(c) Helipistas</span>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="row">
+                                <div class="col-12">
+                                    <i><span style="font-size:10px">Documentación para uso interno.</span></i>
+                                    <br style="display: block;margin-bottom: 2px;margin-top: 2px;font-size:2px;line-height: 2px;"/>
+                                    <span style="font-size:10px">(c) Helipistas</span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="col-6 text-center">
+                        <span style="font-size:20px; margin-right:20px"><b>C L A S E S</b></span>
+                        <span style="font-size:20px"><b>T E Ó R I C A S</b></span>
+                        <br style="display: block;margin-bottom: 2px;margin-top: 2px;font-size:2px;line-height: 2px;"/>
+                        <span t-if="alumno_nombre" t-esc="alumno_nombre"/>
+                        <br style="display: block;margin-bottom: 2px;margin-top: 2px;font-size:2px;line-height: 2px;"/>
+                        <span style="font-size:8px">Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)</span>
+                    </div>
+                    <div class="col-3">
+                        <table align="right" style="margin-bottom:10px;margin-top:10px" class="noborde">
+                            <tr>
+                                <td style="white-space: nowrap; padding: 5px;"><b>Código:</b></td>
+                                <td style="white-space: nowrap; padding: 5px;">HLP-DOC-0006</td>
+                                <td style="white-space: nowrap; padding: 5px;"><b>Versión:</b></td>
+                                <td style="white-space: nowrap; padding: 5px;">3.1.0</td>
+                            </tr>
+                        </table>                
+                    </div>
+                </div>
+            </div>
+        </template>        
+
+        <template id="leulit_20211013_1245_informe">
+            <t t-call="web.html_container">  
+                <t t-set="data_report_margin_top" t-value="25"/>
+                <t t-set="data_report_header_spacing" t-value="15"/>
+                <t t-set="data_report_dpi" t-value="110"/>                     
+                <t t-set="cursos" t-value="0" />           
+                <t t-call="leulit_escuela.informe_teoricas_cabecera"/>          
+                <t t-foreach="datos" t-as="curso">     
+                    <t t-if="cursos > 0">
+                        <div style="page-break-after: always;"/>
+                        <t t-call="leulit_escuela.informe_teoricas_cabecera"/> 
+                    </t>
+                    <div class="article">     
+                        <t t-call="leulit_escuela.informe_teoricas_css"/>  
+                        <t t-if="cursos == 0">
+                            <table style="width:100%" class="border1">
+                                <thead>
+                                    <tr>
+                                        <th class="literal centertext bgcolored titleheight" style="vertical-align:middle" colspan="11">Curso</th>
+                                        <th class="literal centertext bgcolored titleheight" colspan="2">Horas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="datos" t-as="curso2">
+                                        <tr>
+                                            <th  colspan="11" class="lefttext" style="width:100%"><span t-esc="curso2['curso']"/></th>
+                                            <th  colspan="2"><span t-esc="curso2['horasrecibidas']"/></th>
+                                        </tr>
+                                    </t>    
+                                </tbody>
+                            </table>
+                            <div class="footer text-right" style="margin:0px; padding:0px;font-size:12px;">    
+                                <span class="page"/> / <span class="topage"/>
+                            </div>
+                            <div style="page-break-after: always;"/>
+                        </t>
+                        <table class="border1">
+                            <thead>
+                                <tr>
+                                    <th class="literal text-left bgcolored titleheight" colspan="12"><span t-esc="curso['curso']"/></th>
+                                </tr>
+                                <tr>
+                                    <th class="literal centertext bgcolored titleheight">ID</th>
+                                    <th class="literal centertext bgcolored titleheight">Fecha</th>
+                                    <th class="literal centertext bgcolored titleheight">Hora</th>
+                                    <th class="literal centertext bgcolored titleheight">Tiempo</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:60%">Silabus</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:40%">Comentario</th>
+                                    <th class="literal centertext bgcolored titleheight">Valoración</th>
+                                    <th class="literal centertext bgcolored titleheight">Instructor</th>
+                                    <th class="literal centertext bgcolored titleheight">Alumno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="curso['partes']" t-as="parte">
+                                    <tr style="page-break-inside: avoid ">
+                                        <td nowrap="1"><span t-esc="parte['id']"/></td>
+                                        <td nowrap="1"><span t-esc="parte['fecha']"/></td>
+                                        <td><span t-esc="parte['horainicio']"/></td>
+                                        <td><span t-esc="parte['tiempo']"/></td>
+                                        <td class="text-left"><span t-raw="parte['silabus']"/></td>
+                                        <td class="text-left"><span t-esc="parte['comentario']"/></td>
+                                        <td style="vertical-align:middle"><span t-esc="parte['valoracion']"/></td>
+                                        <td style="vertical-align:middle"><i><span t-esc="parte['instructor']"/></i></td>
+                                        <td style="vertical-align:middle"><i><span t-esc="parte['nombrealumno']"/></i></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <t t-set="cursos" t-value="cursos+1" />
+                        <div class="footer text-right" style="margin:0px; padding:0px;font-size:12px;">    
+                            <span class="page"/> / <span class="topage"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

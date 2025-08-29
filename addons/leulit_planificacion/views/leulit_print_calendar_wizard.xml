@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id='leulit_20200922_1652_form' model="ir.ui.view">
+            <field name="name">leulit_20200922_1652_form</field>
+            <field name="model">leulit.print_calendar_wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <div class="oe_right oe_button_box">
+                            <button type="object" name="imprimir" class="oe_highlight" string="Imprimir"/>
+                            <button special="cancel" string="Cancelar"/>
+                        </div>
+                    </header>
+                    <sheet>
+                        <group col="4" fill="0">
+                            <field name='resource' colspan="4"/>
+                            <field name="from_date" />
+                            <field name="to_date" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20200922_1652_action" model="ir.actions.act_window">
+            <field name="name">Imprimir calendario</field>
+            <field name="res_model">leulit.print_calendar_wizard</field>
+            <field name="view_mode">form</field>
+        </record>
+
+
+    </data>
+</odoo>

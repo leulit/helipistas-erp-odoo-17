@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20250120_1215_tree">
+            <field name="name">leulit_20250120_1215_tree</field>
+            <field name="model">leulit.equipamientos_planificacion</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20250120_1215_action" model="ir.actions.act_window">
+            <field name="name">Equipamientos</field>
+            <field name="res_model">leulit.equipamientos_planificacion</field>
+            <field name="view_mode">tree</field>
+        </record>
+    </data>
+</odoo>

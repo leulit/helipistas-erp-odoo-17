@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230308_1108_filter" model="ir.ui.view">
+            <field name="name">leulit_20230308_1108_filter</field>
+            <field name="model">leulit.report_pf_curso</field>
+            <field name="arch" type="xml">
+                <search string="Filtros">
+                    <field name="curso" string="Curso"/>
+                    <field name="alumno" string="Alumno"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="leulit_202302220_1011_tree" model="ir.ui.view">
+            <field name="name">leulit_202302220_1011_tree</field>
+            <field name="model">leulit.report_pf_curso</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Cursos por Alumno" create="0" delete="0" edit="0">
+                    <field name="semaforo_dy" widget="semaforo_char"/>
+                    <field name="curso"/>
+                    <field name="alumno"/>
+                    <field name="last_done_date"/>
+                    <field name="next_done_date"/>
+                    <field name="remainder_dy"/>
+                    <button name="open_cursos_perfil_formacion" string="Ver Todos" type="object" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_202302220_1011_action" model="ir.actions.act_window">
+            <field name="name">Cursos por Alumno</field>
+            <field name="res_model">leulit.report_pf_curso</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+    </data>
+</odoo>

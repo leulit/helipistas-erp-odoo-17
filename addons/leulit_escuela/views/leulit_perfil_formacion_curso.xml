@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data> 
+
+        <record model="ir.ui.view" id="leulit_perfil_formacion_curso_master_form">
+            <field name="name">leulit_perfil_formacion_curso_master_form</field>
+            <field name="model">leulit.perfil_formacion_curso</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="curso_master">
+                    <field name="is_template"  invisible="1"/>
+                    <group col="2">
+                        <field name="descripcion" widget="keyboard_disabled"/>
+                        <field name="curso" string="Curso" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        <field name="periodicidad_dy" string="Periodicidad DY"/>
+                        <field name="marge_dy"/>
+                        <field name="perfil_formacion" readonly="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_perfil_formacion_done_course_form">
+            <field name="name">leulit_perfil_formacion_done_course_form</field>
+            <field name="model">leulit.perfil_formacion_curso_last_done</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Marcar curso como realizada">
+                    <group col="1">
+                    <h5><field name="actualizarTodos" no_label="1"/>Seleccionar para actualizar todos</h5>
+                    </group>
+                    <group col="2">
+                        <field name="pf_curso" invisible="1"/>
+                        <field name="name" readonly="1"/>
+                        <field name="done_date" />
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Cancelar" class="oe_highlight"/>
+                        <button name="do_done_course" string="Guardar" type="object" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>    
+
+
+        <record model="ir.ui.view" id="leulit_20201106_1607_form">
+            <field name="name">leulit_20201106_1607_form</field>
+            <field name="model">leulit.perfil_formacion_curso</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="curso_master">                    
+                    <sheet>
+                        <field name="is_template"  invisible="1"/>
+                        <group col="2">
+                            <field name="perfil_formacion" readonly="1"/>
+                            <field name="descripcion" readonly="1"/>
+                            <field name="curso" readonly="1"/>
+                            <field name="alumno" readonly="1"/>
+                            <field name="notas" readonly="1"/>
+                            <field name="periodicidad_dy" readonly="1"/>
+                            <field name="marge_dy" readonly="1"/>
+                            <field name="last_done_date" readonly="1"/>
+                            <field name="next_done_date" readonly="1"/>
+                            <field name="remainder_dy" readonly="1"/>
+                            <field name="semaforo_dy" readonly="1" widget="semaforo_char"/>
+                            <notebook colspan="2">
+                                <page string="Histórico realización curso">
+                                    <field name="last_done_history" no_label="1">
+                                        <tree delete="true" create="false" edit="true" decoration-muted="is_last == False">
+                                            <field name="id" invisible="1" />
+                                            <field name="is_last" invisible="1"/>
+                                            <button name="informe_general_cursos_alu_ld" type="object" string="Imprimir" class="oe_highlight"/>
+                                            <field name="done_date" />
+                                            <field name="last_parte" string="Fecha LP"/>
+                                            <field name="last_parte_id" string="Id. LP"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201106_1607_tree">
+            <field name="name">leulit_20201106_1607_tree</field>
+            <field name="model">leulit.perfil_formacion_curso</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+            <tree string="curso" create="false">
+                <field name="semaforo_dy" widget="semaforo_char"/>
+                <field name="descripcion"/>
+                <field name="alumno"/>
+                <field name="last_done_date"/>
+                <field name="next_done_date"/>
+                <field name="remainder_dy"/>
+            </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201106_1607_action" model="ir.actions.act_window">
+            <field name="name">Curso Perfil Formación</field>
+            <field name="res_model">leulit.perfil_formacion_curso</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template','=', False),('inactivo','=', False)]</field>
+            <field name="context">{'default_is_template': False}</field>
+        </record>
+        <record id="leulit_20201106_1607_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201106_1607_form" />
+            <field name="act_window_id" ref="leulit_20201106_1607_action" />
+        </record>
+        <record id="leulit_20201106_1607_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_1607_tree" />
+            <field name="act_window_id" ref="leulit_20201106_1607_action" />
+        </record>
+
+    </data>
+</odoo>

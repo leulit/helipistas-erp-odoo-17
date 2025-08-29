@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20200918_1041_form">
+            <field name="name">leulit_20200918_1041_form</field>
+            <field name="model">leulit.event_resource</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="tipo_meeting" >
+                    <sheet>
+                        <table>
+                            <tr>
+                                <td colspan="4"><group><field name="resource" readonly="1"/></group></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <group><field name="asunto" readonly="1"/></group>
+                                </td>
+                                <td>
+                                    <group><field name="nodisponible" readonly="1"/></group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <group><field name="comentarios" readonly="1"/></group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <group><field name="fecha_ini" string="Fecha inicio"/></group>
+                                </td>
+                                <td>
+                                    <group><field name="hora_ini" widget="float_time" string="Hora inicio"/></group>
+                                </td>
+                            </tr>
+                            <tr name="ultimo_tr">
+                                <td>
+                                    <group><field name="fecha_fin" string="Fecha fin"/></group>
+                                </td>
+                                <td>
+                                    <group><field name="hora_fin" widget="float_time" string="Hora fin"/></group>
+                                </td>
+                            </tr>
+                        </table>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20200918_1041_tree">
+            <field name="name">leulit_20200918_1041_tree</field>
+            <field name="model">leulit.event_resource</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="tipo_meeting" create="false" edit="false" >
+                    <field name="resource"/>
+                    <field name="fecha_ini" string="Fecha Ini."/>
+                    <field name="fecha_fin" string="Fecha Fin."/>
+                    <field name="hora_ini" string="Hora Ini."/>
+                    <field name="hora_fin" string="Hora Fin."/>
+                    <field name="work_hours" sum="H. previstas (hh:mm)"/>
+                    <field name="availability_hours" sum="H. disponibilidad (hh:mm)"/>
+                    <field name="type_event"/>
+                    <field name="asunto"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20200918_1041_calendar">
+            <field name="name">leulit_20200918_1041_calendar</field>
+            <field name="model">leulit.event_resource</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <calendar string="Recursos" date_start="date" color="color" date_stop="date_deadline"  mode="week">
+                    <field name="asunto"/>
+                    <field name="resource" invisible="1"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- <record id="leulit_20230131_1429_pivot" model="ir.ui.view">
+            <field name="name">leulit_20230131_1429_pivot</field> 
+            <field name="model">leulit.event_resource</field>
+            <field name="arch" type="xml">
+                <pivot string="Calendario Tabla Dinamica" disable_linking="True" sample="1">
+                    <field name="date" type="col"/>
+                    <field name="resource" type="row"/>
+                    <field name="total_horas_planificadas" type="measure" string="Horas plan." widget="float_time"/>
+                </pivot>
+            </field>
+        </record> -->
+
+        <record id="leulit_20200918_1041_action" model="ir.actions.act_window">
+            <field name="name">Por persona</field>
+            <field name="res_model">leulit.event_resource</field>
+            <field name="view_mode">calendar,tree,form</field>
+            <field name="domain">[('type','=','persona')]</field>
+            <field name="context">{'color_by_value':'1','color_field_label':'resource','cal_off_empty_clk':1,'cal_hide_del_evt':'1'}</field>
+        </record>
+
+        <record id="leulit_20200918_1208_action" model="ir.actions.act_window">
+            <field name="name">Por máquina</field>
+            <field name="res_model">leulit.event_resource</field>
+            <field name="view_mode">calendar,tree,form</field>
+            <field name="domain">[('type','=','maquina')]</field>
+            <field name="context">{'color_by_value':'1','color_field_label':'resource','cal_off_empty_clk':1,'cal_hide_del_evt':'1'}</field>
+        </record>
+        
+        <record id="leulit_20200921_1132_action" model="ir.actions.act_window">
+            <field name="name">Por recurso</field>
+            <field name="res_model">leulit.event_resource</field>
+            <field name="view_mode">calendar,tree,form</field>
+            <field name="context">{'color_by_value':'1','color_field_label':'resource','cal_off_empty_clk':1,'cal_hide_del_evt':'1'}</field>
+        </record>
+<!--         
+        <record id="leulit_20230131_1429_action" model="ir.actions.act_window">
+            <field name="name">Plan. Tabla Dinamica</field>
+            <field name="res_model">leulit.event_resource</field>
+            <field name="view_mode">pivot</field>
+        </record> -->
+
+
+    </data>
+</odoo>

@@ -38,6 +38,16 @@
         </record>
 
 
+        <!-- Rol Propietario -->
+        <record model="ir.module.category" id="propietario_rol_category">
+            <field name="name">Rol Propietario Helicóptero</field>
+            <field name="description">Rol Propietario Helicóptero</field>
+        </record>
+        <record id="RPropietario_helicoptero" model="res.groups">
+            <field name="name">Propietario Helicóptero</field>
+            <field name="category_id" ref="propietario_rol_category"/>
+        </record>
+
 
         <!-- Rol Operaciones -->
         <record model="ir.module.category" id="operaciones_rol_category">

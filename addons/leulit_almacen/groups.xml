@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="almacen_rol_category">
+            <field name="name">Rol Almacen</field>
+            <field name="description">Rol Almacen</field>
+            <field name="sequence">7</field>
+        </record>
+
+        <record id="RBase_almacen" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="almacen_rol_category"/>
+        </record>
+
+        <record id="RResponsable_almacen" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="implied_ids" eval="[(4, ref('RBase_almacen'))]"/>
+            <field name="category_id" ref="almacen_rol_category"/>
+        </record>
+    
+
+    </data>
+</odoo>

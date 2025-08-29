@@ -1,0 +1,124 @@
+<odoo>
+    <data>
+        <record id="leulit_20201127_0930_filter" model="ir.ui.view">
+            <field name="name">leulit_20201127_0930_filter</field>
+            <field name="model">leulit.silabus</field>
+            <field name="arch" type="xml">
+                <search string="Silabus">
+                    <field name="curso_id" />
+                    <field name="asignatura_id"/>
+                    <field name="name" />
+                    <field name="tipo" />
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201127_0930_form">
+            <field name="name">leulit_20201127_0930_form</field>
+            <field name="model">leulit.silabus</field>
+            <field name="arch" type="xml">
+                <form string="Silabus">
+                    <sheet>
+                        <div class="d-flex flex-wrap justify-content-center">
+                            <div>
+                                <group><field name="doblemando" colspan="1"/></group>
+                            </div>
+                            <div>
+                                <group><field name="spic" colspan="1"/></group>
+                            </div>
+                            <div>
+                                <group><field name="vts" colspan="1"/></group>
+                            </div>
+                            <div>
+                                <group><field name="test"/></group>
+                            </div>
+                            <div>
+                                <group><field name="valoracion"/></group>
+                            </div>
+                        </div>
+                        <group col="2">
+                            <field name="name" />
+                            <field name="comentario"/>
+                            <field name="orden"/>
+                            <field name="duracion" widget="float_time"/>
+                            <field name="curso_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="tipo"/>
+                            <field name="sesion"/>
+                            <field name="asignatura_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>        
+
+        <record model="ir.ui.view" id="leulit_20201127_0930_tree">
+            <field name="name">leulit_20201127_0930_tree</field>
+            <field name="model">leulit.silabus</field>
+            <field name="arch" type="xml">
+                <tree string="Silabus">
+                    <field name="id" />
+                    <field name="curso_id" />
+                    <field name="asignatura_id"/>
+                    <field name="name" />
+                    <field name="tipo" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="leulit_20201127_0929_tree">
+            <field name="name">leulit_20201127_0929_tree</field>
+            <field name="model">leulit.silabus</field>
+            <field name="arch" type="xml">
+                <tree string="Silabus">
+                    <field name="silabusDoit" invisible="1"/>
+                    <field name="id" />
+                    <field name="curso_id" />
+                    <field name="asignatura_id"/>
+                    <field name="duracion" string="Tiempo teórico" widget="float_time"/>
+                    <field name="name" />
+                    <field name="tipo" />
+                </tree>
+            </field>
+        </record>              
+
+        
+        <record model="ir.actions.act_window" id="leulit_20201127_0929_action">
+            <field name="name">Silabus</field>
+            <field name="res_model">leulit.silabus</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="leulit_20201127_0929_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201127_0930_form" />
+            <field name="act_window_id" ref="leulit_20201127_0929_action" />
+	    </record>
+	    <record id="leulit_20201127_0929_action_tree" model="ir.actions.act_window.view">
+			<field name="sequence" eval="1"/>
+			<field name="view_mode">tree</field>
+		    <field name="view_id" ref="leulit_20201127_0930_tree" />
+		    <field name="act_window_id" ref="leulit_20201127_0929_action" />
+	    </record>
+
+
+
+        <record model="ir.ui.view" id="leulit_20211109_1218_tree">
+            <field name="name">Silabus</field>
+            <field name="model">leulit.silabus</field>
+            <field name="arch" type="xml">
+                <tree string="Silabus" decoration-success="silabusDoit == True" decoration-primary=" silabusDoit != True">
+                    <field name="silabusDoit" invisible="1"/>
+                    <field name="id" />
+                    <field name="curso_id" />
+                    <field name="asignatura_id"/>
+                    <field name="duracion" string="Tiempo teórico" widget="float_time"/>
+                    <field name="name" />
+                    <field name="tipo" />
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

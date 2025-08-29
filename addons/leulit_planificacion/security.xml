@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20200826_1004_access_permission" model="ir.model.access">
+        <field name="name">Recursos Access</field>
+        <field name="model_id" ref="model_leulit_resource"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200826_1009_access_permission" model="ir.model.access">
+        <field name="name">REl. evento recurso Access</field>
+        <field name="model_id" ref="model_leulit_event_resource"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200827_1515_access_permission" model="ir.model.access">
+        <field name="name">Reunion Access</field>
+        <field name="model_id" ref="model_leulit_reunion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20240319_1226_access_permission" model="ir.model.access">
+        <field name="name">wizard_reunion_create_task Access</field>
+        <field name="model_id" ref="model_leulit_wizard_reunion_create_task"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200831_0912_access_permission" model="ir.model.access">
+        <field name="name">Tipo meeting Access</field>
+        <field name="model_id" ref="model_leulit_tipo_meeting"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+
+    <record id="leulit_20200902_1232_access_permission" model="ir.model.access">
+        <field name="name">Reunion asistente Access</field>
+        <field name="model_id" ref="model_leulit_reunion_asistente"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200922_1652_access_permission" model="ir.model.access">
+        <field name="name">print calendar wizard Access</field>
+        <field name="model_id" ref="model_leulit_print_calendar_wizard"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200923_0940_access_permission" model="ir.model.access">
+        <field name="name">print control calendar wizard Access</field>
+        <field name="model_id" ref="model_leulit_print_ctrl_calendar_wizard"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20200925_0940_access_permission" model="ir.model.access">
+        <field name="name">recurso disponibilidad Access</field>
+        <field name="model_id" ref="model_leulit_recurso_disponibilidad"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+
+    <record id="leulit_20220128_1240_access_permission" model="ir.model.access">
+        <field name="name">calendar.event_user</field>
+        <field name="model_id" ref="model_calendar_event"/>
+        <field name="group_id" ref="RPlanificacion_own"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="leulit_20220128_1242_access_permission" model="ir.model.access">
+        <field name="name">calendar.event_user_all</field>
+        <field name="model_id" ref="model_calendar_event"/>
+        <field name="group_id" ref="RPlanificacion_all"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20230201_1025_access_permission" model="ir.model.access">
+        <field name="name">audit_log planificacion all</field>
+        <field name="model_id" ref="auditlog.model_auditlog_log"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20230201_1030_access_permission" model="ir.model.access">
+        <field name="name">audit_log_line planificacion all</field>
+        <field name="model_id" ref="auditlog.model_auditlog_log_line"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20230201_1429_access_permission" model="ir.model.access">
+        <field name="name">event_resource_byday planificacion all</field>
+        <field name="model_id" ref="model_leulit_event_resource_byday"/>
+        <field name="group_id" ref="RPlanificacion_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <record id="leulit_20250120_1214_access_permission" model="ir.model.access">
+        <field name="name">tipo_planificacion manager</field>
+        <field name="model_id" ref="model_leulit_tipo_planificacion"/>
+        <field name="group_id" ref="RPlanificacion_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250120_1216_access_permission" model="ir.model.access">
+        <field name="name">tipo_planificacion all</field>
+        <field name="model_id" ref="model_leulit_tipo_planificacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20250120_1215_access_permission" model="ir.model.access">
+        <field name="name">equipamientos_planificacion manager</field>
+        <field name="model_id" ref="model_leulit_equipamientos_planificacion"/>
+        <field name="group_id" ref="RPlanificacion_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20250120_1217_access_permission" model="ir.model.access">
+        <field name="name">equipamientos_planificacion all</field>
+        <field name="model_id" ref="model_leulit_equipamientos_planificacion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+
+</odoo>

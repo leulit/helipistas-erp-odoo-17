@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+        <record model="ir.ui.view" id="leulit_20221215_1146_form">
+			<field name="name">leulit_20221215_1146_form</field>
+			<field name="model">stock.lot</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Adjuntar Documentos">
+					<group col="1">
+						<h3>Selecciona todos los archivos que deseas adjuntar:</h3>
+						<field name="rel_docs" nolabel="1"/>
+					</group>
+                    <footer>
+                        <field name="id" invisible="1"/>
+                        <button string="Guardar y cerrar" name="action_close" type="object" class="btn-primary"/>
+                        <button string="Descartar" class="btn-secondary" special="cancel"/> 
+                    </footer>
+				</form>
+			</field>
+		</record>
+    
+        <record id="leulit_20221121_1017_form" model="ir.ui.view">
+            <field name="name">leulit_20221121_1017_form</field>
+            <field name="model">stock.lot</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20231011_1544_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='main_group']" position="replace">
+                    <field name="active" invisible="1"/>
+                    <group col="2">
+                        <group >
+                            <field name="product_id" context="{'default_type': 'product'}" readonly="context.get('set_product_readonly', False)" force_save="1" help="Product this lot/serial number contains. You cannot change it anymore if it has already been moved."/>
+                            <label for="product_qty"  invisible="((not display_complete))" />
+                            <div class="o_row"  invisible="((not display_complete))" >
+                                <field name="product_qty"/>
+                                <field name="product_uom_id" readonly="1" groups="uom.group_uom"/>
+                            </div>
+                            <field name="precio"/>
+                            <field name="qty_available" invisible="1"/>
+                            <field name="currency_id"/>
+                            <field name="precio_x_qty"/>
+                            <field name="ref"/>
+                            <field name="categoria_product" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="proveedores_id_ant"/>
+                            <field name="update_stock"/>
+                            <div id="herramienta" colspan="2"  invisible="((categoria_product != 18))" >
+                                <separator string="Herramienta"/> 
+                                <group>
+                                    <field name="fabricante"/>
+                                    <field name="medicion"/>
+                                    <field name="frecuencia_meses"/>
+                                    <field name="necesita_calibracion"/>
+                                    <field name="is_boroscopo"/>
+                                </group>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="sn"/>
+                            <field name="ref_origen"/>
+                            <field name="lote"/>
+                            <field name="revision"/>
+                            <field name="rotable_lifelimit"/>
+                            <field name="motivo_baja"/>
+                            <field name="last_maintenance_request_id"/>
+                            <field name="posicion"/>
+                            <field name="sistema"/>
+                            <field name="equipment_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="fecha_alta"/>
+                            <field name="fecha_caducidad"/>
+                            <field name="date_last_overhaul"/>
+                            <field name="o_life_hours"/>
+                        </group>
+                        <group>
+                            <field name="is_motor"/>
+                            <field name="tipo_motor"  invisible="((not is_motor))" />
+                            <field name="tsn" groups="leulit.RolIT_developer"/>
+                            <field name="tso" groups="leulit.RolIT_developer"/>
+                            <field name="ng" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
+                            <field name="nf" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
+                            <group>
+                                <field name="tsn_inicio"/>
+                                <field name="tsn_actual"/>
+                            </group>
+                            <group>
+                                <field name="tso_inicio"/>
+                                <field name="tso_actual"/>
+                            </group>
+                            <group>
+                                <field name="ng_inicio"  invisible="((tipo_motor != 'turbina'))" />
+                                <field name="ng_actual"  invisible="((tipo_motor != 'turbina'))" />
+                            </group>
+                            <group>
+                                <field name="nf_inicio"  invisible="((tipo_motor != 'turbina'))" />
+                                <field name="nf_actual"  invisible="((tipo_motor != 'turbina'))" />
+                            </group>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//page[@name='description']" position="before">
+                    <page string="QR y otros" name="qr_and_more">
+                        <group>
+                            <div colspan="2">
+                                <button name="print_etiqueta_report" string="Imprimir Etiqueta" type="object" class="oe_highlight"  invisible="((location_etiqueta == ''))" />
+                                <button name="generate_qr" string="Regenerar QR" type="object" groups="leulit.RolIT_developer"/>        
+                            </div>
+                            <group>
+                                <field name="qr" widget="image"/>
+                                <field name="location_etiqueta"/>
+                                <field name="last_move_stock_id" groups="leulit.RolIT_developer"/>
+                                <field name="last_location_id" groups="leulit.RolIT_developer"/>
+                            </group>
+                            <group>
+                                <field name="first_move"/>
+                                <field name="date_first_move"/>
+                                <field name="lot_hlp_ica"/>
+                                <field name="id_pieza"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Calibraciones" name="calibraciones_herramientas"  invisible="((not necesita_calibracion))" >
+                        <field name="calibraciones">
+                            <tree editable="bottom">
+                                <field name="verificador"/>
+                                <field name="n_certificado"/>
+                                <field name="fecha_calibracion"/>
+                                <field name="proxima_calibracion" readonly="1"/>
+                                <field name="calibrado"/>
+                                <button name="add_docs_calibracion" type="object" class="oe_highlight" string="Adjuntar Doc."/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Form One" name="form_one_pieza">
+                        <button name="create_form_one" string="Crear Form One" type="object" class="oe_highlight"/>
+                        <field name="form_one_ids">
+                            <tree editable="false" create="false" delete="true">
+                                <field name="tracking_number" readonly="1"/>
+                                <field name="certificador" readonly="1"/>
+                                <field name="fecha" readonly="1"/>
+                                <button name="print_form_one" string="Imprimir" type="object" class="oe_highlight"/>
+                                <button name="edit_form_one" string="Editar" type="object" class="oe_highlight"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Intervalos y Tolerancias" name="intervals_and_tolerances">
+                        <group>
+                            <field name="interval_hours"/>
+                            <field name="interval_days"/>
+                            <field name="tolerance_hours"/>
+                            <field name="tolerance_days"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20221121_1017_tree" model="ir.ui.view">
+            <field name="name">leulit_20221121_1017_tree</field>
+            <field name="model">stock.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_date']" position="replace">
+                    <field name="precio"/>
+                    <field name="currency_id"/>
+                    <field name="product_qty"/>
+                    <field name="precio_x_qty" sum="Total"/>
+                    <field name="proveedores_id_ant"/>
+                    <field name="date_first_move"/>
+                    <field name="fecha_caducidad"/>
+                </xpath>
+                <xpath expr="//field[@name='expiration_date']" position="replace">
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20230404_1151_tree" model="ir.ui.view">
+            <field name="name">leulit_20230404_1151_tree</field>
+            <field name="model">stock.lot</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230222_1305_tree" model="ir.ui.view">
+            <field name="name">leulit_20230222_1305_tree</field>
+            <field name="model">stock.lot</field>
+            <field name="arch" type="xml">
+                <tree string="Herramienta">
+                    <field name="semaforo_calibracion" widget="semaforo_char"/>
+                    <field name="fecha_proxima_calibracion"/>
+                    <field name="fabricante"/>
+                    <field name="product_id"/>
+                    <field name="sn"/>
+                    <field name="medicion"/>
+                    <field name="frecuencia_meses"/>
+                    <field name="estado"/>
+                </tree>
+            </field>
+        </record>
+    
+
+        <record id="leulit_20221125_1057_action" model="ir.actions.act_window">
+            <field name="name">Piezas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.lot</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('stock.view_production_lot_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('stock.view_production_lot_form')})]"/>
+            <field name="context">{'display_complete': True, 'default_company_id': 2}</field>
+            <field name="domain">[('name', 'not like', 'HLP'),'|',('categoria_product.name','=','PIEZAS'),('categoria_product.name','=','BIDONES-TANQUES COMBUSTIBLE')]</field>
+        </record>
+
+        <record id="leulit_20230222_1140_action" model="ir.actions.act_window">
+            <field name="name">Herramientas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.lot</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_20230222_1305_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('stock.view_production_lot_form')})]"/>
+            <field name="context">{'display_complete': True, 'default_company_id': 2}</field>
+            <field name="domain">[('categoria_product.name','=','HERRAMIENTAS')]</field>
+        </record>
+
+        <record id="leulit_20230222_1141_action" model="ir.actions.act_window">
+            <field name="name">Equipamientos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.lot</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('stock.view_production_lot_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('stock.view_production_lot_form')})]"/>
+            <field name="context">{'display_complete': True, 'default_company_id': 2}</field>
+            <field name="domain">[('company_id', '=', 2),('categoria_product.name','=','EQUIPAMIENTOS')]</field>
+        </record>
+
+    </data>
+</odoo>

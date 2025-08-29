@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    
+    <record id="leulit_20240212_1600_form_inherit" model="ir.ui.view">
+        <field name="model">leulit.maintenance_boroscopia</field>
+        <field name="inherit_id" ref="leulit_taller.leulit_20240212_1600_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//separator[@name='resultado']" position="before">
+                <separator string="Herramientas"/>
+                <field name="herramienta_ids" nolabel="1"  readonly="((estado != 'borrador'))"  domain="[('is_boroscopo','=',True)]">
+                    <tree>
+                        <field name="product_id"/>
+                        <field name="fabricante"/>
+                        <field name="sn"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase_order_form_leulit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                    <field name="en_stock" optional="hide"/>
+                    <field name="en_prevision" optional="hide"/>
+                    <field name="en_borrador" optional="hide"/>
+                </xpath>
+                <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="options">{'no_create_edit': True,'no_create': True}</attribute>
+                </xpath>
+                <header position="inside">
+                    <button name="toggle_lock" type="object" string="Bloquear/Desbloquear" 
+                             invisible="((state not in ['draft', 'sent']))" 
+                            class="oe_highlight" groups="leulit_almacen.RResponsable_almacen"/>
+                </header>
+                <field name="partner_id" position="after">
+                    <field name="is_locked" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="purchase_order_kpis_tree" model="ir.ui.view">
+            <field name="name">purchase_order_kpis_tree_leulit2</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="is_locked" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

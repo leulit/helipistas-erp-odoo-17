@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_open_permission_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email para abrir premisos en eventos tipo SPO/AOC en los próximos entre 15/30 días</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="state">code</field>
+            <field name="code">model.open_permisos()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_open_permission_event" model="mail.template">
+            <field name="name">Notificación de Apertura de Permisos para Eventos SPO/AOC</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="subject">Solicitar permisos para el evento: ${object.name}</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">ops@helipistas.com</field>
+            <field name="body_html"><![CDATA[
+                <p>El evento programado es de tipo ${object.type_event.name}.</p>
+                <p>
+                    <strong>Nombre del evento:</strong> ${object.name}<br/>
+                    % if not object.recurrence_id:
+                        <strong>Fecha y hora de inicio:</strong> ${object.start}
+                    % endif
+                    % if object.recurrence_id:
+                        <strong>Primer evento de la serie:</strong> ${object.recurrence_id.dtstart}<br/>
+                        <strong>Último evento de la serie:</strong> ${object.recurrence_id.dtstop}
+                    % endif
+                </p><br/>
+                <p>
+                    <strong>Por favor, proceda a tramitar los permisos correspondientes para este evento.</strong>
+                </p>
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

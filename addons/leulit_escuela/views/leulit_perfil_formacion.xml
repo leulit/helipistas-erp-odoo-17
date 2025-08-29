@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_popup_perfil_formacion_form">
+            <field name="name">Creación Perfil Formación</field>
+            <field name="model">leulit.popup_perfil_formacion</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <group col="2">
+                        <field name="master_id" readonly="1"/>
+                        <field name="alumno" string="Alumno" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        <field name="is_piloto_externo"/>
+                    </group>
+                    <footer>
+                        <button name="metodo_popup_a_ejecutar"  class="oe_highlight" type="object" string="Guardar" />
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201106_0957_filter" model="ir.ui.view">
+            <field name="name">leulit_20201106_0957_filter</field>
+            <field name="model">leulit.perfil_formacion</field>
+            <field name="arch" type="xml">
+                <search string="Tipos de vuelo filtros">
+                    <field name="name" string="Nombre"/>
+                    <separator/>
+                    <filter string="Archivado" name="inactivo" domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="leulit_20201106_0957_form">
+            <field name="name">leulit_20201106_0957_action</field>
+            <field name="model">leulit.perfil_formacion</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <header>
+                        <button name="create_perfil_formacion_from_template" type="object" string="Crear Perfil Formación" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                        <button name="replicar_cursos" type="object" string="Replicar cursos PF" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                        <button name="replicar_acciones" type="object" string="Replicar acciones PF" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                    </header>
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <field name="is_template" invisible="1"/>
+                        <field name="id" invisible="1" />
+                        <field name="perfil_tmpl" invisible="1"/>
+                        <group col="1">
+                            <group>
+                                <field name="name"/>
+                                <field name="tipo_helicoptero_tmpl"/>
+                                <field name="vuelo_tipo_id_tmpl" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="operador_tmpl"/>
+                                <field name="water_zone_tmpl"/>
+                            </group>
+                            <notebook colspan="2">
+                                <page string="Cursos">
+                                    <field name="cursos" no_label="1" 
+                                    context="{'default_perfil_formacion_id' : id,'default_is_template': True, 'form_view_ref' : 'leulit_escuela.leulit_perfil_formacion_curso_master_form'}">
+                                        <tree string="Cursos" delete="false">
+                                            <button name="replicar_curso_to_perfiles" string="Replicar curso" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                            <field name="descripcion"/>
+                                            <field name="periodicidad_dy"/>
+                                            <field name="marge_dy"/>
+                                            <button name="end_course_template" string="Finalizar" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Acciones">
+                                    <field name="acciones_new" no_label="1" context="{'default_perfil_formacion_id' : id}">
+                                        <tree string="Acciones" editable="bottom">
+                                            <button name="replicar_accion_to_perfiles" string="Replicar acción" type="object" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                            <field name="accion"/>
+                                            <field name="periodicidad_dy"/>
+                                            <field name="margen_dy"/>
+                                            <button name="delete_accion" string="Eliminar" class="oe_highlight" type="object" confirm="¿Estas seguro de eliminar la acción?" groups="leulit.ROperaciones_gestor"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Histórico cursos">
+                                    <group col="1">
+                                        <field name="cursos_finalizados" no_label="1"  options="{'reload_on_button': true}"
+                                        context="{'default_perfil_formacion_id' : id,'default_is_template': False, 'form_view_ref' : 'leulit_perfil_formacion.leulit_perfil_formacion_curso_form'}">
+                                            <tree delete="false" edit="true" create="false" decoration-danger="semaforo_dy == 'red'" decoration-success="semaforo_dy == 'green'" decoration-warning="semaforo_dy == 'yellow'">
+                                                <field name="semaforo_dy" invisible="1"/>
+                                                <field name="descripcion"/>
+                                                <field name="periodicidad_dy"/>
+                                                <button name="start_course_template" string="Reiniciar" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201106_0957_tree">
+            <field name="name">leulit_20201106_0957_tree</field>
+            <field name="model">leulit.perfil_formacion</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="descripcion">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201106_0957_action" model="ir.actions.act_window">
+            <field name="name">Plantilla Perfil Formación</field>
+            <field name="res_model">leulit.perfil_formacion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template', '=', True),('inactivo', '=', False)]</field>
+            <field name="context">{'default_is_template': True}</field>
+        </record>
+        <record id="leulit_20201106_0957_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20201106_0957_form" />
+            <field name="act_window_id" ref="leulit_20201106_0957_action" />
+        </record>
+        <record id="leulit_20201106_0957_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_0957_tree" />
+            <field name="act_window_id" ref="leulit_20201106_0957_action" />
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20211011_1049_form">
+            <field name="name">leulit_20211011_1049_form</field>
+            <field name="model">leulit.perfil_formacion</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <header>
+                        <button name="archivar_perfil_formacion" type="object" class="oe_highlight" string="Archivar"  invisible="((inactivo))"  groups="leulit.ROperaciones_gestor"/>
+                        <button name="activar_perfil_formacion" type="object" class="oe_highlight" string="Activar"  invisible="((not inactivo))"  groups="leulit.ROperaciones_gestor"/>
+                        <button name="imprimir_perfil_formacion" type="object" class="oe_highlight" string="Imprimir"/>
+                        <button name="copy_cursos_hechos" type="object" class="oe_highlight" string="Xupamunpeu" groups="leulit.ROperaciones_gestor"/>
+                    </header>
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <field name="is_template" invisible="1"/>
+                        <field name="cursos_in_red" invisible="1"/>
+                        <field name="id" invisible="1"/>
+                        <field name="user_id" invisible="1"/>
+                        <field name="inactivo" invisible="1"/>
+                        <group col="1">
+                            <group>
+                                <field name="name"/>
+                                <field name="alumno" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="tipo_helicoptero"/>
+                                <field name="vuelo_tipo_id"/>
+                                <field name="operador"/>
+                                <field name="water_zone"/>
+                            </group>
+                            <notebook>
+                                <page string="Cursos">
+                                    <group col="1">
+                                        <field name="cursos" no_label="1"  options="{'reload_on_button': true}"
+                                            context="{'default_perfil_formacion_id' : id,'default_is_template': False}">
+                                            <tree  delete="false" edit="true" create="false">
+                                                <field name="id" invisible="1"/>
+                                                <button name="done_course" string="Realizado" type="object" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                                <button name="print_last_informe_general_cursos_alu_ld" string="Imprimir" type="object"  class="oe_highlight"/>
+                                                <field name="descripcion"/>
+                                                <field name="last_done_date"  widget="nalabel" string="Last Done"/>
+                                                <field name="next_done_date"  widget="nalabel" string="Next Done"/>
+                                                <field name="remainder_dy" widget="nalabel"  string="Remaining DY"/>
+                                                <field name="semaforo_dy" widget="semaforo_char" string=""/>
+                                                <button name="end_course" string="Finalizar" type="object"  class="oe_highlight" confirm="¿Estas seguro de finalizar el curso?" groups="leulit.ROperaciones_gestor"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                                <page string="Acciones">
+                                    <group col="1">
+                                        <field name="acciones_new" no_label="1">
+                                            <tree delete="true" edit="true" create="false">
+                                                <field name="id" invisible="1"/>
+                                                <button name="done_course" string="Realizado" class="oe_highlight" type="object" groups="leulit.ROperaciones_gestor"/>
+                                                <field name="accion"/>
+                                                <field name="last_done_date" widget="nalabel" string="Last Done"/>
+                                                <field name="next_done_date" widget="nalabel" string="Next Done"/>
+                                                <field name="remainder_dy" widget="nalabel" string="Remaining DY"/>
+                                                <field name="semaforo_dy" widget="semaforo_char" string=""/>
+                                                <button name="delete_accion" string="Eliminar" class="oe_highlight" type="object" confirm="¿Estas seguro de eliminar la acción?" groups="leulit.ROperaciones_gestor"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                                <page string="Histórico cursos">
+                                    <group col="1">
+                                        <field name="cursos_finalizados" no_label="1"  options="{'reload_on_button': true}"
+                                        context="{'default_perfil_formacion_id' : id,'default_is_template': False, 'form_view_ref' : 'leulit_perfil_formacion.leulit_perfil_formacion_curso_form'}">
+                                            <tree delete="false" edit="true" create="false" decoration-danger="semaforo_dy == 'red'" decoration-success="semaforo_dy == 'green'" decoration-warning="semaforo_dy == 'yellow'">
+                                                <field name="descripcion"/>
+                                                <field name="last_done_date"  widget="nalabel" string="Last Done"/>
+                                                <field name="next_done_date"  widget="nalabel" string="Next Done"/>
+                                                <field name="remainder_dy" widget="nalabel"  string="Remaining DY"/>
+                                                <field name="semaforo_dy" widget="semaforo_char" string=""/>
+                                                <button name="start_course" string="Reiniciar" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201106_1049_tree">
+            <field name="name">leulit_20201106_1049_tree</field>
+            <field name="model">leulit.perfil_formacion</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="descripcion">
+                    <field name="semaforo" widget="semaforo_char" string=""/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201106_1049_action" model="ir.actions.act_window">
+            <field name="name">Perfil Formación</field>
+            <field name="res_model">leulit.perfil_formacion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template', '=', False),('inactivo', '=', False)]</field>
+            <field name="context">{'default_is_template': False}</field>
+        </record>
+        <record id="leulit_20201106_1049_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20211011_1049_form" />
+            <field name="act_window_id" ref="leulit_20201106_1049_action" />
+        </record>
+        <record id="leulit_20201106_1049_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_1049_tree" />
+            <field name="act_window_id" ref="leulit_20201106_1049_action" />
+        </record>
+
+
+        <record id="leulit_20250520_1538_action" model="ir.actions.act_window">
+            <field name="name">Mis Perfiles de Formación</field>
+            <field name="res_model">leulit.perfil_formacion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template', '=', False),('inactivo', '=', False),('user_id', '=', uid)]</field>
+            <field name="context">{'default_is_template': False}</field>
+        </record>
+        <record id="leulit_20250520_1538_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_1049_tree" />
+            <field name="act_window_id" ref="leulit_20250520_1538_action" />
+        </record>
+        <record id="leulit_20250520_1538_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20211011_1049_form" />
+            <field name="act_window_id" ref="leulit_20250520_1538_action" />
+        </record>
+
+
+        <record id="leulit_20201106_1602_action" model="ir.actions.act_window">
+            <field name="name">Perfil Formación</field>
+            <field name="res_model">leulit.perfil_formacion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template', '=', False),('inactivo', '=', True)]</field>
+            <field name="context">{'default_is_template': False}</field>
+        </record>
+        <record id="leulit_20201106_1602_action_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20211011_1049_form" />
+            <field name="act_window_id" ref="leulit_20201106_1602_action" />
+        </record>
+        <record id="leulit_20201106_1602_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_1049_tree" />
+            <field name="act_window_id" ref="leulit_20201106_1602_action" />
+        </record>
+
+    </data>
+</odoo>

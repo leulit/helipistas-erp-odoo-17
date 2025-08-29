@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1303_asignatura_form">
+            <field name="name">Asignaturas</field>
+            <field name="model">leulit.asignatura</field>
+            <field name="arch" type="xml">
+                <form string="Asignaturas">
+                    <field name="id" invisible="1"/>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" icon="fa-file-o" type="action" name="%(leulit.leulit_20211114_2153_action)d" string="Adjuntos"
+                            context="{'default_res_id': id, 'default_res_model': 'leulit.asignatura'}"/>
+                        </div>                    
+                        <group col="2">
+                            <field name="descripcion" />
+                            <field name="horas_teoria" widget="float_time"/>
+                            <field name="horas_practica" widget="float_time" />
+                        </group>
+                        <notebook>
+                            <page string="Cursos donde se imparte">
+                                <field name="curso_ids">
+                                    <tree string="Cursos" delete="false" create="false" edit="false" >
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Sílabus teórico">
+                                <field name="silabus_teorico_ids" colspan="4" no_label="1">
+                                    <tree string="Silabus" create="false" >
+                                        <field name="name" />
+                                        <field name="duracion" widget="float_time" sum="Total duración"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Sílabus práctico"> 
+                                <field name="silabus_practico_ids" colspan="4" no_label="1">
+                                    <tree string="Silabus" create="false" >
+                                        <field name="name" />
+                                        <field name="duracion" widget="float_time" sum="Total duración"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Ficheros">                                
+                                <!--tree string="Attachments" editable="top" >
+                                    <field name="datas" widget="download_link" filename="name" string="File"/>
+                                    <field name="name" invisible="1"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                    <field name="create_uid"/>
+                                    <field name="create_date"/>
+                                </tree-->                                                                
+                                <field name="attachment_ids" widget="many2many_binary"/>                          
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>        
+
+
+        <record model="ir.ui.view" id="leulit_20201130_1303_asignatura_tree">
+            <field name="name">Asignaturas</field>
+            <field name="model">leulit.asignatura</field>
+            <field name="arch" type="xml">
+                <tree string="Asignaturas">
+                     <field name="descripcion" />
+                     <field name="tiempo"/>
+                     <field name="num_cursos"/>
+                     <field name="silabus_ids"/>              
+                </tree>
+            </field>
+        </record>               
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1303_asignatura_action">
+            <field name="name">Asignaturas</field>
+            <field name="res_model">leulit.asignatura</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+         
+    </data>
+</odoo>

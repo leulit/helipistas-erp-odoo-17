@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <report string="Etiqueta"
+            id="etiqueta_report"
+            model="stock.lot"
+            name="leulit_almacen.leulit_20221117_1102_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_B8_landscape"/>
+
+
+        <template id="etiqueta_report_css">
+            <style>
+                table {
+                    border-collapse:collapse;
+                    border-spacing: 0;
+                    width:100%;
+                    table-layout: fixed;
+                }
+
+                thead { display: table-header-group;
+                }
+
+                tfoot { display: table-row-group }
+
+                tr { page-break-inside: avoid }
+
+                th,td {
+                    border:1px solid transparent;
+                }
+
+                .bold {
+                    font-weight: bold;
+                }
+
+                #truncateLongTexts {
+                    width: 60mm;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                p {
+                    font-size:11px;
+                }
+
+
+                .numbervalue {
+                    text-align:right;
+                }
+                .negrita {
+                    font-weight: bold;
+                    font-size: 12px;
+                }
+                .sinbordes {
+                    border: 1px solid white;
+                }
+                .pie_pag {
+                    position: relative;
+                    top: 300px;
+                }
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .titleheight {height:0.6cm}
+                .titulostablas {
+                    font-size: 12px;
+                    font-weight:bold;
+                }
+                
+                .bgcolored {
+                    background-color: #808080;
+                    color: white;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 12px;
+                }
+                
+                .numericfieldvalue {
+                    font-size: 14px;
+                    font-weight: normal;
+                    text-align: right;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+
+                .literal {
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                .va-middle {
+                	vertical-align:middle;
+                }
+                .centertext {
+                	text-align:center;
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20221117_1102_informe">
+            <!-- <t t-call="leulit_almacen.etiqueta_report_css"/> -->
+            <t t-call="web.html_container">
+                <table class="fullwidth" style="border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width:25mm; border-bottom: 1px solid black">
+                                <p style="font-weight: bold;font-size:10px;text-align:left;margin-top:8px;">ÍCARUS</p>
+                                <p style="font-size: 5px;text-align:left;font-weight: normal;margin-top:-10px;">MANTENIMENT,S.L.</p>
+                                <p style="font-size: 5px;text-align:left;font-weight: normal;margin-top:-4px;">EASA PART 145. E-173</p>
+                            </th>
+                            <th style="width:60mm; border-bottom: 1px solid black">
+                                <p style="font-size:20px; text-align:center;font-weight: bold;"><span t-esc="titulo"/></p>
+                            </th>
+                            <th style="width:20mm; border-bottom: 1px solid black">
+                                <p style="font-weight: normal;margin:0mm; vertical-aling:center; text-align:center; font-size:8px">Ref M.O.E. 2.3</p>
+                                <p style="font-weight: normal;margin:0mm; vertical-aling:center; text-align:center; font-size:8px">Formato: <span t-esc="formato"/></p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="vertical-align:top; border:1px solid transparent;font-weight: bold;">
+                                <p style="font-size:13px">PN:</p>
+                                <p style="font-size:9px;margin-top:-10px;">PN Alt.:</p>
+                                <p style="font-size:9px;margin-top:-7px;">Nombre:</p>
+                                <p style="font-size:9px;margin-top:-7px;">SN:</p>
+                                <p style="font-size:9px;margin-top:-7px;">Revisión:</p>
+                                <p style="font-size:9px;margin-top:-7px;">Lote:</p>
+                                <p style="font-size:9px;margin-top:-7px;">R.Origen:</p>
+                                <t t-if="titulo=='MATERIAL NUEVO'">
+                                    <p style="font-size:9px;margin-top:-7px;">Fecha Alta:</p>
+                                    <p style="font-size:9px;margin-top:-7px;">F.Caducidad:</p>
+                                    <p style="font-size:9px;margin-top:-7px;"></p>
+                                    <p style="font-size:9px;margin-top:-7px;"></p>
+                                    <p style="font-size:9px;margin-top:-7px;"></p>
+                                    <p style="font-size:9px;margin-top:-7px;"></p>
+                                    <p style="font-size:9px;margin-top:-7px;"></p>
+                                </t>
+                                <t t-else="">
+                                    <t t-if="titulo == 'MATERIAL ÚTIL' or titulo == 'M. PTE. DECISIÓN'">
+                                        <p style="font-size:9px;margin-top:-7px;">O.Trabajo:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">T.S.N:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">T.S.O:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">V.Operativa:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">Fecha Alta:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">F.Caducidad:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">Posición:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">Sistema:</p>
+                                    </t>
+                                    <t t-else="">
+                                        <p style="font-size:9px;margin-top:-7px;">O.Trabajo:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">T.S.N:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">T.S.O:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">V.Operativa:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">Motivo baja:</p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                    </t>
+                                </t>
+                            </td>
+                            <td style="vertical-align:top; border:1px solid transparent;">
+                                <div style="width: 60mm;">
+                                    <p style="font-size:13px;"><span t-esc="pn"/></p>
+                                    <p style="font-size:9px;margin-top:-10px;"><span t-esc="pn_alternativo"/></p>
+                                    <p style="font-size:9px;margin-top:-7px;"><span t-esc="pn_nombre"/></p>
+                                    <p style="font-size:9px;margin-top:-7px;"><span t-esc="sn"/></p>
+                                    <p style="font-size:9px;margin-top:-7px;"><span t-esc="revision"/></p>
+                                    <p style="font-size:9px;margin-top:-7px;"><span t-esc="lote"/></p>
+                                    <p style="font-size:9px;margin-top:-7px;"><span t-esc="ref_origen"/></p>
+                                    <t t-if="titulo=='MATERIAL NUEVO'">
+                                        <p style="font-size:9px;margin-top:-7px;"><span t-esc="fecha_alta"/></p>
+                                        <p style="font-size:9px;margin-top:-7px;"><span t-esc="fecha_caducidad"/></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                        <p style="font-size:9px;margin-top:-7px;"></p>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-if="titulo == 'MATERIAL ÚTIL' or titulo == 'M. PTE. DECISIÓN'">
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="codigo_wo"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="tsn"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="tso"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="o_life_hours"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="fecha_alta"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="fecha_caducidad"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="posicion"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="sistema"/></p>
+                                        </t>
+                                        <t t-else="">
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="codigo_wo"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="tsn"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="tso"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="o_life_hours"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="motivo_baja"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"></p>
+                                            <p style="font-size:9px;margin-top:-7px;"></p>
+                                            <p style="font-size:9px;margin-top:-7px;"></p>
+                                        </t>
+                                    </t>
+                                </div>
+                            </td>
+                            <td style="vertical-align:top; overflow-y: hidden; border:1px solid transparent;">
+                                <t t-if="qr != ''">
+                                    <img t-att-src="'data:image/png;base64,%s' % to_text(qr)" style="width:auto;height:25mm;"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>                
+            </t>
+        </template>
+
+    </data>
+</odoo>

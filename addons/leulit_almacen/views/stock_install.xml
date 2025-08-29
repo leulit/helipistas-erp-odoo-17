@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="stock_install_search_view" model="ir.ui.view">
+            <field name="name">stock.install.search</field>
+            <field name="model">stock.install</field>
+            <field name="arch" type="xml">
+                <search string="Search Install">
+                    <field name="name" string="Reference"/>
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="install_location_id"/>
+                    <field name="create_date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product" name="product" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Location" name="location" domain="[]" context="{'group_by':'location_id'}"/>
+                        <filter string="Install Location" name="install_location" domain="[]" context="{'group_by':'install_location_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="stock_install_form_view" model="ir.ui.view">
+            <field name="name">stock.install.form</field>
+            <field name="model">stock.install</field>
+            <field name="arch" type="xml">
+                <form string="Install">
+                    <header>
+                        <button name="action_validate" invisible="state == 'draft'" string="Validate" type="object" class="oe_highlight" context="{'not_unlink_on_discard': True}" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="action_get_stock_picking"
+                                    string="Stock Operation" type="object"
+                                     invisible="((not picking_id))"  icon="fa-cogs"/>
+                            <field name="picking_id" invisible="1"/>
+                            <button class="oe_stat_button" name="action_get_stock_move_lines"
+                                    string="Product Moves" type="object"
+                                     invisible="((not move_id))"  icon="fa-exchange"/>
+                            <field name="move_id" invisible="1"/>
+                        </div>
+                        <separator string="Movimiento Instalación"/>
+                        <div class="oe_title">
+                            <h1><field name="name" nolabel="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="lot_id" context="{'default_company_id': company_id, 'tree_view_ref': 'leulit_almacen.leulit_20230404_1151_tree'}"  groups="stock.group_production_lot" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                                <field name="product_id" invisible="True"/>
+                                <label for="install_qty" string="Cantidad"/>
+                                <div class="o_row">
+                                    <field name="install_qty"/>
+                                    <field name="product_uom_category_id" invisible="1"/>
+                                    <field name="product_uom_id" groups="uom.group_uom" force_save="1"/>
+                                </div>
+                                <field name="qty_available"/>
+                                <field name="rotable_lifelimit" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <separator string="Pieza a Desinstalar"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" />
+                                <field name="uninstall_location_id"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))"  options="{'no_create': True, 'no_open': True}"/>
+                                <field name="desinstalacion_lot_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" />
+                            </group>
+                            <group>
+                                <field name="tracking" invisible="1"/>
+                                <field name="owner_id" groups="stock.group_tracking_owner" invisible="True"/>
+                                <field name="location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1"/>
+                                <field name="install_location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1" readonly="True"/>
+                                <field name="origin"/>
+                                <field name="date_done"/>
+                                <field name="picking_id" invisible="True"/>
+                                <field name="company_id" groups="base.group_multi_company" invisible="True"/>
+                                <field name="maintenance_request_id" options="{'no_create': True, 'no_open': True}" required="True"/>
+                                <field name="equipment"/>
+                            </group>
+                            <group col="2">
+                                <button type="object" name="print_etiqueta_pieza" class="oe_highlight" string="Imprimir Etiqueta Pieza Desinstalada"  invisible="((state != 'done') or (not rotable_lifelimit))" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="stock_install_view_kanban" model="ir.ui.view">
+            <field name="name">stock.install.kanban</field>
+            <field name="model">stock.install</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" sample="1">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="date_done"/>
+                    <field name="install_qty"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="row mb4">
+                                    <strong class="col-6">
+                                        <span t-esc="record.name.value"/>
+                                    </strong>
+                                    <strong t-if="record.date_done.value" class="col-6 text-right">
+                                        <i class="fa fa-clock-o" role="img" aria-label="Date" title="Date"/><span t-esc="record.date_done.value"/>
+                                    </strong>
+                                    <div class="col-12">
+                                        <span t-esc="record.product_id.value"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <span t-esc="record.install_qty.value"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <span class="float-right badge badge-secondary">
+                                            <field name="state"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="stock_install_tree_view" model="ir.ui.view">
+            <field name="name">stock.install.tree</field>
+            <field name="model">stock.install</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1" sample="1">
+                    <field name="name" decoration-bf="1"/>
+                    <field name="date_done"/>
+                    <field name="product_id" readonly="1"/>
+                    <field name="install_qty"/>
+                    <field name="product_uom_category_id" invisible="1"/>
+                    <field name="product_uom_id" groups="uom.group_uom"/>
+                    <field name="location_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                    <field name="install_location_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_install">
+            <field name="name">Instalación</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.install</field>
+            <field name="view_mode">form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Install products
+              </p><p>
+                Installing a product will remove it from your stock. The product will
+                end up in a install location that can be used for reporting purpose.
+              </p>
+            </field>
+        </record>
+
+    
+        <record id="stock_warn_insufficient_qty_install_form_view" model="ir.ui.view">
+            <field name="name">stock.warn.insufficient.qty.install</field>
+            <field name="model">stock.warn.insufficient.qty.install</field>
+            <field name="inherit_id" ref="stock.stock_warn_insufficient_qty_form_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='description']" position="inside">
+                    Do you confirm you want to install <strong><field name="quantity" readonly="True"/></strong><field name="product_uom_name" readonly="True" class="mx-1"/>from location <strong><field name="location_id" readonly="True"/></strong>? This may lead to inconsistencies in your inventory.
+                </xpath>
+                <xpath expr="//button[@name='cancel_button']" position="replace">
+                    <button string="Descartar" name="action_cancel" type="object" class="btn-primary"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    <data noupdate="1">
+        
+        <record model="ir.sequence" id="leulit_seq_install">
+            <field name="name">leulit Sequencia Instalación</field>
+            <field name="code">stock.install</field>
+            <field name="prefix">INS/</field>
+            <field name="padding">5</field>
+            <field name="number_next_actual">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id">2</field>
+        </record>
+        
+    </data>
+
+
+</odoo>

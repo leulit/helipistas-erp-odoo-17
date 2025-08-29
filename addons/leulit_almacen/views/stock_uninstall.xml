@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="stock_uninstall_search_view" model="ir.ui.view">
+            <field name="name">stock.uninstall.search</field>
+            <field name="model">stock.uninstall</field>
+            <field name="arch" type="xml">
+                <search string="Search Uninstall">
+                    <field name="name" string="Reference"/>
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="uninstall_location_id"/>
+                    <field name="create_date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product" name="product" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Location" name="location" domain="[]" context="{'group_by':'location_id'}"/>
+                        <filter string="Uninstall Location" name="install_location" domain="[]" context="{'group_by':'uninstall_location_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="stock_uninstall_form_view" model="ir.ui.view">
+            <field name="name">stock.uninstall.form</field>
+            <field name="model">stock.uninstall</field>
+            <field name="arch" type="xml">
+                <form string="Uninstall">
+                    <header>
+                        <button name="action_validate" invisible="state == 'draft'" string="Validate" type="object" class="oe_highlight" context="{'not_unlink_on_discard': True}" />
+                        <button name="action_create_lot" invisible="state == 'draft'" string="Crear Pieza" type="object" class="oe_highlight" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="action_get_stock_picking"
+                                    string="Stock Operation" type="object"
+                                     invisible="((not picking_id))"  icon="fa-cogs"/>
+                            <field name="picking_id" invisible="1"/>
+                            <button class="oe_stat_button" name="action_get_stock_move_lines"
+                                    string="Product Moves" type="object"
+                                     invisible="((not move_id))"  icon="fa-exchange"/>
+                            <field name="move_id" invisible="1"/>
+                        </div>
+                        <separator string="Movimiento Desinstalación"/>
+                        <div class="oe_title">
+                            <h1><field name="name" nolabel="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="lot_id" context="{'default_company_id': company_id, 'tree_view_ref': 'leulit_almacen.leulit_20230404_1151_tree'}"  groups="stock.group_production_lot" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                                <field name="product_id" invisible="True"/>
+                                <label for="uninstall_qty" string="Cantidad"/>
+                                <div class="o_row">
+                                    <field name="uninstall_qty"/>
+                                    <field name="product_uom_category_id" invisible="1"/>
+                                    <field name="product_uom_id" groups="uom.group_uom" force_save="1"/>
+                                </div>
+                                <field name="rotable_lifelimit" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <!-- <field name="desinstalacion_lot_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" /> -->
+                            </group>
+                            <group>
+                                <field name="tracking" invisible="1"/>
+                                <field name="owner_id" groups="stock.group_tracking_owner" invisible="True"/>
+                                <field name="location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1" readonly="1"/>
+                                <field name="uninstall_location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1"/>
+                                <field name="origin"/>
+                                <field name="date_done"/>
+                                <field name="picking_id" invisible="True"/>
+                                <field name="company_id" groups="base.group_multi_company" invisible="True"/>
+                                <field name="maintenance_request_id" options="{'no_create': True, 'no_open': True}" required="False"/>
+                                <field name="equipment"/>
+                            </group>
+                            <group col="2">
+                                <button type="object" name="print_etiqueta_pieza" class="oe_highlight" string="Imprimir Etiqueta Pieza Desinstalada"  invisible="((state != 'done'))" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_uninstall">
+            <field name="name">Desinstalación</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.uninstall</field>
+            <field name="view_mode">form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Uninstall products
+              </p><p>
+                Uninstalling a product will remove it from your Aircrafts. The product will
+                end up in a pending decision location that can be used for reporting purpose.
+              </p>
+            </field>
+        </record>
+
+
+
+    <data noupdate="1">
+        
+        <record model="ir.sequence" id="leulit_seq_uninstall">
+            <field name="name">leulit Sequencia Desinstalación</field>
+            <field name="code">stock.uninstall</field>
+            <field name="prefix">DES/</field>
+            <field name="padding">5</field>
+            <field name="number_next_actual">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id">2</field>
+        </record>
+        
+    </data>
+
+
+</odoo>

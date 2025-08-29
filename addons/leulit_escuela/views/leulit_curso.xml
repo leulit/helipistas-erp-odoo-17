@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="leulit_20201130_1241_curso_filter_view" model="ir.ui.view">
+            <field name="name">leulit_20201130_1241_curso_filter_view</field>
+            <field name="model">leulit.curso</field>
+            <field name="arch" type="xml">
+                <search string="Leulit">
+                    <filter string="Cursos Activos" name="leulit_20201130_1241_curso_activo_filter" domain="[('estado','=','activo')]" />
+                    <filter string="Cursos Inactivos" name="leulit_20201130_1241_curso_inactivo_filter" domain="[('estado','=','inactivo')]" />
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="leulit_curso_silabus_teoricos_button_action" model="ir.actions.act_window">
+			<field name="name">Silabus Teóricos del curso</field>
+			<field name="res_model">leulit.silabus</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('tipo', '=', 'teorica'),('curso_id','=',active_id)]</field>
+			<field name="context">{'default_curso_id': active_id, 'default_tipo':'teorica'}</field>
+		</record>
+
+        <record id="leulit_curso_silabus_practicas_button_action" model="ir.actions.act_window">
+			<field name="name">Silabus Pŕacticos del curso</field>
+			<field name="res_model">leulit.silabus</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('tipo', '=', 'practica'),('curso_id','=',active_id)]</field>
+			<field name="context">{'default_curso_id': active_id, 'default_tipo':'practica'}</field>
+		</record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1241_curso_form">
+            <field name="name">Cursos</field>
+            <field name="model">leulit.curso</field>
+            <field name="arch" type="xml">
+                <form string="Curso" create="false" delete="false">
+                    <header>
+                        <field name="estado" widget="statusbar"/>
+                        <button name="on_change_activo" type="object" string="Activar" icon="gtk-apply"  invisible="((estado in ['activo']))"  class="oe_edit_only oe_highlight"/>
+                        <button name="on_change_inactivo" type="object" string="Desactivar" icon="gtk-apply"  invisible="((estado in ['inactivo']))"  class="oe_edit_only oe_highlight"/>
+                        <button name="imprimir_checklist" type="object" string="CheckList" class="oe_highlight"/>
+                        <button name="print_progreso_alumnos_activos" type="object" string="Progresos Alumnos" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group col="2">
+                            <field name="template_id" />
+                            <field name="edicion" />
+                            <field name="revision" />
+                            <field name="name" />
+                            <field name="logo_reports" invisible="1"/>
+                        </group>
+                        <group col="6">
+                            <field name="aoc"/>
+                            <field name="lci"/>
+                            <field name="ttaa"/>
+                            <field name="ato_mo"/>
+                            <field name="ato_mi"/>
+                            <field name="nco"/>
+                            <field name="camo"/>
+                            <field name="p_145"/>
+                        </group>
+                        <group col="2">
+                            <field name="is_curso_pf"/>
+                            <field name="comentario"/>
+                            <field name="tipotitulacion"/>
+                            <field name="total_horas_practico" widget="float_time"/>
+                            <field name="total_horas_teorico" widget="float_time"/>
+                            <field name="total_horas" widget="float_time"/>
+                            <field name="tiempo" widget="float_time"/>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Asignaturas">
+                                <group col="2">
+                                    <button name="%(leulit_escuela.leulit_curso_silabus_teoricos_button_action)d" class="oe_highlight" type="action" string="Silabus Teóricos"/>
+									<button name="%(leulit_escuela.leulit_curso_silabus_practicas_button_action)d" class="oe_highlight" type="action" string="Silabus Prácticos"/>
+                                </group>
+                                <field name="asignatura_ids" no_label="1">
+                                    <tree string="Asignaturas" create="false">
+                                        <field name="tiempo" widget="float_time"/>
+                                        <field name="descripcion"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1241_curso_tree">
+            <field name="name">Cursos</field>
+            <field name="model">leulit.curso</field>
+            <field name="arch" type="xml">
+                <tree string="Curso" create="false" delete="false">
+                    <field name="template_id" />
+                    <field name="edicion" />
+                    <field name="revision" />
+                    <field name="name" />
+                    <field name="tiempo" widget="float_time"/>
+                    <field name="total_horas_teorico" widget="float_time" sum="Total teórico"/>
+                    <field name="total_horas_practico" widget="float_time" sum="Total práctico"/>
+                    <field name="total_horas" widget="float_time" sum="Total"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1241_curso_action">
+            <field name="name">Cursos</field>
+            <field name="res_model">leulit.curso</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1241_curso_activo_action">
+            <field name="name">Cursos Activos</field>
+            <field name="res_model">leulit.curso</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20201130_1241_curso_tree"/>
+            <field name="domain">[('estado','=','activo')]</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1241_curso_inactivo_action">
+            <field name="name">Cursos Inactivos</field>
+            <field name="res_model">leulit.curso</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20201130_1241_curso_tree"/>
+            <field name="domain">[('estado','=','inactivo')]</field>
+        </record>
+
+    </data>
+</odoo>

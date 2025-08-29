@@ -262,7 +262,7 @@
         id="leulit_20201021_1648_menuitem"
         name="Partes de vuelo (A)"
         parent="leulit.leulit_20200818_1028_menuitem"
-        action="leulit_20201021_1648_action"
+        action="leulit_20250929_1451_action"
         sequence="120"
         groups="leulit.ROperaciones_piloto_externo"
     />
@@ -274,6 +274,15 @@
         sequence="130"
         groups="leulit.ROperaciones_piloto_externo"
     />
+    <menuitem
+        id="leulit_20250929_1623_menuitem"
+        name="Partes de vuelo (Helicóptero)"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        action="leulit_20250929_1509_action"
+        sequence="140"
+        groups="leulit.RPropietario_helicoptero"
+    />
+
 
     <!-- Menu CAMO -->
         <menuitem 

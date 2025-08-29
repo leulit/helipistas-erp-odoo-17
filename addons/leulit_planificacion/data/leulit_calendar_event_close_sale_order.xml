@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_close_sale_order_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email para cerrar sale orders en eventos tipo SPO/AOC</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="state">code</field>
+            <field name="code">model.close_sale_order()</field>
+            <field name="active" eval="False"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_close_sale_order_event" model="mail.template">
+            <field name="name">Notificación de Cierre de Sale Orders SPO/AOC</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="subject">Cierre de Sale Order: ${object.sale_order_id.full_name}</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">info@helipistas.com</field>
+            <field name="body_html"><![CDATA[
+                <p>Ayer fue el último día donde hay un evento programado con la Sale Order: <strong>${object.sale_order_id.full_name}</strong>.</p>
+                <p>
+                    <strong>Nombre del evento:</strong> ${object.name}<br/>
+                    <strong>Fecha y hora de inicio:</strong> ${object.start}
+                </p><br/>
+                <p><strong>Por favor, cierre la Sale Order verificando con Operaciones que los vuelos están introducidos en el sistema.</strong></p>
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

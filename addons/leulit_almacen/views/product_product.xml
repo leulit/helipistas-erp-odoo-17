@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="product_product_tree_view" model="ir.ui.view">
+            <field name="name">product_product_tree_view_leulit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="leulit_taller.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="str_product_opcionales" />
+                    <field name="qty_opcionales" />
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201113_1016_form">
+            <field name="name">leulit_20201113_1016_form</field>
+            <field name="model">leulit.resource</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="name" invisible="1"/>
+                        <group col="4">
+                            <field name="type"/>
+                            <field name="color" widget="color"/>
+                            <field name="aeronave"  invisible="((type != 'maquina'))"  options="{'no_open': true}"/>
+                            <field name="strhoras_remanente"  invisible="((type != 'maquina'))"  readonly="1"/>
+                            <field name="user"  invisible="((type == 'maquina'))"  options="{'no_open': true}"/>
+                            <field name="partner"  invisible="((type == 'maquina'))"  options="{'no_open': true}"/>
+                            <field name="email"  invisible="((type == 'maquina'))" />
+                            <field name="active"  invisible="((type == 'maquina'))" />
+                            <field name="work_time"/>
+                            <field name="availability_time"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201113_1016_tree">
+            <field name="name">leulit_20201113_1016_tree</field>
+            <field name="model">leulit.resource</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="partner"/>
+                    <field name="piloto"/>
+                    <field name="type"/>
+                    <field name="work_time"/>
+                    <field name="availability_time"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201113_1016_action" model="ir.actions.act_window">
+            <field name="name">Recursos</field>
+            <field name="res_model">leulit.resource</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

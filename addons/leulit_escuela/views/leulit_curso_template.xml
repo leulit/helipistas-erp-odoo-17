@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20240729_1551_tree">
+            <field name="name">Cursos</field>
+            <field name="model">leulit.curso_template</field>
+            <field name="arch" type="xml">
+                <tree string="Curso plantillas">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20240729_1551_form">
+            <field name="name">Cursos plantillas</field>
+            <field name="model">leulit.curso_template</field>
+            <field name="arch" type="xml">
+                <form string="Cursos plantilla">
+                    <sheet>
+                        <group col="2">
+                            <field name="name" />
+                        </group>
+                        <group col="6">
+                            <field name="aoc"/>
+                            <field name="lci"/>
+                            <field name="ttaa"/>
+                            <field name="ato_mo"/>
+                            <field name="ato_mi"/>
+                            <field name="nco"/>
+                            <field name="camo"/>
+                            <field name="p_145"/>
+                        </group>
+                        <button name="action_create_revision" type="object" string="Crear Edición/Revision" class="oe_highlight"/>
+                        <group col="2">
+                            <field name="revisiones">
+                                <tree create="false" edit="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="edicion"/>
+                                    <field name="revision"/>
+                                    <field name="estado" invisible="1"/>
+                                    <button name="action_open_revision" type="object" string="Abrir" class="oe_highlight"/>
+                                    <button name="on_change_inactivo" type="object" string="Desactivar"  invisible="((estado == 'inactivo'))"  class="oe_highlight"/>
+                                    <button name="on_change_activo" type="object" string="Activar"  invisible="((estado == 'activo'))"  class="oe_highlight"/>
+                                    <button name="copy" type="object" string="Duplicar"  invisible="((estado == 'inactivo'))"  class="oe_highlight"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20240729_1551_action">
+            <field name="name">Cursos plantillas</field>
+            <field name="res_model">leulit.curso_template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

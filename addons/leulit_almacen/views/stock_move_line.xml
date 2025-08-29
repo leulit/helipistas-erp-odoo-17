@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20221215_1453_tree">
+            <field name="name">leulit_20221215_1453_tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="Histórico Movimientos" create="0" default_order="date desc">
+                    <field name="date"/>
+                    <field name="reference" string="Reference"/>
+                    <field name="product_id"/>
+                    <field name="lot_id" groups="stock.group_production_lot"/>
+                    <field name="location_id" string="Ubi. Origen"/>
+                    <field name="location_dest_id" string="Ubi. Destino"/>
+                    <field name="work_order" string="Work Order antiguo" optional="hide"/>
+                    <field name="maintenance_request_id" optional="show"/>
+                    <field name="equipment" optional="show"/>
+                    <field name="quantity" string="Cantidad" optional="show"/>
+                    <field name="owner_id" string="Propietario" optional="hide"/>
+                    <field name="origin" string="Origen" optional="show"/>
+                </tree>
+            </field>
+        </record>
+    
+        <record id="leulit_20221215_1453_action" model="ir.actions.act_window">
+            <field name="name">Histórico Movimientos</field>
+            <field name="res_model">stock.move.line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,kanban,pivot,form</field>
+            <field name="view_id" ref="leulit_20221215_1453_tree"/>
+            <field name="context">{'search_default_done': 1}</field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20230112_1533_tree">
+            <field name="name">leulit_20230112_1533_tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="Movimientos" create="0" default_order="date desc">
+                    <field name="date"/>
+                    <field name="reference" string="Reference"/>
+                    <field name="product_id"/>
+                    <field name="lot_id" groups="stock.group_production_lot"/>
+                    <field name="location_id" string="Ubi. Origen"/>
+                    <field name="location_dest_id" string="Ubi. Destino"/>
+                    <field name="quantity" string="Cantidad"/>
+                    <field name="owner_id" string="Propietario"/>
+                    <field name="origin" string="Origen"/>
+                    <button name="open_stock_production_lot" string="Pieza" type="object" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="view_stock_move_line_operation_tree" model="ir.ui.view">
+            <field name="name">stock.move.line.operations.tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='result_package_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='quantity']" position="before">
+                    <field name="sn"/>
+                    <field name="lote"/>
+                    <field name="ref_origen"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_stock_move_line_detailed_operation_tree" model="ir.ui.view">
+            <field name="name">stock.move.line.operations.tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='result_package_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='package_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='owner_id']" position="before">
+                    <field name="equipment"/>
+                    <field name="maintenance_request_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_line_form" model="ir.ui.view">
+            <field name="name">stock.move.line.form</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='owner_id']" position="after">
+                    <field name="work_order" string="Work Order antiguo" readonly="1"/>
+                    <field name="maintenance_request_id"/>
+                    <field name="equipment"/>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="create_uid" string="Realizado por" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

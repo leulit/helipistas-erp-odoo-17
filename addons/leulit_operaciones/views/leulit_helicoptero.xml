@@ -7,22 +7,12 @@
             <field name="model">leulit.helicoptero</field>
             <field name="inherit_id" ref="leulit_parte_145.leulit_20200626_1201_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='owner']" position="after">
+                    <field name="user_id" options='{"no_open": True}' />
+                </xpath>
                 <xpath expr="//field[@name='airtime']" position="after">
                     <field name="sling_cycles"  invisible="((name != 'EC-HIL'))" />
                 </xpath>
-                <!-- <xpath expr="//field[@name='doitov']" position="after">
-                    <field name="tareaov" domain="[('helicoptero_id','=',id),('is_template','=',False),('overhaul','=','helicopter')]"
-                     invisible="((tipo == 'EC120B'))" />
-                </xpath> -->
-                <!-- <xpath expr="//field[@name='doitov']" position="before">
-                    <field name="ovfecha"  invisible="((not doitov) or (tipo == 'EC120B'))" />
-                    <field name="ovhoras" widget="float_time"  invisible="((not doitov) or (tipo == 'EC120B'))" />
-                    <field name="ov_afterhoras" widget="float_time"  invisible="((not doitov) or (tipo == 'EC120B'))" />
-                    <field name="ov_rh" widget="float_time"  invisible="((not doitov) or (tipo == 'EC120B'))" />
-                    <field name="ov_rd"  invisible="((not doitov) or (tipo == 'EC120B'))" />
-                    <field name="ovrh_first" widget="float_time"  invisible="((doitov) or (tipo == 'EC120B'))" />
-                    <field name="ovrd_first"  invisible="((doitov) or (tipo == 'EC120B'))" />
-                </xpath> -->
                 <xpath expr="//field[@name='landings']" position="after">
                     <field name="arlandingstart"/>
                     <field name="arlandings"/>

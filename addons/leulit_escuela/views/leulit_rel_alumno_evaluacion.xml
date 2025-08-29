@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20240611_1739_filter" model="ir.ui.view">
+            <field name="name">leulit_20240611_1739_filter</field>
+            <field name="model">leulit.rel_alumno_evaluacion</field>
+            <field name="arch" type="xml">
+                <search string="Filtros">
+                    <field name="alumno_id" string="Alumno"/>
+                    <field name="asignatura" string="Asignatura"/>
+                    <field name="apto" string="Apto"/>
+                    <field name="fecha" string="Fecha"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="leulit_20240611_1739_tree" model="ir.ui.view">
+            <field name="name">leulit_20240611_1739_tree</field>
+            <field name="model">leulit.rel_alumno_evaluacion</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Evaluaciones Externas">
+                    <field name="alumno_id"/>
+                    <field name="fecha"/>
+                    <field name="asignatura"/>
+                    <field name="nota"/>
+                    <field name="apto"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20240611_1739_form" model="ir.ui.view">
+            <field name="name">leulit_20240611_1739_form</field>
+            <field name="model">leulit.rel_alumno_evaluacion</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Evaluaciones Externas">
+                    <sheet>
+                        <group col="2">
+                            <field name="alumno_id"/>
+                            <field name="fecha"/>
+                            <field name="resultado" readonly="1"/>
+                            <field name="asignatura"/>
+                            <field name="nota"/>
+                            <field name="apto"/>
+                            <field name="descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20240611_1739_action" model="ir.actions.act_window">
+            <field name="name">Evaluaciones Externas</field>
+            <field name="res_model">leulit.rel_alumno_evaluacion</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

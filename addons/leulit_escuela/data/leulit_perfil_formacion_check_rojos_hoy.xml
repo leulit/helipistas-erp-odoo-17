@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_check_pf_hoy_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email de perfiles de formacion diario</field>
+            <field name="model_id" ref="model_leulit_perfil_formacion"/>
+            <field name="state">code</field>
+            <field name="code">model.check_perfiles_caducados_hoy()</field>
+            <field name="active" eval="False"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_check_pf_hoy" model="mail.template">
+            <field name="name">Notificación perfiles de formación diario</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Avui caduquen els següents perfils de formació</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">jgarcia@helipistas.com</field>
+            <field name="body_html"><![CDATA[
+                <p>A continuació es detallen els cursos i accions que caduquen avui, agrupats per perfil de formació:</p>
+                % for perfil, values in ctx.get('email_values', {}).items():
+                    % if values['cursos'] or values['acciones']:
+                        <p><strong>Perfil:</strong> ${perfil}</p>
+                        % if values['cursos']:
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Cursos:</strong></p>
+                            <ul>
+                                % for curso in values['cursos']:
+                                    <li>${curso}</li>
+                                % endfor
+                            </ul>
+                        % endif
+                        % if values['acciones']:
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Acciones:</strong></p>
+                            <ul>
+                                % for accion in values['acciones']:
+                                    <li>${accion}</li>
+                                % endfor
+                            </ul>
+                        % endif
+                    % endif
+                % endfor
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

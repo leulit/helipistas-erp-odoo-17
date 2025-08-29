@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20220314_1649_form">
+            <field name="name">leulit_20220314_1649_form</field>
+            <field name="model">calendar.event</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <group col="2">
+                        <field name="motivo_cancelacion" />
+                    </group>
+                    <footer>
+                        <button name="cancelar_evento" type="object" string="Confirmar cancelación" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20220127_1040_filter" model="ir.ui.view">
+            <field name="name">leulit_20220127_1040_filter</field>
+            <field name="model">calendar.event</field>
+            <field name="arch" type="xml">
+                <search string="Search Meetings">
+                    <field name="name"/>
+                    <field name="resource_fields"/>
+                    <field name="partner_ids"/>
+                    <field name="type_event"/>
+                    <filter string="Mi Planificación" help="Mi Planificación" name="mymeetings" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                    <filter name="today_meetings" string="Hoy" domain="[('start','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('start','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+                    <separator/>
+                    <filter string="Date" name="filter_start_date" date="start"/>
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Responsible" name="responsible" domain="[]" context="{'group_by': 'user_id'}"/>
+                        <filter string="Availability" name="availability" domain="[]" context="{'group_by': 'show_as'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_calendar_event_search" model="ir.ui.view">
+        <field name="name">calendar.event.search</field>
+        <field name="model">calendar.event</field>
+        <field name="arch" type="xml">
+            <search string="Search Meetings">
+                <field name="name" string="Meeting" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="partner_ids"/>
+                <field name="categ_ids"/>
+                <field name="user_id"/>
+                <field name="show_as"/>
+                <filter string="My Meetings" help="My Meetings" name="mymeetings" domain="[('partner_ids.user_ids', 'in', [uid])]"/>
+                <separator/>
+                <filter string="Date" name="filter_start_date" date="start"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Responsible" name="responsible" domain="[]" context="{'group_by': 'user_id'}"/>
+                    <filter string="Availability" name="availability" domain="[]" context="{'group_by': 'show_as'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+            
+        <record model="ir.ui.view" id="leulit_20200818_1536_form">
+            <field name="name">leulit_20200818_1536_form</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='allday']" position="replace">
+                    <field name="allday"  readonly="((id) and (recurrency))"  force_save="1" string="A realizar durante el día"/>
+                </xpath>
+                <xpath expr="//button[@name='action_open_calendar_event']" position="before">
+                    <div></div>
+                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="((cancelado))" />
+                </xpath>
+                <xpath expr="//field[@name='description']" position="before">
+                    <group>
+                        <field name="tipo_vuelo" invisible="1"/>
+                        <field name="tipo" invisible="1"/>
+                        <field name="type_event" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                        <field name="equipamientos_ids" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                        <field name="sale_order_id"  required="((tipo_vuelo))" />
+                        <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="((tipo_vuelo))" />
+                        <field name="min_cloud_height"  required="((tipo_vuelo))" />
+                        <field name="no_modificar" invisible="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="after">
+                    <hr/>
+                    <field name="cancelado" invisible="1"/>
+                    <h2>Recursos</h2>
+                    <field name="resource_fields"  readonly="((cancelado))" >
+                        <tree create="true" edit="true" editable="bottom">
+                            <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
+                            <field name="work_hours" widget="float_time" string="H. V."/>
+                            <field name="availability_hours" widget="float_time" string="H.T." readonly="1"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//page[@name='page_invitations']" position="after">
+                    <page name="page_leulit_3" string="Documentos" >
+                        <field name="documentos" widget="many2many_binary"/>
+                    </page>
+                    <page name="page_leulit_4" string="Historial" >
+                        <field name="historic_lines" >
+                            <tree editable="bottom" create="false" delete="false" edit="false">
+                                <field name="create_date" readonly="1"/>
+                                <field name="method" readonly="1"/>
+                                <field name="user_id" readonly="1"/>
+                                <button name="open_detail_log_lines" type="object" string="Detalle" class="oe_highlight"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20200818_1536_tree">
+            <field name="name">leulit_20200818_1536_tree</field>
+            <field name="model">calendar.event</field>
+            <field name="arch" type="xml">
+                <tree string="Eventos">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="start" string="Fecha inicio"/>
+                    <field name="stop" string="Fecha fin"/>
+                    <field name="duration" widget="timesheet_uom" sum="Total duración"/>
+                    <field name="tipo"/>
+                    <field name="resource_fields" widget="many2many_tags" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20220117_2230_calendar" model="ir.ui.view">
+            <field name="name">leulit_20220117_2230_calendar</field>
+            <field name="model">calendar.event</field>
+            <field name="arch" type="xml">
+                <calendar delete="0" js_class="attendee_calendar" string="Eventos" date_start="start" date_stop="stop" date_delay="duration" all_day="allday"
+                    event_open_popup="true"
+                    event_limit="5"
+                    color="type_event">
+                    <field name="partner_ids" invisible="1"/>
+                    <field name="is_highlighted" invisible="1"/>
+                    <field name="description"/>
+                    <field name="create_uid"/>
+                    <field name="write_uid" />
+                    <field name="type_event"  filters="1" readonly="1"/>
+                    <field name="partner_ids" widget="many2many_tags_avatar" write_model="calendar.contacts" write_field="partner_id" avatar_field="image_128"/>
+                    <field name="resource_fields" string="Recursos" />
+                    <field name="equipamientos_ids"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="recurrency" invisible="1"/>
+                    <field name="recurrence_update" invisible="1"/>
+                </calendar>
+            </field>
+        </record>
+
+
+        <record id="leulit_20220117_2230_gantt" model="ir.ui.view">
+            <field name="name">leulit_20220117_2230_gantt</field>
+            <field name="model">calendar.event</field>
+            <field name="arch" type="xml">
+                <gantt date_stop="stop" date_start="start" string="Eventos" create="0">
+                </gantt>
+            </field>
+        </record>        
+
+        <record id="leulit_20200818_1536_action" model="ir.actions.act_window">
+            <field name="name">Planificación</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">calendar,gantt,tree,form</field>
+            <field name="domain">[('cancelado','=',False)]</field>
+            <field name="search_view_id" ref="leulit_20220127_1040_filter"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20200818_1536_action_gantt">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">gantt</field>
+            <field name="view_id" ref="leulit_20220117_2230_gantt"/>
+            <field name="act_window_id" ref="leulit_20200818_1536_action"/>
+       </record>
+        <record model="ir.actions.act_window.view" id="leulit_20200818_1536_action_calendar">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="leulit_20220117_2230_calendar"/>
+            <field name="act_window_id" ref="leulit_20200818_1536_action"/>
+       </record>
+       <record model="ir.actions.act_window.view" id="leulit_20200818_1536_action_tree">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20200818_1536_tree"/>
+            <field name="act_window_id" ref="leulit_20200818_1536_action"/>
+       </record>
+        <record model="ir.actions.act_window.view" id="leulit_20200818_1536_action_form">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20200818_1536_form"/>
+            <field name="act_window_id" ref="leulit_20200818_1536_action"/>
+       </record>
+       
+        <record id="leulit_20220920_1242_action" model="ir.actions.act_window">
+            <field name="name">Planificación Cancelada</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">calendar,gantt,tree,form</field>
+            <field name="domain">[('cancelado','=',True)]</field>
+            <field name="search_view_id" ref="leulit_20220127_1040_filter"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="leulit_20220920_1242_action_gantt">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">gantt</field>
+            <field name="view_id" ref="leulit_20220117_2230_gantt"/>
+            <field name="act_window_id" ref="leulit_20220920_1242_action"/>
+       </record>
+        <record model="ir.actions.act_window.view" id="leulit_20220920_1242_action_calendar">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="leulit_20220117_2230_calendar"/>
+            <field name="act_window_id" ref="leulit_20220920_1242_action"/>
+       </record>
+       <record model="ir.actions.act_window.view" id="leulit_20220920_1242_action_tree">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20200818_1536_tree"/>
+            <field name="act_window_id" ref="leulit_20220920_1242_action"/>
+       </record>
+        <record model="ir.actions.act_window.view" id="leulit_20220920_1242_action_form">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20200818_1536_form"/>
+            <field name="act_window_id" ref="leulit_20220920_1242_action"/>
+       </record>
+<!-- 
+        <record id="rule_set_create_calendar_event" model="base.automation">
+            <field name="name">Send Email on Calendar Event Create.</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="trigger">on_create</field>
+            <field name="state">code</field>
+            <field name="code">record.send_mail('CREACIÓN')</field>
+        </record>
+        
+        <record id="rule_set_update_calendar_event" model="base.automation">
+            <field name="name">Send Email on Calendar Event Update.</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="trigger">on_write</field>
+            <field name="state">code</field>
+            <field name="code">record.send_mail('ACTUALIZACIÓN')</field>
+        </record>
+        
+        <record id="rule_set_cancel_calendar_event" model="base.automation">
+            <field name="name">Send Email on Calendar Event Cancel.</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="trigger">on_write</field>
+            <field name="state">code</field>
+            <field name="code">record.send_mail('CANCELADO')</field>
+        </record> -->
+
+        <record id="leulit_evento_template" model="mail.template">
+            <field name="name">Helipistas event mail template</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">${ctx.get('mail_to')}</field>
+            <field name="model_id" ref="model_calendar_event" />
+            <field name="auto_delete" eval="True" />
+            <field name="subject">${ctx.get('subject')}</field>
+            <field name="lang">es_ES</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        Esto es una modificación para el siguiente evento :
+                    </p>
+                    <table border="0" cellpadding="0" cellspacing="0"><tr>
+                        <td width="130px;">
+                            <div style="border-top-left-radius: 3px; border-top-right-radius: 3px; font-size: 12px; border-collapse: separate; text-align: center; font-weight: bold; color: #ffffff; min-height: 18px; background-color: #875A7B; border: 1px solid #875A7B;">
+                                ${object.get_interval('dayname', tz='Europe/Madrid' if not object.allday else None)}
+                            </div>
+                            <div style="font-size: 48px; min-height: auto; font-weight: bold; text-align: center; color: #5F5F5F; background-color: #F8F8F8; border: 1px solid #875A7B;">
+                                ${object.get_interval('day', tz='Europe/Madrid' if not object.allday else None)}
+                            </div>
+                            <div style='font-size: 12px; text-align: center; font-weight: bold; color: #ffffff; background-color: #875A7B;'>
+                                ${object.get_interval('month', tz='Europe/Madrid' if not object.allday else None)}
+                            </div>
+                            <div style="border-collapse: separate; color: #5F5F5F; text-align: center; font-size: 12px; border-bottom-right-radius: 3px; font-weight: bold; border: 1px solid #875A7B; border-bottom-left-radius: 3px;">
+                                ${not object.allday and object.get_interval('time', tz='Europe/Madrid') or ''}
+                            </div>
+                        </td>
+                        <td width="20px;"/>
+                        <td style="padding-top: 5px;">
+                            <p><strong>Detalles del evento</strong></p>
+                            <ul>
+                                % if object.cancelado:
+                                    <li>Motivo Cancelado: ${object.motivo_cancelacion}</li>
+                                % endif
+                                % if object.location:
+                                    <li>Ubicación: ${object.location}</li>
+                                % endif
+                                % if object.description :
+                                    <li>Descripción: ${object.description}</li>
+                                % endif
+                                % if object.recurrence_id:
+                                    <li>Recurrencia: ${object.recurrence_id.name}</li>
+                                % endif
+                                % if not object.allday and object.duration
+                                    <li>Duración: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
+                                % endif
+                                <li>Asistentes
+                                <ul>
+                                % for resource in object.resource_fields:
+                                    <li>
+                                        <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
+                                            <span style="margin-left:5px">${resource.resource.name}</span>
+                                    </li>
+                                % endfor
+                                </ul></li>
+                            </ul>
+                        </td>
+                    </tr></table>
+                    <br/>
+                    <br/>
+                    Gracias.
+                </div>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

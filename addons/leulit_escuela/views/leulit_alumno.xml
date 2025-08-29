@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20201028_1410_filter" model="ir.ui.view">
+            <field name="name">leulit_20201028_1410_filter</field>
+            <field name="model">leulit.alumno</field>
+            <field name="arch" type="xml">
+                <search string="Alumno filtros">
+                    <field name="name"/>
+                    <separator/>
+                    <filter string="Archivado" name="inactivo" domain="[('active','=',False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201028_1410_form">
+            <field name="name">leulit_20201028_1410_form</field>
+            <field name="model">leulit.alumno</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Alumno">
+                    <sheet>
+                        <field name="alta_all" invisible="1"/>
+                        <field name="is_alta" invisible="1"/>
+                        <field name="active" invisible="1"/>
+                        <field name="id" readonly="1" invisible="1"/>
+                        <field name="partner_id" invisible="1"/>
+                        <div class="d-flex align-items-end border-bottom">
+                            <field name="image_1920" widget="image" class="oe_avatar p-2" string="Imagen"/>
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <div class="d-flex flex-wrap flex-row">
+                            <div class="mr-2 mt-2">
+                                <button name="informe_cursos_alu_practicas" type="object" string="Informe clases prácticas" class="oe_highlight"/>
+                            </div>
+                            <div class="mr-2 mt-2">
+                                <button name="informe_cursos_alu_teoricas" type="object" string="Informe clases teóricas" class="oe_highlight"/>
+                            </div>
+                            <div class="mr-2 mt-2">
+                                <button name="wizard_change_data" type="object" string="Cambiar Datos Silabus" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                            </div>
+                            <div class="mr-2 mt-2">
+                                <button name="open_popup_tabla_progresos" type="object" string="Tabla de Progreso" class="oe_highlight"/>
+                            </div>
+                            <div class="mr-2 mt-2">
+                                <button name="alta_alumno" type="object" string="Alta alumno" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"  invisible="((alta_all))"  confirm="¿Estás seguro de querer crear el usuario y el piloto de este alumno?"/>
+                            </div>
+                            <div class="mr-2 mt-2">
+                                <button name="remove_alta" type="object" string="Deshacer alta alumno" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"  invisible="((not alta_all))"  confirm="¿Estás seguro de querer eliminar el usuario y el piloto de este alumno?"/>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap flex-row p-2">
+                            <div class="card p-4" style="flex: 0 1 50%;">
+                                <separator class="border-bottom" string="Datos de Contacto"/>
+                                <group>
+                                    <field name="name" required="1"/>
+                                    <field name="vat" required="1"/>
+                                    <field name="fecha_nacimiento" required="1"/>
+                                    <field name="email" required="1"/>
+                                    <field name="mobile" required="1"/>
+                                    <field name="phone"/>
+                                    <field name="street" required="1"/>
+                                    <field name="city" required="1"/>
+                                    <field name="state_id" options="{'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                                    <field name="zip" required="1" string="Código Postal"/>
+                                    <field name="country_id" options="{'no_create': true, 'no_create_edit': true, 'no_open':true}" required="1"/>
+                                </group>
+                            </div>
+                            <div class="card p-4" style="flex: 0 1 50%;">
+                                <separator class="border-bottom" string="Otros Datos"/>
+                                <group col="2">
+                                    <field name="emergency_contact_empl"  invisible="((not employee_id))" />
+                                    <field name="emergency_phone_empl"  invisible="((not employee_id))" />
+                                    <field name="emergency_contact"  invisible="((employee_id))" />
+                                    <field name="emergency_phone"  invisible="((employee_id))" />
+                                    <field name="piloto_id" options="{'limit': 20, 'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                                    <field name="peso_piloto" required="1"/>
+                                    <field name="partner_id" options="{'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                                    <field name="userid"  readonly="1" widget="many2many_tags"/>
+                                    <field name="employee_id"  readonly="1" options="{'limit': 20, 'no_create': true, 'no_create_edit': true, 'no_open':true}"  invisible="((not employee_id))" />
+                                    <field name="firma" widget="image" class="oe_avatar oe_left"/>
+                                </group>
+                            </div>
+                        </div>
+                        <group>
+                            <field name="observaciones"/>
+                        </group>
+                        <notebook colspan="2">
+                            <page string="Cursos">
+                                <field name="rel_alumno_curso_ids" class="rel_alumno_curso_ids">
+                                    <tree string="Cursos" editable="bottom" create="true">
+                                        <field name="curso_id" options="{'no_create': True, 'create': False, 'edit': False}" />
+                                        <field name="fecha_inscripcion" string="Inicio"/>
+                                        <field name="fecha_finalizacion" string="Finalización"/>
+                                        <field name="cursos_perfil_formacion" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Documentos">
+                                <field name="attachement_ids">
+                                    <tree class="attachement_ids">
+                                        <field name="name"/>
+                                        <!--TODO <field name="user_id"/> -->
+                                        <field name="create_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Autorización exámenes SENASA">
+                                <field name="rel_alumno_documentacion_ids">
+                                    <tree string="Documentación">
+                                        <field name="name"/>
+                                        <field name="fecha_expedicion"/>
+                                        <field name="fecha_validez"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Evaluación">
+                                <field name="rel_alumno_evaluacion_ids">
+                                    <tree string="Evaluación" editable="bottom">
+                                        <field name="fecha"/>
+                                        <field name="asignatura"/>
+                                        <field name="nota"/>
+                                        <field name="apto"/>
+                                        <field name="descripcion"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Evaluación Interna">
+                                <field name="rel_parte_escuela_examenes">
+                                    <tree string="Evaluación" readonly="1" default_order="fecha desc">
+                                        <field name="fecha"/>
+                                        <field name="asignatura"/>
+                                        <field name="nota"/>
+                                        <button type="object" name="add_docs_rel_parte_escuela" class="oe_highlight" string="Examen"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20221028_1210_form">
+            <field name="name">leulit_20221028_1210_form</field>
+            <field name="model">leulit.alumno</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="leulit" js_class="tabla_resumen_asignaturas">
+                    <sheet>
+                        <group>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th><b>Cursos:</b></th>
+                                        <th>
+                                            <select id="selector_curso_teoricas"></select>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            <notebook colspan="2">
+                                                <page string="Teóricas">                                        
+                                                    <div id="container_tabla_asignaturas_teoricas"/>
+                                                </page>
+                                                <page string="Prácticas">
+                                                    <div id="container_tabla_asignaturas_practicas"/>
+                                                </page>
+                                            </notebook>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>                                                           
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button special="cancel" string="Cerrar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201028_1410_tree">
+            <field name="name">leulit_20201028_1410_tree</field>
+            <field name="model">leulit.alumno</field>
+            <field name="arch" type="xml">
+                <tree string="leulit">
+                    <field name="activo" invisible="1"/>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="mobile"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_20201028_1411_action" model="ir.actions.act_window">
+            <field name="name">Alumnos activos</field>
+            <field name="res_model">leulit.alumno</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('activo','=',True)]</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_escuela.leulit_20201028_1410_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_escuela.leulit_20201028_1410_form')})]"/>
+        </record>
+
+        <record id="leulit_20201103_1011_action" model="ir.actions.act_window">
+            <field name="name">Alumnos</field>
+            <field name="res_model">leulit.alumno</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('active','=',True),('active','=',False)]</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_escuela.leulit_20201028_1410_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_escuela.leulit_20201028_1410_form')})]"/>
+        </record>
+
+    </data>
+</odoo>

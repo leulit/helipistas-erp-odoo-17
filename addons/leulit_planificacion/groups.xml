@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="planificacion_rol_category">
+            <field name="name">Rol Planificación</field>
+            <field name="description">Rol Planificación</field>
+            <field name="sequence">8</field>
+        </record>
+
+
+        <record id="RPlanificacion_own" model="res.groups">
+            <field name="name">Planificación: Mi planificación</field>
+            <field name="category_id" ref="planificacion_rol_category"/>
+        </record>
+
+        <record id="RPlanificacion_all" model="res.groups">
+            <field name="name">Planificación: Toda la planificación</field>
+            <field name="implied_ids" eval="[(4, ref('RPlanificacion_own'))]"/>
+            <field name="category_id" ref="planificacion_rol_category"/>
+        </record>
+
+        <record id="RPlanificacion_manager" model="res.groups">
+            <field name="name">Planificación: Gestor de planificación</field>
+            <field name="implied_ids" eval="[(4, ref('RPlanificacion_all'))]"/>
+            <field name="category_id" ref="planificacion_rol_category"/>
+        </record>
+
+
+    </data>
+</odoo>

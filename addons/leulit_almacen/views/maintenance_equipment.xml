@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230112_1607_form" model="ir.ui.view">
+            <field name="name">leulit_20230112_1607_form</field>
+            <field name="model">maintenance.equipment</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20220210_1528_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="helicoptero_pieza" invisible="1"/>
+                    <button name="open_move_lines_to_equipment" 
+                            type="object" class="oe_highlight" string="Movimientos" 
+                             invisible="((helicoptero_pieza))" />
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

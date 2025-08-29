@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem
+        id="leulit_20220223_1446_menuitem"
+        name="Lista Items Partes de Escuela"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        action="leulit_20220223_1446_action"
+        sequence="70"
+        groups="leulit_escuela.REscuela_responsable"
+    />
+    <menuitem
+        id="leulit_20201201_1059_menuitem"
+        name="Partes escuela"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        action="leulit_20200908_1552_action"
+        sequence="1"
+    />
+    <menuitem
+        id="leulit_20201127_0932_menuitem"
+        name="Silabus"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        action="leulit_20201127_0929_action"
+        sequence="5"
+    />
+    <menuitem
+        id="leulit_20201130_1003_menuitem"
+        name="Alumnos"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        sequence="6"
+    />
+        <menuitem
+            id="leulit_20201130_1004_menuitem"
+            name="Activos"
+            parent="leulit_20201130_1003_menuitem"
+            action="leulit_20201028_1411_action"
+            sequence="1"
+        />
+        <menuitem
+            id="leulit_20201130_1005_menuitem"
+            name="Todos"
+            parent="leulit_20201130_1003_menuitem"
+            action="leulit_20201103_1011_action"
+            sequence="2"
+        />
+        <menuitem
+            id="leulit_20201130_1020_menuitem"
+            name="Cursos Alumnos"
+            parent="leulit_20201130_1003_menuitem"
+            action="leulit_20201130_1015_action"
+            sequence="3"
+        />
+        <menuitem
+            id="leulit_20240611_1739_menuitem"
+            name="Evaluaciones Externas"
+            parent="leulit_20201130_1003_menuitem"
+            action="leulit_20240611_1739_action"
+            sequence="4"
+        />
+
+    <!-- Menu Helipistas -->
+        <menuitem 
+            id="leulit_20201021_1102_menuitem"
+            name="Partes escuela (A)"
+            parent="leulit.leulit_20200818_1028_menuitem"
+            action="leulit_20201021_1102_action"
+            sequence="110"
+            groups="REscuela_base"
+        />
+
+    
+    <!-- Menu Formación -->
+    <menuitem 
+        id="leulit_20201130_1246_menuitem"
+        name="Cursos"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        sequence="3"
+    />
+        
+        <menuitem 
+            id="leulit_20240729_1551_menuitem"
+            name="Cursos plantillas"
+            parent="leulit_20201130_1246_menuitem"
+            action="leulit_20240729_1551_action"
+            sequence="10"
+        />
+        
+        <menuitem 
+            id="leulit_20201130_1247_menuitem"
+            name="Todos"
+            parent="leulit_20201130_1246_menuitem"
+            action="leulit_20201130_1241_curso_action"
+            sequence="20"
+        />
+
+        <menuitem 
+            id="leulit_20201130_1248_menuitem"
+            name="Cursos activos"
+            parent="leulit_20201130_1246_menuitem"
+            action="leulit_20201130_1241_curso_activo_action"
+            sequence="30"
+        />
+
+        <menuitem 
+            id="leulit_20201130_1249_menuitem"
+            name="Cursos inactivos"
+            parent="leulit_20201130_1246_menuitem"
+            action="leulit_20201130_1241_curso_inactivo_action"
+            sequence="40"
+        />
+
+    <menuitem 
+        id="leulit_20201130_1313_menuitem"
+        name="Asignaturas"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        action="leulit_20201130_1303_asignatura_action"
+        sequence="4"
+    />
+
+    <menuitem 
+        id="leulit_20201130_1318_menuitem"
+        name="Profesores"
+        parent="leulit.leulit_20201125_1200_menuitem"
+        action="leulit_20201130_1314_silabus_profesor_action"
+        sequence="7"
+    />
+
+
+
+    <!-- Menú de Perfil de formacion -->
+    <menuitem 
+        id="leulit_20211011_1044_menuitem" 
+        name="Perfiles" 
+        parent="leulit.leulit_20200618_1104_menuitem"  
+        sequence="60"
+    />
+        <menuitem
+            id="leulit_20211006_0957_menuitem"
+            name="Plantillas"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20201106_0957_action"
+            sequence="10"
+            groups="leulit.ROperaciones_gestor"
+        />
+        <menuitem
+            id="leulit_20211006_1049_menuitem"
+            name="Perfil formación"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20201106_1049_action"
+            sequence="20"
+            groups="leulit.ROperaciones_gestor"
+        />
+        <menuitem
+            id="leulit_20250520_1538_menuitem"
+            name="Mis perfiles de formación"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20250520_1538_action"
+            sequence="25"
+        />
+        <menuitem
+            id="leulit_20211006_1602_menuitem"
+            name="PF inactivos"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20201106_1602_action"
+            sequence="30"
+            groups="leulit.ROperaciones_gestor"
+        />
+        <menuitem
+            id="leulit_20211006_1607_menuitem"
+            name="Cursos"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20201106_1607_action"
+            sequence="40"
+            groups="leulit.ROperaciones_gestor"
+        />
+        <menuitem
+            id="leulit_20230125_1116_menuitem"
+            name="Acciones"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_20230125_1116_action"
+            sequence="50"
+            groups="leulit.ROperaciones_gestor"
+        />
+        <menuitem
+            id="leulit_202302220_1011_menuitem"
+            name="Cursos por Alumno"
+            parent="leulit_20211011_1044_menuitem"
+            action="leulit_202302220_1011_action"
+            sequence="60"
+            groups="leulit.ROperaciones_gestor"
+        />
+
+
+</odoo>

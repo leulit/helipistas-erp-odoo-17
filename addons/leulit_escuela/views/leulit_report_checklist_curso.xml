@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="report_checklist_curso"
+            string="Curso checklist"
+            model="leulit.curso"
+            report_type="qweb-pdf"
+            file="leulit_escuela.leulit_2022011_1111_informe"
+            name="leulit_escuela.leulit_2022011_1111_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />      
+
+        <template id="ptv_report_css">
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                * {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 8px;
+                }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 29.7cm;
+                    height: 19cm;
+                    margin: 0.5cm 0.5cm 0.5cm 0.5cm;                 
+                }
+                .titleheight {height:0.6cm}
+                .titulostablas {
+                    font-size: 10px;
+                    font-weight:bold;
+                }
+                p {
+                    font-size:9pt;
+                    font-weight: bold;
+                }
+                table {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;		    
+                    border-spacing: 0;		       
+                }
+                th, tbody td, tfoot td {
+                    border: 1px solid #EEEEEE;;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:10px;
+                    font-weight:bold;
+                    word-break: keep-all;
+                }		
+                tr .smalltext th, tr .smalltext td, .smalltext {font-size: 5px;}
+                td{
+                    vertical-align: middle
+                    word-break: keep-all;
+                }
+                td .hcenter{
+                    text-align: center;   
+                    word-break: keep-all;     	
+                }
+                .bgcolored {
+                    background-color: #808080;#bababa
+                    color: white;
+                }
+                tbody td {
+                    text-align:center;
+                    font-size:8px;
+                    font-weight:normal;
+                    word-break: keep-all;
+                }
+                .table {
+                    border-collapse:collapse;
+                    border-spacing: 0;
+                    width:100%;
+                    table-layout: fixed;
+                }
+                thead { display: table-header-group }
+			    tfoot { display: table-row-group }
+			    tr { page-break-inside: avoid }
+            </style>
+        </template>
+
+        <template id="leulit_2022011_1111_informe">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="leulit_operaciones.ptv_report_css"/>
+                    <t t-if="len(o.silabus_teorico_ids) > 0">
+                        <table class="fullwidth">
+                            <thead style="padding-top: 30px">
+                                <tr>
+                                    <th class=" bgcolored" style="text-align:center" colspan="2">
+                                        <span style="font-size:15px; margin-right:5px">CHECKLIST</span>
+                                        <span style="font-size:15px; margin-right:5px">CURSO</span>
+                                        <span style="font-size:15px; margin-right:5px">-</span>
+                                        <span style="font-size:15px; margin-right:5px">SILABUS</span>
+                                        <span style="font-size:15px">TEÓRICO</span>
+                                    </th>
+                                    <th style="width:130px" rowspan="2">
+                                        <img t-att-src="'data:image/png;base64,%s' % to_text(o.logo_reports)" style="width:auto;height:60px;"/>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="bgcolored " style="text-align:center;" colspan="2"><span style="font-size:15px" t-field="o.name"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.silabus_teorico_ids" t-as="oteo">
+                                    <tr style="height:20px">
+                                        <td style="font-size:20px;background-color:#bababa;">Silabus</td>
+                                        <td style="text-align:left;background-color:#bababa;"><span style="font-size: 20px;" t-field="oteo.name"/></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr style="height:20px">
+                                        <td style="font-size:15px">Comentario</td>
+                                        <td style="text-align: left">
+                                            <t t-if="oteo.comentario">
+                                                <span style="font-size: 15px" t-field="oteo.comentario"/>
+                                            </t>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div style="page-break-after: always"></div>
+                    </t>
+                    <t t-if="o.silabus_practico_ids">
+                        <table class="fullwidth">
+                            <thead style="padding-top: 30px">
+                                <tr>
+                                    <th class=" bgcolored" style="text-align:center" colspan="2">
+                                        <span style="font-size:15px; margin-right:5px">CHECKLIST</span>
+                                        <span style="font-size:15px; margin-right:5px">CURSO</span>
+                                        <span style="font-size:15px; margin-right:5px">-</span>
+                                        <span style="font-size:15px; margin-right:5px">SILABUS</span>
+                                        <span style="font-size:15px">PRÁCTICO</span>
+                                    </th>
+                                    <th style="width:130px" rowspan="2">
+                                        <img t-att-src="'data:image/png;base64,%s' % to_text(o.logo_reports)" style="width:auto;height:60px;"/>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="bgcolored " style="text-align:center;" colspan="2"><span style="font-size:15px" t-field="o.name"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.silabus_practico_ids" t-as="opra">
+                                    <tr style="height:20px">
+                                        <td style="font-size:20px;background-color:#bababa;">Silabus</td>
+                                        <td style="text-align:left;background-color:#bababa;"><span style="font-size: 20px;" t-field="opra.name"/></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr style="height:auto">
+                                        <td style="font-size:15px">Comentario</td>
+                                        <td style="text-align: left">
+                                            <t t-if="opra.comentario">
+                                                <span t-field="opra.comentario"  t-field-options='{"widget": "html"}'/>
+                                            </t>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

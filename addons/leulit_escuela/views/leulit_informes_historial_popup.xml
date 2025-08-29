@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record model="ir.ui.view" id="leulit_20201130_1125_informes_historial_popup_form">
+            <field name="name">leulit_20201130_1125_informes_historial_popup_form</field>
+            <field name="model">leulit.informes_historial_popup</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <sheet>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="soloteoricas"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="imprimir_seleccion_historial" type="object" string="Imprimir historial" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+
+        <report string="Histórico de Partes"
+            id="informes_historial_popup_report"
+            model="leulit.informes_historial_popup"
+            name="leulit_escuela.leulit_20211014_1131_informe"
+            report_type="qweb-pdf"
+            paperformat="leulit.paperformat_A4_landscape"/>
+
+
+
+        <template id="leulit_20211014_1131_informe">
+            <t t-call="web.html_container">
+                <div class="header">
+                    
+                </div>
+                <div class="page">
+                    
+                </div>
+                <div class="footer">
+                    <div class="row text-center" style="border-top: 1px solid black;">
+                        <div class="col col-3 offset-9 text-right">
+                            <ul class="list-inline mt-2">
+                                <li class="list-inline-item">Page:</li>
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

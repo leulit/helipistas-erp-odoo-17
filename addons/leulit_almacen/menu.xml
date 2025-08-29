@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+        <menuitem
+            id="leulit_20230119_0911_menuitem"
+            name="Equipos / Componentes"
+            parent="leulit.leulit_20250207_1052_menuitem"
+            action="maintenance.hr_equipment_action"
+            sequence="20"
+        />
+
+        <menuitem
+            id="leulit_20210615_1643_menuitem"
+            name="Productos"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_taller.leulit_20221129_1527_action"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20221125_1057_menuitem"
+            name="Piezas"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_almacen.leulit_20221125_1057_action"
+            sequence="20"
+        />
+        <!-- <menuitem
+            id="leulit_20221125_1045_menuitem"
+            name="Nuevo Movimiento"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_almacen.leulit_20221125_1045_action"
+            sequence="30"
+        /> -->
+        <menuitem
+            id="leulit_20230224_1122_menuitem"
+            name="Movimiento Instalación"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="action_stock_install"
+            sequence="30"
+        />
+        <menuitem
+            id="leulit_20240923_1640_menuitem"
+            name="Movimiento Desinstalación"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="action_stock_uninstall"
+            sequence="32"
+        />
+        <menuitem
+            id="leulit_20241003_1656_menuitem"
+            name="Movimiento Certificado"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20241003_1656_action"
+            sequence="34"
+        />
+        <menuitem
+            id="leulit_20241004_1004_menuitem"
+            name="Movimiento Scrap"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20241004_1004_action"
+            sequence="36"
+        />
+        <menuitem
+            id="leulit_20221201_1704_menuitem"
+            name="Histórico movimientos"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_almacen.leulit_20221215_1453_action"
+            sequence="50"
+        />
+        <menuitem
+            id="leulit_20230119_0845_menuitem"
+            name="Transferencias"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="stock.action_picking_tree_all"
+            sequence="60"
+        />
+        <menuitem
+            id="leulit_20230126_1052_menuitem"
+            name="Stock mínimo"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="stock.action_orderpoint_replenish"
+            sequence="65"
+        />
+        <menuitem
+            id="leulit_20230222_1140_menuitem"
+            name="Herramientas"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20230222_1140_action"
+            sequence="130"
+        />
+        <menuitem
+            id="leulit_20230222_1141_menuitem"
+            name="Equipamientos"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20230222_1141_action"
+            sequence="136"
+        />
+    
+
+</odoo>

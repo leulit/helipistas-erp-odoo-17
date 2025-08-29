@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230201_1429_pivot" model="ir.ui.view">
+            <field name="name">leulit_20230201_1429_pivot</field> 
+            <field name="model">leulit.event.resource.byday</field>
+            <field name="arch" type="xml">
+                <pivot string="Calendario Tabla Dinamica" disable_linking="True" sample="1">
+                    <field name="fecha" type="col"/>
+                    <field name="resource" type="row"/>
+                    <field name="total_horas_planificadas" type="measure" string="Horas plan." widget="float_time"/>
+                </pivot>
+            </field>
+        </record> 
+
+        <record id="leulit_20230201_1429_action" model="ir.actions.act_window">
+            <field name="name">Plan. Tabla Dinamica</field>
+            <field name="res_model">leulit.event.resource.byday</field>
+            <field name="view_mode">pivot</field>
+        </record>
+
+
+    </data>
+</odoo>

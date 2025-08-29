@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20240617_1123_form" model="ir.ui.view">
+            <field name="name">leulit_20240617_1123_form</field>
+            <field name="model">maintenance.plan</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20231020_1300_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='page_actividades_programadas']" position="after">
+                    <page string="Componentes" name="page_componentes">
+                        <field name="componentes">
+                            <tree limit="100">
+                                <field name="equipment_id"/>
+                                <field name="product_id" string="P/N"/>
+                                <field name="sn" string="S/N"/>
+                                <field name="lote" string="Lot/Rev."/>
+                                <field name="tsn_actual"/>
+                                <field name="tso_actual"/>
+                                <field name="o_life_hours"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

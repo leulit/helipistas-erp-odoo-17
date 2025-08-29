@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_notify_formacion_interna_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email notificación formación interna</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="state">code</field>
+            <field name="code">model.notify_formacion_interna()</field>
+            <field name="active" eval="False"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_notify_formacion_interna" model="mail.template">
+            <field name="name">Notificación de Formación Interna</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Recordatorio de Programar Entrenamientos de Compañía y Resumen de lo Programado</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">ops@helipistas.com</field>
+            <field name="body_html"><![CDATA[
+                % if ctx.get('values_flag'):
+                    <p>A continuación se detallan los eventos de entrenamientos de compañía programados:</p>
+                    % for evento, datos in ctx.get('email_values', {}).items():
+                        <br/>
+                        <p><strong>${evento}</strong></p>
+                        <p><strong>Fecha:</strong> ${datos['fecha']}</p>
+                        <p><strong>Participantes:</strong> ${datos['participantes']}</p>
+                    % endfor
+                    <br/>
+                    <br/>
+                    <p>Se recuerda que es necesario programar los entrenamientos de compañía para el mes siguiente.</p>
+                % else:
+                    <p>No hay ningún entrenamiento de compañía programado para el mes que viene.</p>
+                    <br/>
+                    <p>Se recuerda que es necesario programar los entrenamientos de compañía para el mes siguiente.</p>
+                % endif
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

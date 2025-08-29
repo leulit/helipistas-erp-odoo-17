@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="report_curso_pf"
+            string="Informe curso perfil formación"
+            model="leulit.perfil_formacion_curso_last_done"
+            report_type="qweb-pdf"
+            file="leulit_escuela.leulit_20211115_1345_informe"
+            name="leulit_escuela.leulit_20211115_1345_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />            
+
+
+
+        <template id="leulit_20211115_1831_informe">
+            <table class="table table-bordered fullwidth">
+                <tr>
+                    <td style="font-size:8px; white-space: nowrap; text-align:center:padding:5px;border-right:">
+                        <i>Fecha creación documento:</i><br/>
+                        <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/></i>                                
+                    </td>
+                    <td style="font-size:8px; white-space: nowrap; text-align:center">
+                        <t t-if="csv_cid and len(csv_cid) &gt; 0"><i>CSV/CID:</i><br/><span t-esc="csv_cid"/></t>
+                        <t t-if="not (csv_cid and len(csv_cid) &gt; 0)"><i><span>Documentación para uso interno.</span></i></t>
+                    </td>
+                    <td style="font-size:8px; white-space: nowrap; text-align:center">
+                        <t t-if="firmado_por and len(firmado_por) &gt; 0"><i>Firmado por:</i><br/><span t-esc="firmado_por"/></t>
+                    </td>
+                </tr>
+            </table>
+        </template>
+
+        <template id="leulit_20211115_1924_informe">
+            <table class="table table-bordered fullwidth">
+                <tr>
+                    <td style="text-align:center;vertical-align: middle; width:20%">
+                        <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                    </td>
+                    <td class="literal theadtitle centertext" style="width:80%">
+                        INFORME GENERAL
+                    </td>                
+                </tr>
+            </table>
+        </template>
+
+        <template id="leulit_20211115_2020_informe">
+            <table align="right" style="margin-bottom:10px" class="table table-bordered">
+                <tr>
+                    <td style="white-space: nowrap;"><b>Código:</b></td>
+                    <td style="white-space: nowrap;">HLP-DOC-0005</td>
+                    <td style="white-space: nowrap;"><b>Versión:</b></td>
+                    <td style="white-space: nowrap;">4.2.0</td>
+                </tr>
+            </table> 
+        </template>
+
+        <template id="leulit_20211115_1345_informe">
+            <t t-call="web.html_container">
+                <style type="text/css">
+                    .page {}
+                    .fullwidth {
+                        width: 100%;
+                    }
+                    .numbervalue {
+                        text-align:right;
+                    }
+                    table {
+                        text-align:center;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        overflow: visible !important;
+                    }
+                    thead { display: table-header-group !important}
+                    tfoot { 
+                        display: table-footer-group !important
+                    }
+                    .footer-bottom {                
+                    }
+                    tr { page-break-inside: avoid }
+
+                    th, tbody td, tfoot td {
+                        border: 1px solid #000000;
+                        text-align:center;
+                        font-size:10px;
+                        font-weight:bold;
+                        padding:5px;
+                    }
+                    .bgcolored {
+                        background-color: #585858;
+                        color: #ffffff
+                    }
+                    .titleheight {
+                    }
+                    .noborder {
+                        border: 0px none #000000;
+                    }   
+                    .lefttext {
+                        text-align: left;
+                    }  
+                </style>
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <t t-foreach="datos" t-as="curso">
+                    <t t-if="len(curso['silabus_teoria'])">                    
+                        <table class="table table-bordered fullwidth" data-pagebreak="after">
+                            <thead>
+                                <tr>
+                                    <th colspan="6">
+                                        <table class="table table-bordered fullwidth">
+                                            <tr>
+                                                <td class="">
+                                                    <t t-call="leulit_escuela.leulit_20211115_1831_informe">
+                                                        <t t-set="csv_cid" t-value="csv_cid" /> 
+                                                        <t t-set="firmado_por" t-value="firmado_por" /> 
+                                                    </t> 
+                                                </td>
+                                                <td class="">
+                                                    <t t-call="leulit_escuela.leulit_20211115_2020_informe"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:100%; font-size:8px;white-space: nowrap; text-align:center" colspan="2">
+                                                    Cualquier copia total o parcial de este documento se considera copia no controlada ysiempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                                </td>
+                                            </tr>
+                                        </table>                                                                              
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="6">
+                                        <t t-call="leulit_escuela.leulit_20211115_1924_informe"/>                                                                           
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="literal lefttext bgcolored titleheight" colspan="5">
+                                        <span style="font-size:15px"><b style="font-size:15px">Alumno:</b><span t-esc="alumno_nombre"/></span><br/>
+                                        <span t-esc="curso['name']"/> - <span t-esc="curso['tiempo']"/> ( Contenido teórico )<br/>
+                                        <b>válido desde: <span t-esc="curso['valido_desde']"/> hasta <span t-esc="curso['valido_hasta']"/></b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >ID</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:85%" >Silabus</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Fecha</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:1%" >Val.</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:10%">Instructor / Alumno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="recno" t-value="0"/>
+                                <t t-foreach="curso['silabus_teoria']" t-as="silabus">
+                                    <t t-if="recno==0">
+                                        <tr>
+                                            <th colspan="5" class="">
+                                                <t t-if="silabus['valoracion_parte']">
+                                                    <table class="fullwidth">
+                                                        <tr>
+                                                            <td align="left" style="text-align:left;width:100px"><b>Valoración:</b></td>
+                                                            <td align="left" style="text-align:left"><span t-esc="silabus['valoracion_parte']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" style="text-align:left;height:100px;vertical-align:top"><b>Comentarios:</b></td>
+                                                            <td align="left" style="text-align:left;vertical-align:top"><span t-esc="silabus['comentario_parte']"/></td>
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </th>
+                                        </tr>
+                                    </t>
+                                    <t t-set="recno" t-value="recno+1"/>
+                                    <tr>
+                                        <td align="left" style="height:30px"><span t-esc="silabus['id_parte']"/><br/><span t-esc="silabus['id']"/></td>
+                                        <td style="text-align: left" >
+                                            <table border="1" class="">
+                                                <span t-esc="silabus['name']"/>                                                                                                        
+                                                <br/>
+                                                <i><span style="font-size:8px"><b  style="font-size:8px">Comentario:</b><span t-esc="silabus['comentario']"/></span></i>
+                                            </table>
+                                        </td>
+                                        <td nowrap="1"><span t-esc="silabus['fecha']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['valoracion']"/></td>
+                                        <td nowrap="1">
+                                            <i>Impartido por:</i><br/><span t-esc="silabus['nombreprofe']"/>
+                                            
+                                            <br/><i>Validado por:</i><br/><t t-if="silabus['id_parte']"><span t-esc="alumno_nombre"/></t>
+                                        </td>                            
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>                        
+                    </t>
+                    <t t-if="len(curso['silabus_practica'])">
+                        <table class="table table-bordered fullwidth" data-pagebreak="after">
+                            <thead>                                
+                                <tr>
+                                    <th colspan="9">
+                                        <table class="table table-bordered fullwidth">
+                                            <tr>
+                                                <td class="">
+                                                    <t t-call="leulit_escuela.leulit_20211115_1831_informe">
+                                                        <t t-set="csv_cid" t-value="csv_cid" /> 
+                                                        <t t-set="firmado_por" t-value="firmado_por" /> 
+                                                    </t> 
+                                                </td>
+                                                <td class="">
+                                                    <t t-call="leulit_escuela.leulit_20211115_2020_informe"/> 
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:100%; font-size:8px;white-space: nowrap; text-align:center" colspan="2">
+                                                    Cualquier copia total o parcial de este documento se considera copia no controlada ysiempre deberá ser contrastada con la información vigente en la intranet.
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="9">
+                                        <t t-call="leulit_escuela.leulit_20211115_1924_informe"/>  
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="literal lefttext bgcolored titleheight" colspan="9">
+                                        <span style="font-size:15px"><b style="font-size:15px">Alumno:</b><span t-esc="alumno_nombre"/></span><br/>
+                                        <span t-esc="curso['name']"/> ( Contenido práctico )<br/>
+                                        <b>válido desde: <span t-esc="curso['valido_desde']"/> hasta <span t-esc="curso['valido_hasta']"/></b>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="literal centertext bgcolored titleheight" style="width:1%" >ID</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:80%" >Silabus</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:1%" >Fecha</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Máquina</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Piloto</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Hora salida</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Hora llegada</th>
+                                    <th class="literal centertext bgcolored titleheight" style="width:2%" >Val.</th>
+                                    <th class="literal centertext bgcolored titleheight" style="widht:10%">Instructor / Alumno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="recno" t-value="0"/>
+                                <t t-foreach="curso['silabus_practica']" t-as="silabus">
+                                    <t t-if="recno==0">
+                                        <tr>
+                                            <th colspan="9" class="">
+                                                <t t-if="silabus['valoracion_parte']">
+                                                    <table class="fullwidth">
+                                                        <tr>
+                                                            <td align="left" style="text-align:left;width:100px"><b>Valoración:</b></td>
+                                                            <td align="left" style="text-align:left"><span t-esc="silabus['valoracion_parte']"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" style="text-align:left;height:100px;vertical-align:top"><b>Comentarios:</b></td>
+                                                            <td align="left" style="text-align:left;vertical-align:top"><span t-esc="silabus['comentario_parte']"/></td>
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </th>
+                                        </tr>
+                                    </t>
+                                    <t t-set="recno" t-value="recno+1"/>
+                                    <tr>
+                                        <td align="left" style="height:30px"><span t-esc="silabus['id_parte']"/><br/><span t-esc="silabus['id']"/></td>
+                                        <td style="text-align: left" >
+                                            <span t-esc="silabus['name']"/>                                            
+                                            <br/><i><span style="font-size:8px"><b  style="font-size:8px">Comentario:</b><span t-esc="silabus['comentario']"/></span></i>
+                                        </td>
+                                        <td nowrap="1"><span t-esc="silabus['fecha']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['maquina']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['piloto']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['hora_salida']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['hora_llegada']"/></td>
+                                        <td nowrap="1"><span t-esc="silabus['valoracion']"/></td>
+                                        <td nowrap="1">
+                                            <i>Impartido por:</i><br/><span t-esc="silabus['nombreprofe']"/>
+                                            <t t-if="silabus['verificado']">                                
+                                                <br/><i>Validado por:</i><br/><span t-esc="alumno_nombre"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>                                
+                            </tbody>
+                        </table>
+                        <div data-pagebreak="before"></div>
+                    </t>                    
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

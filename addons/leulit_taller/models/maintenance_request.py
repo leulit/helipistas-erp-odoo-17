@@ -9,7 +9,7 @@ import logging
 import io
 import re
 import base64
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from pypdf import PdfWriter, PdfReader
 from odoo.addons.web.controllers.main import Binary
 
 _logger = logging.getLogger(__name__)
@@ -178,7 +178,7 @@ class MaintenanceRequest(models.Model):
                             'order_id': self.sale_order_id.id,
                             'product_id': material.lot_id.product_id.id,
                             'name': material.lot_id.product_id.name,
-                            'product_uom_qty': material.qty_done,
+                            'product_uom_qty': material.quantity,
                             'price_unit': material.lot_id.precio * 1.2 
                         })
 
@@ -684,7 +684,7 @@ class MaintenanceRequest(models.Model):
                 'revision' : item.lot_id.revision if item.lot_id.revision else 'N/A',
                 'lote' : item.lot_id.lote if item.lot_id.lote else 'N/A',
                 'ref_origen' : item.lot_id.ref_origen if item.lot_id.ref_origen else 'N/A',
-                'qty' : item.qty_done,
+                'qty' : item.quantity,
                 'price' : precio_coste,
                 'empleado' : item.create_uid.name,
                 'fecha' : item.date.strftime('%Y-%m-%d'),
@@ -909,14 +909,14 @@ class MaintenanceRequest(models.Model):
     
 
     def merge_pdfs(self, pdf_list):
-        pdf_writer = PdfFileWriter()
+        pdf_writer = PdfWriter()
         page_number = 1  # Inicializa el número de página
 
         for pdf_data in pdf_list:
-            pdf_reader = PdfFileReader(io.BytesIO(pdf_data))
-            for page_num in range(pdf_reader.getNumPages()):
-                page = pdf_reader.getPage(page_num)
-                pdf_writer.addPage(page)
+            pdf_reader = PdfReader(io.BytesIO(pdf_data))
+            for page_num in range(len(pdf_reader.pages)):
+                page = pdf_reader.pages[page_num]
+                pdf_writer.add_page(page)
 
         # Crear un objeto BytesIO para almacenar el PDF combinado en memoria
         combined_pdf = io.BytesIO()

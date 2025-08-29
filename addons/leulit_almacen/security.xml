@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_20230222_1630_access_permission" model="ir.model.access">
+        <field name="name">leulit calibracion access permission</field>
+        <field name="model_id" ref="model_leulit_calibracion"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <record id="leulit_20230224_1121_access_permission" model="ir.model.access">
+        <field name="name">stock install access permission</field>
+        <field name="model_id" ref="model_stock_install"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20240923_1640_access_permission" model="ir.model.access">
+        <field name="name">stock uninstall access permission</field>
+        <field name="model_id" ref="model_stock_uninstall"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <record id="leulit_20241004_0936_access_permission" model="ir.model.access">
+        <field name="name">stock move certificate access permission</field>
+        <field name="model_id" ref="model_stock_move_certificate"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20241004_1004_access_permission" model="ir.model.access">
+        <field name="name">stock move scrap access permission</field>
+        <field name="model_id" ref="model_stock_move_scrap"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <record id="leulit_20230224_1228_access_permission" model="ir.model.access">
+        <field name="name">stock.warn.insufficient.qty.install access permission</field>
+        <field name="model_id" ref="model_stock_warn_insufficient_qty_install"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+</odoo>

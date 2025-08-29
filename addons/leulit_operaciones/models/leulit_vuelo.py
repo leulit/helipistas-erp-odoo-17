@@ -2108,6 +2108,7 @@ class leulit_vuelo(models.Model):
     helicoptero_id = fields.Many2one('leulit.helicoptero', string='Helicóptero', required=True, domain="[('baja','=',False)]")
     helicoptero_modelo = fields.Char(compute=_get_modelo_helicoptero,string="Modelo")
     helicoptero_tipo = fields.Selection(related='helicoptero_id.tipo',string='Tipo',store=True)
+    helicoptero_propietario = fields.Many2one(related='helicoptero_id.user_id',string='Propietario',store=True)
     strhoras_remanente = fields.Char(related='helicoptero_id.strhoras_remanente', string='Potencial Aeronave')
     semaforo = fields.Char(related='helicoptero_id.semaforo', string='Estado Aeronave')
     ruta_id = fields.Many2one('leulit.ruta', 'Ruta', domain=[('activo','=',True)])

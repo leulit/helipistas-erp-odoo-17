@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_check_partes_escuela_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email check partes escuela pendientes</field>
+            <field name="model_id" ref="model_leulit_parte_escuela"/>
+            <field name="state">code</field>
+            <field name="code">model.check_partes_pendientes()</field>
+            <field name="active" eval="False"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_check_partes_escuela_pendientes" model="mail.template">
+            <field name="name">Notificación Check Partes de Escuela Pendientes</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Partes de Escuela Pendientes</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">${ctx.get('mail_to')}</field>
+            <field name="body_html"><![CDATA[
+                <p>A continuación se detallan los partes de escuela que estan en estado pendiente:</p>
+                % for profesor, partes in ctx.get('email_values', {}).items():
+                    <ul>
+                        % for parte in partes:
+                            <li>
+                                <strong>ID:</strong> ${parte['id']}<br/>
+                                <strong>Contenido:</strong> ${parte['name']}<br/>
+                                <strong>Fecha:</strong> ${parte['fecha']}
+                            </li>
+                        % endfor
+                    </ul>
+                % endfor
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        
+        <record model="ir.ui.view" id="leulit_20200826_0949_tree">
+            <field name="model">leulit.resource</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="leulit_planificacion.leulit_20201113_1016_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner']" position="after">
+                    <field name="alumno"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

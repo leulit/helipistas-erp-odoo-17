@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id='leulit_20200923_0938_form' model="ir.ui.view">
+            <field name="name">leulit_20200923_0938_form</field>
+            <field name="model">leulit.print_ctrl_calendar_wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group col="4" fill="0">
+                            <field name="from_date" />
+                            <field name="to_date" />
+                        </group>
+                        <!-- <field name="items_realizados" />
+                        <field name="items_planificados" /> -->
+                    </sheet>
+                    <footer>
+                        <button type="object" name="imprimir" class="oe_highlight" string="Imprimir"/>
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20200923_0938_action" model="ir.actions.act_window">
+            <field name="name">Control planificación</field>
+            <field name="res_model">leulit.print_ctrl_calendar_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <report
+            id="leulit_20220118_1037_report"
+            string="Control Planificación"
+            model="leulit.print_ctrl_calendar_wizard"
+            report_type="qweb-pdf"
+            file="leulit_planificacion.leulit_20220118_1154_informe"
+            name="leulit_planificacion.leulit_20220118_1154_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+        />            
+
+        <template id="leulit_20220118_1154_informe">
+            <t t-call="web.html_container">
+                <t t-foreach="fechas" t-as="fecha">
+                    <table style="width: 100%;border:1px solid #c4c4c4;">
+                        <tr>
+                            <td colspan="2" style="width:100%; background:#c4c4c4; font-size:24px; font-weight: bold"><span t-esc="fecha['fecha']"/></td>
+                        </tr>
+                    </table>
+                    <t t-foreach="fecha['users']" t-as="user">
+                        <table style="width: 100%;border:1px solid #c4c4c4;" >
+                            <thead>
+                                <tr>
+                                    <th colspan="2" style="text-align:left;width:100%; background:#e4e4e4"><span t-esc="fecha['fecha']"/> - <span t-esc="user['nombre']"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="page-break-inside: avoid">
+                                    <td style="width:50%; vertical-align: top;border:1px solid #c4c4c4;">
+                                        <b>Planificado</b>
+                                    </td>
+                                    <td style="width:50%; vertical-align: top;border:1px solid #c4c4c4;">
+                                        <b>Realizado</b>
+                                    </td>
+                                </tr>
+                                <tr style="page-break-inside: avoid">
+                                    <td style="width:50%; vertical-align: top;">
+                                        <table style="width: 100%" >
+                                            <t t-foreach="user['eventos']" t-as="evento">
+                                                <tr>
+                                                    <td style="width:75px;border:1px solid #c4c4c4;"><span t-esc="evento['start_evento']"/></td>
+                                                    <td style="width:75px;border:1px solid #c4c4c4;"><span t-esc="evento['stop_evento']"/></td>
+                                                    <td style="width:100%;border:1px solid #c4c4c4;"><span t-esc="evento['asunto']"/></td>
+                                                </tr>
+                                            </t>
+                                        </table>
+                                    </td>
+                                    <td style="width:50%; vertical-align: top;">
+                                        <table style="width: 100%" >
+                                            <t t-foreach="user['tareas']" t-as="tarea">
+                                                <tr>
+                                                    <td style="width:75px;border:1px solid #c4c4c4;"><span t-esc="tarea['codigo']"/></td>
+                                                    <td style="width:100%;border:1px solid #c4c4c4;"><span t-esc="tarea['nombre_tarea']"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:75px;border:1px solid #c4c4c4;"><span t-esc="tarea['duracion']"/></td>
+                                                    <td style="width:100%;border:1px solid #c4c4c4;"><span t-esc="tarea['nombre']"/></td>
+                                                </tr>
+                                            </t>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

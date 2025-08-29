@@ -1,0 +1,97 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1017_tree">
+			<field name="name">leulit_20201130_1017_tree</field>
+			<field name="model">leulit.rel_alumno_curso</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Helipistas" create="false" edit="false">
+                    <field name="id" string="ID"/>
+					<field name="curso_id" string="Curso"/>
+                    <field name="alumno_id" string="NIF/DNI"/>
+                    <field name="alumno_name" string="Nombre"/>
+                    <field name="fecha_inscripcion"/>
+                    <field name="fecha_finalizacion"/>
+				</tree>
+			</field>
+		</record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1016_tree">
+            <field name="name">leulit_20201130_1016_tree</field>
+            <field name="model">leulit.rel_alumno_curso</field>
+            <field name="arch" type="xml">
+                <tree string="Cursos"  editable="bottom"> 
+                    <button name="informe_cursos_alu" string="Informe progreso" type="object" class="oe_highlight"/>
+                    <field name="curso_id" />
+                    <field name="fecha_inscripcion" string="Inicio"/>
+                    <field name="fecha_finalizacion" string="Finalización"/>
+                    <field name="cursos_perfil_formacion" invisible="1"/>
+                </tree>
+	        </field>
+        </record>
+        
+        <record model="ir.ui.view" id="leulit_20201130_1015_tree">
+            <field name="name">leulit_20201130_1015_tree</field>
+            <field name="model">leulit.rel_alumno_curso</field>
+            <field name="arch" type="xml">
+                <tree string="Cursos" create="false" edit="false" delete="false"> 
+                    <field name="alumno_id" invisible="1"/>
+                    <field name="alumno_name" />
+                    <field name="curso_id" />
+                    <field name="fecha_inscripcion" string="Inicio"/>
+                    <field name="fecha_finalizacion" string="Finalización"/>
+                    <field name="cursos_perfil_formacion" invisible="1"/>
+                </tree>
+	        </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1015_form">
+            <field name="name">leulit_20201130_1015_form</field>
+            <field name="model">leulit.rel_alumno_curso</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <sheet>
+                        <group col="2">
+                            <field name="alumno_id" readonly="1"/>
+                            <field name="curso_id" readonly="1"/>
+                            <field name="fecha_inscripcion" string="Inicio" readonly="1"/>
+                            <field name="fecha_finalizacion" string="Finalización" readonly="1"/>
+                            <field name="cursos_perfil_formacion" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="leulit_20230829_1522_filter" model="ir.ui.view">
+            <field name="name">leulit_20230829_1522_filter</field>
+            <field name="model">leulit.rel_alumno_curso</field>
+            <field name="arch" type="xml">
+                <search string="Alumno cursos filtros">
+                    <field name="alumno_id"/>
+                    <field name="curso_id"/>
+                    <filter string="Alumnos con Cursos en Activo" name="leulit_20230829_1522_f1_search"  domain="[('fecha_finalizacion','=',False)]" />
+                    <filter string="Cursos Perfil de Formación" name="leulit_20230829_1522_f2_search"  domain="[('cursos_perfil_formacion','=',True)]" />
+                    <filter string="Cursos ATO" name="leulit_20230829_1522_f3_search"  domain="[('cursos_perfil_formacion','=',False)]" />
+                    <separator/>
+                    <group expand="0" string="Agrupar por...">
+                        <filter name="group_by_alumno" string="Alumno" context="{'group_by': 'alumno_id'}"/>
+                        <filter name="group_by_curso" string="Curso" context="{'group_by': 'curso_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201130_1015_action" model="ir.actions.act_window">
+            <field name="name">Cursos Alumnos</field>
+            <field name="res_model">leulit.rel_alumno_curso</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="leulit_20201130_1015_tree"/>
+            <field name="search_view_id" ref="leulit_20230829_1522_filter"/>
+        </record>
+
+    </data>
+</odoo>

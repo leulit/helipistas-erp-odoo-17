@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+    
+        <record id="view_warehouse_orderpoint_tree_editable_inherited_leulit" model="ir.ui.view">
+            <field name="name">stock.warehouse.orderpoint.tree.editable.inherit.leulit</field>
+            <field name="model">stock.warehouse.orderpoint</field>
+            <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree_editable"/>
+            <field name="arch" type="xml">
+                <field name="location_id" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <field name="json_lead_days_popover" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <field name="route_id" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <field name="product_uom_name" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <field name="trigger" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <field name="company_id" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </field>
+                <xpath expr="//field[@name='qty_forecast']" position="after">
+                    <field name="str_product_opcionales" optional="show"/>
+                    <field name="qty_opcionales" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20230126_1052_form" model="ir.actions.act_window">
+            <field name="name">Stock mínimo</field>
+            <field name="res_model">stock.warehouse.orderpoint</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_warehouse_orderpoint_tree_editable_inherited_leulit"/>
+            <field name="search_view_id" ref="stock.stock_reorder_report_search"/>
+        </record>
+
+    </data>
+</odoo>

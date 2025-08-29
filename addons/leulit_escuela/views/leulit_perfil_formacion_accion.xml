@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201106_1638_tree">
+            <field name="name">leulit_20201106_1638_tree</field>
+            <field name="model">leulit.perfil_formacion_accion</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="accion" create="false">
+                    <field name="semaforo_dy" widget="semaforo_char"/>
+                    <field name="alumno"/>
+                    <field name="descripcion"/>
+                    <field name="last_done_date"/>
+                    <field name="next_done_date"/>
+                    <field name="remainder_dy"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20201106_1638_action" model="ir.actions.act_window">
+            <field name="name">Acciones Perfil Formación</field>
+            <field name="res_model">leulit.perfil_formacion_accion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_template', '=', False),('inactivo','=', False)]</field>
+        </record>
+        <record id="leulit_20201106_1638_action_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="leulit_20201106_1638_tree" />
+            <field name="act_window_id" ref="leulit_20201106_1638_action" />
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_perfil_formacion_done_accion_form">
+            <field name="name">leulit_perfil_formacion_done_accion_form</field>
+            <field name="model">leulit.perfil_formacion_accion_last_done</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Marcar acción como realizada">
+                    <group col="1">
+                        <h5><field name="actualizartodos" no_label="1"/> Seleccionar para actualizar todos</h5>
+                    </group>
+                    <group col="2">	
+                        <field name="name" readonly="1"/>
+                        <field name="done_date"/>
+                        <field name="documentos_perfil" widget="many2many_binary"></field>
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Cancelar" />
+                        <button name="do_done_course" string="Guardar" type="object" class="oe_highlight"
+                            context="{'done_date':done_date}"/>
+                    </footer>				
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_perfil_formacion_done_accion_form_confirm">
+            <field name="name">leulit_perfil_formacion_done_accion_form_confirm</field>
+            <field name="model">leulit.perfil_formacion_accion_last_done</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Confirmación fecha proxima">
+                    <group col="1">
+                        <h5><field name="actualizartodos" no_label="1"/> Seleccionar para actualizar todos</h5>
+                    </group>
+                    <group col="2">				
+                        <field name="name" readonly="1"/>
+                        <field name="done_date"/>
+                        <field name="documentos_perfil" widget="many2many_binary"></field>
+                    </group>
+                    <footer>
+                        <button special="cancel" string="Cancelar" />
+                        <button name="do_done_course" string="Guardar" type="object" class="oe_highlight"
+                            context="{'done_date':done_date}"/>
+                    </footer>				
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_popup_replicar_acciones_pf_form">
+            <field name="name">Repicar Acciones Perfil Formación</field>
+            <field name="model">leulit.popup_replicar_acciones_pf</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="descripcion">
+                    <group col="1">
+                        <field name="perfil_formacion_tmpl" invisible="1"/>
+                        <separator string="Perfiles Formación"></separator>
+                        <field name="perfil_formacion_replica_ids" domain="[('perfil_tmpl','=',perfil_formacion_tmpl)]" no_label="1"/>
+                    </group>
+                    <footer>
+                        <button name="metodo_popup_a_ejecutar" type="object" string="Realizar Cambios" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

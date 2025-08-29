@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201130_1314_profesor_form">
+            <field name="name">leulit_20201130_1314_profesor_form</field>
+            <field name="model">leulit.profesor</field>
+            <field name="arch" type="xml">
+                <form string="profesor">
+                    <sheet>
+                        <group col="2">                            
+                            <field name="image_1920" widget="image" class="oe_avatar oe_left" string="Imagen"/>
+                            <field name="name" />
+                            <field name="email" />
+                            <field name="mobile" />
+                            <field name="phone" />
+                            <field name="partner_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="employee" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="profesor_erp" />
+                            <field name="adjunto" />
+                            <field name="firma" widget="image" class="oe_avatar oe_left"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201130_1314_profesor_tree">
+            <field name="name">leulit_20201130_1314_profesor_tree</field>
+            <field name="model">leulit.profesor</field>
+            <field name="arch" type="xml">
+                <tree string="profesor">
+                    <field name="name" />
+                    <field name="email"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201130_1314_silabus_profesor_action">
+            <field name="name">Profesores</field>
+            <field name="res_model">leulit.profesor</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

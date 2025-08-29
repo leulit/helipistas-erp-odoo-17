@@ -1,0 +1,51 @@
+{
+    "name": "Planificación",
+    "summary": "LEULIT PLANIFICACIÓN",
+    "description": "\n    ",
+    "author": "Leulit S.L.",
+    "website": "http://www.leulit.com",
+    "category": "leulit",
+    "version": "17.0.1.0.0",
+    "depends": [
+        "leulit",
+        "leulit_taller",
+        "calendar",
+        "leulit_tarea",
+        "auditlog"
+    ],
+    "data": [
+        "groups.xml",
+        "security.xml",
+        "views/leulit_calendar_event.xml",
+        "views/leulit_tipo_planificacion.xml",
+        "views/leulit_equipamientos_planificacion.xml",
+        "views/leulit_print_ctrl_calendar_wizard.xml",
+        "views/leulit_resource.xml",
+        "views/leulit_event_resource.xml",
+        "views/leulit_print_calendar_wizard.xml",
+        "views/leulit_recurso_disponibilidad.xml",
+        "views/leulit_reunion.xml",
+        "views/leulit_event_resource_by_day.xml",
+        "views/mail_activity.xml",
+        "views/project_task.xml",
+        "data/leulit_calendar_event_open_permission.xml",
+        "data/leulit_calendar_event_close_permission.xml",
+        "data/leulit_calendar_event_check_equipamientos.xml",
+        "data/leulit_calendar_event_notify_customer.xml",
+        "data/leulit_calendar_event_close_sale_order.xml",
+        "data/leulit_calendar_event_notify_formacion_interna.xml",
+        "data/leulit_calendar_event_potencial_aeronaves.xml",
+        "menu.xml"
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'leulit_planificacion/static/src/js/custom_calendar_view.js',
+        ],
+    },
+    "demo": [],
+    "css": [],
+    "installable": True,
+    "auto_install": False,
+    "application": True,
+    "license": "LGPL-3"
+}

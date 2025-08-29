@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="escuela_tabla_resumen_asignaturas">
+        <t t-if="tipo == 'teoricas'">
+            <t t-call="escuela_tabla_resumen_asignaturas_teoricas" />
+        </t>
+        <t t-if="tipo == 'practicas'">
+            <t t-call="escuela_tabla_resumen_asignaturas_practicas" />
+        </t>
+    </t>
+
+    <t t-name="escuela_tabla_resumen_asignaturas_teoricas">
+        <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        <h4>Asignaturas teóricas</h4>
+                    </th>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Asignaturas</th>
+                    <th>Tiempo prev.</th>
+                    <th>Tiempo clase</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </t>
+
+    <t t-name="escuela_tabla_resumen_asignaturas_practicas">
+        <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
+            <thead>
+                <tr>
+                    <th colspan="7">
+                        <h4>Sesiones prácticas</h4>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Sesiones</th>
+                    <th>Tiempo prev.</th>
+                    <th>Doble mando</th>
+                    <th>Pilot in command</th>
+                    <th>SPIC</th>
+                    <th>Otros</th>
+                    <th>Totales</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </t>
+
+</templates>
