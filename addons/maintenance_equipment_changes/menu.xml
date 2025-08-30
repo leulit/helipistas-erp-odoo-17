@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- <menuitem 
+        id="leulit_20200907_1307_menuitem"
+        name="Gestión tareas"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        sequence="10"
+        action="project.action_view_all_task"
+        groups="leulit.ROperaciones_piloto,leulit.RTaller_base,RT_base"
+    /> -->
+
+
+
+</odoo>

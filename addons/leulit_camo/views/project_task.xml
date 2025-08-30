@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20250625_1153_tree" model="ir.ui.view">
+            <field name="name">leulit_20250625_1153_tree</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree default_order="code asc" decoration-success="estado_tarea_bool_realizada==True" decoration-danger="estado_tarea_bool_noaplica==True">
+                    <field name="estado_tarea_bool_realizada" invisible="1"/>
+                    <field name="estado_tarea_bool_noaplica" invisible="1"/>
+                    <field name="semaforo_subtasks" string="" widget="semaforo_char"/>
+                    <field name="code"/>
+                    <field name="maintenance_request_id" string="Orden de trabajo"/>
+                    <field name="name" string="Defecto"/>
+                    <field name="solucion_defecto"/>
+                    <field name="user_ids"/>
+                    <field name="stage_id"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="leulit_20250625_1153_action" model="ir.actions.act_window">
+            <field name="name">Defectos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.task</field>
+            <field name="domain">[('tipo_tarea_taller', '=', 'defecto_encontrado')]</field>
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_20250625_1153_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_taller.leulit_20250724_1244_form')})]"/>
+        </record>
+
+
+    </data>
+</odoo>

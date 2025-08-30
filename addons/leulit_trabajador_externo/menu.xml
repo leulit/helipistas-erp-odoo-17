@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem 
+        id="leulit_20200818_1028_menuitem" 
+        name="Externo"
+        web_icon="leulit_trabajador_externo,static/description/icon.png"
+        sequence="10000"
+    />
+    <menuitem 
+        id="leulit_20200907_1307_menuitem"
+        name="Tareas"
+        parent="leulit_20200818_1028_menuitem"
+        sequence="10"
+        action="leulit_20230908_1214_action"
+        groups="RTExterno_base"
+    />
+
+</odoo>

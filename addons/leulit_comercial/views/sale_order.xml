@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="sale_order_tree_leulit" model="ir.ui.view">
+            <field name="name">view_quotation_tree_with_onboarding_leulit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="origin" string="Información" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

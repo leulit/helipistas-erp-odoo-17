@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="t_externo_rol_category">
+            <field name="name">Rol Trabajador Externo</field>
+            <field name="description">Rol Tarea</field>
+        </record>
+
+        <record id="RTExterno_base" model="res.groups">
+            <field name="name">Trabajador</field>
+            <field name="category_id" ref="t_externo_rol_category"/>
+        </record>
+
+        <record id="RTExterno_gestor" model="res.groups">
+            <field name="name">Gestor</field>
+            <field name="implied_ids" eval="[(4, ref('RTExterno_base'))]"/>
+            <field name="category_id" ref="t_externo_rol_category"/>
+        </record>
+
+
+    </data>
+</odoo>

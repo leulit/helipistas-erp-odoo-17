@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20240618_1653_form">
+            <field name="name">leulit_20240618_1653_form</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20220211_1150_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fecha_oh_motor']" position="before">
+                    <field name="fecha_instala_motor" readonly="1" string="Fecha instalación"/>
+                </xpath>
+                <xpath expr="//group[@name='fechas_datos_motor']" position="after">
+                    <group>
+                        <field name="motor_tsn_inicio" readonly="1" string="TSN Inicio"/>
+                        <field name="motor_tso_inicio" readonly="1" string="TSO Inicio"/>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='tsn_tso_datos_motor']" position="after">
+                    <group>
+                        <field name="ngstart" readonly="1" string="NG Inicio"/>
+                        <field name="nfstart" readonly="1" string="NF Inicio"/>
+                    </group>
+                </xpath>
+                <xpath expr="//page[@name='motor_helicoptero']" position="inside">
+                    <group>
+                        <h2>Historial de motores</h2>
+                        <p>Por las modificaciones que se estan haciendo para el desarrollo de los programas de mantenimiento, la información del historial de los motores puede verse afectada. Para tener la información correcta contactar con IT (Pau Barbarroja)</p>
+                    </group>
+                    <group>
+                        <field name="motores" nolabel="1">
+                            <tree>
+                                <field name="date"/>
+                                <field name="old_production_lot_id" string="Motor anterior"/>
+                                <field name="new_production_lot_id" string="Motor nuevo"/>
+                                <field name="tsn_inicio"/>
+                                <field name="tso_inicio"/>
+                                <field name="ng_inicio"/>
+                                <field name="nf_inicio"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

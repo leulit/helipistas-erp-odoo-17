@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id='leulit_20240521_1117_form' model="ir.ui.view">
+            <field name="name">leulit_20240521_1117_form</field>
+            <field name="model">leulit.wizard_report_experiencia</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Registro Experiencia 6/24 meses">
+                    <group col="4" fill="0">
+                        <field name='mecanico_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                    </group>
+                    <footer>
+                        <button type="object" name="print_report_experiencia" string="Imprimir" class="oe_highlight"/>
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record> 
+
+
+        <record model="ir.actions.act_window" id="leulit_20240521_1117_action">
+            <field name="name">leulit_20240521_1117_action</field>
+            <field name="res_model">leulit.wizard_report_experiencia</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20240521_1117_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

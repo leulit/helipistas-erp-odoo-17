@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Categoría de aplicación -->
+    <record id="module_category_riesgo_analisis" model="ir.module.category">
+        <field name="name">Análisis de Riesgos</field>
+        <field name="description">Gestión y análisis de riesgos empresariales</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Grupo: Gestor de Riesgos -->
+    <record id="group_riesgo_manager" model="res.groups">
+        <field name="name">Gestor de Riesgos</field>
+        <field name="category_id" ref="module_category_riesgo_analisis"/>
+        <field name="comment">Este grupo permite acceso completo al módulo de análisis de riesgos</field>
+    </record>
+
+    <!-- Grupo: Usuario de Riesgos -->
+    <record id="group_riesgo_user" model="res.groups">
+        <field name="name">Usuario de Riesgos</field>
+        <field name="category_id" ref="module_category_riesgo_analisis"/>
+        <field name="comment">Este grupo permite acceso de lectura y creación al módulo de análisis de riesgos</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- ===== REGLAS PARA ANÁLISIS DE RIESGO (CABECERA) ===== -->
+    
+    <!-- Regla de acceso por defecto: Los gestores pueden ver todos los análisis -->
+    <record id="rule_analisis_riesgo_manager" model="ir.rule">
+        <field name="name">Regla Análisis Riesgo - Gestor</field>
+        <field name="model_id" ref="model_analisis_riesgo"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Regla de acceso: Los usuarios pueden ver todos los análisis pero solo editar los propios -->
+    <record id="rule_analisis_riesgo_user_read" model="ir.rule">
+        <field name="name">Regla Análisis Riesgo - Usuario Lectura</field>
+        <field name="model_id" ref="model_analisis_riesgo"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_analisis_riesgo_user_write" model="ir.rule">
+        <field name="name">Regla Análisis Riesgo - Usuario Escritura</field>
+        <field name="model_id" ref="model_analisis_riesgo"/>
+        <field name="domain_force">[('responsable_principal', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+    
+    <!-- ===== REGLAS PARA PELIGROS ===== -->
+    
+    <!-- Regla de acceso por defecto: Los gestores pueden ver todos los peligros -->
+    <record id="rule_analisis_riesgo_peligro_manager" model="ir.rule">
+        <field name="name">Regla Peligros - Gestor</field>
+        <field name="model_id" ref="model_analisis_riesgo_peligro"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_analisis_riesgo_peligro_user" model="ir.rule">
+        <field name="name">Regla Peligros - Usuario</field>
+        <field name="model_id" ref="model_analisis_riesgo_peligro"/>
+        <field name="domain_force">[('analisis_id.responsable_principal', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+    
+    <!-- ===== REGLAS PARA RIESGOS ===== -->
+    
+    <!-- Regla de acceso por defecto: Los gestores pueden ver todos los riesgos -->
+    <record id="rule_analisis_riesgo_riesgo_manager" model="ir.rule">
+        <field name="name">Regla Riesgos - Gestor</field>
+        <field name="model_id" ref="model_analisis_riesgo_riesgo"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_analisis_riesgo_riesgo_user" model="ir.rule">
+        <field name="name">Regla Riesgos - Usuario</field>
+        <field name="model_id" ref="model_analisis_riesgo_riesgo"/>
+        <field name="domain_force">[('analisis_id.responsable_principal', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+    
+    <!-- ===== REGLAS PARA MEDIDAS DE CONTROL ===== -->
+    
+    <!-- Regla de acceso por defecto: Los gestores pueden ver todas las medidas -->
+    <record id="rule_analisis_riesgo_medida_manager" model="ir.rule">
+        <field name="name">Regla Medidas - Gestor</field>
+        <field name="model_id" ref="model_analisis_riesgo_medida"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_analisis_riesgo_medida_user_read" model="ir.rule">
+        <field name="name">Regla Medidas - Usuario Lectura</field>
+        <field name="model_id" ref="model_analisis_riesgo_medida"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_analisis_riesgo_medida_user_write" model="ir.rule">
+        <field name="name">Regla Medidas - Usuario Escritura</field>
+        <field name="model_id" ref="model_analisis_riesgo_medida"/>
+        <field name="domain_force">['|', ('responsable', '=', user.id), ('analisis_id.responsable_principal', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_riesgo_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

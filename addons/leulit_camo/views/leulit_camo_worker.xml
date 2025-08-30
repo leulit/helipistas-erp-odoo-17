@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20240613_1308_form">
+            <field name="name">leulit_20240613_1308_form</field>
+            <field name="model">leulit.camo_worker</field>
+            <field name="arch" type="xml">
+                <form string="Trabajador CAMO">
+                    <sheet>
+                        <field name="image_1920" widget="image" class="oe_avatar oe_right" string="Imagen"/>
+                        <h1><label for="partner_id" string="Contacto"></label></h1>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="partner_id"  options="{'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="active"/>
+                            <field name="rga"/>
+                            <field name="pra"/>
+                        </group>
+                        <group col="4">
+                            <field name="street" />
+                            <field name="name" />
+                            <field name="city" />
+                            <field name="vat" />
+                            <field name="state_id" options="{'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                            <field name="email" />
+                            <field name="country_id" options="{'no_create': true, 'no_create_edit': true, 'no_open':true}"/>
+                            <field name="mobile" />
+                            <field name="zip" />
+                            <field name="user_id"  readonly="1"/>
+                            <field name="firma" widget="image" class="oe_avatar oe_left"/>
+                            <field name="sello" widget="image" class="oe_avatar oe_left"/>
+                        </group>
+                        <notebook>
+                            <page string="Emergencia">
+                                <group col="4">
+                                    <field name="emergency_contact_empl"/>
+                                    <field name="emergency_phone_empl"/>
+                                </group>
+                            </page>
+                            <page string="Empleo">
+                                <group col="4">
+                                    <field name="fecha_inicio_empleo"/>
+                                    <field name="fecha_fin_empleo"/>
+                                </group>
+                            </page>
+                            <page string="Certificación">
+                                <group col="4">
+                                    <field name="fecha_inicio_certificador"/>
+                                    <field name="fecha_fin_certificador"/>
+                                </group>
+                                <group col="2">
+                                    <field name="certificaciones_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>        
+                
+        <record model="ir.ui.view" id="leulit_20240613_1308_tree">
+            <field name="name">leulit_20240613_1308_tree</field>
+            <field name="model">leulit.camo_worker</field>
+            <field name="arch" type="xml">
+                <tree string="Trabajador CAMO">                    
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+                
+        
+        
+	    <record model="ir.actions.act_window" id="leulit_20240613_1308_action">
+            <field name="name">Trabajador CAMO</field>
+            <field name="res_model">leulit.camo_worker</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

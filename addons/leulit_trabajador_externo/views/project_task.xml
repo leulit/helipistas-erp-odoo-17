@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data> 
+
+         <record id="leulit_20230908_1214_action" model="ir.actions.act_window">
+            <field name="name">Tareas TE</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+        </record>
+
+    </data>
+</odoo>

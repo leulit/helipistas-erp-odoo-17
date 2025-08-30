@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20231024_1040_form" model="ir.ui.view">
+            <field name="name">leulit_20231024_1040_form</field>
+            <field name="model">leulit.job_card</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20230726_1419_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='manual_id']" position="after">
+                    <field name="tipos_actividad" string="Actividad" widget="many2many_tags" options="{'no_create_edit': True,'no_create': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

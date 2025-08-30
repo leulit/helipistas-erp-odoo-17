@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <!-- Menu CAMO -->
+        <menuitem
+            id="leulit_20240613_1308_menuitem"
+            name="Personal CAMO"
+            parent="leulit.leulit_20201109_1035_menuitem"
+            action="leulit_20240613_1308_action"
+            sequence="30"
+        />
+    
+        <menuitem
+            id="leulit_20250625_1153_menuitem"
+            name="Defectos"
+            parent="leulit.leulit_20201109_1035_menuitem"
+            action="leulit_20250625_1153_action"
+            sequence="23"
+        />
+    
+</odoo>

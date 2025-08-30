@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="external_layout_boxed" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[@name='company_address']" position="inside">
+            <p t-if="company.vat"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></p>
+        </xpath>
+    </template>    
+
+
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[hasclass('clearfix')]" position="after">
+            <div class="col-auto col-3 mw-100 mb-2" t-if="o.company_id.partner_id.bank_ids" name="bank_acc_number">
+                <strong>Cuenta bancaria:</strong>
+                <t t-foreach="o.company_id.partner_id.bank_ids" t-as="bank">
+                    <p class="m-0" t-field="bank.acc_number"/>
+                </t>
+            </div>
+        </xpath>
+    </template>    
+
+    <template id="report_saleorder_document" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@name='signature']" position="after">
+            <div class="col-auto col-3 mw-100 mb-2" t-if="doc.company_id.partner_id.bank_ids" name="bank_acc_number">
+                <strong>Cuenta bancaria:</strong>
+                <t t-foreach="doc.company_id.partner_id.bank_ids" t-as="bank">
+                    <p class="m-0" t-field="bank.acc_number"/>
+                </t>
+                <strong>BIC/SWIFT:</strong>
+                <t t-foreach="doc.company_id.partner_id.bank_ids" t-as="bank">
+                    <t t-if="bank.bank_id.bic">
+                        <p class="m-0" t-field="bank.bank_id.bic"/>
+                    </t>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+
+
+
+    <template id="leulit_202301300939_report" inherit_id="sale.report_saleorder_document" primary="True">
+        <xpath expr="//th[@name='th_quantity']" position="replace"></xpath>
+        <xpath expr="//th[@name='th_priceunit']" position="replace"></xpath>
+        <xpath expr="//th[@name='th_taxes']" position="replace"></xpath>
+
+        <xpath expr="//td[@name='td_quantity']" position="replace"></xpath>
+        <xpath expr="//td[@name='td_priceunit']" position="replace"></xpath>
+        <xpath expr="//td[@name='td_taxes']" position="replace"></xpath>
+    </template>
+
+
+    <template id="leulit_202301300950_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="leulit_comercial.leulit_202301300939_report" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+
+    <report string="Presupuesto / Pedido sin Detalle"
+        id="leulit_202301300940_report"
+        model="sale.order"
+        file="leulit_comercial.leulit_202301300950_report"
+        name="leulit_comercial.leulit_202301300950_report"
+        report_type="qweb-pdf"/>
+
+    
+</odoo>

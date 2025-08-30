@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+
+        <record id="leulit_20230313_1459_form" model="ir.ui.view">
+            <field name="name">leulit_20230313_1459_form</field>
+            <field name="model">project.task</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20250724_1244_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='production_lot_id']" position="after">
+                    <field name="tipos_actividad" widget="many2many_tags" options="{'no_create_edit': True,'no_create': True}"  invisible="((not maintenance_request_id))" readonly="((maintenance_request_done))" />
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

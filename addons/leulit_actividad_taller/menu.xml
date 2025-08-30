@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <menuitem
+        id="leulit_20230616_1139_menuitem"
+        name="Experiencia"
+        action="leulit_20230616_1139_action"
+        parent="leulit_taller.leulit_20221128_1144_menuitem"
+        sequence="20"/>
+
+    <menuitem
+        id="leulit_20240521_1117_menuitem"
+        name="Informe Experiencia"
+        action="leulit_20240521_1117_action"
+        parent="leulit_taller.leulit_20221128_1144_menuitem"
+        sequence="25"/>
+    
+    <menuitem 
+        id="leulit_20230615_1717_menuitem"
+        name="Tipos de actividad mecánico"
+        action="leulit_20230615_1717_action"
+        parent="leulit_taller.leulit_20221128_1144_menuitem"
+        sequence="30"/>
+
+</odoo>
