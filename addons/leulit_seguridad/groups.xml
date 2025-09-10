@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="seguridad_rol_category">
+            <field name="name">Rol Seguridad</field>
+            <field name="description">Rol Seguridad</field>
+        </record>
+
+
+        <record id="RSeguridad_user" model="res.groups">
+            <field name="name">Usuario</field>
+            <field name="category_id" ref="seguridad_rol_category"/>
+        </record>
+        
+        <record id="RSeguridad_responsable" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="implied_ids" eval="[(4, ref('RSeguridad_user'))]"/>
+            <field name="category_id" ref="seguridad_rol_category"/>
+        </record>
+
+
+    </data>
+</odoo>

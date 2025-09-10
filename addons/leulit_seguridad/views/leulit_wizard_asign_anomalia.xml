@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230704_1748_form" model="ir.ui.view">
+            <field name="name">leulit_20230704_1748_form</field>
+            <field name="model">leulit.wizard_asign_anomalia</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Asignar anomalía">
+                    <field name="helicoptero" invisible="1"/>
+                    <field name="rel_maintenance_request" invisible="1"/>
+                    <field name="anomalia_ids" domain="[('maintenance_request_id','=',False),('helicoptero_id','=',helicoptero),('estado','in',['pending','deferred'])]" context="{'tree_view_ref': 'leulit_seguridad.leulit_20201026_0823_tree'}">
+                        <tree>
+                            <field name="codigo" readonly="1"/>
+                            <field name="discrepancia" readonly="1"/>
+                            <field name="fecha" readonly="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="asign_anomalia" type="object" string="Guardar" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

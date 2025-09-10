@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="leulit_202009151825_form" model="ir.ui.view">
+            <field name="name">Form descarga documento firmado</field>
+            <field name="model">leulit_signaturedoc</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Helipistas" version="7.0">
+					<field name="id" invisible="1"/>
+                    <h4>Descargar documento firmado</h4>
+					<group col="2">
+                        <field name="datas_fname" invisible="1"/>
+                        <field name="name" string="Descripción" readonly="1"/>
+						<field name="datas" filename="datas_fname" string="Documento"/>
+                        <field name="hashcode" readonly="1"/>
+                        <field name="firmado_por"/>
+					</group>
+				</form>
+			</field>            
+        </record>
+
+        <record id="leulit_20210112_1138_form" model="ir.ui.view">
+            <field name="name">Documentos firmados anomalías</field>
+            <field name="model">leulit_signaturedoc</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Helipistas" >
+					<field name="id" invisible="1"/>
+					<group col="4">
+                        <field name="name"/>
+                        <field name="name_attach" invisible="1"/>
+						<field name="datas" filename="name_attach"/>
+                        <field name="firmado_por"/>
+					</group>
+				</form>
+			</field>            
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_202011091820_view">
+            <field name="name">Página consulta documentos firmados</field>
+            <field name="model">leulit_signaturedocquery</field>
+            <field name="arch" type="xml">
+                <form string="Helipistas" version="7.0">
+                    <div style="border: 1px solid #c4c4c4; background-color:#f2f2f2; width:90%%; padding: 20px">                                        
+                        <b>Documentación firmada con código CSV/CID y accesible desde esta pantalla</b><br/>
+                        <ul>
+                            <li>Parte técnico de vuelo (PTV) - Posteriores al día 12-Noviembre-2020</li>
+                            <li>Plan operacional - Posteriores al día 12-Noviembre-2020</li>
+                            <li>Informe general cursos</li>
+                            <li>Informe clases teóricas</li>
+                            <li>Informe clases prácticas</li>
+                        </ul>
+                    </div>
+                    <group col="8">                        
+                        <group col="6">
+                            <field name="csvcode"/>
+                        </group>
+                        <group col="1" colspan="2">
+                            <a href="#" id="btn_signaturedocquerey" class="button_tipo_1">Buscar</a>
+                        </group>
+                    </group>
+                    <widget type="csv_code" style="button"/>
+                    <table id="table_signaturedocquerey" class="minimalistBlack display">
+                        <thead>
+                            <tr>
+                                <th class="halign-center">Id</th>
+                                <th class="halign-center">Firmado por</th>
+                                <th class="halign-center">Fecha</th>
+                                <th class="halign-center">CSV / CID</th>
+                                <th class="halign-center">Descripción</th>
+                                <th class="halign-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tdbody">
+                        </tbody>
+                    </table>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="hlp_202010061535_action">
+            <field name="name">Verificar código CSV / CID</field>
+            <field name="res_model">leulit_signaturedocquery</field>
+            <field name="type">ir.actions.act_window</field>            
+            <field name="view_mode">form</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="hlp_202010061535_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_202011091820_view"/>
+            <field name="act_window_id" ref="hlp_202010061535_action"/>
+       </record>        
+
+    
+
+
+    </data>
+</openerp>

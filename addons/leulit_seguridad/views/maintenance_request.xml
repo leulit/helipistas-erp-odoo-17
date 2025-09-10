@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230517_1330_form" model="ir.ui.view">
+            <field name="name">leulit_20230517_1330_form</field>
+            <field name="model">maintenance.request</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="leulit_taller.leulit_20231020_1222_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='page_datos_helicoptero']" position="before">
+                    <page name="page_anomalias" string="Anomalias">
+                        <button name="open_wizard_asign_anomalia" string="Agregar Anomalia" type="object" class="oe_highlight"/>
+                        <field name="anomalia_ids">
+                            <tree editable="false" create="false" delete="false">
+                                <field name="codigo" readonly="1"/>
+                                <field name="discrepancia" readonly="1"/>
+                                <field name="fecha" readonly="1"/>
+                                <button name="edit_anomalia" string="Editar" type="object" class="oe_highlight"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

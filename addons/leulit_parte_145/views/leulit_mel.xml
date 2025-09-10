@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20201028_1130_search" model="ir.ui.view">
+            <field name="name">leulit_20201028_1130_search</field>
+            <field name="model">leulit.mel</field>
+            <field name="arch" type="xml">
+                <search string="Mel">
+                    <group expand="0" string="Filtrar Tipo Helicóptero">
+                        <filter string="R22" name="r22" domain="[('tipo_helicoptero','=','R22')]"/>
+                        <filter string="R44" name="r44" domain="[('tipo_helicoptero','=','R44')]"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20201028_1130_form">
+            <field name="name">leulit_20201028_1130_form</field>
+            <field name="model">leulit.mel</field>
+            <field name="arch" type="xml">
+                <form string="MEL">
+                    <sheet>
+                        <group col="1">
+                            <group col="6">
+                                <field name="ata" />
+                                <field name="name"/>
+                                <field name="tipo_helicoptero" />
+                                <field name="referencia"/>
+                                <field name="revision_id" domain="[('tipo_helicoptero','=',tipo_helicoptero)]"/>
+                                <field name="fecha_revision"/>
+                            </group>
+                            <group col="1">
+                                <h3>Historial de Referéncias Mel</h3>
+                                <field name="linemel_ids" class="linemel_ids" colspan="4" nolabel="1">
+                                        <tree string="MELs"  editable="bottom">
+                                            <field name="referencia" />
+                                            <field name="tipo" />
+                                            <field name="categoria" />
+                                            <field name="numinstalado" />
+                                            <field name="numexp" />
+                                            <field name="tenerencuenta" />
+                                        </tree>
+                                    </field>
+                            </group>
+                            <notebook colspan="4" >
+                                <page string="Helicopteros">
+                                    <field name="helicoptero_ids" colspan="4" nolabel="1">
+                                        <tree string="Helicopteros">
+                                            <field name="modelo" />
+                                            <field name="name" />
+                                            <field name="serialnum" />
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201028_1130_tree">
+            <field name="name">leulit_20201028_1130_tree</field>
+            <field name="model">leulit.mel</field>
+            <field name="arch" type="xml">
+                <tree string="MEls">
+                    <field name="tipo_helicoptero" />
+                    <field name="matriculas_heli" />
+                    <field name="ata" />
+                    <field name="referencia"/>
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20201028_1130_action">
+            <field name="name">MELs</field>
+            <field name="res_model">leulit.mel</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

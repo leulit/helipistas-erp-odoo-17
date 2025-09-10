@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="esignature_rol_category">
+            <field name="name">Rol Esignature</field>
+            <field name="description">Rol Esignature</field>
+            <field name="sequence">10</field>
+        </record>
+
+
+        <record id="RE_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="esignature_rol_category"/>
+        </record>
+
+
+    </data>
+</odoo>

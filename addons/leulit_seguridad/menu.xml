@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Menú Helipiistas -->
+    TODO: hacerlo con helpdesk
+    <!-- <menuitem
+        id="leulit_20241002_1146_menuitem"
+        name="Ocurrencias"
+        parent="leulit.leulit_20200818_1028_menuitem"
+        sequence="30"
+    />
+        <menuitem
+            id="leulit_20241028_1152_menuitem"
+            name="Ocurrencias Reportadas"
+            parent="leulit_20241002_1146_menuitem"
+            action="leulit_20241028_1152_action"
+            sequence="10"
+        />
+        <menuitem
+            id="leulit_20241028_1153_menuitem"
+            name="Ocurrencias Asignadas"
+            parent="leulit_20241002_1146_menuitem"
+            action="leulit_20241028_1153_action"
+            sequence="20"
+        /> -->
+
+
+    <!-- Menu OPERACIONES -->
+    <menuitem 
+        id="leulit_20201026_0823_menuitem"
+        name="Anomalías / Defectos"
+        parent="leulit.leulit_20200618_1104_menuitem"
+        sequence="40"
+        groups="leulit.ROperaciones_piloto,leulit.RCampaña_piloto"
+    />
+    <menuitem 
+        id="leulit_20250730_1520_menuitem" 
+        name="Registro de anomalías y defectos" 
+        parent="leulit_20201026_0823_menuitem" 
+        action="leulit_20201026_0823_action" 
+        sequence="10"
+    />
+    <menuitem 
+        id="leulit_20250730_1521_menuitem" 
+        name="Registros en Edición" 
+        parent="leulit_20201026_0823_menuitem" 
+        action="leulit_20250730_1513_action" 
+        sequence="20"
+    />
+
+
+
+    <!-- Menu Taller -->
+    <menuitem 
+        id="leulit_20201125_1140_menuitem" 
+        name="Anomalías / Defectos" 
+        parent="leulit.leulit_20201120_1140_menuitem" 
+        sequence="40"
+    />
+    <menuitem 
+        id="leulit_20250730_1512_menuitem" 
+        name="Registro de anomalías y defectos" 
+        parent="leulit_20201125_1140_menuitem" 
+        action="leulit_20201026_0823_action" 
+        sequence="10"
+    />
+    <menuitem 
+        id="leulit_20250730_1513_menuitem" 
+        name="Registros en Edición" 
+        parent="leulit_20201125_1140_menuitem" 
+        action="leulit_20250730_1513_action" 
+        sequence="20"
+    />
+
+
+    <!-- Sistema de Gestión -->
+
+
+    <menuitem 
+        id="leulit_20240729_1059_menuitem"
+        name="Plan de Auditorías"
+        parent="mgmtsystem.menu_mgmtsystem_root"
+        sequence="100"
+    />
+    <menuitem 
+        id="leulit_20240729_1100_menuitem" 
+        name="Plan de Auditorías"
+        action="leulit_20240320_1123_action" 
+        parent="leulit_20240729_1059_menuitem" 
+        sequence="10" 
+        groups="mgmtsystem.group_mgmtsystem_manager,mgmtsystem.group_mgmtsystem_auditor"
+    />
+    <menuitem 
+        id="leulit_20240611_1229_menuitem" 
+        name="Items de Verificación de Auditorías"
+        action="mgmtsystem_audit.open_mgmtsystem_verification_line_list" 
+        parent="leulit_20240729_1059_menuitem" 
+        sequence="20" 
+        groups="mgmtsystem.group_mgmtsystem_manager,mgmtsystem.group_mgmtsystem_auditor"
+    />
+    <menuitem 
+        id="leulit_20240827_0856_menuitem" 
+        name="Procedimientos de Preguntas de Auditoría"
+        action="leulit_20240827_0856_action" 
+        parent="leulit_20240729_1059_menuitem" 
+        sequence="30" 
+        groups="mgmtsystem.group_mgmtsystem_manager,mgmtsystem.group_mgmtsystem_auditor"
+    />
+    <menuitem 
+        id="leulit_20240320_1144_menuitem"
+        name="Preguntas de Auditoría"
+        action="leulit_20240320_1144_action"
+        parent="leulit_20240729_1059_menuitem"
+        sequence="40" 
+        groups="mgmtsystem.group_mgmtsystem_manager,mgmtsystem.group_mgmtsystem_auditor"
+    />
+
+</odoo>

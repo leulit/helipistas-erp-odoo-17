@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="leulit_202306071553_form" model="ir.ui.view">
+            <field name="name">leulit_202306071553_form</field>
+            <field name="model">wizard_create_claim_from_vuelo</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Crear Ocurrencia">
+                    <h3>Para firmar este parte se ha creado una ocurrencia, una vez descrito por qué se debe pasar las horas máximas del día de la actividad aérea, podrás firmar el parte de vuelo. En caso de no querer acabar de cerrar el parte, clicar en el botón, descartar.</h3>
+                    <field name="descripcion"/>
+                    <footer>
+                        <button name="guardar_ocurrencia_from_vuelo" string="Guardar" type="object" class="oe_highlight"/>
+                        <button name="descartar_ocurrencia_from_vuelo" string="Descartar" type="object" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

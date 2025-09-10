@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hlp_202011091850_view">
+            <field name="name">Botón firmar wizard alumno teóricas</field>
+            <field name="model">leulit.wizard_report_teoricas_curso</field>
+            <field name="inherit_id" ref="leulit_escuela.leulit_20211013_1155_form" />
+            <field name="arch" type="xml">
+                <button name="imprimir" position="after">
+                    <button name="firmar" type="object" string="Firmar"  class="oe_highlight"/>
+                </button>                
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hlp_202011091625_view">
+            <field name="name">Botón firmar wizard alumno prácticas</field>
+            <field name="model">leulit.wizard_report_practicas_curso</field>
+            <field name="inherit_id" ref="leulit_escuela.leulit_20211012_1347_form" />
+            <field name="arch" type="xml">
+                <button name="imprimir" position="after">
+                    <button name="firmar" type="object" string="Firmar" class="oe_highlight"/>
+                </button>                
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hlp_202011101800_view">
+            <field name="name">Botón firmar curso perfil formacion</field>
+            <field name="model">leulit.perfil_formacion_curso</field>
+            <field name="inherit_id" ref="leulit_escuela.leulit_20201106_1607_form" />
+            <field name="arch" type="xml">
+                <button name="informe_general_cursos_alu_ld" position="before">                    
+                    <button name="firmar_informe_general_cursos_alu_ld" type="object"  class="oe_highlight" string="Firmar"/>                                
+                </button>                
+            </field>
+        </record>        
+
+    </data>
+</openerp>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>        	
+        <menuitem
+            id="hlp_202010051815_menu"
+            name="Público"
+            parent="leulit.leulit_20200818_1028_menuitem"
+            sequence="150"
+            groups="RE_base"
+        />  
+            <menuitem
+                id="hlp_202010051820_menu"
+                name="Verificar CSV / CID"
+                sequence="1"
+                parent="hlp_202010051815_menu"
+                action="hlp_202010061535_action"            
+                groups="RE_base"    
+            />
+    </data>
+</openerp>

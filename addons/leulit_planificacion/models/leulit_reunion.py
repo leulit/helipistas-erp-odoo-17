@@ -185,7 +185,6 @@ class WizardReunionCreateTask(models.TransientModel):
     project_id = fields.Many2one("project.project", "Project")
     date_deadline = fields.Date("Deadline")
     user_id = fields.Many2one("res.users", "Assigned to",default=lambda self: self.env.user)
-    claim_id = fields.Many2one("mgmtsystem.claim", "Ocurrencia")
     company_id = fields.Many2one("res.company", "Compañía")
     partner_id = fields.Many2one("res.partner", "Cliente")
 
@@ -195,7 +194,6 @@ class WizardReunionCreateTask(models.TransientModel):
             "project_id": self.project_id.id or False,
             "date_deadline": self.date_deadline or False,
             "user_id": self.user_id.id or False,
-            "claim_id": self.claim_id.id,
             "company_id": self.company_id.id,
             "partner_id": self.partner_id.id,
         })

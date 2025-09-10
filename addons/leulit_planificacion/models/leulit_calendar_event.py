@@ -381,10 +381,10 @@ class leulit_calendar_event(models.Model):
     historic_lines = fields.One2many(compute=_get_historic_lines, comodel_name='auditlog.log', string='Lineas historico', readonly=True)
 
 
-    @api.model
-    def fields_get(self, fields=None, attributes=None):
-        hide = ['cancelado_date','start_date','stop_date','tipo']
-        res = super(leulit_calendar_event, self).fields_get()
-        for field in hide:
-            res[field]['searchable'] = False
-        return res
+    # @api.model
+    # def fields_get(self, fields=None, attributes=None):
+    #     hide = ['cancelado_date','start_date','stop_date','tipo']
+    #     res = super(leulit_calendar_event, self).fields_get()
+    #     for field in hide:
+    #         res[field]['searchable'] = False
+    #     return res

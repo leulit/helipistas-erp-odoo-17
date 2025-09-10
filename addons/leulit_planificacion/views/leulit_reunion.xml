@@ -167,7 +167,6 @@
                         <group>
                             <field name="project_id"/>
                             <field name="user_id" required="1" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                            <field name="claim_id" invisible="1"/>
                             <field name="company_id" invisible="1"/>
                             <field name="partner_id" invisible="1"/>
                         </group>

@@ -1,0 +1,71 @@
+<odoo>
+    <data>
+
+        <record id="leulit_20240320_1144_search" model="ir.ui.view">
+            <field name="name">leulit_20240320_1144_search</field>
+            <field name="model">leulit.audit_question</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Pregunta de Auditoría">
+                    <field name="name" string="Nombre" filter_domain="[('name','ilike',self)]"/>
+                    <field name="norma" string="Norma" filter_domain="[('norma','ilike',self)]"/>
+                    <field name="procedure_id" string="Procedimiento" filter_domain="[('procedure_id','ilike',self)]"/>
+                    <filter string="Borrador" domain="[('estado','=','borrador')]" name="estado_borrador"/>
+                    <filter string="En Vigor" domain="[('estado','=','en_vigor')]" name="estado_en_vigor"/>
+                    <filter string="Cancelado" domain="[('estado','=','cancelado')]" name="estado_cancelado"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="leulit_20240320_1144_tree" model="ir.ui.view">
+            <field name="name">leulit_20240320_1144_tree</field>
+            <field name="model">leulit.audit_question</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="estado=='cancelado'"  decoration-success="estado=='en_vigor'">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="norma"/>
+                    <field name="procedure_id"/>
+                    <field name="recurrencia"/>
+                    <field name="area_ids" widget="many2many_tags"/>
+                    <field name="estado"/>
+                    <field name="semaforo" widget="semaforo_char" string=" "/>
+                </tree>
+            </field>
+        </record>
+    
+        <record id="leulit_20240320_1144_form" model="ir.ui.view">
+            <field name="name">leulit_20240320_1144_form</field>
+            <field name="model">leulit.audit_question</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="estado" widget="statusbar" clickable="1"/>
+                    </header>
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <field name="editable" invisible="1"/>
+                        <span  invisible="((editable))" >
+                            <b>*Esta pregunta está en modo de solo lectura porque ya está en una auditoría. Si se quiere editar la pregunta se debe duplicar. Tener en cuenta que sí se duplica se debería de poner la pregunta actual en estado cancelado, para no tener duplicidad.</b>
+                        </span>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="name"  readonly="((not editable) and (id))"  widget="text"/>
+                            <field name="norma"  readonly="((not editable) and (id))" />
+                            <field name="procedure_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((not editable) and (id))" />
+                            <field name="recurrencia"  readonly="((not editable) and (id))" />
+                            <field name="area_ids" widget="many2many_tags"  readonly="((not editable) and (id))" />
+                            <field name="notas"  readonly="((not editable) and (id))" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20240320_1144_action" model="ir.actions.act_window">
+            <field name="name">Preguntas de Auditoría</field>
+            <field name="res_model">leulit.audit_question</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    
+    </data>
+</odoo>

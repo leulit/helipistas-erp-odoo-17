@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="leulit_200511_1627_imprimir_anomalia"
+            string="Anomalía"
+            model="leulit.anomalia"
+            report_type="qweb-pdf"
+            file="leulit_seguridad.leulit_2022201900_informe"
+            name="leulit_seguridad.leulit_2022201900_informe"
+            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
+            print_report_name="(object._get_report_base_filename())"
+        />        
+
+
+        <template id="anomalia_report_css">
+            <style>
+                .footer {
+                    position:absolute;
+                    bottom:-350px
+                }
+
+                .page {
+                    background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    position: relative;
+                }
+                .noborde {
+                    border:0 solid #ffffff;
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                }
+
+                table.estructura {
+                    width:100%
+                }
+
+                table.anomalia {
+                    border:thin solid #E3E4EA;
+                    text-align:center;
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                }
+
+                
+
+                table.anomalia th, table.anomalia tbody td, table.anomalia tfoot td {
+                    border: 1px solid #E3E4EA;
+                    padding-right:3px;
+                    padding-left:3px;
+                    text-align:center;
+                    font-size:10px;
+                }
+
+                .campo1{
+                    font-weight: bold;
+                    font-size: 13px;
+                }
+
+                .campo2{
+                    font-weight: bold;
+                    font-size: 10px;
+                }
+
+
+                .anomalia_tabla{
+                    margin-top: 5px;
+                }
+
+                #textos td{
+                    width: 50%;
+                    padding: 10px;
+                    padding-bottom: 0px;
+                    vertical-align:top;
+                    text-align: left;
+                    border: 1px solid white;
+                }
+
+                #textos td p{
+                    font-size: 10px;
+                }
+
+                #codigo {
+                    height: 25px;
+                }
+                #codigo td{
+                    padding: 10px;
+                    vertical-align:middle;
+                    text-align: left;
+                    border-top: 1px solid white;
+                    border-left: 1px solid white;
+                    border-right: 1px solid white;
+                    border-bottom: 1px solid #E3E4EA;
+                }
+
+                #codigo td p{
+                    font-size: 13px;
+                }
+
+                #datos_fila_1{
+                    height: 45px;
+                }
+
+                #datos_fila_1 td{
+                    padding: 10px;
+                    vertical-align:middle;
+                    text-align: left;
+                    border: 1px solid #E3E4EA;
+                    width: 25%;
+                }
+
+                #datos_fila_1 td p{
+                    font-size: 10px;
+                }
+
+                #datos_fila_2{
+                    height: 200px;
+                }
+
+                #datos_fila_2 td{
+                    padding: 10px;
+                    vertical-align:top;
+                    text-align: left;
+                    border: 1px solid #E3E4EA;
+                }
+
+                #datos_fila_2 td h3{
+                    font-size: 13px;
+                    margin-bottom:2px;
+                    padding-bottom:10px;
+                }
+
+                #datos_fila_2 td p{
+                    font-size: 10px;
+                }
+
+                #datos_fila_3{
+                    height: 15px;
+                }
+
+                #datos_fila_3 td{
+                    padding: 10px;
+                    vertical-align:top;
+                    text-align: left;
+                    border: 1px solid #E3E4EA;
+                    border-bottom: 1px solid white;
+                }
+
+                #datos_fila_3 td h3{
+                    font-size: 13px;
+                }
+
+                #datos_fila_4{
+                    height: 40px;
+                    border-bottom: 1px solid #E3E4EA;
+
+                }
+
+                #datos_fila_4 td{
+                    padding: 10px;
+                    padding-top: 0px;
+                    vertical-align:top;
+                    text-align: left;
+                    border: 1px solid #E3E4EA;
+
+                }
+
+                #datos_fila_4 td h3{
+                    font-size: 13px;
+                    margin-bottom:2px;
+                }
+
+                #datos_fila_4 td p{
+                    font-size: 10px;
+                }
+
+                #datos_fila_5{
+                    height: 200px;
+                }
+
+                #datos_fila_5 td{
+                    padding: 10px;
+                    vertical-align:top;
+                    text-align: left;
+                    border: 1px solid #E3E4EA;
+                }
+
+                #datos_fila_5 td h3{
+                    padding-bottom:10px;
+                    font-size: 13px;
+                    margin-bottom:2px;
+                }
+
+                #datos_fila_5 td p{
+                    font-size: 10px;
+                }
+
+                .version_doc td{
+                    font-size: 12px;
+                    padding:5px;
+                }
+
+                #footer_text{
+                    width:80%;
+                    text-align:left;
+                    vertical-align:middle;
+                }
+
+                #footer_text p{
+                    margin-top:2px;
+                    font-size:10px;
+                    padding-left: 10px;
+                }
+
+                #footer_qr{
+                    vertical-align:middle;
+                }
+
+                .firma{
+                    text-align: right;
+                    padding-top:5px;
+                    padding-right: 20px;
+                }
+                .fullwidth {
+                    width: 100%;
+                }
+            </style>
+        </template>
+
+        <template id="leulit_2022201900_informe">
+            <t t-call="web.html_container">     
+                <div class="page">
+                    <t t-call="leulit_seguridad.anomalia_report_css"/>
+                    <div class="row">
+                        <table class="fullwidth">
+                            <tr>
+                                <th>
+                                    <table>
+                                        <tr>
+                                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
+                                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                                <i>Fecha creación documento</i><br/>
+                                                <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>
+                                            </td>
+                                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                                <t t-if="hashcode">
+                                                    <i>Firmado por:</i><br/>
+                                                    <i><span t-esc="firmado_por"/></i>
+                                                </t>
+                                            </td>
+                                            <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                                <t t-if="hashcode">
+                                                    <i>CSV/CID</i><br/>
+                                                    <span t-esc="hashcode"/>
+                                                </t>
+                                                <t t-if="not hashcode">
+                                                    <i>Referencia</i><br/>
+                                                    <span t-esc="hashcode_interno"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </th>
+                                <th>
+                                    <table align="right">
+                                        <tr>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0003</td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">3.1.0</td>
+                                        </tr>
+                                    </table>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" style="border-top: 1px solid #575757;">
+                                    <table class="fullwidth">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                                                    Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                                </td>
+                                            </tr>
+                                            <tr class="noborde">
+                                                <td class="noborde">
+                                                    <table class="anomalia_tabla anomalia fullwidth">
+                                                        <tr>
+                                                            <th style="text-align:center;vertical-align: middle" class="noborder" colspan="2">
+                                                                <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                                                            </th>
+                                                            <th class="literal theadtitle centertext" style="width:100%; font-size:17px" colspan="8">
+                                                                ANOMALIES / DEFECTS
+                                                            </th>
+                                                            <th class="literal centertext"><div style="text-transform: uppercase; font-size:17px;"><span t-esc="estado"/></div></th>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </th>
+                            </tr>
+                        </table>
+                        <table  class="estructura fullwidth noborde">
+                            <tr class="noborde">
+                                <td class="noborde">
+                                    <table class="anomalia_tabla anomalia fullwidth">
+                                        <tr id="codigo">
+                                            <td colspan="12" style="font-size:18px">
+                                                <b>CODE:</b>
+                                                <t t-if="codigo">
+                                                    <span t-esc="codigo"/>
+                                                </t>
+                                                <t t-if="not codigo">
+                                                    <span t-esc="id"/> - (ID)
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr id="datos_fila_1">
+                                            <td colspan="3">
+                                                <p><span class="campo2">Flight:</span> <span t-esc="vuelo_id"/></p>
+                                                <p><span class="campo2">Date:</span> <span t-esc="fechavuelo"/></p>
+                                            </td>
+                                            <td colspan="3">
+                                                <p><span class="campo2">Airtime:</span> <span t-esc="strairtime"/></p>
+                                                <p><span class="campo2">Helicopter:</span> <span t-esc="helicoptero_id"/></p>
+
+                                            </td>
+                                            <td colspan="3">
+                                                <p><span class="campo2">Take off:</span> <span t-esc="lugarsalida"/></p>
+                                                <p><span class="campo2">Landing:</span> <span t-esc="lugarllegada"/></p>
+                                            </td>
+                                            <td colspan="3">
+                                                <p><span class="campo2">Take off time:</span> <span t-esc="horasalida"/> </p>
+                                                <p><span class="campo2">Landing time:</span> <span t-esc="horallegada"/></p>
+                                            </td>
+                                        </tr>
+                                        <tr id="datos_fila_2">
+                                            <td colspan="6">
+                                                <h3>REPORT</h3>
+                                                <p><span class="campo2">Date:</span> <span t-esc="fecha"/></p>
+                                                <p><span class="campo2">Who:</span> <span t-esc="informado_por"/>  (<span t-esc="rol_informa"/>)</p>
+                                                <p><span class="campo2">Place:</span> <span t-esc="lugaranomalia"/></p>
+                                                <p><span class="campo2">Comment:</span> <span t-esc="discrepancia"/></p>
+                                                <p><span class="campo2">SMS Report:</span> <span t-esc="notificacion_sms"/></p>
+                                            </td>
+                                            <td colspan="6">
+                                                <h3>ACTION</h3>
+                                                <p><span class="campo2">Date: </span>
+                                                    <t t-if="estado == 'deferred' or estado == 'closed'">
+                                                        <span t-esc="fechadiferido"/>
+                                                    </t>
+                                                    <t t-if="not (estado == 'deferred' or estado == 'closed')">
+                                                        N/A
+                                                    </t>
+                                                </p>
+                                                <p><span class="campo2">Who:</span> 
+                                                    <t t-if="estado == 'deferred' or estado == 'closed'">
+                                                        <span t-esc="diferido_por"/> (<span t-esc="rol_difiere"/>)
+                                                    </t>
+                                                </p>
+                                                <p><span class="campo2">Reason:</span> 
+                                                    <t t-if="estado == 'deferred' or estado == 'closed'">
+                                                        <span t-esc="motivodiferir"/> 
+                                                    </t>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr id="datos_fila_3">
+                                            <td colspan="12">
+                                                <h3>MEL</h3>
+                                            </td>
+                                        </tr>
+                                        <tr id="datos_fila_4">
+                                            <td colspan="3" style="border-right: 1px solid white;">
+                                                <p><span class="campo2">Ref. Description:</span> <span t-esc="melref"/> </p>
+                                                <p><span class="campo2">POI / Exceptions:</span> <span t-esc="tenerencuentamel"/></p>
+                                            </td>
+                                            <td colspan="3" style="border-left: 1px solid white; border-right:1px solid white">
+                                                <p><span class="campo2">Dead date:</span> <span t-esc="fechalimite"/></p>
+                                                <p><span class="campo2">Reference:</span> <span t-esc="linemel_id"/></p>
+                                            </td>
+                                            <td colspan="3" style="border-left: 1px solid white; border-right:1px solid white">
+                                                <p><span class="campo2">Nº installed:</span> <span t-esc="numinstaladomel"/></p>
+                                                <p><span class="campo2">POM:</span> <span t-esc="pom"/></p>
+                                            </td>
+                                            <td colspan="3" style="border-left: 1px solid white;">
+                                                <p><span class="campo2">Category:</span> <span t-esc="categoria"/></p>
+                                                <p><span class="campo2">Nº expedition:</span> <span t-esc="numexpmel"/></p>
+                                            </td>
+                                        </tr>
+                                        <tr id="textos">
+                                            <td colspan="12">
+                                                <p>
+                                                    If you have mechanical issues contact with: Helipistas Operaciones or CAMO.
+                                                    Telf: 0034 937 304 911.
+                                                </p>
+                                                <br/>
+                                            </td>
+                                        </tr>
+                                        <tr id="datos_fila_5">
+                                            <td colspan="6">
+                                                <h3>CLOSE</h3>
+                                                <p><span class="campo2">Date:</span> 
+                                                    <span t-esc="fecha_accion"/>
+                                                </p>
+                                                <p><span class="campo2">Who:</span> 
+                                                    <span t-esc="cerrado_por"/> (<span t-esc="rol_close"/>)<br/><span t-esc="cerrado_por_company"/>
+                                                </p>
+                                                <p><span class="campo2">Reason:</span> 
+                                                    <span t-esc="accion"/>
+                                                </p>
+                                                <p><span class="campo2">CAS:</span> 
+                                                    <span t-esc="cas"/>
+                                                </p>
+                                                <p><span class="campo2">Comment:</span> 
+                                                    <span t-esc="comentario"/>
+                                                </p>
+                                            </td>
+                                            <td colspan="6">
+                                                <h3>CRS</h3>
+                                                <p><span class="campo2">Date:</span> 
+                                                    <span t-esc="fecha_crs"/>
+                                                </p>
+                                                <p><span class="campo2">Who:</span> <span t-esc="crs_por"/></p>
+                                                <p><span class="campo2">Place:</span> <span t-esc="lugar_crs"/></p>
+                                                <p><span class="campo2">Comment:</span> <span t-esc="comentario_crs"/></p>
+                                            </td>
+                                        </tr>
+                                        <tr id="textos">
+                                            <td colspan="12">
+                                                <p>
+                                                    Certifies that the work specified except as otherwise specified was carried out in
+                                                    accordance with Part 145 and in respect to that work the aircraft is considered ready
+                                                    for Release to Service.
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

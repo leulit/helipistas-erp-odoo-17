@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="leulit_20231116_1104_form" model="ir.ui.view">
+        <field name="name">Documentos firmados crs</field>
+        <field name="model">leulit.maintenance_crs</field>
+        <field name="inherit_id" ref="leulit_taller.leulit_20230623_1633_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='last_info_crs']" position="after">
+                <notebook colspan="4" >
+                    <page string="Documentos firmados">
+                        <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                            <tree>
+                                <field name="id"/>
+                                <field name="firmado_por" string="Por"/>
+                                <field name="name" />
+                                <field name="hashcode" /> 
+                                <field name="attachment_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

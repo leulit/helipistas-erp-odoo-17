@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+
+        <record id="leulit_20240827_0856_tree" model="ir.ui.view">
+            <field name="name">leulit_20240827_0856_tree</field>
+            <field name="model">leulit.procedure_audit_question</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    
+        <record id="leulit_20240827_0856_form" model="ir.ui.view">
+            <field name="name">leulit_20240827_0856_form</field>
+            <field name="model">leulit.procedure_audit_question</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <separator string="Procedimiento"/>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <separator string="Preguntas de Auditoría"/>
+                        <field name="questions_ids" nolabel="1" readonly="1">
+                            <tree decoration-danger="estado=='cancelado'"  decoration-success="estado=='en_vigor'">
+                                <field name="name" widget="text"/>
+                                <field name="norma" widget="text"/>
+                                <field name="notas" widget="text"/>
+                                <field name="estado" invisible="1"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20240827_0856_action" model="ir.actions.act_window">
+            <field name="name">Procedimientos de Preguntas de Auditoría</field>
+            <field name="res_model">leulit.procedure_audit_question</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    
+    </data>
+</odoo>

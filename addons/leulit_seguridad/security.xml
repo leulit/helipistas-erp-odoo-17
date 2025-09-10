@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="leulit_20201026_0823_access_permission" model="ir.model.access">
+        <field name="name">Anomalias</field>
+        <field name="model_id" ref="model_leulit_anomalia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20230704_1744_access_permission" model="ir.model.access">
+        <field name="name">leulit_wizard_asign_anomalia</field>
+        <field name="model_id" ref="model_leulit_wizard_asign_anomalia"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20231006_1206_access_permission" model="ir.model.access">
+        <field name="name">leulit_anomalia_scripts</field>
+        <field name="model_id" ref="model_leulit_anomalia_scripts"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240320_1131_access_permission" model="ir.model.access">
+        <field name="name">leulit_audit_question</field>
+        <field name="model_id" ref="model_leulit_audit_question"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240827_0856_access_permission" model="ir.model.access">
+        <field name="name">leulit_procedure_audit_question</field>
+        <field name="model_id" ref="model_leulit_procedure_audit_question"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20240408_1206_access_permission" model="ir.model.access">
+        <field name="name">leulit_list_questions</field>
+        <field name="model_id" ref="model_leulit_list_questions"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+</odoo>

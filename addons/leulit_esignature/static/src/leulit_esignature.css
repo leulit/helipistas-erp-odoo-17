@@ -1,0 +1,9 @@
+.text_aviso_pendiente_firma {
+    color: #FF0000;
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+.otp_aviso_pendiente_firma {
+    font-weight: bolder;
+}

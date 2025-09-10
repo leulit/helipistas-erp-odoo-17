@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data> 
+        <!-- Vista Nueva (Parte vuelo views branch) -->
+        <record id="leulit_20231031_1027_form" model="ir.ui.view">
+            <field name="name">leulit_20231031_1027_form</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20230906_1505_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='block_1']" position="after">
+                    <group col="1"  invisible="((diferido_ids in []))" >
+                        <separator string="Anomalías/Discrepancias"/>
+                        <field name="diferido_ids" colspan="4" nolabel="1"
+                             invisible="((diferido_ids in []))" 
+                            context="{'default_vuelo_id' : id, 'default_helicoptero_id': helicoptero_id, 'flags': {'form': {'action_buttons': True}}, 'view_type': 'form','target':'current'}"
+                            options="{'create':false}">
+                            <tree delete="false" create="false" edit="true">
+                                <field name="codigo"/>
+                                <field name="discrepancia" />
+                                <field name="estado" />
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+         <!-- Vista Nueva resumen -->
+        <record id="leulit_20231031_1027_form_vista_resumen" model="ir.ui.view">
+            <field name="name">leulit_20231031_1027_form_vista_resumen</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20240313_1513_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='block_1']" position="after">
+                    <group col="1"  invisible="((diferido_ids in []))" >
+                        <separator string="Anomalías/Discrepancias"/>
+                        <field name="diferido_ids" colspan="4" nolabel="1"
+                             invisible="((diferido_ids in []))" 
+                            context="{'default_vuelo_id' : id, 'default_helicoptero_id': helicoptero_id, 'flags': {'form': {'action_buttons': True}}, 'view_type': 'form','target':'current'}"
+                            options="{'create':false}">
+                            <tree delete="false" create="false" edit="true">
+                                <field name="codigo"/>
+                                <field name="discrepancia" />
+                                <field name="estado" />
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

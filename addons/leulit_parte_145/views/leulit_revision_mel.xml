@@ -1,0 +1,38 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="leulit_20201123_0935_tree">
+            <field name="name">leulit_20201123_0935_tree</field>
+            <field name="model">leulit.revision_mel</field>
+            <field name="arch" type="xml">
+                <tree string="MEls">
+                    <field name="tipo_helicoptero"/>
+                    <field name="name"/>
+                    <field name="fecha" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="leulit_20201123_0935_form">
+            <field name="name">leulit_20201123_0935_form</field>
+            <field name="model">leulit.revision_mel</field>
+            <field name="arch" type="xml">
+                <form string="MEL">
+                    <sheet>
+                        <group col="2">
+                            <field name="tipo_helicoptero"/>
+                            <field name="name"/>
+                            <field name="fecha" />
+                        </group>
+                    </sheet>                 
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="leulit_20201123_0935_action">
+            <field name="name">Estado Actual Revisiones Mel</field>
+            <field name="res_model">leulit.revision_mel</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

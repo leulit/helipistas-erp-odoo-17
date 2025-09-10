@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>     
+
+
+        <record model="ir.ui.view" id="leulit_20220103_0915_tree">
+            <field name="name">leulit_20220103_0915_tree</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20201021_1648_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='revisar']" position="before">
+                    <field name="semaforo_firma" widget="semaforo_char" optional="show"/>
+                </xpath>
+            </field>
+        </record> 
+
+        
+        <!-- <record id="hlp_202011021140_form" model="ir.ui.view">
+            <field name="name">Documentos firmados vuelo</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20200618_1105_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='wkf_act_cerrado']" position="attributes">
+                    <attribute name="attrs">{'invisible':True}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='wkf_act_postvuelo']" position="attributes">
+                    <attribute name="attrs">{'invisible':True}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='wizard_pre_cancelar']" position="before">
+                    <button name="firmar_doc_parte_vuelo" type="object" string="Firmar" attrs="{'invisible': [('can_sign','=',False)]}" class="oe_right oe_highlight oe_edit_only"/>
+                    <field name="can_sign" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@name='Comentarios']" position="after">
+                    <page string="Documentos firmados">
+                        <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                            <tree>
+                                <field name="firmado_por" string="Por"/>
+                                <field name="referencia" />
+                                <field name="attachment_id" filename="name_attach" string="Doc."/>
+                                <field name="name_attach" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <div id="hackcontainer" style="display:none">
+                        <table>
+                            <tr>
+                                <td>Estado:</td>
+                                <td><input type="text" id="strestado"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id persona:</td>
+                                <td><input type="text" id="idpersona"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id documento:</td>
+                                <td><input type="text" id="iddocumento"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><a href="#" id="hackbutton">Enviar</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </xpath>
+            </field>
+        </record> -->
+
+        <!-- nueva vista -->
+
+        <record id="hlp_202011021140_form_nueva_vista" model="ir.ui.view">
+            <field name="name">Documentos firmados vuelo</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20230906_1505_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='wkf_act_cerrado']" position="attributes">
+                    <attribute name="attrs">{'invisible':True}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='wkf_act_postvuelo']" position="attributes">
+                    <attribute name="attrs">{'invisible':True}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='wizard_pre_cancelar']" position="before">
+                <!-- Botón para dispositivos móviles -->
+                    <button name="firmar_doc_parte_vuelo"
+                        type="object" 
+                        string="Firmar" 
+                        class="oe_right px-4 my-1 btn-dark d-block d-sm-none" 
+                        attrs="{'invisible': [('can_sign','=',False)]}"
+                    />
+                <!-- Botón para dispositivos de escritorio -->
+                    <button name="firmar_doc_parte_vuelo"
+                        type="object" 
+                        string="Firmar" 
+                        class="oe_right px-4 my-1 btn-dark oe_edit_only d-none d-sm-block" 
+                        attrs="{'invisible': [('can_sign','=',False)]}"
+                    />
+                    <field name="can_sign" invisible="1"/>
+                </xpath>
+                <xpath expr="//div[@name='fin de pag']" position="before">
+                    <div class="card my-2">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex">
+                                <separator string="Documentos Firmados"></separator>
+                                <span 
+                                    data-toggle="collapse" 
+                                    href="#esignature_docs" 
+                                    role="button" 
+                                    aria-expanded="false" 
+                                    aria-controls="esignature_docs" 
+                                    class=" d-flex align-items-center p-2 text-primary fa fa-plus-circle fa-lg"
+                                />
+                            </div>
+                            <div class="collapse" style="color: #17a2b8;" colspan="4" id="esignature_docs">
+                                <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                                    <tree>
+                                        <field name="firmado_por" string="Por"/>
+                                        <field name="referencia" />
+                                        <field name="attachment_id" filename="name_attach" string="Doc."/>
+                                        <field name="name_attach" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                    <!--widget type="hack_signature"/-->
+                    <div id="hackcontainer" style="display:none">
+                        <table>
+                            <tr>
+                                <td>Estado:</td>
+                                <td><input type="text" id="strestado"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id persona:</td>
+                                <td><input type="text" id="idpersona"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id documento:</td>
+                                <td><input type="text" id="iddocumento"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><a href="#" id="hackbutton">Enviar</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hlp_202011021140_form_nueva_vista_resumen" model="ir.ui.view">
+            <field name="name">Documentos firmados vuelo</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="inherit_id" ref="leulit_operaciones.leulit_20240313_1513_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='fin de pag']" position="before">
+                    <div class="card my-2">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex">
+                                <separator string="Documentos Firmados"></separator>
+                                <span 
+                                    data-toggle="collapse" 
+                                    href="#esignature_docs" 
+                                    role="button" 
+                                    aria-expanded="false" 
+                                    aria-controls="esignature_docs" 
+                                    class=" d-flex align-items-center p-2 text-primary fa fa-plus-circle fa-lg"
+                                />
+                            </div>
+                            <div class="collapse" style="color: #17a2b8;" colspan="4" id="esignature_docs">
+                                <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                                    <tree>
+                                        <field name="firmado_por" string="Por"/>
+                                        <field name="referencia" />
+                                        <field name="attachment_id" filename="name_attach" string="Doc."/>
+                                        <field name="name_attach" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

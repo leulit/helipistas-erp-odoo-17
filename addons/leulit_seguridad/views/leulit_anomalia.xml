@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20201026_0823_tree">
+            <field name="name">leulit_20201026_0823_tree</field>
+            <field name="model">leulit.anomalia</field>
+            <field name="arch" type="xml">
+                <tree string="Anomalías">
+                    <field name="baja_helicoptero" invisible="1"/>
+                    <field name="codigo" />
+                    <field name="estado" invisible="1"/>
+                    <field name="vuelo_id" />
+                    <field name="discrepancia" />
+                    <field name="accion" />
+                    <field name="fecha" />
+                    <field name="fechalimite" string="Fecha límite" invisible="1"/>
+                    <field name="cas" />
+                    <field name="helicoptero_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20201026_0823_form">
+            <field name="name">leulit_20201026_0823_form</field>
+            <field name="model">leulit.anomalia</field>
+            <field name="arch" type="xml">
+                <form string="Registro anomalía">
+                    <header>
+                        <field name="estado" widget="statusbar" class="oe_right"/>
+                        <button name="wizard_pending" type="object" string="En Pendiente"  invisible="((estado not in ['edicion']))"  class="oe_right oe_highlight"/>
+                        <button name="wizard_diferir" type="object" string="Diferir"  invisible="((estado in ['deferred', 'closed', 'flightcanceled']))"  class="oe_right oe_highlight"/>
+                        <button name="wizard_cerrar" type="object" string="Cerrar"  invisible="((estado in ['closed']))"  class="oe_right oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
+                            <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
+                        </group>
+                        <div>
+                            <group col="2">
+                                <field name="codigo" string="Code"/>
+                            </group>
+                            <group col="3">
+                                <div>
+                                    <group col="2">
+                                        <field name="vuelo_id" string="Flight"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="fechavuelo" string="Date" readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="maintenance_request_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                    </group>
+                                </div>
+                                <div>
+                                    <group col="2">
+                                        <field name="lugarsalida" string="Take off" readonly="1" />
+                                        <field name="lugarllegada" string="Landing" readonly="1" />
+                                        <field name="horasalida" string="Take off time" readonly="1" widget="float_time"/>
+                                        <field name="horallegada" string="Landing time" readonly="1" widget="float_time"/>
+                                    </group>
+                                </div>
+                                <div>
+                                    <group col="2">
+                                        <field name="oilqty" string="Oil added" readonly="1" />
+                                        <field name="fuelqty" string="Fuel added" readonly="1" />
+                                        <field name="consumomedio_vuelo" string="Avg fuel consumption" readonly="1" />
+                                        <field name="fuelsalida_kg" string="Fuel on landing" readonly="1"/>
+                                    </group>
+                                </div>
+                            </group>
+                        </div>
+                        <div>
+                            <h3>Report</h3>
+                            <group col="2">
+                                <field name="fecha" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <div colspan="2">
+                                    <group col="5">
+                                        <field name="informado_por" string="Who"/>
+                                        <p>(</p>
+                                        <field name="rol_informa" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <p>)</p>
+                                    </group>
+                                </div>
+                                <field name="lugaranomalia" string="Place"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="discrepancia" string="Comment"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="notificacion_sms" string="SMS Report" />
+                            </group>
+                        </div>
+                        <div>
+                            <h3>Action</h3>
+                            <group col="2">
+                                <field name="fechadiferido" string="Date"/>
+                                <field name="date_deferred" invisible="1"/>
+                                <field name="days_deferred" invisible="1"/>
+                                <div colspan="2">
+                                    <group col="5">
+                                        <field name="diferido_por" string="Who"/>
+                                        <p>(</p>
+                                        <field name="rol_difiere" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <p>)</p>
+                                    </group>
+                                </div>
+                                <field name="motivodiferir" string="Reason"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                            </group>
+                        </div>
+                        <div>
+                            <h3>Mel</h3>
+                            <group col="3">
+                                <div>
+                                    <group col="2">
+                                        <field name="melref" domain="[('helicoptero_ids','in',[helicoptero_id])]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                        <field name="tenerencuentamel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="fechalimite"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                    </group>
+                                </div>
+                                <div>
+                                    <group col="2">
+                                        <field name="linemel_id" domain="[('mel_id','=',melref)]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                        <field name="numinstaladomel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="pom"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                    </group>
+                                </div>
+                                <div>
+                                    <group col="2">
+                                        <field name="categoria"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="numexpmel" />
+                                    </group>
+                                </div>
+                            </group>
+                        </div>
+                        <div>
+                            <group col="2">
+                                <div>
+                                    <h3>Close</h3>
+                                    <group col="2">
+                                        <field name="fecha_accion" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="date_closed" invisible="1"/>
+                                        <field name="days_close" invisible="1"/>
+                                        <div colspan="2">
+                                            <group col="5">
+                                                <field name="cerrado_por" string="Who"/>
+                                                <p>(</p>
+                                                <field name="rol_close" nolabel="1"  readonly="((estado in ['closed']))" />
+                                                <p>)</p>
+                                            </group>
+                                        </div>
+                                        <field name="cerrado_por_company" string="Company" />
+                                        <field name="accion" string="Reason"  readonly="((estado in ['closed']))" />
+                                        <field name="cas" string="CAS"  readonly="((estado in ['closed']))" />
+                                        <field name="comentario" string="Comment"  readonly="((estado in ['closed']))" />
+                                    </group>
+                                </div>
+                                <div>
+                                    <h3>CRS</h3>
+                                    <group col="2">
+                                        <field name="fecha_crs" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                        <field name="crs_por" string="Who"/>
+                                        <field name="lugar_crs" string="Place"  readonly="((estado in ['closed']))" />
+                                        <field name="comentario_crs" string="Comment"  readonly="((estado in ['closed']))" />
+                                    </group>
+                                </div>
+                            </group>
+                        </div>
+                        <div id="materials_anomalia">
+                            <h3>Materials</h3>
+                            <field name="domain_materiales" invisible="1"/>
+                            <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="production_lot"/>
+                                </tree>
+                            </field>
+                        </div>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- action con anomalias sin estado edicion -->
+        <record model="ir.actions.act_window" id="leulit_20201026_0823_action">
+            <field name="name">Registro de anomalías y defectos</field>
+            <field name="res_model">leulit.anomalia</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('baja_helicoptero', '=', False),('estado','!=','edicion')]</field>
+        </record>
+        <!-- action solo anomalias con estado edicion -->
+        <record model="ir.actions.act_window" id="leulit_20250730_1513_action">
+            <field name="name">Registros en Edición</field>
+            <field name="res_model">leulit.anomalia</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('estado', '=', 'edicion')]</field>
+        </record>
+
+
+        <record id="leulit_anomalia_mail_camo_estado" model="mail.template">
+            <field name="name">Helipistas mail informa estado anomalía CAMO</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">${ctx.get('mail_to')}</field>
+            <field name="model_id" ref="model_leulit_anomalia" />
+            <field name="auto_delete" eval="True" />
+            <field name="subject">${ctx.get('subject')}</field>
+            <field name="body_html"><![CDATA[
+                <table>
+                <tr>
+                    <td>
+                        Código:
+                    </td>
+                    <td>
+                        ${object.codigo}
+                     </td>
+                </tr>
+                <tr>
+                    <td>
+                        Estado:
+                    </td>
+                    <td>
+                        ${object.estado}
+                     </td>
+                </tr>
+                <tr>
+                    <td>
+                        Vuelo:
+                    </td>
+                    <td>
+                        ${object.vuelo_id.codigo}
+                     </td>
+                </tr>
+                <tr>
+                    <td>
+                        Máquina:
+                    </td>
+                    <td>
+                        ${object.helicoptero_id.name}
+                     </td>
+                </tr>
+                <tr>
+                    <td>
+                        Discrepancia/anomalía:
+                    </td>
+                    <td>
+                        ${object.discrepancia}<br/>
+                     </td>
+                </tr>
+                % if object.motivodiferir:
+                <tr>
+                    <td>
+                        Acción considerada:
+                    </td>
+                    <td>
+                        ${object.motivodiferir}
+                    </td>
+                </tr>
+                % endif
+                % if object.accion:
+                <tr>
+                    <td>
+                        Acción tomada:
+                    </td>
+                    <td>
+                        ${object.accion}
+                    </td>
+                </tr>
+                % endif
+                </table>
+            ]]>
+            </field>
+        </record>
+
+    </data>
+</odoo>

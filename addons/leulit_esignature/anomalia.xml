@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="leulit_202009111150_tree" model="ir.ui.view">
+            <field name="name">Árbol anomalías</field>
+            <field name="model">leulit.anomalia</field>
+            <field name="inherit_id" ref="leulit_seguridad.leulit_20201026_0823_tree" />
+            <field name="arch" type="xml">
+                <field name="codigo" position="before">
+                    <field name="semaforo_firma" string="Firma" widget="semaforo_char"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="leulit_202007051023_form" model="ir.ui.view">
+            <field name="name">Documentos firmados anomalías</field>
+            <field name="model">leulit.anomalia</field>
+            <field name="inherit_id" ref="leulit_seguridad.leulit_20201026_0823_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="after">
+                    <field name="id" invisible="1"/>
+                    <field name="check_firmado" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='wizard_cerrar']" position="attributes">
+                    <attribute name="invisible">('estado','in',['closed']),('check_firmado', '=', True)</attribute>
+                </xpath>
+                <xpath expr="//button[@name='wizard_diferir']" position="attributes">
+                    <attribute name="invisible">('estado','in',['deferred','closed','flightcanceled']),('check_firmado', '=', True)</attribute>
+                </xpath>
+                <xpath expr="//div[@id='materials_anomalia']" position="after">
+                    <notebook colspan="4" >
+                        <page string="Documentos firmados">
+                            <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                                <tree>
+                                    <field name="id"/>
+                                    <field name="firmado_por" string="Por"/>
+                                    <field name="name" />
+                                    <field name="hashcode" /> 
+                                    <field name="attachment_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <div id="hackcontainer" style="display:none">
+                        <table>
+                            <tr>
+                                <td>Estado:</td>
+                                <td><input type="text" id="strestado"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id persona:</td>
+                                <td><input type="text" id="idpersona"/></td>
+                            </tr>
+                            <tr>
+                                <td>Id documento:</td>
+                                <td><input type="text" id="iddocumento"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><a href="#" id="hackbutton">Enviar</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>
