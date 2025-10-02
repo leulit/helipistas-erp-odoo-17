@@ -324,8 +324,8 @@ class ProjectTask(models.Model):
 
 
     def set_into_workorder(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20240417_1418_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20240417_1418_form',raise_if_not_found=False)
         context = {
             'default_task': self.id,
             }
@@ -335,7 +335,7 @@ class ProjectTask(models.Model):
             'name': 'Añadir Tarea a Orden de Trabajo',
             'res_model': 'leulit.wizard_ad_task_to_wo',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context': context,
         }
@@ -373,17 +373,16 @@ class ProjectTask(models.Model):
         return action
 
 
-
     def open_tarea_editable(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
             'name': 'Tarea',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': self.id,
             'target': 'current',
         }

@@ -52,15 +52,15 @@ class StockLot(models.Model):
         return new_pieza
     
     def add_datos_pieza(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_almacen', 'leulit_20221121_1017_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_almacen.leulit_20221121_1017_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Añadir + datos',
            'res_model'      : 'stock.lot',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'res_id'         : self.id,
             'flags'         : {'form': {'action_buttons': True}}
@@ -78,15 +78,15 @@ class StockLot(models.Model):
 
 
     def add_docs_stock_production_lot(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_almacen', 'leulit_20221215_1146_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_almacen.leulit_20221215_1146_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Añadir Documento',
            'res_model'      : 'stock.lot',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'res_id'         : self.id,
             'flags'         : {'form': {'action_buttons': True}}
@@ -98,15 +98,15 @@ class StockLot(models.Model):
 
 
     def open_stock_production_lot(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('stock', 'view_production_lot_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('stock.view_production_lot_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Pieza',
            'res_model'      : 'stock.lot',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'res_id'         : self.id,
         }
 
@@ -398,8 +398,8 @@ class StockLot(models.Model):
 
 
     def create_form_one(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230706_1118_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20230706_1118_form',raise_if_not_found=False)
 
         context = {
             'pieza': self.id,
@@ -412,7 +412,7 @@ class StockLot(models.Model):
             'name': 'Form One',
             'res_model': 'leulit.maintenance_form_one',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }

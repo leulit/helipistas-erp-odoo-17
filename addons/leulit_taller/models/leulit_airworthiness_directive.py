@@ -78,8 +78,8 @@ class LeulitAirworthinessDirective(models.Model):
 
     def action_create_task_maintenance(self):
         tags = self.env['project.tags'].search([('name', '=', 'Tareas de mantenimiento')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
 
         project_id = int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
         context={
@@ -93,7 +93,7 @@ class LeulitAirworthinessDirective(models.Model):
             'name': 'Tarea Mantenimiento',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
@@ -101,8 +101,8 @@ class LeulitAirworthinessDirective(models.Model):
 
     def action_create_task(self):
         tags = self.env['project.tags'].search([('name', '=', 'Tareas usuarios')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
 
         company = self.env['res.company'].search([('name','=','Helipistas S.L.')])
         project = self.env['project.project'].search([('name','=','Internal'),('company_id','=',company.id)])
@@ -116,7 +116,7 @@ class LeulitAirworthinessDirective(models.Model):
             'name': 'Tarea Mantenimiento',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }

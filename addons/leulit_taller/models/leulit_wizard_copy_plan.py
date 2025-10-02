@@ -13,6 +13,7 @@ class leulit_wizard_copy_plan(models.TransientModel):
     _description    = "leulit_wizard_copy_plan"
 
     def copy_for_new_helicopter(self):
+        self.ensure_one()
         new_plan = self.maintenance_plan_id.copy()
         new_plan.equipment_id = self.equipment_id.id
         new_plan.parent_id = False
@@ -33,14 +34,13 @@ class leulit_wizard_copy_plan(models.TransientModel):
             planned_act.job_card_id = new_job_card.id
 
 
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20231020_1300_form')
-        view_id = view_ref and view_ref[1] or False
+        view = self.env.ref('leulit_taller.leulit_20231020_1300_form',raise_if_not_found=False)
         return {
             'type': 'ir.actions.act_window',
             'name': 'Plan de Mantenimiento',
             'res_model': 'maintenance.plan',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': new_plan.id,
             'target': 'current',
         }

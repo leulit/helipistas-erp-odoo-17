@@ -224,8 +224,8 @@ class MaintenanceRequest(models.Model):
 
 
     def action_create_boroscopia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20240212_1600_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20240212_1600_form',raise_if_not_found=False)
         
         mecanico = self.env['leulit.mecanico'].search([('partner_id','=',self.env.user.partner_id.id),('active','=',True)])
         
@@ -240,15 +240,15 @@ class MaintenanceRequest(models.Model):
             'name': 'Boroscopia',
             'res_model': 'leulit.maintenance_boroscopia',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
 
 
     def action_create_form_one(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230706_1118_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20230706_1118_form',raise_if_not_found=False)
         
         mecanico = self.env['leulit.mecanico'].search([('partner_id','=',self.env.user.partner_id.id),('active','=',True)])
         form_one_today = self.env['leulit.maintenance_form_one'].search([('fecha','=',datetime.now().date())])
@@ -269,16 +269,16 @@ class MaintenanceRequest(models.Model):
             'name': 'Form One',
             'res_model': 'leulit.maintenance_form_one',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
     
 
     def action_create_maintenance_crs_incompleto(self):
+        self.ensure_one()
         self.comprobacion_estados_crs()
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230623_1633_form')
-        view_id = view_ref and view_ref[1] or False
+        view = self.env.ref('leulit_taller.leulit_20230623_1633_form',raise_if_not_found=False)
         text = ''
         cont = 0
         for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Realizada'):
@@ -372,15 +372,15 @@ class MaintenanceRequest(models.Model):
             'name': 'CRS',
             'res_model': 'leulit.maintenance_crs',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
 
     def action_create_maintenance_crs_completo(self):
+        self.ensure_one()
         self.comprobacion_estados_crs()
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230623_1633_form')
-        view_id = view_ref and view_ref[1] or False
+        view = self.env.ref('leulit_taller.leulit_20230623_1633_form',raise_if_not_found=False)
         text = ''
         crs_anterior_name = ''
         for item in self.env['leulit.maintenance_crs'].search([('request','=',self.id),('tipo_crs','=','incompleto')], limit=1, order="id desc"):
@@ -425,7 +425,7 @@ class MaintenanceRequest(models.Model):
             'name': 'CRS',
             'res_model': 'leulit.maintenance_crs',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
@@ -437,9 +437,9 @@ class MaintenanceRequest(models.Model):
         return action_id
 
     def action_create_internal_task(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
         tags = self.env['project.tags'].search([('name', '=', 'Tareas de mantenimiento')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
         context={
             'default_maintenance_request_id':self.id,
             'default_project_id': self.project_id.id,
@@ -453,15 +453,15 @@ class MaintenanceRequest(models.Model):
             'name': 'Tarea interna',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
 
     def action_create_defect_found(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
         tags = self.env['project.tags'].search([('name', '=', 'Tareas de mantenimiento')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
         context={
             'default_maintenance_request_id':self.id,
             'default_project_id': self.project_id.id,
@@ -475,15 +475,15 @@ class MaintenanceRequest(models.Model):
             'name': 'Defecto encontrado',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
 
     def action_create_task_sb(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
         tags = self.env['project.tags'].search([('name', '=', 'Tareas de mantenimiento')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
         context={
             'default_maintenance_request_id':self.id,
             'default_project_id': self.project_id.id,
@@ -498,15 +498,15 @@ class MaintenanceRequest(models.Model):
             'name': 'Tarea Service Bulletin',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
 
     def action_create_task_ad(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20250724_1244_form',raise_if_not_found=False)
         tags = self.env['project.tags'].search([('name', '=', 'Tareas de mantenimiento')])
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20250724_1244_form')
-        view_id = view_ref and view_ref[1] or False
         context={
             'default_maintenance_request_id':self.id,
             'default_project_id': self.project_id.id,
@@ -521,7 +521,7 @@ class MaintenanceRequest(models.Model):
             'name': 'Tarea Airworthiness directive',
             'res_model': 'project.task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }

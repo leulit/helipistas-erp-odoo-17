@@ -427,21 +427,10 @@ class leulit_vuelo(models.Model):
 
             if full_actividad_aerea:
                 raise UserError(_("No se puede firmar el parte de vuelo porque se ha excedido el tiempo máximo de actividad aérea. Debe crear una ocurrencia para gestionar el exceso de tiempo de actividad aérea."))
-                # view_ref = self.env['ir.model.data'].get_object_reference('leulit_esignature','leulit_202306071553_form')
-                # view_id = view_ref and view_ref[1] or False
-                # return {
-                #     'type': 'ir.actions.act_window',
-                #     'name': 'Crear Ocurrencia',
-                #     'res_model': 'wizard_create_claim_from_vuelo',
-                #     'view_mode': 'form',
-                #     'view_id': view_id,
-                #     'target': 'new',
-                #     'context': {'default_vuelo': self.id, 'default_who':who.id}
-                # }
         if self.estado == 'prevuelo':
             if self.env['res.users'].get_piloto_freelance() and len(self.env['leulit.freelance_actividad_aerea'].search([('user','=',self.env.uid),('date','=',self.fechavuelo)])) == 0:
-                view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', 'leulit_20250320_1123_form')
-                view_id = view_ref and view_ref[1] or False
+                self.ensure_one()
+                view = self.env.ref('leulit_operaciones.leulit_20250320_1123_form',raise_if_not_found=False)
                 context = {
                     'default_date' : self.fechavuelo,
                 }
@@ -450,7 +439,7 @@ class leulit_vuelo(models.Model):
                     'name': 'Actividad Aerea',
                     'res_model': 'leulit.wizard_freelance_actividad_aerea',
                     'view_mode': 'form',
-                    'view_id': view_id,
+                    'view_id': view.id if view else False,
                     'target': 'new',
                     'context': context
                 }

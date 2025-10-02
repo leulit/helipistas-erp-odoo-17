@@ -124,15 +124,15 @@ class leulit_helipuerto(models.Model):
             'helipuerto_id' : self.id
         })
 
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones','leulit_20201026_1156_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_20201026_1156_form',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
             'name': 'Punto',
             'res_model': 'leulit.ruta_punto',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': punto.id,
             'target': 'new',
         }

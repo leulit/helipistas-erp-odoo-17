@@ -142,15 +142,15 @@ class MiantenancePlannedactivity(models.Model):
 
 
     def open_planned_activity(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','maintenance_planned_activity_view_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.maintenance_planned_activity_view_form',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
             'name': 'Solicitud',
             'res_model': 'maintenance.planned.activity',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': self.id,
             'target': 'current',
         }

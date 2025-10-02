@@ -36,9 +36,8 @@ class MgmtsystemAudit(models.Model):
                 _logger.error('info estoy pasando por aqui 2')
 
     def button_close_informe(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_seguridad','leulit_20241017_1115_form')
-        view_id = view_ref and view_ref[1] or False
-
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20241017_1115_form',raise_if_not_found=False)
         self.closing_date = datetime.now()
 
         return {
@@ -46,7 +45,7 @@ class MgmtsystemAudit(models.Model):
             'name': 'Informe de Cierre',
             'res_model': 'mgmtsystem.audit',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': self.id,
             'target': 'new',
         }

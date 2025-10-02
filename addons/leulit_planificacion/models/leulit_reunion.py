@@ -48,8 +48,8 @@ class leulit_reunion(models.Model):
         }
 
     def create_task(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_planificacion','leulit_wizard_reunion_create_task')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_planificacion.leulit_wizard_reunion_create_task',raise_if_not_found=False)
 
         project = self.env['project.project'].search([('name','=','Reuniones')])
 
@@ -64,7 +64,7 @@ class leulit_reunion(models.Model):
             'name': 'Create Task',
             'res_model': 'leulit.wizard_claim_create_task',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context': context,
         }

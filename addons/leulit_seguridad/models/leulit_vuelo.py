@@ -38,8 +38,8 @@ class leulit_vuelo(models.Model):
         
 
     def wizard_add_anomalia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_seguridad', 'leulit_20201026_0823_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20201026_0823_form',raise_if_not_found=False)
         for item in self:
             context = {
                 'curso_id'          : item.curso_id.id,
@@ -50,7 +50,7 @@ class leulit_vuelo(models.Model):
            'res_model'      : 'leulit.anomalia',
            'view_type'      : 'form',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'context'        : context,
         }

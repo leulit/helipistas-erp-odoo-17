@@ -55,8 +55,8 @@ class LeulitMaintenanceBoroscopia(models.Model):
 
 
     def create_form_one_from_boroscopia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230706_1118_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20230706_1118_form',raise_if_not_found=False)
         
         form_one_today = self.env['leulit.maintenance_form_one'].search([('fecha','=',datetime.now().date())])
         sequence = 1
@@ -81,7 +81,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
             'res_model': 'leulit.maintenance_form_one',
             'view_mode': 'form',
             'res_id': form_one.id,
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
         }
 
@@ -102,8 +102,8 @@ class LeulitMaintenanceBoroscopia(models.Model):
         return True
 
     def edit_boroscopia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20240212_1600_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20240212_1600_form',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
@@ -111,7 +111,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
             'res_model': 'leulit.maintenance_boroscopia',
             'view_mode': 'form',
             'res_id': self.id,
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
         }
 

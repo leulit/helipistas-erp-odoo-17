@@ -180,8 +180,8 @@ class leulit_anomalia(models.Model):
                 item.helicoptero_id = False
 
     def edit_anomalia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_seguridad','leulit_20201026_0823_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20201026_0823_form',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
@@ -189,7 +189,7 @@ class leulit_anomalia(models.Model):
             'res_model': 'leulit.anomalia',
             'view_mode': 'form',
             'res_id': self.id,
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
         }
 

@@ -119,16 +119,16 @@ class leulit_calendar_event(models.Model):
 
 
     def cancelar_evento_popup(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_planificacion', 'leulit_20220314_1649_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_planificacion.leulit_20220314_1649_form',raise_if_not_found=False)
         return {
-            'type'           : 'ir.actions.act_window',
-            'name'           : 'Cancelar evento',
-            'res_model'      : 'calendar.event',
-            'view_mode'      : 'form',
-            'view_id'        : view_id,
-            'target'         : 'new',
-            'res_id'         : self.id
+            'type': 'ir.actions.act_window',
+            'name': 'Cancelar evento',
+            'res_model': 'calendar.event',
+            'view_mode': 'form',
+            'view_id': view.id if view else False,
+            'target': 'new',
+            'res_id': self.id,
         }
 
 

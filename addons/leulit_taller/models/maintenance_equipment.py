@@ -222,14 +222,14 @@ class MaintenanceEquipment(models.Model):
 
 
     def action_change_production_lot(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20231011_1250_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20231011_1250_form',raise_if_not_found=False)
         return {
             'type': 'ir.actions.act_window',
             'name': 'Cambiar pieza',
             'res_model': 'maintenance.equipment',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': self.id,
             'target': 'new'
         }

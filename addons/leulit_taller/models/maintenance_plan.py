@@ -25,15 +25,15 @@ class MaintenancePlan(models.Model):
         return new_plan
 
     def copy_for_new_helicopter(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20241113_1600_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20241113_1600_form',raise_if_not_found=False)
         context = {'default_maintenance_plan_id':self.id}
         return {
             'type': 'ir.actions.act_window',
             'name': 'Nuevo Plan de Mantenimiento',
             'res_model': 'leulit.wizard_copy_plan',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context' : context,
         }
@@ -70,8 +70,8 @@ class MaintenancePlan(models.Model):
 
 
     def create_plan_activity(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','maintenance_planned_activity_view_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.maintenance_planned_activity_view_form',raise_if_not_found=False)
 
         context = {
             'default_maintenance_plan_id': self.id,
@@ -83,15 +83,15 @@ class MaintenancePlan(models.Model):
             'name': 'Actividad programada',
             'res_model': 'maintenance.planned.activity',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
             'context': context,
         }
     
 
     def open_wizard_create_request(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230505_1518_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20230505_1518_form',raise_if_not_found=False)
 
         context = {
             'default_rel_maintenance_plan': self.id,
@@ -102,7 +102,7 @@ class MaintenancePlan(models.Model):
             'name': 'Crear Orden de Trabajo',
             'res_model': 'leulit.wizard_create_maintenance_request',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context': context,
         }
@@ -115,8 +115,8 @@ class MaintenancePlan(models.Model):
 
 
     def add_task_in_wo(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20240208_1003_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20240208_1003_form',raise_if_not_found=False)
 
         context = {
             'default_rel_maintenance_plan': self.id,
@@ -127,7 +127,7 @@ class MaintenancePlan(models.Model):
             'name': 'Añadir tareas a Orden de Trabajo',
             'res_model': 'leulit.wizard_add_task_request',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context': context,
         }

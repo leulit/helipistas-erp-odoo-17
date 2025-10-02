@@ -70,36 +70,68 @@
             <field name="model">calendar.event</field>
             <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_join_video_call']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='set_discuss_videocall_location']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//button[@name='clear_videocall_location']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//label[@for='videocall_location']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='videocall_location']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//label[@for='privacy']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='privacy']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='show_as']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='categ_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='alarm_ids']" position="attributes">
+                    <attribute name="options">{'no_quick_create': True, 'no_create': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_ids']" position="attributes">
+                    <attribute name="options">{'no_quick_create': True, 'no_create': True}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='allday']" position="replace">
-                    <field name="allday"  readonly="((id) and (recurrency))"  force_save="1" string="A realizar durante el día"/>
+                    <field name="allday" readonly="id and recurrency" force_save="1"/>
                 </xpath>
                 <xpath expr="//button[@name='action_open_calendar_event']" position="before">
                     <div></div>
-                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="((cancelado))" />
+                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="(cancelado)" />
+                    <field name="cancelado" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='description']" position="before">
-                    <group>
-                        <field name="tipo_vuelo" invisible="1"/>
-                        <field name="tipo" invisible="1"/>
-                        <field name="type_event" options="{'no_create': True, 'create': False, 'edit': False}"/>
-                        <field name="equipamientos_ids" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"/>
-                        <field name="sale_order_id"  required="((tipo_vuelo))" />
-                        <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="((tipo_vuelo))" />
-                        <field name="min_cloud_height"  required="((tipo_vuelo))" />
-                        <field name="no_modificar" invisible="1"/>
-                    </group>
-                </xpath>
-                <xpath expr="//field[@name='description']" position="after">
-                    <hr/>
-                    <field name="cancelado" invisible="1"/>
-                    <h2>Recursos</h2>
-                    <field name="resource_fields"  readonly="((cancelado))" >
-                        <tree create="true" edit="true" editable="bottom">
+                    <field name="resource_fields"  readonly="(cancelado)" string="Recursos">
+                        <tree create="true" edit="true" editable="bottom"> 
                             <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
                             <field name="work_hours" widget="float_time" string="H. V."/>
                             <field name="availability_hours" widget="float_time" string="H.T." readonly="1"/>
                         </tree>
                     </field>
+                </xpath>
+                <xpath expr="//div[@invisible='not invalid_email_partner_ids']" position="after">
+                    <field name="tipo_vuelo" invisible="1"/>
+                    <field name="tipo" invisible="1"/>
+                    <field name="type_event" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                    <field name="equipamientos_ids" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                    <field name="sale_order_id"  required="tipo_vuelo" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="((tipo_vuelo))" />
+                    <field name="min_cloud_height"  required="((tipo_vuelo))" />
+                    <field name="no_modificar" invisible="1"/>
                 </xpath>
                 <xpath expr="//page[@name='page_invitations']" position="after">
                     <page name="page_leulit_3" string="Documentos" >
@@ -137,21 +169,60 @@
         </record>
 
 
+        <record id="leulit_20250922_1302_calendar_quik_create" model="ir.ui.view">
+            <field name="name">leulit_20250922_1302_calendar_quik_create</field>
+            <field name="model">calendar.event</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <form string="Eventos" js_class="calendar_quick_create_form_view">
+                    <sheet>
+                        <field name="recurrence_update" invisible="1"/>
+                        <field name="videocall_source" invisible="1"/>
+                        <field name="access_token" invisible="1" force_save="1"/>
+                        <div class="o_row">
+                            <h1 class="w-100"><field name="name" nolabel="1" placeholder="Agregar título" colspan="2"/></h1>
+                        </div>
+                        <group>
+                            <field name="start_date" widget="daterange" options="{'end_date_field': 'stop_date'}" invisible="not allday" required="allday"/>
+                            <field name="start" widget="daterange" options="{'end_date_field': 'stop'}" invisible="allday" required="not allday"/>
+                            <field name="stop_date" invisible="1" />
+                            <field name="stop" invisible="1" />
+                            <field name="allday"/>
+                            <field name="partner_ids" widget="many2manyattendee"
+                                placeholder="Agregue asistentes..."
+                                options="{'no_quick_create': True, 'no_create': True}"
+                                context="{'form_view_ref': 'base.view_partner_simple_form'}"
+                                class="oe_inline"
+                            />
+                            <field name="type_event" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="description" placeholder="Describe el evento"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
         <record id="leulit_20220117_2230_calendar" model="ir.ui.view">
             <field name="name">leulit_20220117_2230_calendar</field>
             <field name="model">calendar.event</field>
             <field name="arch" type="xml">
-                <calendar delete="0" js_class="attendee_calendar" string="Eventos" date_start="start" date_stop="stop" date_delay="duration" all_day="allday"
+                <calendar js_class="attendee_calendar" string="Eventos" banner_route="/onboarding/calendar" date_start="start" date_stop="stop" date_delay="duration" all_day="allday"
                     event_open_popup="true"
                     event_limit="5"
+                    quick_create="true"
+                    quick_create_view_id="%(leulit_planificacion.leulit_20250922_1302_calendar_quik_create)d"
                     color="type_event">
                     <field name="partner_ids" invisible="1"/>
                     <field name="is_highlighted" invisible="1"/>
                     <field name="description"/>
-                    <field name="create_uid"/>
-                    <field name="write_uid" />
-                    <field name="type_event"  filters="1" readonly="1"/>
-                    <field name="partner_ids" widget="many2many_tags_avatar" write_model="calendar.contacts" write_field="partner_id" avatar_field="image_128"/>
+                    <field name="create_uid" options="{'no_open': True}"/>
+                    <field name="write_uid" options="{'no_open': True}"/>
+                    <field name="type_event"  filters="1" readonly="1" options="{'no_open': True}"/>
+                    <field name="partner_ids" options="{'block': True, 'icon': 'fa fa-users'}"
+                        filters="1" widget="many2manyattendeeexpandable" write_model="calendar.filters"
+                        write_field="partner_id" filter_field="partner_checked" avatar_field="avatar_128"
+                    />
                     <field name="resource_fields" string="Recursos" />
                     <field name="equipamientos_ids"/>
                     <field name="user_id" invisible="1"/>

@@ -34,15 +34,15 @@ class leulitPilotoAdjunto(models.Model):
         return {'type': 'ir.actions.act_window_close'}
             
     def add_docs_piloto(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', 'leulit_20230829_1717_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_20230829_1717_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Añadir Documento',
            'res_model'      : 'leulit.piloto_adjunto',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'res_id'         : self.id,
             'flags'         : {'form': {'action_buttons': True}}

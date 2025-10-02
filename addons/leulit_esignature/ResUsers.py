@@ -145,61 +145,11 @@ class ResUsers(models.Model):
 
     
     def sendInstallMail(self):
-        # template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'leulit_esignature', 'leulit_202009162105_mail')[1]
-        # item = self.read(cr,uid, ids, ['id','otp_qrcode','email'], context)
-        # if isinstance(item, list):
-        #     item = item[0]
-        # try:
-        #     context.update({'mail_to': item['email']})
-        #     context.update({'subject': "Instalación aplicación móvil Helipistas S.L."})
-
-        #     email_template_obj = self.pool.get('email.template')
-
-        #     values = email_template_obj.generate_email(cr, uid, template_id, item['id'], context=context)
-        #     mail_mail = self.pool.get('mail.mail')
-        #     msg_id = mail_mail.create(cr, uid, values, context=context)
-        #     mail = mail_mail.browse(cr, uid, msg_id, context=context)
-        #     mail_mail.send(cr, uid, [msg_id], context=context)
-        #     #self.pool.get('email.template').send_mail(cr, uid, template_id, item['id'], True, context=context)
-        # except Exception as e:
-        #     raise osv.except_osv(_('Error enviado email!'), '{0}'.format(e.message))
-        # return True    
         raise UserError('Funcionalidad no migrada boton')
 
         
 
     def sendQRToRegisterMobile(self):
-        # template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'leulit_esignature', 'leulit_202009131035_mail')[1]
-        # item = self.read(cr,uid, ids, ['id','otp_qrcode','email'], context)
-        # if isinstance(item, list):
-        #     item = item[0]
-        # try:
-        #     context.update({'mail_to': item['email']})
-        #     context.update({'subject': "Registro de dispositivo móvil en el ERP de Helipistas S.L."})
-
-        #     ir_attachment = self.pool.get('ir.attachment')
-        #     email_template_obj = self.pool.get('email.template')
-        #     values = email_template_obj.generate_email(cr, uid, template_id, item['id'], context=context)
-        #     mail_mail = self.pool.get('mail.mail')
-        #     msg_id = mail_mail.create(cr, uid, values, context=context)
-        #     mail = mail_mail.browse(cr, uid, msg_id, context=context)
-        #     attachment_data = {
-        #     'name': "CÓDIGO QR",
-        #     'datas_fname': "qrcode.png",
-        #     'datas': item['otp_qrcode'],
-        #     'res_model': 'mail.message',
-        #     'res_id': mail.mail_message_id.id,
-        #     }
-        #     attachment_ids = []
-        #     attachment_ids.append(ir_attachment.create(cr, uid, attachment_data, context=context))
-        #     if attachment_ids:
-        #         values['attachment_ids'] = [(6, 0, attachment_ids)]
-        #     mail_mail.write(cr, uid, msg_id, {'attachment_ids': [(6, 0, attachment_ids)]}, context=context)
-        #     mail_mail.send(cr, uid, [msg_id], context=context)
-        #     #self.pool.get('email.template').send_mail(cr, uid, template_id, item['id'], True, context=context)
-        # except Exception as e:
-        #     raise osv.except_osv(_('Error enviado email!'), '{0}'.format(e.message))
-        # return True
         raise UserError('Funcionalidad no migrada boton')
         
 

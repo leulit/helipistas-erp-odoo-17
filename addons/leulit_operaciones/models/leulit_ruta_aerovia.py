@@ -118,12 +118,11 @@ class leulit_ruta_aerovia(models.Model):
     
 
     def open_other_aerovia(self,id):
-        _logger.error(id)
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', 'leulit_20201026_1153_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_20201026_1153_form',raise_if_not_found=False)
         item_id = self.search([('id','=',id)]).id
         return {
-            'view_id' : view_id,
+            'view_id' : view.id if view else False,
             'item_id' : item_id
         }
     

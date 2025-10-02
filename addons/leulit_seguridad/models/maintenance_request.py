@@ -14,8 +14,8 @@ class MaintenanceRequest(models.Model):
 
 
     def open_wizard_asign_anomalia(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_seguridad','leulit_20230704_1748_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20230704_1748_form',raise_if_not_found=False)
 
         context = {
             'default_rel_maintenance_request': self.id,
@@ -27,7 +27,7 @@ class MaintenanceRequest(models.Model):
             'name': 'Anomalía',
             'res_model': 'leulit.wizard_asign_anomalia',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'context': context,
         }

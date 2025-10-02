@@ -26,15 +26,15 @@ class Calibracion(models.Model):
 
         
     def add_docs_calibracion(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_almacen', 'leulit_20230222_1614_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_almacen.leulit_20230222_1614_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Añadir Documento calibración',
            'res_model'      : 'leulit.calibracion',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'res_id'         : self.id,
             'flags'         : {'form': {'action_buttons': True}}

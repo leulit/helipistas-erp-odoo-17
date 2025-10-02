@@ -118,15 +118,15 @@ class leulit_vuelo(models.Model):
         
     # Función para lanzar el popup que procede a cancelar el parte de vuelo.
     def wizard_pre_cancelar(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones','leulit_pre_cancelar_vuelo_popup')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_pre_cancelar_vuelo_popup',raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
             'name': 'Confirmar Cancelar Vuelo',
             'res_model': 'leulit.vuelo',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': self.id,
             'target': 'new',
         }
@@ -947,16 +947,15 @@ class leulit_vuelo(models.Model):
         return sw
 
 
-    def vuelo_print(self):                
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', 'leulit_vuelos_form_popup_ficha')
-        view_id = view_ref and view_ref[1] or False
-        #self._context.update({'default_meteo_imprimir_report':True})
+    def vuelo_print(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_vuelos_form_popup_ficha',raise_if_not_found=False)
         return {
              'type': 'ir.actions.act_window',
              'name': 'Pop up Ficha Parte de Vuelo',
              'res_model': 'leulit.vuelo',
              'view_mode': 'form',
-             'view_id': view_id,
+             'view_id': view.id if view else False,
              'res_id': self.id,
              'target': 'new',
              'context': self._context,
@@ -964,8 +963,8 @@ class leulit_vuelo(models.Model):
 
     
     def wizard_add_wb(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', 'leulit_20210128_1642_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_operaciones.leulit_20210128_1642_form',raise_if_not_found=False)
         for item in self:
             wandb = self.env['leulit.weight_and_balance'].search([('vuelo_id','=',item.id)])
             fls = 0.0
@@ -1022,14 +1021,14 @@ class leulit_vuelo(models.Model):
             if not wandb.helicoptero_modelo:
                 wandb.helicoptero_modelo = item.helicoptero_id.modelo.name
             
-                
+
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Weight And Balance',
            'res_model'      : 'leulit.weight_and_balance',
            'res_id'         : wandb.id,
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'context'        : context,
            'nodestroy'      : True,
@@ -1049,47 +1048,44 @@ class leulit_vuelo(models.Model):
         peso = self.obtener_peso()
         for item in self:
             if item.helicoptero_modelo == 'EC120B':
-                vista = 'leulit_performance_EC120B_form'
+                vista = 'leulit_operaciones.leulit_performance_EC120B_form'
                 if item.helicoptero_id.name == 'EC-HIL':
                     if item.weight_and_balance_id:
                         if item.weight_and_balance_id.gancho_carga_cb:
-                            vista = 'leulit_performance_ECHIL_form'
+                            vista = 'leulit_operaciones.leulit_performance_ECHIL_form'
             elif item.helicoptero_modelo == 'R22 Beta':
-                vista = 'leulit_performance_R22_form'
+                vista = 'leulit_operaciones.leulit_performance_R22_form'
             elif item.helicoptero_modelo == 'R22 Beta II':
-                vista = 'leulit_performance_R22_2_form'
+                vista = 'leulit_operaciones.leulit_performance_R22_2_form'
             elif item.helicoptero_modelo == 'R44 Astro':
-                vista = 'leulit_performance_R44_form'
+                vista = 'leulit_operaciones.leulit_performance_R44_form'
             elif item.helicoptero_modelo == 'R44 Raven I':
-                vista = 'leulit_performance_R44_form'
+                vista = 'leulit_operaciones.leulit_performance_R44_form'
             elif item.helicoptero_modelo == 'R44 Clipper I':
-                vista = 'leulit_performance_R44_form'
+                vista = 'leulit_operaciones.leulit_performance_R44_form'
             elif item.helicoptero_modelo == 'R44 Raven II':
-                vista = 'leulit_performance_R44_2_form'
+                vista = 'leulit_operaciones.leulit_performance_R44_2_form'
             elif item.helicoptero_modelo == 'R44 Clipper II':
-                vista = 'leulit_performance_R44_2_form'
+                vista = 'leulit_operaciones.leulit_performance_R44_2_form'
             elif item.helicoptero_modelo == 'CABRI G2':
-                vista = 'leulit_performance_CABRI_G2_form'
+                vista = 'leulit_operaciones.leulit_performance_CABRI_G2_form'
             else:
                 raise UserError ('NO SE PUEDE CALCULAR PERFORMANCE PARA ESTE MODELO PORQUE NO HA SIDO IMPLEMENTADO EN EL SISTEMA')
 
-            view_ref = self.env['ir.model.data'].get_object_reference('leulit_operaciones', vista)
-            view_id = view_ref and view_ref[1] or False
+            self.ensure_one()
+            view = self.env.ref(vista,raise_if_not_found=False)
 
-            performance = None
-            # _logger.error('########### %r',item.performance)
             if item.performance:
                 item.performance.write({'peso':peso,'ige':None,'oge':None})
             else:
                 self.env['leulit.performance'].create({'peso':peso,'vuelo':item.id,'temperatura':0})
 
-            # _logger.error("--obtener_peso--> peso = %r", peso)
             return {
                 'type': 'ir.actions.act_window',
                 'name': 'Calcular Performance',
                 'res_model': 'leulit.performance',
                 'view_mode': 'form',
-                'view_id': view_id,
+                'view_id': view.id if view else False,
                 'res_id': item.performance.id,
                 'target': 'new',
             }

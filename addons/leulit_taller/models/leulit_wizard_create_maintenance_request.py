@@ -16,6 +16,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
 
     
     def create_maintenance_request(self):
+        self.ensure_one()
         peticion_mantenimiento = False
         for item in self:
             tag_id = self.env['project.tags'].search([('name','=','Tareas de mantenimiento')])
@@ -117,8 +118,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                 anomalia.maintenance_request_id = request.id
             peticion_mantenimiento = request.id
 
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20231020_1222_form')
-        view_id = view_ref and view_ref[1] or False
+        view = self.env.ref('leulit_taller.leulit_20231020_1222_form',raise_if_not_found=False)
         context = {
             'create': 0,
         }
@@ -127,7 +127,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
             'name': 'Orden de Trabajo',
             'res_model': 'maintenance.request',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'res_id': peticion_mantenimiento,
             'target': 'current',
             'context': context,

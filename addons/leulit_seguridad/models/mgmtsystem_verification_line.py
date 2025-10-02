@@ -7,15 +7,15 @@ class MgmtsystemVerificationLine(models.Model):
 
 
     def action_get_attachment_view(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_seguridad', 'leulit_20240722_1511_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20240722_1511_form',raise_if_not_found=False)
 
         return {
            'type'           : 'ir.actions.act_window',
            'name'           : 'Añadir Documento',
            'res_model'      : 'mgmtsystem.verification.line',
            'view_mode'      : 'form',
-           'view_id'        : view_id,
+           'view_id'        : view.id if view else False,
            'target'         : 'new',
            'res_id'         : self.id,
             'flags'         : {'form': {'action_buttons': True}}

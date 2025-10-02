@@ -125,8 +125,8 @@ class LeulitMaintenanceFormOne(models.Model):
         return True
 
     def edit_form_one(self):
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_taller','leulit_20230706_1118_form')
-        view_id = view_ref and view_ref[1] or False
+        self.ensure_one()
+        view = self.env.ref('leulit_taller.leulit_20230706_1118_form',raise_if_not_found=False)
 
         return {
             'type': 'ir.actions.act_window',
@@ -134,7 +134,7 @@ class LeulitMaintenanceFormOne(models.Model):
             'res_model': 'leulit.maintenance_form_one',
             'view_mode': 'form',
             'res_id': self.id,
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'current',
         }
 

@@ -24,16 +24,15 @@ class SignatureDoc(models.Model):
     COMPLETADO = 'completado'
 
     def popUpDescargaDocFirmado(self, idmodelo):
-        #item = self.pool['leulit_signaturedoc'].browse(cr, uid, iddoc)            
-        view_ref = self.env['ir.model.data'].get_object_reference('leulit_esignature','leulit_202009151825_form')
-        view_id = view_ref and view_ref[1] or False        
+        self.ensure_one()
+        view = self.env.ref('leulit_esignature.leulit_202009151825_form',raise_if_not_found=False)
         return {
             'type': 'ir.actions.act_window',
             'name': 'Documento firmado',
             'res_model': 'leulit_signaturedoc',
             'view_type': 'form',
             'view_mode': 'form',
-            'view_id': view_id,
+            'view_id': view.id if view else False,
             'target': 'new',
             'res_id': idmodelo,
             'nodestroy': True,
