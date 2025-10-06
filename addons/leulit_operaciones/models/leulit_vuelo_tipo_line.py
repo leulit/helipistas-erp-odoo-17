@@ -14,7 +14,7 @@ class leulit_vuelo_tipo_line(models.Model):
     _description = "leulit_vuelo_tipo_line"
     _rec_name = "vuelo_tipo_id"
 
-    vuelo_id = fields.Many2one('leulit.vuelo', 'Referencia vuelo', required=True, select=True)
+    vuelo_id = fields.Many2one('leulit.vuelo', 'Referencia vuelo', required=True, index=True)
     vuelo_tipo_id = fields.Many2one('leulit.vuelostipo', 'Tipo vuelo', required=True)
     privado = fields.Boolean('Privado',help="Indica si el tipo de vuelo será visible en los documentos oficiales")
     

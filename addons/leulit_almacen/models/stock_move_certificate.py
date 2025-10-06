@@ -102,7 +102,7 @@ class StockMoveCertificate(models.TransientModel):
     def unlink(self):
         if 'done' in self.mapped('state'):
             raise UserError(_('No se puede eliminar un movimiento ya creado'))
-        return super(StockInstall, self).unlink()
+        return super(StockMoveCertificate, self).unlink()
 
     def _prepare_move_values(self):
         self.ensure_one()

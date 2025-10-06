@@ -29,8 +29,8 @@ class leulit_actividad_16bravo(models.Model):
             item.tiempo_calc = (item.tiempo*item.coe_mayoracion)+item.delta_pre
 
 
-    fecha = fields.Date('Fecha', select=1)
-    partner = fields.Many2one('res.partner', 'Partner', ondelete='restrict', select=1)
+    fecha = fields.Date('Fecha', index=True)
+    partner = fields.Many2one('res.partner', 'Partner', ondelete='restrict', index=True)
     inicio = fields.Float('Inicio actividad', digits=(16, 2))
     fin = fields.Float('Fin actividad', digits=(16, 2))
     tiempo = fields.Float("Tiempo", digits=(16, 2))

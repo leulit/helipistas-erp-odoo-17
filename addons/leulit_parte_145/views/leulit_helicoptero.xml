@@ -17,7 +17,7 @@
                                     <field name="ctrlmantenimiento" />
                                     <field name="ctrloperaciones" />
                                     <field name="ctrlcamo" />
-                                    <field name="datelastflight" reaonly="1"/>
+                                    <field name="datelastflight" readonly="1"/>
                                 </group>
                                 <group col="3">
                                     <group col="2">
@@ -47,9 +47,9 @@
                                 <group col="2">
                                     <field name="statemachine" />
                                     <field name="proximarev" widget="float_time"/>
-                                    <field name="strhoras_remanente" reaonly="1"/>
+                                    <field name="strhoras_remanente" readonly="1"/>
                                     <field name="fechaproximarev"/>
-                                    <field name="dias_remanente" reaonly="1"/>
+                                    <field name="dias_remanente" readonly="1"/>
                                 </group>
                             </page>
                             <!-- DATOS TECNICOS -->

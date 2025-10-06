@@ -153,7 +153,7 @@ class ActividadAerea(models.Model):
             return [('id', 'in', aa)]
         return [('id', '=', False)]
 
-    fecha = fields.Date('Fecha', select=1)
+    fecha = fields.Date('Fecha', index=True)
     fecha_inicio = fields.Datetime(string="Fecha inicio",compute=_fecha_inicio, store=False)
     fecha_fin = fields.Datetime(string="Fecha fin",compute=_fecha_fin, store=False)
     inicio = fields.Float('Inicio actividad', digits=(16, 2))
@@ -165,7 +165,7 @@ class ActividadAerea(models.Model):
     aplica_desc_parcial = fields.Boolean(string="Aplica descanso parcial")
     max_duracion = fields.Float('Tiempo máximo actividad', digits=(16, 2))
     tiempo = fields.Float("Tiempo actividad", digits=(16, 2))
-    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', select=1)
+    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', index=True)
     user_id = fields.Many2one(comodel_name='res.users', string='Usuario', compute=_get_user_from_partner, search=_search_user_from_partner, store=False)
     descripcion = fields.Char('Descripción')
     valid_activity_time = fields.Char(string='Tiempo actividad valido', compute=_valid_activity_time, store=False)

@@ -334,11 +334,11 @@ class leulit_actividad_base(models.Model):
 
 
 
-    fecha = fields.Date('Fecha', select=1)
-    fecha_inicio = fields.Datetime('Fecha inicio', select=1)
-    fecha_fin = fields.Datetime('Fecha fin', select=1)
-    idmodelo = fields.Integer('idmodelo', select=1)
-    modelo = fields.Char('Modelo', select=1)
+    fecha = fields.Date('Fecha', index=True)
+    fecha_inicio = fields.Datetime('Fecha inicio', index=True)
+    fecha_fin = fields.Datetime('Fecha fin', index=True)
+    idmodelo = fields.Integer('idmodelo', index=True)
+    modelo = fields.Char('Modelo', index=True)
     inicio = fields.Float('Inicio actividad', digits=(16, 2))
     fin = fields.Float('Fin actividad', digits=(16, 2))
     delta_pre = fields.Float('Delta previo', digits=(16, 2))
@@ -351,14 +351,14 @@ class leulit_actividad_base(models.Model):
     escuela = fields.Boolean('Escuela')
     ato = fields.Boolean('ATO')
     coe_mayoracion = fields.Float('Coeficiente mayoración')
-    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', select=1)
+    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', index=True)
     rol = fields.Char('Rol empleado')
     descripcion = fields.Char('Descripción')
     tipo_actividad = fields.Char('Tipo actividad')
     valid_flight_time = fields.Char('Semáforo tiempo de vuelo')
-    actividad_16bravo_id = fields.Many2one("leulit.actividad_16bravo", "Actividad 16Bravo", ondelete='cascade', select=1)
-    actividad_16bravo_dia_id = fields.Many2one("leulit.actividad_16bravo_dia", "Actividad 16Bravo día", ondelete='cascade', select=1)
-    actividad_base_dia_id = fields.Many2one("leulit.actividad_base_dia", "Actividad base día", ondelete='cascade', select=1)
+    actividad_16bravo_id = fields.Many2one("leulit.actividad_16bravo", "Actividad 16Bravo", ondelete='cascade', index=True)
+    actividad_16bravo_dia_id = fields.Many2one("leulit.actividad_16bravo_dia", "Actividad 16Bravo día", ondelete='cascade', index=True)
+    actividad_base_dia_id = fields.Many2one("leulit.actividad_base_dia", "Actividad base día", ondelete='cascade', index=True)
 
 
     def detalle(self):

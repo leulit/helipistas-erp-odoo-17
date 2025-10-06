@@ -22,8 +22,8 @@ class AnalyticActividadAearea(models.Model):
     _description = "Análisis Actividad Aerea"
 
 
-    fecha = fields.Date('Fecha', select=1)
-    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', select=1)
+    fecha = fields.Date('Fecha', index=True)
+    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', index=True)
 
 
 class AccountAnalyticLine(models.Model):

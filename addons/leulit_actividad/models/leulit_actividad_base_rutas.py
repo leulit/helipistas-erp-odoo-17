@@ -39,8 +39,8 @@ class leulit_leulit_actividad_base_rutas(models.Model):
     
     
 
-    fecha = fields.Date("Fecha", select=1)
-    partner = fields.Many2one('res.partner', 'Usuario', select=1)
+    fecha = fields.Date("Fecha", index=True)
+    partner = fields.Many2one('res.partner', 'Usuario', index=True)
     ruta_clh = fields.Integer("RUTA CLH")
     ruta_enagas = fields.Integer("RUTA ENGAS")
     ruta_gas_natural = fields.Integer("RUTA GAS NATURAL")

@@ -220,9 +220,9 @@ class leulit_actividad_base_dia(models.Model):
             item.tiempo = round(float(item.fin),2) - round(float(item.inicio),2)
 
 
-    fecha = fields.Date('Fecha', select=1)
+    fecha = fields.Date('Fecha', index=True)
     prevista = fields.Boolean('Prevista')
-    partner = fields.Many2one('res.partner', 'Usuario', ondelete='restrict', select=1)
+    partner = fields.Many2one('res.partner', 'Usuario', ondelete='restrict', index=True)
     inicio = fields.Float('Inicio actividad', digits=(16, 2))
     fin = fields.Float('Fin actividad', digits=(16, 2))
     #tiempo = fields.Float("Tiempo actividad", digits=(16, 2))

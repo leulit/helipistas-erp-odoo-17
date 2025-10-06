@@ -42,7 +42,7 @@ class LeulitEventResourceByDay(models.Model):
 
     
     resource = fields.Many2one(comodel_name="leulit.resource", string="Recurso")
-    fecha = fields.Datetime(string="Fecha", select=1)
+    fecha = fields.Datetime(string="Fecha", index=True)
     event_resource_lines = fields.One2many(comodel_name='leulit.event_resource', inverse_name='byday_id', string='Lineas Planificadas')
     total_horas_planificadas = fields.Float(string="Total horas imputadas", compute=_compute_total_horas_planificadas,  digits=(16, 2), compute_sudo=True, store=True)
 

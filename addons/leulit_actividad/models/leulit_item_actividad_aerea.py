@@ -96,13 +96,13 @@ class ItemActividadAerea(models.Model):
 
 
     
-    fecha = fields.Date('Fecha', select=1)
+    fecha = fields.Date('Fecha', index=True)
     fecha_inicio = fields.Datetime(string="Fecha inicio",compute=_fecha_inicio, store=True)
     fecha_fin = fields.Datetime(string="Fecha fin",compute=_fecha_fin, store=True)
     fecha_inicio_calc = fields.Datetime(string="Fecha inicio calculado",compute=_fecha_inicio_calc, store=True)
 
-    idmodelo = fields.Integer('idmodelo', select=1)
-    modelo = fields.Char('Modelo', select=1)
+    idmodelo = fields.Integer('idmodelo', index=True)
+    modelo = fields.Char('Modelo', index=True)
     inicio = fields.Float('Inicio actividad', digits=(16, 2))
     fin = fields.Float('Fin actividad', digits=(16, 2))    
     horallegada = fields.Float('Hora llegada', digits=(16, 2))
@@ -117,7 +117,7 @@ class ItemActividadAerea(models.Model):
     escuela = fields.Boolean('Escuela')
     ato = fields.Boolean('ATO')
     coe_mayoracion = fields.Float('Coeficiente mayoración')
-    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', select=1)
+    partner = fields.Many2one('res.partner', 'Empleado Helipistas', ondelete='restrict', index=True)
     rol = fields.Char('Rol empleado')
     descripcion = fields.Char('Descripción')
     tipo_actividad = fields.Char('Tipo actividad')

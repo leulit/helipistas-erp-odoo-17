@@ -95,7 +95,7 @@ class leulit_actividad_base_mes(models.Model):
     #     }    
 
 
-    partner = fields.Many2one('res.partner', 'Usuario', ondelete='restrict', select=1)
+    partner = fields.Many2one('res.partner', 'Usuario', ondelete='restrict', index=True)
     month = fields.Integer('Mes')
     year = fields.Integer('Año')
     tiempo = fields.Float('Tiempo', digits=(16, 2))

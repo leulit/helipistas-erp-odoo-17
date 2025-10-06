@@ -97,10 +97,10 @@ class LeulitAccounAnalyticLineByDay(models.Model):
         return float(hours) + (float(minutes) / 60.0) + (float(seconds) / pow(60.0, 2))
 
     
-    employee_id = fields.Many2one(comodel_name='hr.employee',string='Empleado',ondelete='restrict', select=1)
+    employee_id = fields.Many2one(comodel_name='hr.employee',string='Empleado',ondelete='restrict', index=True)
     user_id = fields.Many2one(related='employee_id.user_id',comodel_name='res.users',string='Usuario')
     account_analytic_lines = fields.One2many('account.analytic.line', 'byday_id', 'Lineas imputación')
-    fecha = fields.Date(string="Fecha", select=1)
+    fecha = fields.Date(string="Fecha", index=True)
     dummy = fields.Boolean(string="Dummy")
     total_horas_imputadas = fields.Float(string="Total horas imputadas", compute=_compute_total_horas_imputadas,  digits=(16, 2), compute_sudo=True, store=True)
     horas_imputadas = fields.Float(string="Horas imputadas", compute=_compute_horas_imputadas,  digits=(16, 2), compute_sudo=True, store=True)
