@@ -1170,6 +1170,11 @@ class leulit_vuelo(models.Model):
             valor = datetime.strptime(tira,"%Y-%m-%d %H:%M")
             item.fechasalida = valor
 
+
+    @api.depends('fechavuelo','horasalida')
+    def _calc_strfecha_salida(self):
+        for item in self:
+            date2 = utilitylib.leulit_float_time_to_str( item.horasalida )
             date1 = item.fechavuelo.strftime("%d/%m/%Y")
             tira =  date1+" "+date2
             item.strfechasalida = tira
@@ -2067,7 +2072,7 @@ class leulit_vuelo(models.Model):
     cg = fields.Char('C.G.', size=5)
     tow = fields.Float('Peso al despegue (kg.)')
     fechasalida = fields.Datetime(compute=_calc_fecha_salida,string='Fecha Salida', store=True)
-    strfechasalida = fields.Char(compute=_calc_fecha_salida,string='Fecha Salida')
+    strfechasalida = fields.Char(compute=_calc_strfecha_salida,string='Fecha Salida')
     horasalida = fields.Float('Hora salida local', required=True)
     strhorasalida = fields.Char(compute=_strhorasalida,string='Horas Salida')
     alternativos = fields.One2many('leulit.helipuerto', 'vuelo_id', string='Alternativos')
