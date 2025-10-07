@@ -1751,12 +1751,17 @@ class leulit_vuelo(models.Model):
     def _get_tipo_actividad(self):
         for item in self:
             tipo_actividad = None
-            nombre_actividad = ''
             rel_tipovuelo = self.env['leulit.vuelo_tipo_line'].search([('vuelo_id','=',item.id)])
             if rel_tipovuelo.ids and len(rel_tipovuelo.ids) > 0:
                 tipo_actividad= rel_tipovuelo[0].vuelo_tipo_id.tipo_trabajo
-                nombre_actividad = rel_tipovuelo[0].vuelo_tipo_id.name
             item.tipo_actividad = tipo_actividad
+
+    def _get_nombre_actividad(self):
+        for item in self:
+            nombre_actividad = ''
+            rel_tipovuelo = self.env['leulit.vuelo_tipo_line'].search([('vuelo_id','=',item.id)])
+            if rel_tipovuelo.ids and len(rel_tipovuelo.ids) > 0:
+                nombre_actividad = rel_tipovuelo[0].vuelo_tipo_id.name
             item.nombre_actividad = nombre_actividad
 
     @api.depends('horasalida')
@@ -2166,7 +2171,7 @@ class leulit_vuelo(models.Model):
     user_vuelo_ids = fields.Boolean(compute=_get_user_vuelo_ids,string='Usuarios',search=_search_user_vuelo_ids)
     is_comercial_uid = fields.Boolean(string='¿Is Comercial?', default=True)
     tipo_actividad = fields.Char(compute=_get_tipo_actividad,string='Tipo actividad', store=False) 
-    nombre_actividad = fields.Char(compute=_get_tipo_actividad,string='Nombre actividad', store=True) 
+    nombre_actividad = fields.Char(compute=_get_nombre_actividad,string='Nombre actividad', store=True) 
     uso_gancho = fields.Float('Uso gancho')
     meteo_imprimir_report = fields.Boolean('Meteorologia',default=True)
 
