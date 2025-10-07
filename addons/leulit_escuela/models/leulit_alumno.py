@@ -483,7 +483,7 @@ class leulit_alumno(models.Model):
     rel_parte_escuela_examenes = fields.One2many(comodel_name="leulit.rel_parte_escuela_cursos_alumnos", inverse_name="alumno", string="Examenes", domain=[('sil_test','=',True)])
     alta_all = fields.Boolean(compute=_get_alta_alumno, string="¿Alta alumno?")
     is_alta = fields.Boolean(string="Se ha dado de alta")
-    employee_id = fields.Many2one(compute=_get_employee, comodel_name='hr.employee', string='Empleado')
+    employee_id = fields.Many2one(compute=_get_employee, comodel_name='hr.employee', string='Empleado', store=True)
     emergency_contact_empl = fields.Char(related='employee_id.emergency_contact', string='Contacto de Emergencia')
     emergency_phone_empl = fields.Char(related='employee_id.emergency_phone', string='Teléfono de emergencia')
     emergency_contact = fields.Char(string='Contacto de Emergencia')
