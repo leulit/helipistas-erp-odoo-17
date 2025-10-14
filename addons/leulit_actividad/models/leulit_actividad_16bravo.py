@@ -42,12 +42,12 @@ class leulit_actividad_16bravo(models.Model):
     actividad_16bravo_dia_id = fields.Many2one('leulit.actividad_16bravo_dia', 'Actividad 16bravo día')
 
 
-    tiempo_aa = fields.Float(related='actividad_16bravo_dia_id.tiempo',string='Tiempo actividad aérea', readonly="1")
-    tiempo_a = fields.Float(related='actividad_16bravo_dia_id.tiempo_act', string="Tiempo actividad", readonly="1")
-    valid_activity_time = fields.Char(related='actividad_16bravo_dia_id.valid_activity_time', string="Tiempo actividad válido", readonly="1")
-    max_duracion = fields.Float(related='actividad_16bravo_dia_id.max_duracion', string="Tiempo máximo AA", readonly="1")
-    tiempo_desc_parcial = fields.Float(related='actividad_16bravo_dia_id.tiempo_desc_parcial', string="Tiempo descanso parcial", readonly="1")
-    tiempo_amplia = fields.Float(related='actividad_16bravo_dia_id.tiempo_amplia', string="Tiempo ampliación por descanso", readonly="1")
+    tiempo_aa = fields.Float(related='actividad_16bravo_dia_id.tiempo',string='Tiempo actividad aérea', readonly=True)
+    tiempo_a = fields.Float(related='actividad_16bravo_dia_id.tiempo_act', string="Tiempo actividad", readonly=True)
+    valid_activity_time = fields.Char(related='actividad_16bravo_dia_id.valid_activity_time', string="Tiempo actividad válido", readonly=True)
+    max_duracion = fields.Float(related='actividad_16bravo_dia_id.max_duracion', string="Tiempo máximo AA", readonly=True)
+    tiempo_desc_parcial = fields.Float(related='actividad_16bravo_dia_id.tiempo_desc_parcial', string="Tiempo descanso parcial", readonly=True)
+    tiempo_amplia = fields.Float(related='actividad_16bravo_dia_id.tiempo_amplia', string="Tiempo ampliación por descanso", readonly=True)
 
     idmodelo = fields.Integer('idmodelo', index=1)
     modelo = fields.Char('Modelo', index=1)

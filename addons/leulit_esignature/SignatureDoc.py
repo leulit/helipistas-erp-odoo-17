@@ -445,7 +445,7 @@ class SignatureDoc(models.Model):
     name = fields.Char('Descripcion', size=500, help="Descripción documento")
     attachment_id = fields.Many2one('ir.attachment','Documento')
     name_attach = fields.Char(related='attachment_id.name')
-    datas_fname = fields.Char(string='File Name',size=256, readonly="1")
+    datas_fname = fields.Char(string='File Name',size=256, readonly=True)
     datas = fields.Binary(related='attachment_id.datas', string='File Content', readonly=True)
     firma = fields.Binary(string='Firma')
     esignature = fields.Char(string='Firma electrónica')

@@ -213,7 +213,7 @@ class leulit_anomalia(models.Model):
     codigo = fields.Char('Código', size=20,readonly=True)
     melref = fields.Many2one('leulit.mel', 'Ref. Description')
     linemel_id = fields.Many2one('leulit.lines_mel', 'Reference')
-    tipomel = fields.Many2one('leulit.mel_tipo_operacion', 'Kind', readonly="1")
+    tipomel = fields.Many2one('leulit.mel_tipo_operacion', 'Kind', readonly=True)
     categoria = fields.Char('Category', size=2, readonly=True)
     numinstaladomel = fields.Integer('Nº installed', readonly=True)
     numexpmel = fields.Char('Nº expedition', size=20, readonly=True)
