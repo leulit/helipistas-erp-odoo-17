@@ -260,7 +260,7 @@ class CoeficienteMayoracionHandler(actividad.AbstractHandler):
             _logger.error("-AA--> CoeficienteMayoracionHandler")
             o_iaa = request.env['leulit.item_actividad_aerea']
             for item in o_iaa.search([('fecha','=',request.fecha),('partner','=',request.partner),('prevista','=',False)],order="fecha ASC, inicio ASC"):
-                nitems = o_iaa.search([('modelo','=','leulit.vuelo'),('fecha','=',item.fecha),('inicio', '>=', item.fin),('partner','=',item.partner.id),('prevista','=',False)], order="fecha ASC, inicio ASC", count=True)
+                nitems = o_iaa.search_count([('modelo','=','leulit.vuelo'),('fecha','=',item.fecha),('inicio', '>=', item.fin),('partner','=',item.partner.id),('prevista','=',False)], order="fecha ASC, inicio ASC")
                 coe_mayoracion = 1.5 if ((nitems >0) and item.escuela and (not item.ato)) else 1
                 item.coe_mayoracion = coe_mayoracion
             request.env.cr.commit()
