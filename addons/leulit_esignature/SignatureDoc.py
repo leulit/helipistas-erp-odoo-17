@@ -463,6 +463,3 @@ class SignatureDoc(models.Model):
     notp = fields.Char('Código')
     qrtext = fields.Char('Cadena QR')
     firmado = fields.Boolean('Firmado')
-
-
-    
