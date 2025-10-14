@@ -293,3 +293,4 @@ class AccountAnalyticLine(models.Model):
     )
     byday_id = fields.Many2one('leulit.account.analytic.line.byday','Información diaria',ondelete='restrict')
     checklist_id = fields.Many2one(comodel_name='leulit.checklist', string='Checklist')
+    date_time = fields.Datetime('Fecha y hora inicio')
