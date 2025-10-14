@@ -453,7 +453,7 @@ class SignatureDoc(models.Model):
     modelo = fields.Char(string='Entidad')
     referencia = fields.Char(string='Referencia')
     idmodelo = fields.Integer(string='Identificador Entidad')
-    firmado_por = fields.Many2one('res.partner', 'Firmado por', ondelete='restrict', readonly='True')
+    firmado_por = fields.Many2one('res.partner', 'Firmado por', ondelete='restrict', readonly=True)
     fecha_create = fields.Datetime(string='Fecha creación')
     fecha_valid = fields.Datetime(string='Fecha validación')
     estado = fields.Char(string='Estado')

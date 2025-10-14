@@ -185,7 +185,7 @@ class leulit_circular(models.Model):
     estado = fields.Selection([('valido','Válido'),('no_valido','No válido')],"Estado", size=200, required=False)
     area = fields.Many2one('hr.department','Área',ondelete='restrict')
     area_name = fields.Char(related='area.name',string='Area',store=False)
-    autor_id = fields.Many2one('res.users','Autor',ondelete='restrict', readonly='True', default=lambda self: self.env.uid)
+    autor_id = fields.Many2one('res.users','Autor',ondelete='restrict', readonly=True, default=lambda self: self.env.uid)
     historial_ids = fields.One2many('leulit.historial_circular', 'circular_id', string='Circular')
     is_mine = fields.Boolean(compute='_is_mine',string='Asignada',store=False,search=_search_is_mine)
     pendiente = fields.Boolean(compute='_pendiente_mine',string='Pendiente',store=False,search=_search_pendiente)
