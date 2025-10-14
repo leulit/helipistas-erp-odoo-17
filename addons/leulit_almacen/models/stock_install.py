@@ -25,45 +25,28 @@ class StockInstall(models.TransientModel):
         return self.env['stock.location'].search([('name','=','Material Pendiente Decisión')], limit=1).id
 
 
-    name = fields.Char(
-        'Reference',  default=lambda self: _('Nuevo'),
-        copy=False, readonly=True, required=True,
-        states={'done': [('readonly', True)]})
-    company_id = fields.Many2one('res.company', string='Compañia', default=2, required=True, states={'done': [('readonly', True)]})
+    name = fields.Char('Reference', default=lambda self: _('Nuevo'),copy=False, readonly=True, required=True)
+    company_id = fields.Many2one('res.company', string='Compañia', default=2, required=True)
     origin = fields.Char(string='Información')
     product_id = fields.Many2one('product.product', 'Product', ondelete="cascade", check_company=True, domain="[('type', '!=', 'service')]", index=True)
-    product_uom_id = fields.Many2one(
-        'uom.uom', 'Unit of Measure',
-        required=True, states={'done': [('readonly', True)]}, domain="[('category_id', '=', product_uom_category_id)]")
+    product_uom_id = fields.Many2one('uom.uom', 'Unit of Measure', required=True, domain="[('category_id', '=', product_uom_category_id)]")
     product_uom_category_id = fields.Many2one(related='product_id.uom_id.category_id')
     tracking = fields.Selection(string='Product Tracking', readonly=True, related="product_id.tracking")
-    lot_id = fields.Many2one(
-        'stock.lot', 'Pieza', required=True,
-        states={'done': [('readonly', True)]}, check_company=True, domain=[('product_qty','!=',0)])
-    owner_id = fields.Many2one('res.partner', 'Propietario', states={'done': [('readonly', True)]}, default=1, check_company=True)
+    lot_id = fields.Many2one('stock.lot', 'Pieza', required=True, check_company=True, domain=[('product_qty','!=',0)])
+    owner_id = fields.Many2one('res.partner', 'Propietario', default=1, check_company=True)
     move_id = fields.Many2one('stock.move', 'Scrap Move', readonly=True, check_company=True, copy=False)
-    picking_id = fields.Many2one('stock.picking', 'Picking', states={'done': [('readonly', True)]}, check_company=True)
-    location_id = fields.Many2one(
-        'stock.location', 'Ubicación Origen', domain="[('name', 'in', ['Material Nuevo','Material Útil'])]",
-        required=True, states={'done': [('readonly', True)]}, default=_get_default_location_id, check_company=True)
-    install_location_id = fields.Many2one(
-        'stock.location', 'Ubicación Destino', default=_get_default_install_location_id,
-        domain="[ ('company_id', 'in', [company_id, False])]", required=True, states={'done': [('readonly', True)]}, check_company=True)
-    uninstall_location_id = fields.Many2one(
-        'stock.location', 'Ubicación Destino', default=_get_default_uninstall_location_id,
-        domain="[('name', 'in', ['Material Pendiente Decisión','Scrap']), ('company_id', 'in', [company_id, False])]", 
-        required=True, states={'done': [('readonly', True)]}, check_company=True)
-    install_qty = fields.Float('Cantidad', default=1.0, required=True, states={'done': [('readonly', True)]}, digits='Product Unit of Measure')
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('done', 'Done')],
-        string='Status', default="draft", readonly=True, tracking=True)
+    picking_id = fields.Many2one('stock.picking', 'Picking', check_company=True)
+    location_id = fields.Many2one('stock.location', 'Ubicación Origen', domain="[('name', 'in', ['Material Nuevo','Material Útil'])]", required=True, default=_get_default_location_id, check_company=True)
+    install_location_id = fields.Many2one('stock.location', 'Ubicación Destino', default=_get_default_install_location_id, domain="[ ('company_id', 'in', [company_id, False])]", required=True, check_company=True)
+    uninstall_location_id = fields.Many2one('stock.location', 'Ubicación Destino', default=_get_default_uninstall_location_id, domain="[('name', 'in', ['Material Pendiente Decisión','Scrap']), ('company_id', 'in', [company_id, False])]",  required=True, check_company=True)
+    install_qty = fields.Float('Cantidad', default=1.0, required=True, digits='Product Unit of Measure')
+    state = fields.Selection([('draft', 'Draft'),('done', 'Done')], string='Status', default="draft", readonly=True, tracking=True)
     date_done = fields.Datetime('Fecha', default=fields.Date.context_today)
     qty_available = fields.Float(related="lot_id.product_qty",string="Cantidad en Stock")
     rotable_lifelimit = fields.Boolean(related="lot_id.rotable_lifelimit",string="Rotable / Life Limit")
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order", domain=[('done','=',False)])
     equipment = fields.Many2one(related="maintenance_request_id.equipment_id", comodel_name="maintenance.equipment", string="Equipo Work Order")
-    desinstalacion_lot_id = fields.Many2one(comodel_name="stock.lot", string="Pieza a Desinstalar", states={'done': [('readonly', True)]})
+    desinstalacion_lot_id = fields.Many2one(comodel_name="stock.lot", string="Pieza a Desinstalar")
 
 
     def print_etiqueta_pieza(self):

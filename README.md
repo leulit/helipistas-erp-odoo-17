@@ -1,8 +1,8 @@
 # helipistas-erp-odoo-17
 Instalar en produccion en odoo:
-pip install pypdf
-pip install pyqrcode
-pip install pyotp
+docker exec -ti helipistas_odoo pip install pypdf
+docker exec -ti helipistas_odoo pip install pyqrcode
+docker exec -ti helipistas_odoo pip install pyotp
 
 Antes de hacer la importacion lanzar dos alter tables para quitar algun constraint que luego se debe poner de nuevo:
 

@@ -42,33 +42,33 @@
                         </div>
                         <separator string="Movimiento Instalación"/>
                         <div class="oe_title">
-                            <h1><field name="name" nolabel="1"/></h1>
+                            <h1><field name="name" nolabel="1" readonly="state == 'done'"/></h1>
                         </div>
                         <group>
                             <group>
-                                <field name="lot_id" context="{'default_company_id': company_id, 'tree_view_ref': 'leulit_almacen.leulit_20230404_1151_tree'}"  groups="stock.group_production_lot" options="{'no_create': True, 'create': False, 'edit': False}"/>
+                                <field name="lot_id" context="{'default_company_id': company_id, 'tree_view_ref': 'leulit_almacen.leulit_20230404_1151_tree'}"  groups="stock.group_production_lot" options="{'no_create': True, 'create': False, 'edit': False}" readonly="state == 'done'"/>
                                 <field name="product_id" invisible="True"/>
                                 <label for="install_qty" string="Cantidad"/>
                                 <div class="o_row">
-                                    <field name="install_qty"/>
+                                    <field name="install_qty" readonly="state == 'done'"/>
                                     <field name="product_uom_category_id" invisible="1"/>
-                                    <field name="product_uom_id" groups="uom.group_uom" force_save="1"/>
+                                    <field name="product_uom_id" groups="uom.group_uom" force_save="1" readonly="state == 'done'"/>
                                 </div>
                                 <field name="qty_available"/>
                                 <field name="rotable_lifelimit" invisible="1"/>
-                                <field name="company_id" invisible="1"/>
+                                <field name="company_id" invisible="1" readonly="state == 'done'"/>
                                 <separator string="Pieza a Desinstalar"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" />
-                                <field name="uninstall_location_id"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))"  options="{'no_create': True, 'no_open': True}"/>
-                                <field name="desinstalacion_lot_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" />
+                                <field name="uninstall_location_id"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))"  options="{'no_create': True, 'no_open': True}" readonly="state == 'done'"/>
+                                <field name="desinstalacion_lot_id" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  invisible="((not maintenance_request_id) or (not rotable_lifelimit))" readonly="state == 'done'"/>
                             </group>
                             <group>
                                 <field name="tracking" invisible="1"/>
-                                <field name="owner_id" groups="stock.group_tracking_owner" invisible="True"/>
-                                <field name="location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1"/>
-                                <field name="install_location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1" readonly="True"/>
+                                <field name="owner_id" groups="stock.group_tracking_owner" invisible="True" readonly="state == 'done'"/>
+                                <field name="location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1" readonly="state == 'done'"/>
+                                <field name="install_location_id" options="{'no_create': True, 'no_open': True}" groups="stock.group_stock_multi_locations" force_save="1" readonly="True" readonly="state == 'done'"/>
                                 <field name="origin"/>
                                 <field name="date_done"/>
-                                <field name="picking_id" invisible="True"/>
+                                <field name="picking_id" invisible="True" readonly="state == 'done'"/>
                                 <field name="company_id" groups="base.group_multi_company" invisible="True"/>
                                 <field name="maintenance_request_id" options="{'no_create': True, 'no_open': True}" required="True"/>
                                 <field name="equipment"/>
