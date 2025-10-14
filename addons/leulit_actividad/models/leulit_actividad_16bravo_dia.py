@@ -164,8 +164,8 @@ class leulit_actividad_16bravo_dia(models.Model):
     descanso_prev = fields.Float("Descanso previo", digits=(16, 2))
     valid_descanso_prev = fields.Char(string='Descanso previo válido')
     tiempo = fields.Float("Tiempo actividad aérea", digits=(16, 2))
-    tiempo_act = fields.Float("Tiempo actividad", digits_compute=dp.get_precision('dp_actividad'))
-    tiempo_desc_parcial = fields.Float("Tiempo descanso_parcial actividad aérea", digits_compute=dp.get_precision('dp_actividad'))
+    tiempo_act = fields.Float("Tiempo actividad")
+    tiempo_desc_parcial = fields.Float("Tiempo descanso_parcial actividad aérea")
     tiempo_amplia = fields.Float("Tiempo amplicación actividad aérea", digits=(16, 2))
     tiempo_aa = fields.Float(compute=_tiempo_aa, store=False, string="Tiempo Act. Aérea")  
 
