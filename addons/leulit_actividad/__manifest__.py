@@ -10,7 +10,8 @@
         "leulit",
         "leulit_operaciones",
         "leulit_escuela",
-        "leulit_planificacion"
+        "leulit_planificacion",
+        "project_timesheet_time_control"
     ],
     "data": [
         "groups.xml",
