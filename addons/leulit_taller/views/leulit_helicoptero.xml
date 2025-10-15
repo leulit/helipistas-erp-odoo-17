@@ -56,9 +56,9 @@
                         <group col="8" colspan="8">
                             <field name="life_limits_now" nolabel="1" readonly="1">
                                 <tree version="7.0" colors="green:instalado_actualmente == True;">
-                                    <field name="instalado_actualmente" invisible="1"/>
-                                    <field name="helicoptero" invisible="1"/>
-                                    <field name="modelo" invisible="1"/>
+                                    <field name="instalado_actualmente" column_invisible="1"/>
+                                    <field name="helicoptero" column_invisible="1"/>
+                                    <field name="modelo" invisibcolumn_invisiblele="1"/>
                                     <field name="is_life_limit" string="L.L." />
                                     <field name="pieza"/>
                                     <field name="from_date" string="Inst."/>
@@ -67,12 +67,12 @@
                                     <field name="horas_inicio" string="TSN Inst." widget="float_time" />
                                     <field name="tsn" string="TSN" widget="float_time" />
                                     <field name="hours_remaining" string="H. R." widget="float_time" />
-                                    <field name="ng_start" string="NG Start"  invisible="((modelo != 'EC120B'))"  />
-                                    <field name="ng_acumulado" string="NG"  invisible="((modelo != 'EC120B'))"  />
-                                    <field name="ng" string="NG total"  invisible="((modelo != 'EC120B'))"  />
-                                    <field name="nf_start" string="NF Start"  invisible="((modelo != 'EC120B'))"  />
-                                    <field name="nf_acumulado" string="NF"  invisible="((modelo != 'EC120B'))"  />
-                                    <field name="nf" string="NF total"  invisible="((modelo != 'EC120B'))"  />
+                                    <field name="ng_start" string="NG Start"  column_invisible="((modelo != 'EC120B'))"  />
+                                    <field name="ng_acumulado" string="NG"  column_invisible="((modelo != 'EC120B'))"  />
+                                    <field name="ng" string="NG total"  column_invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf_start" string="NF Start"  column_invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf_acumulado" string="NF"  column_invisible="((modelo != 'EC120B'))"  />
+                                    <field name="nf" string="NF total"  column_invisible="((modelo != 'EC120B'))"  />
                                     <button name="update_airtime_pieza" type="object" string="Upd." class="oe_highlight"/>
                                 </tree>
                             </field>

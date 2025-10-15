@@ -23,8 +23,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 				<tree string="Control Partes de Escuela">
-					<field name="verificado" invisible="1"/>
-					<field name="estado" invisible="1"/>
+					<field name="verificado" column_invisible="1"/>
+					<field name="estado" column_invisible="1"/>
 					<field name="parte_escuela_id"/>
 					<field name="rel_parte_escuela"/>
 					<field name="fecha"/>
@@ -54,8 +54,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 				<tree string="Lineas de silabus" editable="top">
-					<field name="verificado" invisible="1"/>
-					<field name="estado" invisible="1"/>
+					<field name="verificado" column_invisible="1"/>
+					<field name="estado" column_invisible="1"/>
 					<field name="parte_escuela_id"/>
 					<field name="rel_parte_escuela" options="{'no_open': True}"/>
 					<field name="fecha"/>

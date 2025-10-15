@@ -45,7 +45,7 @@
                             <page string="Ficheros">                                
                                 <!--tree string="Attachments" editable="top" >
                                     <field name="datas" widget="download_link" filename="name" string="File"/>
-                                    <field name="name" invisible="1"/>
+                                    <field name="name" column_invisible="1"/>
                                     <field name="company_id" groups="base.group_multi_company"/>
                                     <field name="create_uid"/>
                                     <field name="create_date"/>

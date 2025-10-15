@@ -37,7 +37,7 @@
                                 <field name="firmado_por" string="Por"/>
                                 <field name="referencia" />
                                 <field name="attachment_id" filename="name_attach" string="Doc."/>
-                                <field name="name_attach" invisible="1"/>
+                                <field name="name_attach" column_invisible="1"/>
                             </tree>
                         </field>
                     </page>
@@ -114,7 +114,7 @@
                                         <field name="firmado_por" string="Por"/>
                                         <field name="referencia" />
                                         <field name="attachment_id" filename="name_attach" string="Doc."/>
-                                        <field name="name_attach" invisible="1"/>
+                                        <field name="name_attach" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </div>
@@ -169,7 +169,7 @@
                                         <field name="firmado_por" string="Por"/>
                                         <field name="referencia" />
                                         <field name="attachment_id" filename="name_attach" string="Doc."/>
-                                        <field name="name_attach" invisible="1"/>
+                                        <field name="name_attach" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </div>

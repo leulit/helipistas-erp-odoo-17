@@ -71,7 +71,7 @@
             <field name="model">leulit.silabus</field>
             <field name="arch" type="xml">
                 <tree string="Silabus">
-                    <field name="silabusDoit" invisible="1"/>
+                    <field name="silabusDoit" column_invisible="1"/>
                     <field name="id" />
                     <field name="curso_id" />
                     <field name="asignatura_id"/>
@@ -108,7 +108,7 @@
             <field name="model">leulit.silabus</field>
             <field name="arch" type="xml">
                 <tree string="Silabus" decoration-success="silabusDoit == True" decoration-primary=" silabusDoit != True">
-                    <field name="silabusDoit" invisible="1"/>
+                    <field name="silabusDoit" column_invisible="1"/>
                     <field name="id" />
                     <field name="curso_id" />
                     <field name="asignatura_id"/>

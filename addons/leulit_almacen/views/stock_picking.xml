@@ -56,9 +56,9 @@
                                 <field name="sn"/>
                                 <field name="ref_origen"/>
                                 <field name="lote"/>
-                                <field name="can_print" invisible="1"/>
+                                <field name="can_print" column_invisible="1"/>
                                 <button type="object" name="add_docs_stock_production_lot" class="oe_highlight" string="Adjuntar Doc."/>
-                                <button type="object" name="print_etiqueta_pieza" class="oe_highlight" string="Imprimir"  invisible="((not can_print))" />
+                                <button type="object" name="print_etiqueta_pieza" class="oe_highlight" string="Imprimir"  column_invisible="((not can_print))" />
                                 <button type="object" name="add_datos_pieza" class="oe_highlight" string="Datos de pieza"/>
                             </tree>
                         </field>

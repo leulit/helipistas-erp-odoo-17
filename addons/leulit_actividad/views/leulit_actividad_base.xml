@@ -9,7 +9,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Actividad" create="false" edit="true">
-                    <field name="prevista" invisible="1"/>
+                    <field name="prevista" column_invisible="1"/>
                     <field name="partner" string="Usuario"/>
                     <field name="fecha" string="Fecha"/>
                     <field name="descripcion" string="Desc"/>
@@ -30,7 +30,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Actividad" create="false" edit="true">
-                    <field name="prevista" invisible="1"/>
+                    <field name="prevista" column_invisible="1"/>
                     <field name="partner" string="Usuario"/>
                     <field name="rol" string="Rol"/>
                     <field name="fecha" string="Fecha"/>
@@ -44,7 +44,7 @@
                     <field name="delta_pos" string="Delta Pos." />
                     <field name="coe_mayoracion" string="C.M."/>
                     <field name="tiempo_calc" string="T.A." />
-                    <field name="valid_flight_time" invisible="1" />
+                    <field name="valid_flight_time" column_invisible="1" />
                     <!--button name="detalle" type="object" class="oe_highlight" string="Detalle"/-->
                 </tree>
             </field>

@@ -104,7 +104,7 @@
                     <field name="maintenance_kind_id" />
                     <field name="company_id" groups="base.group_multi_company" />
                     <field name="state"/>
-                    <field name="is_activable" invisible="1"/>
+                    <field name="is_activable" column_invisible="1"/>
                 </tree>
             </field>
         </record>

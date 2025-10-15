@@ -27,7 +27,7 @@
                                 <field name="name" widget="text"/>
                                 <field name="norma" widget="text"/>
                                 <field name="notas" widget="text"/>
-                                <field name="estado" invisible="1"/>
+                                <field name="estado" column_invisible="1"/>
                             </tree>
                         </field>
                     </sheet>

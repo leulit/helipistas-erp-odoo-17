@@ -32,11 +32,11 @@
                     <field name="dias_trab_ano" string="Días AV año"/>
                     <field name="dias_programados_ano" string="Días P. año"/>
                     <field name="time_flight_range1_plan" string="TV 28d"/>
-                    <field name="valid_time_flight_range1_plan" invisible="1" />
+                    <field name="valid_time_flight_range1_plan" column_invisible="1" />
                     <field name="time_flight_range2_plan" string="TV 12m"/>
-                    <field name="valid_time_flight_range2_plan" invisible="1" />
+                    <field name="valid_time_flight_range2_plan" column_invisible="1" />
                     <field name="time_flight_range3_plan" string="TV 3m"/>
-                    <field name="valid_time_flight_range3_plan" invisible="1" />
+                    <field name="valid_time_flight_range3_plan" column_invisible="1" />
                     <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>
                 </tree>
             </field>

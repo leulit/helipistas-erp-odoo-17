@@ -89,13 +89,13 @@
                                         <field name="alumno" readonly="1"/>
                                         <field name="duracion" widget="float_time" string="T. Teórico" readonly="1"/>
                                         <field name="tiempo" widget="float_time" string="T. Dedicado" readonly="1" force_save="1"/>
-                                        <field name="sil_test" invisible="1"/>
-                                        <field name="sil_valoracion" invisible="1"/>
-                                        <field name="todo_cerrar" invisible="1"/>
-                                        <field name="rel_docs" invisible="1"/>
-                                        <field name="valoracion"  invisible="((not sil_valoracion))" />
-                                        <field name="nota"  invisible="((not sil_test))" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" class="oe_highlight" string="Adjuntar Doc."  invisible="((not sil_test))" />
+                                        <field name="sil_test" column_invisible="1"/>
+                                        <field name="sil_valoracion" column_invisible="1"/>
+                                        <field name="todo_cerrar" column_invisible="1"/>
+                                        <field name="rel_docs" inviscolumn_invisibleible="1"/>
+                                        <field name="valoracion"  column_invisible="((not sil_valoracion))" />
+                                        <field name="nota"  column_invisible="((not sil_test))" />
+                                        <button type="object" name="add_docs_rel_parte_escuela" class="oe_highlight" string="Adjuntar Doc."  column_invisible="((not sil_test))" />
                                     </tree>
                                 </field>
                             </page>
@@ -132,7 +132,7 @@
                     <field name="fecha"/>
                     <field name="tiempo" widget="float_time" sum="Total"/>
                     <field name="profesor"/>
-                    <field name="silverificado" invisible="1"/>    
+                    <field name="silverificado" column_invisible="1"/>    
                 </tree>
             </field>
         </record>
@@ -198,12 +198,12 @@
                         <group col="1" colspan="3">
                             <field name="domainSilabus" no_label="1" style="width:100%%">
                             	<tree create="false" edit="false" limit="200">
-                            		<button name="verificar_alumno" type="object" string="verificar" class="oe_highlight"  invisible="((verificado))" />
-                            		<field name="id" invisible="1"/>
+                            		<button name="verificar_alumno" type="object" string="verificar" class="oe_highlight"  column_invisible="((verificado))" />
+                            		<field name="id" column_invisible="1"/>
                             		<field name="verificado" width="1px" string=" "/>
                                     <field name="rel_curso" style="white-space:normal"/>
                                     <field name="rel_silabus" style="white-space:normal"/>
-                                    <field name="alumno" invisible="1"/>
+                                    <field name="alumno" column_invisible="1"/>
                                     <field name="tiempo" width="1px" widget="float_time" string="T. Dedicado"/>
                                 </tree>
                             </field>
@@ -224,8 +224,8 @@
                     <field name="fecha"/>
                     <field name="tiempo" widget="float_time" sum="Total"/>
                     <field name="profesor"/>
-                    <field name="uid_in_alumnos" invisible="1"/>
-                    <field name="silverificado_por_alumno" invisible="1"/>
+                    <field name="uid_in_alumnos" column_invisible="1"/>
+                    <field name="silverificado_por_alumno" column_invisible="1"/>
                 </tree>
             </field>
         </record>

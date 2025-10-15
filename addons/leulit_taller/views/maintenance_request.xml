@@ -133,8 +133,8 @@
                                         <field name="d_check"/>
                                         <field name="user_d_check"  options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         <field name="datetime_d_check"/>
-                                        <field name="flag_doble_check" invisible="1"/>
-                                        <field name="flag_security_inspection" invisible="1"/>
+                                        <field name="flag_doble_check" column_invisible="1"/>
+                                        <field name="flag_security_inspection" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </page>

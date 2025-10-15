@@ -64,8 +64,8 @@
                                         <field name="tag_ids" widget="many2many_tags"/>
                                         <field name="maintenance_request_id" string="WO"/>
                                         <field name="stage_id"/>
-                                        <field name="task_maintenance" invisible="1"/>
-                                        <button name="set_into_workorder" string="Añadir a WO" type="object" class="oe_highlight"  invisible="((not task_maintenance))" />
+                                        <field name="task_maintenance" column_invisible="1"/>
+                                        <button name="set_into_workorder" string="Añadir a WO" type="object" class="oe_highlight"  column_invisible="((not task_maintenance))" />
                                     </tree>
                                 </field>
                             </page>
@@ -80,14 +80,14 @@
             <field name="model">leulit.airworthiness_directive</field>
             <field name="arch" type="xml">
                 <tree decoration-danger="state=='cancel'" decoration-success="state=='active'">
-                    <field name="state" invisible="1"/>
+                    <field name="state" column_invisible="1"/>
                     <field name="aircraft"/>
                     <field name="name_easa"/>
                     <field name="name_faa"/>
                     <field name="date"/>
                     <field name="rev"/>
-                    <field name="type_component" invisible="1"/>
-                    <field name="type_aircraft" invisible="1"/>
+                    <field name="type_component" column_invisible="1"/>
+                    <field name="type_aircraft" column_invisible="1"/>
                     <field name="subject"/>
                     <field name="recursive"/>
                     <field name="date_applyed"/>

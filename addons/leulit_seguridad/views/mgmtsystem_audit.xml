@@ -102,7 +102,7 @@
                                             <field name="norma" widget="text"/>
                                             <field name="conforme"/>
                                             <field name="comments" widget="text"/>
-                                            <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+                                            <field name="company_id" groups="base.group_multi_company" column_invisible="1"/>
                                             <button name="action_get_attachment_view" string="Añadir Adjuntos" type="object" icon="fa-paperclip"/>
                                         </tree>
                                     </field>
@@ -140,7 +140,7 @@
                     <field name="procedimiento_id"/>
                     <field name="department_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state" column_invisible="1"/>
                 </tree>
             </field>
         </record>

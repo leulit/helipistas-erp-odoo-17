@@ -11,9 +11,9 @@
                     <page string="Vuelos" name="vuelos">
                         <field name="vuelos" readonly="1">
                             <tree decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'" default_order="fechavuelo desc, horasalida desc">
-                                <field name="estado" invisible="1"/>
-                                <field name="fechavuelo" invisible="1"/>
-                                <field name="horasalida" invisible="1"/>
+                                <field name="estado" column_invisible="1"/>
+                                <field name="fechavuelo" column_invisible="1"/>
+                                <field name="horasalida" column_invisible="1"/>
                                 <field name="codigo"/>
                                 <field name="helicoptero_id"/>
                                 <field name="piloto_id"/>
@@ -34,7 +34,7 @@
             <field name="priority" eval="100"/>
             <field name="arch" type="xml">
                 <tree create="false">
-                    <field name="state" invisible="1"/>
+                    <field name="state" column_invisible="1"/>
                     <field name="name"/>
                     <field name="partner_id"/>
                 </tree>
@@ -103,7 +103,7 @@
                                 <group>
                                     <field name="vuelos" readonly="1">
                                         <tree decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'">
-                                            <field name="estado" invisible="1"/>
+                                            <field name="estado" column_invisible="1"/>
                                             <field name="codigo"/>
                                             <field name="helicoptero_id"/>
                                             <field name="piloto_id"/>

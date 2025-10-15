@@ -89,7 +89,7 @@
                                         <field name="cursos_finalizados" no_label="1"  options="{'reload_on_button': true}"
                                         context="{'default_perfil_formacion_id' : id,'default_is_template': False, 'form_view_ref' : 'leulit_perfil_formacion.leulit_perfil_formacion_curso_form'}">
                                             <tree delete="false" edit="true" create="false" decoration-danger="semaforo_dy == 'red'" decoration-success="semaforo_dy == 'green'" decoration-warning="semaforo_dy == 'yellow'">
-                                                <field name="semaforo_dy" invisible="1"/>
+                                                <field name="semaforo_dy" column_invisible="1"/>
                                                 <field name="descripcion"/>
                                                 <field name="periodicidad_dy"/>
                                                 <button name="start_course_template" string="Reiniciar" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
@@ -172,7 +172,7 @@
                                         <field name="cursos" no_label="1"  options="{'reload_on_button': true}"
                                             context="{'default_perfil_formacion_id' : id,'default_is_template': False}">
                                             <tree  delete="false" edit="true" create="false">
-                                                <field name="id" invisible="1"/>
+                                                <field name="id" column_invisible="1"/>
                                                 <button name="done_course" string="Realizado" type="object" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                                 <button name="print_last_informe_general_cursos_alu_ld" string="Imprimir" type="object"  class="oe_highlight"/>
                                                 <field name="descripcion"/>
@@ -189,7 +189,7 @@
                                     <group col="1">
                                         <field name="acciones_new" no_label="1">
                                             <tree delete="true" edit="true" create="false">
-                                                <field name="id" invisible="1"/>
+                                                <field name="id" column_invisible="1"/>
                                                 <button name="done_course" string="Realizado" class="oe_highlight" type="object" groups="leulit.ROperaciones_gestor"/>
                                                 <field name="accion"/>
                                                 <field name="last_done_date" widget="nalabel" string="Last Done"/>

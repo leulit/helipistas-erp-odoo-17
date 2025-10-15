@@ -12,7 +12,7 @@
                     <field name="fin" string="Fin" />
                     <field name="partner" string="Usuario" />
                     <field name="descanso_prev" string="Desc. Prev." />
-                    <field name="valid_descanso_prev" invisible="1"/>
+                    <field name="valid_descanso_prev" column_invisible="1"/>
                     <field name="tiempo" string="Tiempo" />
                     <field name="max_duracion" />
                     <button name="detalle" type="object" class="oe_highlight" string="Detalle"/>

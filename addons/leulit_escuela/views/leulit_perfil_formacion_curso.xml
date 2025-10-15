@@ -68,8 +68,8 @@
                                 <page string="Histórico realización curso">
                                     <field name="last_done_history" no_label="1">
                                         <tree delete="true" create="false" edit="true" decoration-muted="is_last == False">
-                                            <field name="id" invisible="1" />
-                                            <field name="is_last" invisible="1"/>
+                                            <field name="id" column_invisible="1" />
+                                            <field name="is_last" column_invisible="1"/>
                                             <button name="informe_general_cursos_alu_ld" type="object" string="Imprimir" class="oe_highlight"/>
                                             <field name="done_date" />
                                             <field name="last_parte" string="Fecha LP"/>

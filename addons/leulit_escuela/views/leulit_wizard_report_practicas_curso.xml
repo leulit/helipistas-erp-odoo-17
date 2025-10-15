@@ -13,8 +13,8 @@
                         <field name="cursos" domain="[('alumno_id','=',alumno),('cursos_perfil_formacion','=',False)]">
                             <tree string="Cursos" create="false" edit="false">
                                 <field name="curso_id"/>
-                                <field name="alumno_id" invisible="1"/>
-                                <field name="cursos_perfil_formacion" invisible="1"/>
+                                <field name="alumno_id" column_invisible="1"/>
+                                <field name="cursos_perfil_formacion" column_invisible="1"/>
                             </tree>
                         </field>                        
                     </group>

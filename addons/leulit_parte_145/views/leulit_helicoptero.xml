@@ -107,8 +107,8 @@
             <field name="arch" type="xml">
                 <tree string="Helicópteros">
                     <field name="statemachine"/>
-                    <field name="horas_remanente" invisible="1"/>
-                    <field name="baja" invisible="1"/>
+                    <field name="horas_remanente" column_invisible="1"/>
+                    <field name="baja" column_invisible="1"/>
                     <field name="semaforo" widget="semaforo_char" string=""/>
                     <field name="strhoras_remanente"/>
                     <field name="semaforo_fecha" widget="semaforo_char" string=""/>

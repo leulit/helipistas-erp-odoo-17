@@ -98,7 +98,7 @@
                 <field name="total_medidas" readonly="1"/>
                 <button name="action_view_medidas" type="object" string="Ver Medidas" 
                         class="btn-secondary" icon="fa-arrow-right"/>
-                <field name="color" invisible="1"/>
+                <field name="color" column_invisible="1"/>
             </tree>
         </field>
     </record>
@@ -125,7 +125,7 @@
                 <field name="costo_estimado"/>
                 <field name="tarea_asociada" readonly="1" optional="hide"/>
                 <button name="crear_tarea" type="object" string="Crear Tarea" 
-                        class="btn-primary" icon="fa-plus" invisible="tarea_asociada"/>
+                        class="btn-primary" icon="fa-plus" column_invisible="tarea_asociada"/>
             </tree>
         </field>
     </record>

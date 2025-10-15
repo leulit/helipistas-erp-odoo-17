@@ -30,7 +30,7 @@
             <field name="arch" type="xml">
             <tree string="Análisis consume aceite" create="false">
                 <field name="matricula"/>
-                <field name="baja_helicoptero" invisible="1"/>
+                <field name="baja_helicoptero" column_invisible="1"/>
                 <field name="fecha"/>
                 <field name="oilqty" sum="Total"/>
                 <field name="acumulado"/>

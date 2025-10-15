@@ -37,7 +37,7 @@
                                 <field name="orden"/>
                                 <field name="descriptor" class="lt_tree_wrap_line"/>
                                 <field name="fecha_doit"/>
-                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" invisible="doit != False"/>                                
+                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" column_invisible="doit != False"/>                                
                             </tree>
                         </field>
                         <div class="oe_chatter">

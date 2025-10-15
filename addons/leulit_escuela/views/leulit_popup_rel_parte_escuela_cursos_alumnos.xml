@@ -72,7 +72,7 @@
 	                	<field name="rel_curso" options="{'no_create': True, 'edit': False, 'no_open':true}" domain="[('estado','=','activo')]"/>
 	                   	<field name="silabus" domain="[('curso_id','=',rel_curso),('tipo','=','teorica')]"  readonly="((not rel_curso))" > 
 	                   		<tree create="false">
-	                   			<field name="silabusDoit" invisible="1"/>
+	                   			<field name="silabusDoit" column_invisible="1"/>
 	                   			<field name="id"/>
 	                   			<field name="asignatura_id"/>
 	                   			<field name="name"/>

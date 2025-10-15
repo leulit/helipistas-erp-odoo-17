@@ -652,15 +652,15 @@
                                     <h4>Aerovías</h4>
                                     <field name="aerovia_ids" string="" nolabel="1"  invisible="not ruta_id" >
                                         <tree create="false" edit="false" delete="false">
-                                            <field name="ruta_id" invisible="1"/>
-                                            <field name="vuelo_id" invisible="1"/>
+                                            <field name="ruta_id" column_invisible="1"/>
+                                            <field name="vuelo_id" column_invisible="1"/>
                                             <field name="aerovia_id"/>
                                             <field name="distancia" sum="Total distancia"/>
                                             <field name="rumbo"/>
                                             <field name="altitudprevista"/>
                                             <field name="altitudseguridad"/>
                                             <field name="tiempoprevisto" widget="float_time" sum="Total"/>
-                                            <field name="strtiempoprevisto" invisible="1"/>
+                                            <field name="strtiempoprevisto" column_invisible="1"/>
                                         </tree>
                                     </field>
                                 </div>
@@ -1393,15 +1393,15 @@
                                 <h4>Aerovías</h4>
                                 <field name="aerovia_ids" string="" nolabel="1"  invisible="((not ruta_id))" >
                                     <tree create="false" edit="false" delete="false">
-                                        <field name="ruta_id" invisible="1"/>
-                                        <field name="vuelo_id" invisible="1"/>
+                                        <field name="ruta_id" column_invisible="1"/>
+                                        <field name="vuelo_id" column_invisible="1"/>
                                         <field name="aerovia_id"/>
                                         <field name="distancia" sum="Total distancia"/>
                                         <field name="rumbo"/>
                                         <field name="altitudprevista"/>
                                         <field name="altitudseguridad"/>
                                         <field name="tiempoprevisto" widget="float_time" sum="Total"/>
-                                        <field name="strtiempoprevisto" invisible="1"/>
+                                        <field name="strtiempoprevisto" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </div>
@@ -1558,10 +1558,10 @@
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
                 <tree create="0" string="Vuelos" decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'" default_order="fechavuelo desc, horasalida desc">
-                    <field name="helicoptero_propietario" invisible="1"/>
-                    <field name="estado" invisible="1"/>
-                    <field name="fechavuelo" invisible="1"/>
-                    <field name="horasalida" invisible="1"/>
+                    <field name="helicoptero_propietario" column_invisible="1"/>
+                    <field name="estado" column_invisible="1"/>
+                    <field name="fechavuelo" column_invisible="1"/>
+                    <field name="horasalida" column_invisible="1"/>
                     <field name="codigo"/>
                     <field name="helicoptero_id" string="Helicóptero" />
                     <field name="piloto_id" />
@@ -1577,12 +1577,12 @@
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
                 <tree string="Vuelos" decoration-success="estado=='cerrado'" decoration-danger="estado=='cancelado'" decoration-warning="estado=='postvuelo'" decoration-primary="estado=='prevuelo'" default_order="fechavuelo desc, horasalida desc">
-                    <field name="revisar" invisible="1"/>
+                    <field name="revisar" column_invisible="1"/>
                     <field name="codigo"/>
                     <field name="helicoptero_id" string="Helicóptero" />
                     <field name="foto_piloto" widget="image" class="foto_piloto_tree" optional="show"/>
                     <field name="piloto_id" />
-                    <field name="estado" invisible="1"/>
+                    <field name="estado" column_invisible="1"/>
                     <field name="presupuesto_vuelo" optional="show"/>
                     <field name="strfechasalida" string="Fecha Salida" optional="show"/>       
                     <field name="strfechallegada" string="Fecha Llegada" optional="show"/>

@@ -47,7 +47,7 @@
                                     <field name="rumbo" readonly="1"/>
                                     <field name="altitudprevista"/>
                                     <field name="altitudseguridad" readonly="1"/>
-                                    <field name="water_zone" invisible="1"/>
+                                    <field name="water_zone" column_invisible="1"/>
                                 </tree>
                             </field>
                             <table class="">

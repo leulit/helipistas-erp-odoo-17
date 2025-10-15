@@ -82,7 +82,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Reunion" decoration-success="pendiente==False" decoration-warning="pendiente==True">
-                    <field name="pendiente" invisible="1"/>
+                    <field name="pendiente" column_invisible="1"/>
                     <field name="asunto"/>
                     <field name="tipo_reunion"/>
                     <field name="fecha_ini"/>
@@ -100,8 +100,8 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Mis Reunion" decoration-success="pendiente_mine==False" decoration-warning="pendiente_mine==True">
-                    <field name="pendiente_mine" invisible="1"/>
-                    <field name="is_mine" invisible="1"/>
+                    <field name="pendiente_mine" column_invisible="1"/>
+                    <field name="is_mine" column_invisible="1"/>
                     <field name="asunto"/>
                     <field name="tipo_reunion"/>
                     <field name="fecha_ini"/>
