@@ -24,9 +24,9 @@
             <field name="type">tree</field>
             <field name="arch" type="xml" >
                 <tree string="Mis Circulares" decoration-success="pendiente==False" decoration-warning="pendiente==True">
-                    <field name="pendiente" invisible="1"/>
-                    <field name="caducada" invisible="1"/>
-                    <field name="is_mine" invisible="1"/>
+                    <field name="pendiente" column_invisible="1"/>
+                    <field name="caducada" column_invisible="1"/>
+                    <field name="is_mine" column_invisible="1"/>
                     <field name="name"/>
                     <field name="fecha_emision"/>
                     <field name="fecha_fin"/>
@@ -43,9 +43,9 @@
             <field name="type">tree</field>
             <field name="arch" type="xml" >
                 <tree string="Circulares" decoration-success="pendiente_todos==False" decoration-warning="pendiente_todos==True">
-                    <field name="pendiente_todos" invisible="1"/>
-                    <field name="caducada" invisible="1"/>
-                    <field name="is_mine" invisible="1"/>
+                    <field name="pendiente_todos" column_invisible="1"/>
+                    <field name="caducada" column_invisible="1"/>
+                    <field name="is_mine" column_invisible="1"/>
                     <field name="name"/>
                     <field name="fecha_emision"/>
                     <field name="fecha_fin"/>
@@ -83,7 +83,7 @@
                                 <tree string="historial_ids"  editable="bottom">
                                     <field name="partner_id"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                                     <field name="partner_email" string="Email"/>
-                                    <field name="user_id" invisible="1"/>
+                                    <field name="user_id" column_invisible="1"/>
                                     <field name="enviado"/>
                                     <field name="recibido"/>
                                     <field name="leido"/>

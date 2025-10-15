@@ -33,7 +33,7 @@
                         <h2 invisible="not template">Items Checklist</h2>
                         <field name="items" invisible="not template" options="{'no_create': True, 'create': False, 'edit': False}" readonly="1" nolabel="1">
                             <tree string="Items" create="false" edit="false" limit="80">
-                                <field name="doit" invisible="1"/>
+                                <field name="doit" column_invisible="1"/>
                                 <field name="orden"/>
                                 <field name="descriptor" class="lt_tree_wrap_line"/>
                                 <field name="fecha_doit"/>
