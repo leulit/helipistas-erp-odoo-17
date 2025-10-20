@@ -113,7 +113,7 @@
                     <field name="strhoras_remanente"/>
                     <!-- <field name="semaforo_fecha" invisible="1" widget="semaforo_char" string=""/> -->
                     <field name="dias_remanente" type="char"/>
-                    <field name="name" />
+                    <!-- <field name="name" /> -->
                     <field name="airtime" widget="float_time" string="TSN aeronave"/>
                     <field name="datelastflight" />
                     <field name="fechalastWB" />
