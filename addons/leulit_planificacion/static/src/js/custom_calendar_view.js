@@ -1,28 +1,33 @@
 /** @odoo-module **/
 
 import { patch } from "@web/core/utils/patch";
-import { AttendeeCalendarModel } from "@calendar/views/attendee_calendar/attendee_calendar_model";
+import { AttendeeCalendarController } from "@calendar/views/attendee_calendar/attendee_calendar_controller";
+import { onWillStart } from "@odoo/owl";
 
-patch(AttendeeCalendarModel.prototype, {
-    /**
-     * Sobrescribimos el método que carga específicamente las secciones de filtros.
-     * Esto se ejecuta DENTRO de la carga inicial ('load'), justo ANTES de que
-     * el modelo pida los registros de eventos al servidor.
-     */
-    async _loadFilterSections(meta) {
-        // Dejamos que el método original cree la estructura de filtros con su defecto (usuario activo).
-        await super._loadFilterSections(...arguments);
+patch(AttendeeCalendarController.prototype, {
+    setup() {
+        super.setup(...arguments);
 
-        // Inmediatamente después, modificamos ese resultado en memoria.
-        const partnerFilters = this.data.filterSections.partner_ids.filters;
-        const allFilter = partnerFilters.find(f => f.type === 'all');
-        const userPartnerFilter = partnerFilters.find(f => f.value === this.userPartnerId);
+        // onWillStart se ejecuta ANTES de la primera carga.
+        onWillStart(async () => {
+            // Esperamos a que el modelo se cargue por primera vez con sus datos por defecto.
+            await this.model.load();
+            
+            // Justo después de la carga inicial, y ANTES del primer renderizado,
+            // modificamos los filtros en memoria.
+            const filterSections = this.model.data.filterSections;
+            if (filterSections && filterSections.partner_ids) {
+                const partnerFilters = filterSections.partner_ids.filters;
+                const allFilter = partnerFilters.find(f => f.type === 'all');
+                const userPartnerFilter = partnerFilters.find(f => f.value === this.model.userPartnerId);
 
-        if (allFilter) {
-            allFilter.active = true;
-        }
-        if (userPartnerFilter) {
-            userPartnerFilter.active = false;
-        }
+                if (allFilter) {
+                    allFilter.active = true;
+                }
+                if (userPartnerFilter) {
+                    userPartnerFilter.active = false;
+                }
+            }
+        });
     }
 });
