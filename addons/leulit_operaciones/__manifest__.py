@@ -40,7 +40,7 @@
         "views/registro_consumosaeronave_report.xml",
         "views/report_piloto_log_book.xml",
         "views/leulit_performance.xml",
-        "views/leulit_helicoptero.xml",
+        # "views/leulit_helicoptero.xml",
         "views/leulit_freelance_actividad_aerea.xml",
         "views/leulit_wizard_freelance_actividad_aerea.xml",
         "views/report_format_27.xml",
