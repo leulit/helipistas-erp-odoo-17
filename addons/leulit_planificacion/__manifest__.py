@@ -38,9 +38,9 @@
         "menu.xml"
     ],
     'assets': {
-        # 'web.assets_backend': [
-        #     'leulit_planificacion/static/src/js/custom_calendar_view.js',
-        # ],
+        'web.assets_backend': [
+            'leulit_planificacion/static/src/js/custom_calendar_view.js',
+        ],
     },
     "demo": [],
     "css": [],
