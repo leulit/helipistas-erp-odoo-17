@@ -29,7 +29,7 @@
                         <group>
                             <h2>Datos motor instalado</h2>
                         </group>
-                        <group col="3">
+                        <!-- <group col="3">
                             <group name="datos_generales_motor">
                                 <field name="tipo_motor" readonly="1" string="Tipo"/>
                                 <field name="modelomotor" readonly="1" string="Modelo"/>
@@ -48,7 +48,7 @@
                                 <field name="nf" readonly="1" string="NF Actual"/>
                             </group>
                         </group>
-                    </page>
+                    </page> -->
                     <!-- <page string="Life Limits / Rotables" name="life_limits_rotables_helicoptero">
                         <group>
                             <h2>Datos life limits / rotables instalados</h2>
