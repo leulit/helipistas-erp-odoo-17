@@ -33,12 +33,12 @@
                                         <field name="colormarks" />
                                         <field name="codoperador" />
                                     </group>
-                                    <group col="2">
+                                    <!-- <group col="2">
                                         <field name="airtimestart" widget="float_time"/>
                                         <field name="airtime" widget="float_time"/>
                                         <field name="date_tso"/>
                                         <field name="tso" widget="float_time"/>
-                                    </group>
+                                    </group> -->
                                     <group col="2">
                                         <field name="doitov" invisible="tipo == 'EC120B'"/>
                                     </group>
