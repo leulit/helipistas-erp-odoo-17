@@ -13,7 +13,7 @@
     "data": [
         "security.xml",
         "views/maintenance_equipment.xml",
-        "views/leulit_helicoptero.xml"
+        # "views/leulit_helicoptero.xml"
     ],
     "demo": [],
     "css": [],
