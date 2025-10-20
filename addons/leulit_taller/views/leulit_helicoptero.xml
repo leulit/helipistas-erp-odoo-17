@@ -47,8 +47,8 @@
                                 <field name="ng" readonly="1" string="NG Actual"/>
                                 <field name="nf" readonly="1" string="NF Actual"/>
                             </group>
-                        </group>
-                    </page> -->
+                        </group> -->
+                    </page>
                     <!-- <page string="Life Limits / Rotables" name="life_limits_rotables_helicoptero">
                         <group>
                             <h2>Datos life limits / rotables instalados</h2>
