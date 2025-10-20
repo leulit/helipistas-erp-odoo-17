@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
 import { patch } from "@web/core/utils/patch";
-import { AttendeeCalendarController } from "@calendar/views/attendee_calendar/attendee_calendar_controller";
+import { AttendeeCalendarModel } from "@calendar/views/attendee_calendar/attendee_calendar_model";
 import { onWillStart } from "@odoo/owl";
 
-patch(AttendeeCalendarController.prototype, {
+patch(AttendeeCalendarModel.prototype, {
     
     async updateAttendeeData(data) {
         const attendeeFilters = data.filterSections.partner_ids;
