@@ -6,7 +6,7 @@
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
 
-        <record id="calendar.menu_root" model="ir.ui.menu">
+        <record id="calendar.mail_menu_calendar" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
 
@@ -16,3 +16,4 @@
 
     </data>
 </odoo>
+
