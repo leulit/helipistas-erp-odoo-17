@@ -33,11 +33,11 @@
                         <h2 invisible="not template">Items Checklist</h2>
                         <field name="items" invisible="not template" options="{'no_create': True, 'create': False, 'edit': False}" readonly="1" nolabel="1">
                             <tree string="Items" create="false" edit="false" limit="80">
-                                <field name="doit"/>
+                                <field name="doit" column_invisible="1"/>
                                 <field name="orden"/>
                                 <field name="descriptor" class="lt_tree_wrap_line"/>
                                 <field name="fecha_doit"/>
-                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" column_invisible="doit != False"/>                                
+                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" invisible="doit != False"/>                                
                             </tree>
                         </field>
                         <div class="oe_chatter">
