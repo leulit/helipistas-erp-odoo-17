@@ -29,6 +29,10 @@
                         <group>
                             <h2>Datos motor instalado</h2>
                         </group>
+                        <group>
+                            <field name="motor"/>
+                            <field name="motor_lot"/>
+                        </group>
                         <!-- <group col="3">
                             <group name="datos_generales_motor">
                                 <field name="tipo_motor" readonly="1" string="Tipo"/>
