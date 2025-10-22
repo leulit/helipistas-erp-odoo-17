@@ -2,27 +2,32 @@
 <odoo>
     <data noupdate="0">
 
+        <!-- Conversaciones -->
         <record id="mail.menu_root_discuss" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
-
+        <!-- Calendario -->
         <record id="calendar.mail_menu_calendar" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
-
+        <!-- Proyectos -->
         <record id="project.menu_main_pm" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
-
+        <!-- Partes de horas -->
         <record id="hr_timesheet.timesheet_menu_root" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
-
+        <!-- Web -->
         <record id="website.menu_website_configuration" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
-
+        <!-- Marketing por email -->
         <record id="mass_mailing.mass_mailing_menu_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
+        </record>
+        <!-- Rastreador de enlaces -->
+        <record id="utm.menu_link_tracker_root" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
 
