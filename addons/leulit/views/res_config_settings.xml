@@ -9,7 +9,7 @@
         <!-- Insertamos dentro del app "General Settings" -->
         <xpath expr="//app[@name='general_settings']" position="after">
 
-          <app data-string="General Settings" string="General Settings" name="general_settings" logo="/leulit/static/description/icon.png">
+          <app data-string="Leulit Settings" string="Leulit Settings" name="default_projects_leulit" logo="/leulit/static/description/icon.png">
             <div id="default_projects_leulit">
               <block title="Módulos Leulit" name="leulit_modules_block">
                 <setting string="Proyectos predeterminados para registro de horas">
