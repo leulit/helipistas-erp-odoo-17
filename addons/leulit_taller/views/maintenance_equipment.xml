@@ -32,7 +32,7 @@
                         <button name="action_change_production_lot" string="Cambiar Pieza" type="object" class="oe_highlight"/>
                     </header>
                 </xpath>
-                <!-- <xpath expr="//field[@name='model']" position="after">
+                <xpath expr="//field[@name='model']" position="after">
                     <field name="is_motor"/>
                     <field name="production_lot" readonly="1"/>
                     <field name="first_parent" invisible="1"/>
@@ -89,7 +89,7 @@
                             <field name="airtime_helicopter"/>
                         </group>
                     </page>
-                </xpath> -->
+                </xpath>
             </field>
         </record>
 

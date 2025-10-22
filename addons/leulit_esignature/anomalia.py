@@ -214,7 +214,7 @@ class Anomalia(models.Model):
     
 
     def haveNoGo(self, helicoptero_id, fecha):
-        nitems = self.search([('fecha','<=',fecha),('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')], count=True)
+        nitems = self.search_count([('fecha','<=',fecha),('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')])
         return nitems > 0
 
 
