@@ -50,15 +50,15 @@
                 </xpath>
                 <xpath expr="//field[@name='location']" position="after">
                     <field name="helicoptero_pieza" invisible="1"/>
-                    <field name="external_aircraft"  invisible="((category_id != 1))" />
-                    <field name="helicoptero"  invisible="((category_id != 1))" />
+                    <field name="external_aircraft"  invisible="category_id != 1" />
+                    <field name="helicoptero"  invisible="category_id != 1" />
                 </xpath>
                 <xpath expr="//page[@name='maintenance']" position="after">
-                    <page string="Helicóptero Pieza" name="helicoptero_pieza_helipistas"  invisible="((not helicoptero_pieza))"  groups="leulit.RolIT_developer">
+                    <page string="Helicóptero Pieza" name="helicoptero_pieza_helipistas"  invisible="not helicoptero_pieza"  groups="leulit.RolIT_developer">
                         <group>
                             <field name="is_motor"/>
                             <field name="tipomotor"/>
-                            <field name="marca_motor"/>
+                            <!-- <field name="marca_motor"/>
                             <field name="modelomotor"/>
                             <field name="sn"/>
                             <field name="from_date"/>
@@ -81,10 +81,10 @@
                             <field name="nf_start"/>
                             <field name="nf_acumulado"/>
                             <field name="hours_remaining" widget="float_time"/>
-                            <field name="days_remaining"/>
+                            <field name="days_remaining"/> -->
                         </group>
                     </page>
-                    <page string="Datos Generales" name="datos_generales_helipistas"  invisible="((not helicoptero))" >
+                    <page string="Datos Generales" name="datos_generales_helipistas"  invisible="not helicoptero" >
                         <group>
                             <field name="airtime_helicopter"/>
                         </group>
