@@ -58,7 +58,7 @@
                         <group>
                             <field name="is_motor"/>
                             <field name="tipomotor"/>
-                            <!-- <field name="marca_motor"/>. aaa
+                            <!-- <field name="marca_motor"/>
                             <field name="modelomotor"/>
                             <field name="sn"/>
                             <field name="from_date"/>
