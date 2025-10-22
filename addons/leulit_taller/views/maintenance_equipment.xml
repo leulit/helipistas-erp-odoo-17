@@ -139,7 +139,6 @@
                     eval="[(5, 0, 0),
                             (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_20221125_1241_tree')}),
                             (0, 0, {'view_mode': 'form', 'view_id': ref('maintenance.hr_equipment_view_form')})]"/>
-            
         </record>
 
     </data>

@@ -40,7 +40,7 @@
                         <div class="oe_right">
                             <field name="kanban_state" class="oe_inline" widget="state_selection"/>
                         </div>
-                        <div class="oe_button_box" name="button_box" style="margin-right: 10px;">
+                        <div class="oe_button_box" name="button_box">
                             <button class="oe_stat_button" type="object" name="action_view_timesheet_ids" icon="fa-calendar" >
                                 <field name="timesheet_total_hours" widget="timesheet_uom"/><span class="o_label" style="padding-left: 5px;">horas</span>
                             </button>

@@ -47,7 +47,8 @@ class MaintenanceEquipment(models.Model):
         datos = self._context.get('args',[])
         items = []
         for item in self.search([('first_parent','=',datos['id'])]):
-            items.append(item.production_lot)
+            if item.production_lot:
+                items.append(item.production_lot)
         _logger.error('items --> %r',items)
         return items
     
