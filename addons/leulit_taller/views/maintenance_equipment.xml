@@ -32,7 +32,7 @@
                         <button name="action_change_production_lot" string="Cambiar Pieza" type="object" class="oe_highlight"/>
                     </header>
                 </xpath>
-                <xpath expr="//field[@name='model']" position="after">
+                <!-- <xpath expr="//field[@name='model']" position="after">
                     <field name="is_motor"/>
                     <field name="production_lot" readonly="1"/>
                     <field name="first_parent" invisible="1"/>
@@ -58,7 +58,7 @@
                         <group>
                             <field name="is_motor"/>
                             <field name="tipomotor"/>
-                            <!-- <field name="marca_motor"/>
+                            <field name="marca_motor"/>
                             <field name="modelomotor"/>
                             <field name="sn"/>
                             <field name="from_date"/>
@@ -81,7 +81,7 @@
                             <field name="nf_start"/>
                             <field name="nf_acumulado"/>
                             <field name="hours_remaining" widget="float_time"/>
-                            <field name="days_remaining"/> -->
+                            <field name="days_remaining"/>
                         </group>
                     </page>
                     <page string="Datos Generales" name="datos_generales_helipistas"  invisible="not helicoptero" >
@@ -89,7 +89,7 @@
                             <field name="airtime_helicopter"/>
                         </group>
                     </page>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
 
