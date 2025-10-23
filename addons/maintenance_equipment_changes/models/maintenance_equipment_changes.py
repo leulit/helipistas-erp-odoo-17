@@ -84,8 +84,8 @@ class MaintenanceEquipmentChanges(models.Model):
     
 
     equipment_id = fields.Many2one(comodel_name='maintenance.equipment', string='Equipo', required=True)
-    old_production_lot_id = fields.Many2one(comodel_name='stock.production.lot', string='Pieza anterior')
-    new_production_lot_id = fields.Many2one(comodel_name='stock.production.lot', string='Pieza nueva')
+    old_production_lot_id = fields.Many2one(comodel_name='stock.lot', string='Pieza anterior')
+    new_production_lot_id = fields.Many2one(comodel_name='stock.lot', string='Pieza nueva')
     date = fields.Datetime(string='Fecha', required=True)
     tsn_inicio = fields.Float(string='TSN Inicio')
     tso_inicio = fields.Float(string='TSO Inicio')
