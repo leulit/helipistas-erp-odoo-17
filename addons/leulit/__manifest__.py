@@ -51,8 +51,8 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'leulit/static/src/components/widget_semaforo_field.js',
-            'leulit/static/src/components/semaforo_char.xml',
+            'leulit/static/src/js/widget_semaforo_field.js',
+            'leulit/static/src/xml/semaforo_char.xml',
             # 'leulit/static/src/js/widget_semaforo_cell.js',
             # 'leulit/static/src/js/widget_keyboardDisabled.js',
         ],
