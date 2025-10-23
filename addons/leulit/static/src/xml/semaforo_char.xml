@@ -3,14 +3,14 @@
 
     <t t-name="leulit.SemaforoBool">
         <t t-if="props.readonly">
-            <img t-if="imageUrl" t-att-src="imageUrl" style="height:16px;"/>
+            <img t-if="imageUrl" t-att-src="imageUrl"/>
         </t>
     </t>
 
     <t t-name="leulit.SemaforoChar">
         <t t-if="props.readonly">
             <t t-if="imageUrl">
-                <img t-att-src="imageUrl" style="height:16px;"/>
+                <img t-att-src="imageUrl"/>
             </t>
             <t t-else="">
                 <span>N.A.</span>
