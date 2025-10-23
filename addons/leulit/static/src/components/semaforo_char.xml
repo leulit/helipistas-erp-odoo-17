@@ -13,14 +13,17 @@
             <span t-else="">N.A.</span>
         </div>
     </t>
+    
     <t t-name="leulit.SemaforoBooleanField" owl="1">
-        <div t-if="!props.value">
+        <t t-if="props.value === true">
+            <img t-attf-src="/leulit/static/src/images/semaforo_green.png" alt="Verde"/>
+        </t>
+        <t t-elif="props.value === false">
+            <img t-attf-src="/leulit/static/src/images/semaforo_red.png" alt="Rojo"/>
+        </t>
+        <t t-else="">
             <span>N.A.</span>
-        </div>
-        <div t-else="">
-            <img t-if="props.value" t-attf-src="/leulit/static/src/images/semaforo_green.png" alt="Verde"/>
-            <img t-if="!props.value" t-attf-src="/leulit/static/src/images/semaforo_red.png" alt="Rojo"/>
-        </div>
+        </t>
     </t>
 
 </templates>
