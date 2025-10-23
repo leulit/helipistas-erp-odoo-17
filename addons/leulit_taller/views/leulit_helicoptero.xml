@@ -37,7 +37,7 @@
                             </group>
                             <group name="fechas_datos_motor">
                                 <field name="fecha_oh_motor" readonly="1" string="Fecha overhaul"/>
-                                <!-- <field name="anofabmotor" readonly="1" string="Fecha fabricación"/> -->
+                                <field name="anofabmotor" readonly="1" string="Fecha fabricación"/>
                             </group>
                             <group name="tsn_tso_datos_motor">
                                 <field name="motor_tsn" readonly="1" string="TSN Actual"/>
