@@ -27,8 +27,8 @@
                 <form string="Parte teóricas" >
                     <header>
                         <field name="estado" widget="statusbar"/>
-                        <button name="wkf_act_cancelado" type="object" string="Cancelar"  invisible="((estado in ['cerrado', 'cancelado']))"  class="oe_edit_only oe_highlight" confirm="Estás seguro de querer cancelar este parte de escuela?"/>
-                        <button name="wkf_act_cerrado" type="object" string="Cerrar"  invisible="((estado in ['cerrado', 'cancelado']))"  class="oe_edit_only oe_highlight"/>
+                        <button name="wkf_act_cancelado" type="object" string="Cancelar"  invisible="estado in ('cerrado', 'cancelado')"  class="oe_edit_only oe_highlight" confirm="Estás seguro de querer cancelar este parte de escuela?"/>
+                        <button name="wkf_act_cerrado" type="object" string="Cerrar"  invisible="estado in ('cerrado', 'cancelado')"  class="oe_edit_only oe_highlight"/>
                     </header>
                     <sheet>
                         <field name="isreadonly" invisible="1"/>
@@ -193,12 +193,12 @@
                             <separator/>
                         </group> 
                         <separator string="Curso-Silabus-Alumnos (2)"/>
-                        <button name="verificar_alumno_all" type="object" class="oe_highlight" string="Verificar Todo"   invisible="((silverificado_por_alumno))" /> 
+                        <button name="verificar_alumno_all" type="object" class="oe_highlight" string="Verificar Todo"   invisible="silverificado_por_alumno" /> 
                         <field name="silverificado_por_alumno" invisible="1"/>
                         <group col="1" colspan="3">
                             <field name="domainSilabus" no_label="1" style="width:100%%">
                             	<tree create="false" edit="false" limit="200">
-                            		<button name="verificar_alumno" type="object" string="verificar" class="oe_highlight"  column_invisible="((verificado))" />
+                            		<button name="verificar_alumno" type="object" string="verificar" class="oe_highlight"  invisible="verificado" />
                             		<field name="id" column_invisible="1"/>
                             		<field name="verificado" width="1px" string=" "/>
                                     <field name="rel_curso" style="white-space:normal"/>
