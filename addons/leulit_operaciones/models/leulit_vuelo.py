@@ -452,7 +452,7 @@ class leulit_vuelo(models.Model):
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
             pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
-            return base64.encodestring(pdf)
+            return base64.b64encode(pdf)
 
     def imprimir_report(self,id):
         vuelo = self.search([('id','=',id)])
