@@ -51,7 +51,7 @@
                     </tr>
                     <tr>
                         <td style="text-align:center;vertical-align: middle">
-                            <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                            <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                         </td>
                         <td class="literal theadtitle centertext" style="width:100%;padding-right:10%">
                             F I C H A P A R T E D E V U E L O<br/>
@@ -1139,7 +1139,7 @@
                                     <tbody>
                                         <tr>
                                             <td style="width:100%">
-                                                <img t-att-src="'data:image/png;base64,%s' % to_text(performance_h_v)" style="width:60%;height:auto;display:block;margin:auto;"/>
+                                                <img t-att-src="'data:image/png;base64,%s' % performance_h_v" style="width:60%;height:auto;display:block;margin:auto;"/>
                                             </td>
                                         </tr>
                                     </tbody>
