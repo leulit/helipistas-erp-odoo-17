@@ -451,7 +451,7 @@ class leulit_vuelo(models.Model):
                 'firmado_por': datos.get('firmado_por'),
             })
             report_name = 'leulit_operaciones.ficha_vuelo_report'
-            pdf, _ = self.env.ref(report_name)._render_qweb_pdf([],data)
+            pdf, _ = self.env.ref(report_name)._render_qweb_pdf(None,data)
             _logger.error("PDF VUELO REPORT --> %r", pdf)
             return base64.encodestring(pdf)
 
