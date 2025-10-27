@@ -127,11 +127,6 @@
                     font-size: 3.4mm;
                 }
                 .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
                     width: 230mm;
                     height: 320mm;
                     margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
@@ -1092,12 +1087,12 @@
                                                 <tr>
                                                     <td style="with:50%;" align="center">
                                                         <!--div style="with:400px; margin-to:20px;border: 1px solid black;padding:10px" id="longcanvasdiv"-->
-                                                        <img t-attf-src="#{wandb['canvas_long']}"/>
+                                                        <img t-att-src="wandb['canvas_long']"/>
                                                         <!--/div-->
                                                     </td>
                                                     <td style="with:50%;"  align="center">                                                
                                                         <!--div style="with:400px; margin-to:20px;border: 1px solid black;padding:10px" id="latcanvasdiv"-->
-                                                        <img t-attf-src="#{wandb['canvas_lat']}"/>                                                    
+                                                        <img t-att-src="wandb['canvas_lat']"/>                                                    
                                                         <!--/div-->
                                                     </td>
                                                 </tr>
@@ -1121,10 +1116,10 @@
                                     <tbody>
                                         <tr>
                                             <td style="width:50%" align="top">
-                                                <img t-attf-src="#{performance_ige}" style="width:100%;height:auto;"/>
+                                                <img t-att-src="performance_ige" style="width:100%;height:auto;"/>
                                             </td>
                                             <td style="width:50%" align="top">
-                                                <img t-attf-src="#{performance_oge}" style="width:100%;height:auto"/>
+                                                <img t-att-src="performance_oge" style="width:100%;height:auto"/>
                                             </td>
                                         </tr>
                                         <tr>
