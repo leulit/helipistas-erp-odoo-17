@@ -446,10 +446,13 @@ class leulit_vuelo(models.Model):
     def pdf_vuelo_print_report(self, datos):
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
-            data.update({'hashcode': datos['hashcode']})
-            data.update({'firmado_por': datos['firmado_por']})
+            data.update({
+                'hashcode': datos.get('hashcode'),
+                'firmado_por': datos.get('firmado_por'),
+            })
             report_name = 'leulit_operaciones.ficha_vuelo_report'
-            pdf = self.env.ref(report_name)._render_qweb_pdf([],data)[0]      
+            pdf, _ = self.env.ref(report_name)._render_qweb_pdf([],data)
+            _logger.error("PDF VUELO REPORT --> %r", pdf)
             return base64.encodestring(pdf)
 
     def imprimir_report(self,id):
