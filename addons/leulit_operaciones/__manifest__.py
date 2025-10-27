@@ -35,6 +35,7 @@
         "views/leulit_informe_seguros.xml",
         "report/ptv.xml",
         "report/ficha_vuelo_report.xml",
+        "report/report_format_27.xml",
         "report/ir_actions_report.xml",
         "views/ficha_vuelo_report_4_0_1.xml",
         "views/registro_vuelo_aeronaves.xml",
@@ -44,7 +45,6 @@
         "views/leulit_helicoptero.xml",
         "views/leulit_freelance_actividad_aerea.xml",
         "views/leulit_wizard_freelance_actividad_aerea.xml",
-        "views/report_format_27.xml",
         "menu.xml"
     ],
     "demo": [],
