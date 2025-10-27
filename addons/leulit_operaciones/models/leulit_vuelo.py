@@ -187,7 +187,7 @@ class leulit_vuelo(models.Model):
             pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data={'fechas': [data]})
             return base64.b64encode(pdf)
         
-        
+
     def parte_vuelo_print(self):
         for item in self:
             datos = {
@@ -2304,10 +2304,13 @@ class leulit_vuelo(models.Model):
     def pdf_report_F27_print(self, datos):
         for item in self:
             data = item.get_data_to_report_27format()
-            data.update({'firmado_por': datos['firmado_por']})
-            data.update({'piloto': datos['firmado_por']})
-            data.update({'firma': datos['firma']})
-            data.update({'hashcode': datos['hashcode']})
-
-            pdf = self.env.ref('leulit_operaciones.leulit_20250507_1537_report')._render_qweb_pdf([], data=data)[0]
-            return base64.encodestring(pdf)
+            data.update({
+                'firmado_por': datos['firmado_por'],
+                'piloto': datos['firmado_por'],
+                'firma': datos['firma'],
+                'hashcode': datos['hashcode']
+            })
+            report = self.env.ref('leulit_operaciones.leulit_20250507_1537_report', False)
+            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
+            return base64.b64encode(pdf)
+        
