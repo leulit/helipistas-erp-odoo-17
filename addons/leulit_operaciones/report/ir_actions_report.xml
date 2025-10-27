@@ -13,7 +13,7 @@
     </record>
 
     <record id="hlp_20190709_1846_report" model="ir.actions.report">
-        <field name="name">Parte Operacional</field>
+        <field name="name">Parte Tecnico de Vuelo</field>
         <field name="model">leulit.vuelo</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">leulit_operaciones.leulit_20211119_1030_informe</field>
