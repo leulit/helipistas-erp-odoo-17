@@ -179,12 +179,12 @@ class leulit_vuelo(models.Model):
 
 
     def pdf_parte_vuelo_print(self, datos):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for item in self:
             data = item.get_data_parte_vuelo_print( datos )
             data.update({'hashcode': datos['hashcode']})
             report = self.env.ref('leulit_operaciones.hlp_20190709_1846_report', False)
-
-            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data={'fechas': [data]})
+            pdf, _ = self.env['ir.actions.report'].with_context(base_url=base_url)._render_qweb_pdf(report,None,data={'fechas': [data]})
             return base64.b64encode(pdf)
         
 
@@ -420,9 +420,8 @@ class leulit_vuelo(models.Model):
 
             firmado_por = firmado_por if firmado_por else self.env.user.name
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
-            logo = company_helipistas.logo_reports
             data = {
-                'logo_hlp': base64.b64encode(logo).decode() if logo else '',
+                'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'paginas' : arrpaginas,
                 'before_tservicio': utilitylib.hlp_float_time_to_str( before_tservicio ),
                 'before_airtime': utilitylib.hlp_float_time_to_str( before_airtime ),
@@ -688,7 +687,7 @@ class leulit_vuelo(models.Model):
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
             data = {
-                'logo_hlp' : company_helipistas.logo_reports if company_helipistas else False,
+                'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
@@ -2292,7 +2291,7 @@ class leulit_vuelo(models.Model):
         }
         company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
         if company_helipistas:
-            data['logo_hlp'] = company_helipistas.logo_reports
+            data['logo_hlp'] = company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
         else:
             data['logo_hlp'] = False
         return data
