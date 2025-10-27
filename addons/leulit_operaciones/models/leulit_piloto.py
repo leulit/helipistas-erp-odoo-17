@@ -118,12 +118,12 @@ class leulit_piloto(models.Model):
     def _alumno(self):
         for item in self:
             alumno = self.env['leulit.alumno'].search([('partner_id', '=', item.getPartnerId())])
-            item.alumno = alumno.id if alumno else False
+            item.alumno = [(6, 0, alumno.ids)] if alumno else False
 
     def _profesor(self):
         for item in self:
             profesor = self.env['leulit.profesor'].search([('partner_id', '=', item.getPartnerId())])
-            item.profesor = profesor.id if profesor else False
+            item.profesor = [(6, 0, profesor.ids)] if profesor else False
 
 
     def _start_hv(self):
