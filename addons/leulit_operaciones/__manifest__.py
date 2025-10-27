@@ -33,7 +33,7 @@
         "views/leulit_helipuerto.xml",
         "views/leulit_vuelo_wizard_report.xml",
         "views/leulit_informe_seguros.xml",
-        "views/ptv.xml",
+        "report/ptv.xml",
         "report/ficha_vuelo_report.xml",
         "report/ir_actions_report.xml",
         "views/ficha_vuelo_report_4_0_1.xml",

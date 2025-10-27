@@ -2,15 +2,6 @@
 <odoo>
     <data>
 
-		<report string="Partes de vuelo"
-            id="hlp_20190709_1846_report"
-            model="leulit.vuelo"
-            file="leulit_operaciones.leulit_20211119_1030_informe"
-            name="leulit_operaciones.leulit_20211119_1030_informe"
-            report_type="qweb-pdf"
-            paperformat="leulit.paperformat_A4_landscape_without_cabecera"/>
-
-
 
         <template id="ptv_report_css">
             <style>
@@ -31,11 +22,6 @@
                     font-size: 8px;
                 }
                 .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
                     width: 29.7cm;
                     height: 19cm;
                     margin: 0.5cm 0.5cm 0.5cm 0.5cm;                 
@@ -104,7 +90,7 @@
                             <tr>
                                 <td colspan="6" style="width:78.2%" class="titulostablas bgcolored">DATOS GENERALES</td>
                                 <td rowspan="2">
-                                    <img t-att-src="'data:image/png;base64,%s' % to_text(fecha['logo_hlp'])" style="width:auto;height:50px;"/><br/>
+                                    <img t-att-src="'data:image/png;base64,%s' % fecha['logo_hlp']" style="width:auto;height:50px;"/><br/>
                                 </td>			
                             </tr>			
                             <tr>

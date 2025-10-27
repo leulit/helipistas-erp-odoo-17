@@ -182,11 +182,12 @@ class leulit_vuelo(models.Model):
         for item in self:
             data = item.get_data_parte_vuelo_print( datos )
             data.update({'hashcode': datos['hashcode']})
-            report_name = 'leulit_operaciones.hlp_20190709_1846_report'
+            report = self.env.ref('leulit_operaciones.hlp_20190709_1846_report', False)
 
-            pdf = self.env.ref(report_name)._render_qweb_pdf([],data={'fechas': [data]})[0]
-            return base64.encodestring(pdf)
-
+            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data={'fechas': [data]})
+            return base64.b64encode(pdf)
+        
+        
     def parte_vuelo_print(self):
         for item in self:
             datos = {
