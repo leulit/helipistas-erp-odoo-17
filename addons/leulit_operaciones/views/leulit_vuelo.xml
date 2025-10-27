@@ -649,7 +649,7 @@
                                 <div class="container-fluid">
                                     <h4>Ruta</h4>
                                     <field name="ruta_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" nolabel="1"/>
-                                    <h4>Aerovías</h4>
+                                    <h4 invisible="not ruta_id">Aerovías</h4>
                                     <field name="aerovia_ids" string="" nolabel="1"  invisible="not ruta_id" >
                                         <tree create="false" edit="false" delete="false">
                                             <field name="ruta_id" column_invisible="1"/>
