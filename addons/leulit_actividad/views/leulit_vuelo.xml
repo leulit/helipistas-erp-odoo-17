@@ -14,7 +14,7 @@
                             <div class="d-flex">
                                 <separator string="Imputaciones de Tiempo"></separator>
                                 <span 
-                                    data-toggle="collapse" 
+                                    data-bs-toggle="collapse" 
                                     href="#account_analytic_lines" 
                                     role="button" 
                                     aria-expanded="false" 
@@ -52,7 +52,7 @@
                             <div class="d-flex">
                                 <separator string="Imputaciones de Tiempo"></separator>
                                 <span 
-                                    data-toggle="collapse" 
+                                    data-bs-toggle="collapse" 
                                     href="#account_analytic_lines" 
                                     role="button" 
                                     aria-expanded="false" 

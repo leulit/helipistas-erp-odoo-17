@@ -100,7 +100,7 @@
                             <div class="d-flex">
                                 <separator string="Documentos Firmados"></separator>
                                 <span 
-                                    data-toggle="collapse" 
+                                    data-bs-toggle="collapse" 
                                     href="#esignature_docs" 
                                     role="button" 
                                     aria-expanded="false" 
@@ -155,7 +155,7 @@
                             <div class="d-flex">
                                 <separator string="Documentos Firmados"></separator>
                                 <span 
-                                    data-toggle="collapse" 
+                                    data-bs-toggle="collapse" 
                                     href="#esignature_docs" 
                                     role="button" 
                                     aria-expanded="false" 

@@ -261,7 +261,7 @@
                                             <a
                                             class="dropdown-toggle o-no-caret btn"
                                             role="button"
-                                            data-toggle="dropdown"
+                                            data-bs-toggle="dropdown"
                                             data-display="static"
                                             href="#"
                                             aria-label="Dropdown menu"
