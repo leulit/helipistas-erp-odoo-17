@@ -420,8 +420,9 @@ class leulit_vuelo(models.Model):
 
             firmado_por = firmado_por if firmado_por else self.env.user.name
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
+            logo = company_helipistas.logo_reports
             data = {
-                'logo_hlp' : company_helipistas.logo_reports if company_helipistas else False,
+                'logo_hlp': base64.b64encode(logo).decode() if logo else '',
                 'paginas' : arrpaginas,
                 'before_tservicio': utilitylib.hlp_float_time_to_str( before_tservicio ),
                 'before_airtime': utilitylib.hlp_float_time_to_str( before_airtime ),
@@ -469,13 +470,13 @@ class leulit_vuelo(models.Model):
                     'esignature' : '',
                     'fecha_firma': item.fechavuelo,
                     'hack_firmado_por' : False,
-                    'hack_firmado_por_id' : False,        
+                    'hack_firmado_por_id' : False,
                     'hack_estado' : False,
                     'referencia': '',
                     'prefijo_hashcode': "POV",
                     'informe': "leulit_ficha_vuelo_report",
                     'firmado_por': ''
-                }            
+                }
                 hashcode = self.env['leulit_signaturedoc'].buildSignature('leulit.vuelo', item.id, "POV-{0}".format(item.codigo))
                 datos.update({'hashcode': hashcode})
                 if item.fechavuelo >= datetime.strptime("2022-10-03", "%Y-%m-%d").date():
