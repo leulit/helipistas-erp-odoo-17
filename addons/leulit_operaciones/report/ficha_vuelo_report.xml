@@ -2,17 +2,6 @@
 <odoo>
     <data>
 
-        <report
-            id="ficha_vuelo_report"
-            string="ficha_vuelo_report"
-            model="leulit.vuelo"
-            report_type="qweb-pdf"
-            file="leulit_operaciones.leulit_20221003_1001_informe"
-            name="leulit_operaciones.leulit_20221003_1001_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />     
-
-
         <template id="ficha_vuelo_report_footercontrol">
             <table >
                 <tr>

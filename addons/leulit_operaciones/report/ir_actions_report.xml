@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ficha_vuelo_report" model="ir.actions.report">
+        <field name="name">Parte Operacional</field>
+        <field name="model">leulit.vuelo</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_operaciones.leulit_20221003_1001_informe</field>
+        <field name="report_file">leulit_operaciones.leulit_20221003_1001_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'POV-%s' % (object.codigo or '')</field>
+        <field name="binding_model_id" ref="model_leulit_vuelo"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
