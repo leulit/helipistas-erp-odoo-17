@@ -118,12 +118,12 @@ class leulit_piloto(models.Model):
     def _alumno(self):
         for item in self:
             alumno = self.env['leulit.alumno'].search([('partner_id', '=', item.getPartnerId())])
-            item.alumno = alumno
+            item.alumno = alumno.id
 
     def _profesor(self):
         for item in self:
             profesor = self.env['leulit.profesor'].search([('partner_id', '=', item.getPartnerId())])
-            item.profesor = profesor
+            item.profesor = profesor.id
 
 
     def _start_hv(self):
