@@ -42,7 +42,7 @@
 
                     </header>
                     <!--BOTÓNES DE ACCIONES -->
-                    <div class="oe_button_box">
+                    <div class="d-flex flex-row-reverse flex-wrap bg-white" style="z-index: 49; width: -webkit-fill-available; ; margin-top:14px; padding-top:5px;">
                         <div class="ml-auto">
                             <button name="wizardSetPrevuelo" type="object" string="Set to Pre-Vuelo"  invisible="estado not in ('cerrado', 'cancelado', 'postvuelo')"  class="oe_highlight m-1" groups="leulit.RolIT_developer"/>
                             <button name="wizard_pre_cancelar" type="object" string="Cancelar"  invisible="estado in ('cerrado', 'cancelado')"  class="oe_highlight oe_edit_only m-1"/>
