@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data>
 
         <template id="ficha_vuelo_report_footercontrol">
-            <table>
+            <table >
                 <tr>
                     <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
                     <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
@@ -54,13 +54,17 @@
                             <t t-if="logo_hlp">
                                 <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                             </t>
+                            <!-- <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/> -->
                         </td>
                         <td class="literal theadtitle centertext" style="width:100%;padding-right:10%">
                             F I C H A P A R T E D E V U E L O<br/>
                             <span class="theadtitle" style="font-size: 6mm !important;"><span t-esc="vuelo['codigo']"/> - <span t-esc="vuelo['fecha']"/></span>
+                            <!-- <span class="theadtitle" style="font-size: 6mm !important;">${codigo} - ${fecha if fecha else ""}</span> -->
+                            <!-- %if not hashcode: -->
                             <br/><i><span style="font-size:10px">Documentación para uso interno.</span></i>
+                            <!-- %endif -->
                         </td>
-                    </tr>
+                </tr>
                 </tbody>
             </table>
         </template>        
@@ -85,12 +89,10 @@
 
         <template id="ficha_vuelo_report_css">
             <style>
-                @font-face {
-                    font-family: 'Open Sans';
-                    src: url('/web/static/src/fonts/OpenSans-Regular.ttf') format('truetype');
-                }
-                body {
-                    font-family: 'Open Sans', sans-serif;
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
                 }
                 .fullwidth {
                     width: 100%;
@@ -151,12 +153,11 @@
                 td{
                     vertical-align: middle
                 }
-            </style>
+            </style>      
         </template>
 
         <template id="leulit_20221003_1001_informe">
-            <t t-call="web.html_container">
-                <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+            <t t-call="web.html_container">     
                 <t t-foreach="vuelos" t-as="vuelo">
                     <div class="page">
                         <t t-call="leulit_operaciones.ficha_vuelo_report_css" />
