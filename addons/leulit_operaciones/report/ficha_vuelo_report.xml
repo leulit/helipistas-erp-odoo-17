@@ -89,10 +89,8 @@
 
         <template id="ficha_vuelo_report_css">
             <style>
-                html {
-                    font-family:"DejaVu Sans", sans-serif; /* 1 */
-                    -ms-text-size-adjust: 100%; /* 2 */
-                    -webkit-text-size-adjust: 100%; /* 2 */
+                html, body {
+                    font-family: "DejaVu Sans", sans-serif !important;
                 }
                 .fullwidth {
                     width: 100%;
