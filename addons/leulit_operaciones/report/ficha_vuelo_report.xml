@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
 
         <template id="ficha_vuelo_report_footercontrol">
-            <table >
+            <table>
                 <tr>
                     <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
                     <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
@@ -54,17 +54,13 @@
                             <t t-if="logo_hlp">
                                 <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                             </t>
-                            <!-- <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/> -->
                         </td>
                         <td class="literal theadtitle centertext" style="width:100%;padding-right:10%">
                             F I C H A P A R T E D E V U E L O<br/>
                             <span class="theadtitle" style="font-size: 6mm !important;"><span t-esc="vuelo['codigo']"/> - <span t-esc="vuelo['fecha']"/></span>
-                            <!-- <span class="theadtitle" style="font-size: 6mm !important;">${codigo} - ${fecha if fecha else ""}</span> -->
-                            <!-- %if not hashcode: -->
                             <br/><i><span style="font-size:10px">Documentación para uso interno.</span></i>
-                            <!-- %endif -->
                         </td>
-                </tr>
+                    </tr>
                 </tbody>
             </table>
         </template>        
@@ -155,7 +151,7 @@
                 td{
                     vertical-align: middle
                 }
-            </style>      
+            </style>
         </template>
 
         <template id="leulit_20221003_1001_informe">
