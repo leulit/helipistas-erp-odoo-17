@@ -154,8 +154,9 @@ class ComprobacionOverlapPartesEscuelaVueloHandler(vuelo.AbstractHandler):
                 objpiloto = vuelo.piloto_id
 
             #  Verificar que no exista un parte de escuela donde se solape el profesor.
+            _logger.error("Comprobando partes de escuela para el profesor %s" % (objpiloto.profesor))
             if objpiloto.profesor:
-                _logger.error("Comprobando partes de escuela para el profesor %s" % (objpiloto.profesor))
+                _logger.error("Comprobando partes de escuela para el profesor %s" % (objpiloto.profesor.id))
                 partes_ids = o_parteescuela.search([('profesor','=',objpiloto.profesor.id),('fecha','=',vuelo.fechavuelo),('hora_end','>=',vuelo.horasalida),('hora_start','<=',vuelo.horallegadaprevista),('estado','=','cerrado')])
                 if partes_ids.ids and len(partes_ids.ids) > 0:
                     raise UserError ('El piloto o el piloto supervisor esta de profesor en un parte de escuela para la fecha y hora indicada. Parte de escuela: %s' % (partes_ids[0].id))
