@@ -162,7 +162,7 @@
                                     <td class="centertext"><t t-esc="fecha"/></td>
                                     <td class="centertext"><t t-esc="helicoptero"/></td>
                                     <td class="centertext"><t t-esc="piloto"/></td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -181,121 +181,121 @@
                                     <td>1</td>
                                     <td>Check - Spherical bearing - Elastomer part.</td>
                                     <td>ALS 04-20-00, AMM 05-30-00, 6-1</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
                                     <td>Check - Lead lag damper - Elastomer part.</td>
                                     <td>ALS 04-20-00, AMM 05-30-00, 6-1</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
                                     <td>Visual check of absence of crack - Rotor hub - Damper attachment area.</td>
                                     <td>ALS 04-20-00, AMM 62-21-00, 6-1</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>4</td>
                                     <td>Check - 15-hour / 7-day inspection.</td>
                                     <td>AMM 05-30-00, 6-1</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>5</td>
                                     <td>Check - 15-hour / 7-day inspection - Optional parts.</td>
                                     <td>AMM 05-30-00, 6-4</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>6</td>
                                     <td>ELT self-test.</td>
                                     <td>AMM 25-63-03, 5-1</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7</td>
                                     <td>Safran inspection, points 7.1 to 7.11.</td>
                                     <td>Safran MM 05-20-10-201-810-A01</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.1</td>
                                     <td>Check the visual pre-blockage indicator of the oil filter.<br/>Remark: if the indicator is popped out, refer to Task TSB 71-00-06-816-807.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.2</td>
                                     <td>Check engine oil consumption. Fill up the oil level if necessary.</td>
                                     <td>12-10-22-610-801</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.3</td>
                                     <td>Visual pre-blockage indicator of the fuel filter.<br/>Remark: if the indicator is popped out, refer to Task TSB 71-00-06-816-805. - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.4</td>
                                     <td>Engine attachments - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.5</td>
                                     <td>Mating faces of the casings - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.6</td>
                                     <td>Mating faces of the pipes - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.7</td>
                                     <td>Floor of the engine compartment - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.8</td>
                                     <td>Visible part of the air intake grid - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.9</td>
                                     <td>Air intake surrounding - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.10</td>
                                     <td>Exhaust surrounding - Visual inspection.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>7.11</td>
                                     <td>Accessories, harnesses and pipes - Visual inspection. Make sure that they are secured, that there are no cracks, impacts, deformations and leakage on the mating faces and that the electrical connectors are properly tightened.</td>
                                     <td>-</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>8</td>
                                     <td>Main Rotor - Hub Scissors Attachment Bolt. Repetitive inspection i.a.w. ASB EC120-05A019 Rev.2, paragraph 3.B.2.c</td>
                                     <td>AD 2023-0036, ASB EC120-05A019 Rev.2</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                                 <tr>
                                     <td>9</td>
                                     <td>Tail Rotor Hub - Body, repetitive inspection i.a.w. EASB 05A020 Rev.2 paragraph 3.B.2.</td>
                                     <td>EAD 2024-0109, ASB 05A020 Rev.2</td>
-                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/svg ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
+                                    <td class="centertext" style="font-size:8px;"><img t-if="firma" t-att-src="'data:image/png ;base64,%s' % firma" style="width: auto; height:20px"/><br/>E145.173</td>
                                 </tr>
                             </tbody>
                         </table>
