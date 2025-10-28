@@ -67,11 +67,15 @@
         </template>
 
         <template id="leulit_20250507_1537_report_css">
+            <meta charset="utf-8"/>
             <style>
-                html {
-                    font-family: sans-serif; /* 1 */
-                    -ms-text-size-adjust: 100%; /* 2 */
-                    -webkit-text-size-adjust: 100%; /* 2 */
+                @font-face {
+                    font-family: 'DejaVu Sans';
+                    src: local('DejaVu Sans'),
+                        url('/web/static/src/fonts/DejaVuSans.ttf') format('truetype');
+                }
+                html, body, table, div, span {
+                    font-family: 'DejaVu Sans', sans-serif !important;
                 }
                 .fullwidth {
                     width: 100%;
