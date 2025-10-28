@@ -142,8 +142,8 @@
 
         <template id="leulit_report_formato_27_informe">
             <t t-call="web.html_container">
-                <t t-set="data_report_header_spacing" t-value="35"/>
-                <t t-set="data_report_margin_top" t-value="40"/>
+                <t t-set="data_report_header_spacing" t-value="0"/>
+                <t t-set="data_report_margin_top" t-value="0"/>
                 <div class="page">
 				    <t t-call="leulit_operaciones.leulit_20250507_1537_report_header"/>
 				    <t t-call="leulit_operaciones.leulit_20250507_1537_report_css"/>
