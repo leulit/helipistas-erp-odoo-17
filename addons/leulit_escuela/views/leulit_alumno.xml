@@ -88,7 +88,7 @@
                         </group>
                         <notebook colspan="2">
                             <page string="Cursos">
-                                <field name="rel_alumno_curso_ids" class="rel_alumno_curso_ids">
+                                <field name="rel_alumno_curso_ids">
                                     <tree string="Cursos" editable="bottom" create="true">
                                         <field name="curso_id" options="{'no_create': True, 'create': False, 'edit': False}" />
                                         <field name="fecha_inscripcion" string="Inicio"/>

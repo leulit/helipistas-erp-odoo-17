@@ -260,17 +260,17 @@ class leulit_piloto(models.Model):
     def _is_piloto_helipistas(self):
         for item in self:
             item.piloto_helipistas = False
-            if 140 in item.employee.user_id.groups_id.ids or 194 in item.employee.user_id.groups_id.ids:
+            if 104 in item.employee.user_id.groups_id.ids or 108 in item.employee.user_id.groups_id.ids:
                 item.piloto_helipistas = True
 
     def _search_piloto_helipistas(self, operator, value):
         ids = []
         for item in self.search([]):
             if value == True:
-                if 140 in item.employee.user_id.groups_id.ids or 194 in item.employee.user_id.groups_id.ids:
+                if 104 in item.employee.user_id.groups_id.ids or 108 in item.employee.user_id.groups_id.ids:
                     ids.append(item.id)
             if value == False:
-                if not 140 in item.employee.user_id.groups_id.ids and not 194 in item.employee.user_id.groups_id.ids:
+                if not 104 in item.employee.user_id.groups_id.ids and not 108 in item.employee.user_id.groups_id.ids:
                     ids.append(item.id)
         
         if ids:
