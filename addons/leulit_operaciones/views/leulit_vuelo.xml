@@ -117,12 +117,16 @@
                                             <div  invisible="estado_vista in ('cancelado')" >
                                                 <group   invisible="estado_vista in ('postvuelo', 'cerrado', 'cancelado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
                                                     <field name="checklist_realizado" string="Inspección prevuelo realizada"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
-                                                    <div  invisible="(not checklist_realizado) or (helicoptero_tipo not in ('EC120B', 'CABRI G2'))" >
-                                                        <group>
-                                                            <field name="checklist_prevuelo_BFF" string ="Inspección prevuelo BFF"/>
-                                                            <field name="checklist_prevuelo_entre_vuelos" string ="Inspección entre vuelos"/>
-                                                        </group>
-                                                    </div>
+                                                </group>
+                                            </div>
+                                            <div  invisible="estado_vista in ('cancelado')" >
+                                                <div  invisible="(not checklist_realizado) or (helicoptero_tipo not in ('EC120B', 'CABRI G2'))" >
+                                                    <group>
+                                                        <field name="checklist_prevuelo_BFF" string ="Inspección prevuelo BFF"/>
+                                                        <field name="checklist_prevuelo_entre_vuelos" string ="Inspección entre vuelos"/>
+                                                    </group>
+                                                </div>
+                                                <group>
                                                     <field name="briefing_realizado" string="Briefing Salida, LLegada y Alt."  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
                                                 </group>
                                             </div>
