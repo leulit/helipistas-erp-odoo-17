@@ -93,7 +93,7 @@
                                         <field name="curso_id" options="{'no_create': True, 'create': False, 'edit': False}" />
                                         <field name="fecha_inscripcion" string="Inicio"/>
                                         <field name="fecha_finalizacion" string="Finalización"/>
-                                        <field name="cursos_perfil_formacion" invisible="1"/>
+                                        <field name="cursos_perfil_formacion" column_invisible="1"/>
                                     </tree>
                                 </field>
                             </page>

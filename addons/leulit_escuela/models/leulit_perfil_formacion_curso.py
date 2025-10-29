@@ -306,7 +306,7 @@ class leulit_perfil_formacion_curso(models.Model):
     periodicidad_dy = fields.Integer('Periodicidad dy')
     marge_dy = fields.Integer('Margen dy')
     perfil_formacion = fields.Many2one('leulit.perfil_formacion', 'Perfil formación', ondelete="cascade")
-    piloto = fields.Many2one(related='perfil_formacion.piloto',comodel_name='leulit.piloto',string='Piloto')
+    piloto = fields.Many2one(related='perfil_formacion.piloto',comodel_name='leulit.piloto',string='Piloto',store=True)
     alumno = fields.Many2one(compute=_get_alumno_from_pf,comodel_name="leulit.alumno",string="Alumno",search=_search_alumno_from_pf,store=True)
     inactivo = fields.Boolean(related='perfil_formacion.inactivo',string='Perfil inactivo', store=True)
     is_template = fields.Boolean(relted='perfil_formacion.is_template',string='Es plantilla')
