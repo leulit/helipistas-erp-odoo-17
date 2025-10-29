@@ -462,7 +462,7 @@ class leulit_alumno(models.Model):
                 item.alta_all = True
 
 
-    rel_alumno_curso_ids = fields.One2many('leulit.rel_alumno_curso', 'alumno_id', 'Cursos', required=True)
+    rel_alumno_curso_ids = fields.One2many('leulit.rel_alumno_curso', 'alumno_id', 'Cursos', required=True, domain=[('cursos_perfil_formacion','=',False)])
     piloto_id = fields.Many2one('leulit.piloto', 'Piloto', index=True)
     parte_escuela_ids = fields.One2many(compute='_get_partes_escuela',string='Partes de escuela',comodel_name='leulit.parte_escuela')
     rel_alumno_documentacion_ids= fields.One2many('leulit.rel_alumno_documentacion', 'alumno_id','Documentación', required=True)
