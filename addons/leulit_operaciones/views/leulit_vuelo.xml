@@ -126,6 +126,8 @@
                                                         <field name="checklist_prevuelo_entre_vuelos" string ="Inspección entre vuelos"/>
                                                     </group>
                                                 </div>
+                                            </div>
+                                            <div  invisible="estado_vista in ('cancelado')" >
                                                 <group>
                                                     <field name="briefing_realizado" string="Briefing Salida, LLegada y Alt."  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
                                                 </group>
