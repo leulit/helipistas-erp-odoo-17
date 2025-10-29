@@ -81,7 +81,8 @@
                                         <field name="sil_valoracion" invisible="1"/>
                                         <field name="todo_cerrar" column_invisible="1"/>
                                         <field name="rel_docs" column_invisible="1"/>
-                                        <field name="valoracion"  column_invisible="not sil_valoracion" />
+                                        <!-- <field name="valoracion" column_invisible="not sil_valoracion" /> -->
+                                        <field name="valoracion"/>
                                         <field name="nota"  column_invisible="not sil_test" />
                                         <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="not sil_test"  class="oe_edit_only oe_highlight"/>
                                     </tree>
@@ -146,9 +147,10 @@
                                         <field name="sil_valoracion" invisible="1"/>
                                         <field name="todo_cerrar" column_invisible="1"/>
                                         <field name="rel_docs" column_invisible="1"/>
-                                        <field name="valoracion"  column_invisible="((not sil_valoracion))" />
-                                        <field name="nota"  column_invisible="((not sil_test))" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="((not sil_test))"  class="oe_edit_only oe_highlight"/>
+                                        <!-- <field name="valoracion" column_invisible="not sil_valoracion" /> -->
+                                        <field name="valoracion"/>
+                                        <field name="nota"  column_invisible="not sil_test" />
+                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="not sil_test"  class="oe_edit_only oe_highlight"/>
                                     </tree>
                                 </field>
                             </group>
