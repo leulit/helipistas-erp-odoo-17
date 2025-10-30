@@ -137,7 +137,7 @@
                         <separator string="Escuela"></separator>
                         <div class="d-flex flex-row flex-wrap">
                             <group style="max-width:50%;">
-                                <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus"  invisible="((estado in ['cancelado', 'cerrado']))" readonly="((estado in ['postvuelo', 'cerrado', 'cancelado']))"  class="oe_highlight oe_edit_only"/>
+                                <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus"  invisible="estado in ('cancelado', 'cerrado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  class="oe_highlight oe_edit_only"/>
                                 <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" no_label="1" colspan="2">
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
@@ -146,9 +146,9 @@
                                         <field name="sil_valoracion" column_invisible="1"/>
                                         <field name="todo_cerrar" column_invisible="1"/>
                                         <field name="rel_docs" column_invisible="1"/>
-                                        <field name="valoracion"  column_invisible="((not sil_valoracion))" />
-                                        <field name="nota"  column_invisible="((not sil_test))" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="((not sil_test))"  class="oe_edit_only oe_highlight"/>
+                                        <field name="valoracion"  column_invisible="not sil_valoracion" />
+                                        <field name="nota"  column_invisible="not sil_test" />
+                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="not sil_test"  class="oe_edit_only oe_highlight"/>
                                     </tree>
                                 </field>
                             </group>
