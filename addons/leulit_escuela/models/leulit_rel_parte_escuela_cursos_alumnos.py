@@ -78,14 +78,14 @@ class leulit_rel_parte_escuela_cursos_alumnos(models.Model):
     tiempo = fields.Float('Tiempo dedicado',)
     tiempo_total = fields.Float('Tiempo total', default=0)
     verificado = fields.Boolean('Verificado')
-    sil_test = fields.Boolean(related='rel_silabus.test',string='TEST')
+    sil_test = fields.Boolean(related='rel_silabus.test',string='TEST', store=True)
     rel_docs = fields.One2many(comodel_name='ir.attachment', inverse_name='rel_parte_escuela', string='Documentos')
     valoracion = fields.Selection(_get_valoracion_options,'Valoración')
     comentario = fields.Text('Comentario')
     fechaparte = fields.Date(related='rel_parte_escuela.fecha',string='Fecha Parte',store=False)
     verificado_por = fields.Many2one('res.users', 'Verificado por', readonly=True)
     nota = fields.Integer(string="Nota %",default=-1)
-    sil_valoracion = fields.Boolean(related='rel_silabus.valoracion',string='Valoración')
+    sil_valoracion = fields.Boolean(related='rel_silabus.valoracion',string='Valoración', store=True)
     todo_cerrar = fields.Boolean(compute=_get_todo_cerrar, string="ToDo Cerrar")
 
 
