@@ -51,7 +51,7 @@ class L10nEsAeatMod130Report(models.Model):
     )
     comments = fields.Char(
         string="Observaciones",
-        size=350,
+        
         help="Observaciones que se adjuntarán con el modelo",
     )
     casilla_01 = fields.Monetary(

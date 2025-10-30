@@ -23,7 +23,7 @@ class leulit_mel_ata(models.Model):
                 item.ata_name = ""
         
 
-    name = fields.Char('Descripción', size=255,required=True)
+    name = fields.Char('Descripción', required=True)
     num = fields.Integer('Nº',required=True)
     ata_name = fields.Char(compute=_get_name,string='ATA')
     

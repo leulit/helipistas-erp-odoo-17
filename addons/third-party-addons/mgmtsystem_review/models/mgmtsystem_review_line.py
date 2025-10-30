@@ -8,7 +8,7 @@ class MgmtsystemReviewLine(models.Model):
     _name = "mgmtsystem.review.line"
     _description = "Review Line"
 
-    name = fields.Char("Title", size=300, required=True)
+    name = fields.Char("Title",  required=True)
     type = fields.Selection([("action", "Action"), ("nonconformity", "Nonconformity")])
     action_id = fields.Many2one("mgmtsystem.action", "Action", index=True)
     nonconformity_id = fields.Many2one(

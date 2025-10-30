@@ -201,7 +201,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     main_activity_iae = fields.Char(
         string="Epígrafe I.A.E. actividad principal",
-        size=4,
+        
     )
     other_first_activity_code = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
@@ -210,7 +210,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     other_first_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 1ª actividad",
-        size=4,
+        
     )
     other_second_activity_code = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
@@ -219,7 +219,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     other_second_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 2ª actividad",
-        size=4,
+        
     )
     other_third_activity_code = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
@@ -228,7 +228,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     other_third_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 3ª actividad",
-        size=4,
+        
     )
     other_fourth_activity_code = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
@@ -237,7 +237,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     other_fourth_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 4ª actividad",
-        size=4,
+        
     )
     other_fifth_activity_code = fields.Many2one(
         comodel_name="l10n.es.aeat.mod303.report.activity.code",
@@ -246,7 +246,7 @@ class L10nEsAeatMod303Report(models.Model):
     )
     other_fifth_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 5ª actividad",
-        size=4,
+        
     )
     casilla_88 = fields.Float(
         string="[88] Total volumen operaciones",

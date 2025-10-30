@@ -19,7 +19,7 @@ class leulit_revision_mel(models.Model):
         return utilitylib.leulit_get_tipos_helicopteros() 
     
     
-    name = fields.Char('Revisión', size=255,required=True)
+    name = fields.Char('Revisión', required=True)
     fecha = fields.Date('Fecha',required=True)
     tipo_helicoptero = fields.Selection(_get_tipos,'Tipo')
     

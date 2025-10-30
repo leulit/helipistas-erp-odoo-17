@@ -76,7 +76,7 @@ class leulit_resource(models.Model):
             item.partner = valor
 
 
-    name = fields.Char('Nombre', size=200)
+    name = fields.Char('Nombre', )
     event_resource = fields.One2many('leulit.event_resource', 'resource', 'Recurso')
     type = fields.Selection([('persona', 'Empleado'), ('maquina', 'Máquina'), ('alumno','Alumno')], 'Tipo recurso')
     work_time = fields.Float(compute=_get_work_time,string='Tiempo de trabajo')

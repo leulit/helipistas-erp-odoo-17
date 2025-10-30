@@ -17,7 +17,7 @@ class leulit_helicoptero_oilreport(models.Model):
 
 
     helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicóptero', required=True, domain="[('baja','=',False)]")
-    matricula = fields.Char('Matrícula', size=50, readonly=True)
+    matricula = fields.Char('Matrícula',  readonly=True)
     fecha = fields.Datetime('Fecha',readonly=True)
     oilqty = fields.Float('Aceite añadido (l.)', readonly=True)
     acumulado = fields.Float('Cantidad acumulada (l.)', readonly=True)

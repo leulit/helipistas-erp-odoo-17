@@ -60,15 +60,15 @@ class leulit_helipuerto(models.Model):
                 item.punto_generado = True
         
 
-    name = fields.Char('Indicativo',size=40, required=True)
-    descripcion = fields.Char('Nombre', size=255, required=True)
-    municipio = fields.Char('Ciudad/Provincia',size=40, required=True)
+    name = fields.Char('Indicativo', required=True)
+    descripcion = fields.Char('Nombre',  required=True)
+    municipio = fields.Char('Ciudad/Provincia', required=True)
     direccion = fields.Text('Dirección', required=True)
-    telefono = fields.Char('Teléfono',size=40, required=True)
+    telefono = fields.Char('Teléfono', required=True)
     hayjeta1 = fields.Boolean('Combustible JET A1')
     hayavgas = fields.Boolean('Combustible AVGAS')
-    latitud = fields.Char('Latitud',size=20)
-    longitud = fields.Char('Longitud',size=20)
+    latitud = fields.Char('Latitud',)
+    longitud = fields.Char('Longitud',)
     lat = fields.Float('Latitud (Grados Decimales)', required=True, digits=(10,8))
     long = fields.Float('Longitud (Grados Decimales)', required=True, digits=(10,8))
     elevrumbo = fields.Char('Elevación - Rumbo')

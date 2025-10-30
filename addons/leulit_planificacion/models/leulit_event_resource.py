@@ -19,7 +19,7 @@ class leulit_event_resource(models.Model):
         return utilitylib.leulit_get_tipos_planificacion()
 
     dummy = fields.Char(string="")
-    nodisponible = fields.Boolean(string='No disponible', size=200)
+    nodisponible = fields.Boolean(string='No disponible', )
     work_hours = fields.Float(string='H. previstas')
     availability_hours = fields.Float(string='H. disponibilidad')
     resource = fields.Many2one(comodel_name='leulit.resource',string='Recurso') 
@@ -28,7 +28,7 @@ class leulit_event_resource(models.Model):
     type = fields.Selection(related='resource.type',string='Tipo',store=True)
     rol = fields.Selection([('7', 'Alumno'),('5', 'Instructor de vuelo'),('6', 'Instructor de teóricas'),('1','Máquina'),('3','Operador tierra'),('4','Otros'),('2', 'Piloto'),], '', required=False)
     event = fields.Many2one(comodel_name='calendar.event', string='Evento', ondelete='cascade')
-    duration = fields.Float(realted='event.duration',string="Duración")
+    duration = fields.Float(related='event.duration',string="Duración")
     comentarios = fields.Html(related='event.description',string='Comentarios')
     asunto = fields.Char(related='event.name',string='Tema')
     cancelado = fields.Boolean(related='event.cancelado', string='Cancelado')

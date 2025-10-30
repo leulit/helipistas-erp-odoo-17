@@ -2048,7 +2048,7 @@ class leulit_vuelo(models.Model):
 
 
     p_corregido = fields.Boolean(string="Parte corregido", default=False)
-    codigo = fields.Char('Código', size=20)
+    codigo = fields.Char('Código', )
     fechavuelo = fields.Date('Fecha', required=True, default=fields.Date.context_today)
     fuelqty = fields.Float('Combustible añadido (l.)', help='Cantidad combustible añadida antes de iniciar el vuelo (en litros)')
     fuelqty_kg = fields.Float('')
@@ -2072,7 +2072,7 @@ class leulit_vuelo(models.Model):
     vuelo_tipo_main = fields.Char(compute=_get_vuelo_tipo_main,string='Vuelo Tipo Main',search=_search_vuelo_tipo_main)
     numpax = fields.Integer('Nº de pax / AESA', help='Numero de pasajeros')
     numtripulacion = fields.Integer('Nº tripulantes',default=1)
-    cg = fields.Char('C.G.', size=5)
+    cg = fields.Char('C.G.', )
     tow = fields.Float('Peso al despegue (kg.)')
     fechasalida = fields.Datetime(compute=_calc_fecha_salida,string='Fecha Salida', store=True)
     strfechasalida = fields.Char(compute=_calc_strfecha_salida,string='Fecha Salida')

@@ -462,9 +462,9 @@ class leulit_weight_and_balance(models.Model):
                                                     ('Masa estandard','Masa estandard (piloto 85 kg, masculino 104 kg, femenino 86 kg, niño(de 2-12 años 35kg), equipaje mano 6kg, equipos emergencia 3kg)')],
                                                     'Cálculo peso pasajeros', required=True,default="Masa declarada")
     fieldslist = fields.Char(compute=_get_fields_list_orm,string='',store=False)
-    helicoptero_tipo = fields.Char('Tipo helicoptero', size=50, readonly=True)
-    helicoptero_modelo = fields.Char('Tipo Modelo', size=50, readonly=True)
-    name = fields.Char('Nombre', size=50)
+    helicoptero_tipo = fields.Char('Tipo helicoptero',  readonly=True)
+    helicoptero_modelo = fields.Char('Tipo Modelo',  readonly=True)
+    name = fields.Char('Nombre', )
 
     valid_takeoff_longcg = fields.Boolean('Valid TakeOff Long. CG')
     valid_takeoff_latcg = fields.Boolean('Valid TakeOff Lat. CG')

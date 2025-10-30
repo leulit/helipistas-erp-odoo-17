@@ -120,7 +120,7 @@ class leulit_checklist(models.Model):
 
 
     tags = fields.Many2many('leulit.checklist_tag', 'leulit_checklist_tag_rel', 'checklist_id','checklist_tag_id', 'Clasificación')
-    descriptor = fields.Char("Descriptor", size=500, required=True)
+    descriptor = fields.Char("Descriptor",  required=True)
     comentarios = fields.Text("Comentarios")
     template = fields.Many2one('leulit.checklist_template', 'Plantilla', required=True, domain=lambda self: "[('state','=','1'),('usuarios','in',"+str(self.env.uid)+")]")
     project_id = fields.Many2one(related='template.project_id', string='Proyecto')

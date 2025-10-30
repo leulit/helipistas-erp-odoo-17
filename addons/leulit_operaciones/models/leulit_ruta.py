@@ -34,7 +34,7 @@ class leulit_ruta(models.Model):
         return  [('id','=','0')]
     
 
-    nombre = fields.Char('Nombre', size=500,required=True)
+    nombre = fields.Char('Nombre', required=True)
     comentarios = fields.Text('Comentarios')
     fecha_creacion = fields.Date('Fecha creación',required=True)
     fecha_aprobacion = fields.Date('Fecha aprobación',required=True)

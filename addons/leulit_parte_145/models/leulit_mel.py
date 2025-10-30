@@ -28,8 +28,8 @@ class leulit_mel(models.Model):
             item.matriculas_heli = texto
 
 
-    referencia = fields.Char('Referencia', size=20)
-    name = fields.Char('Descripción', size=255)
+    referencia = fields.Char('Referencia', )
+    name = fields.Char('Descripción', )
     helicoptero_ids = fields.Many2many('leulit.helicoptero', 'leulit_helicoptero_mel_rel','mel_id' ,'helicoptero_id','Helicópteros',domain="[('baja','=',False)]")
     linemel_ids = fields.One2many('leulit.lines_mel', 'mel_id', 'Diferidos')
     ata = fields.Many2one('leulit.mel_ata', 'ATA')

@@ -178,11 +178,11 @@ class leulit_circular(models.Model):
         return  [('id','=','0')]
         
 
-    name = fields.Char("Nombre", size=64, required=True)
-    description = fields.Html("Descripción", size=100, required=True)
-    fecha_emision = fields.Date("Fecha de emisión", size=64, required=False,default=fields.Date.context_today)
-    fecha_fin = fields.Date("Fecha fin", size=64, required=False)
-    estado = fields.Selection([('valido','Válido'),('no_valido','No válido')],"Estado", size=200, required=False)
+    name = fields.Char("Nombre", required=True)
+    description = fields.Html("Descripción",  required=True)
+    fecha_emision = fields.Date("Fecha de emisión", required=False,default=fields.Date.context_today)
+    fecha_fin = fields.Date("Fecha fin", required=False)
+    estado = fields.Selection([('valido','Válido'),('no_valido','No válido')],"Estado",  required=False)
     area = fields.Many2one('hr.department','Área',ondelete='restrict')
     area_name = fields.Char(related='area.name',string='Area',store=False)
     autor_id = fields.Many2one('res.users','Autor',ondelete='restrict', readonly=True, default=lambda self: self.env.uid)

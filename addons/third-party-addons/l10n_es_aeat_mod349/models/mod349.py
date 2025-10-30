@@ -487,7 +487,7 @@ class Mod349PartnerRecord(models.Model):
         string="Partner",
         required=True,
     )
-    partner_vat = fields.Char(string="VAT", size=15, index=True)
+    partner_vat = fields.Char(string="VAT",  index=True)
     country_id = fields.Many2one(comodel_name="res.country", string="Country")
     operation_key = fields.Selection(
         selection=_selection_operation_key,
@@ -593,7 +593,7 @@ class Mod349PartnerRefund(models.Model):
         required=True,
         index=True,
     )
-    partner_vat = fields.Char(string="VAT", size=15)
+    partner_vat = fields.Char(string="VAT", )
     operation_key = fields.Selection(
         selection=_selection_operation_key,
     )

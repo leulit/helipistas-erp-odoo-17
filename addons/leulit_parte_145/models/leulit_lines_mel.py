@@ -24,11 +24,11 @@ class leulit_lines_mel(models.Model):
         )
     
     
-    referencia = fields.Char('Referencia', size=20)
+    referencia = fields.Char('Referencia', )
     tenerencuenta = fields.Text('Puntos de interés / Excepciones')
     categoria = fields.Selection(_get_categorias,'Categoría')
     numinstalado = fields.Integer('Nº instalados')
-    numexp = fields.Char('Nº expedición', size=20)
+    numexp = fields.Char('Nº expedición', )
     tipo = fields.Many2one('leulit.mel_tipo_operacion', 'Tipo')
     mel_id = fields.Many2one('leulit.mel', 'MEL')
     

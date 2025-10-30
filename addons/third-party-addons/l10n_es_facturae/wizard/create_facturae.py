@@ -35,7 +35,7 @@ class CreateFacturae(models.TransientModel):
     _description = "Create Facturae Wizard"
 
     facturae = fields.Binary("Facturae file", readonly=True)
-    facturae_fname = fields.Char("File name", size=64)
+    facturae_fname = fields.Char("File name", )
     note = fields.Text("Log")
     state = fields.Selection(
         [("first", "First"), ("second", "Second")],

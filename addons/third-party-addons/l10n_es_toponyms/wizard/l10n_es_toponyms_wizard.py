@@ -11,7 +11,7 @@ class ConfigEsToponyms(models.TransientModel):
     _inherit = "res.config.installer"
     _description = "Config ES Toponyms"
 
-    name = fields.Char(size=64)
+    name = fields.Char()
 
     def execute(self):
         res = super().execute()

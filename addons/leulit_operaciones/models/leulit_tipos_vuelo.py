@@ -25,7 +25,7 @@ class leulit_vuelostipo(models.Model):
             ('NCO', 'NCO'),
         )
     
-    name = fields.Char('Nombre', size=255,required=True)
+    name = fields.Char('Nombre', required=True)
     descripcion = fields.Char('Descripción')
     categoria = fields.Char('CAtegoría')
     tipo_trabajo = fields.Selection(_get_tipo_trabajo, 'Tipo de Trabajo')

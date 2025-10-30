@@ -33,7 +33,7 @@ class leulit_checklist_template(models.Model):
 
 
     tags = fields.Many2many('leulit.checklist_tag', 'leulit_checklist_template_tag_rel', 'checklist_template_id','checklist_tag_id', 'Clasificación')
-    descriptor = fields.Char("Descriptor", size=500, required=True)
+    descriptor = fields.Char("Descriptor",  required=True)
     comentarios = fields.Text("Comentarios")
     usuarios = fields.Many2many('res.users','leulit_checklist_template_user_rel','checklist_template_id','user_id','Destinatarios')
     items = fields.One2many('leulit.checklist_template_item','checklist_template_id','Items')

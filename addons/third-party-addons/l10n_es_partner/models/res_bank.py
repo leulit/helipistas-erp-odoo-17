@@ -10,6 +10,6 @@ from odoo import fields, models
 class ResBank(models.Model):
     _inherit = "res.bank"
 
-    lname = fields.Char("Long name", size=128)
-    vat = fields.Char("VAT code", size=32, help="Value Added Tax number")
-    website = fields.Char(size=64)
+    lname = fields.Char("Long name", )
+    vat = fields.Char("VAT code",  help="Value Added Tax number")
+    website = fields.Char()

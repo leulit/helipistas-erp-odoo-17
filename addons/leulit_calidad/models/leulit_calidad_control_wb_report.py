@@ -292,5 +292,5 @@ class leulit_calidad_control_wb_report(models.TransientModel):
     vuelo_ids = fields.Many2many('leulit.vuelo', 'leulit_cal_vuelo_rel','vuelo_rel','cal_rel','Vuelos')
     texto = fields.Text('Información')
     fecha = fields.Date('Fecha')
-    lugar = fields.Char('Lugar', size=50)
+    lugar = fields.Char('Lugar', )
 

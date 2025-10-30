@@ -13,7 +13,7 @@ class MgmtsystemAudit(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char()
-    reference = fields.Char(size=64, required=True, readonly=True, default="NEW")
+    reference = fields.Char(required=True, readonly=True, default="NEW")
     date = fields.Datetime()
     line_ids = fields.One2many(
         "mgmtsystem.verification.line", "audit_id", "Verification List"

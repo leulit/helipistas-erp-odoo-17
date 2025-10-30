@@ -210,13 +210,13 @@ class leulit_anomalia(models.Model):
                 item.days_close = (item.date_closed.date()-item.fecha).days
 
 
-    codigo = fields.Char('Código', size=20,readonly=True)
+    codigo = fields.Char('Código', readonly=True)
     melref = fields.Many2one('leulit.mel', 'Ref. Description')
     linemel_id = fields.Many2one('leulit.lines_mel', 'Reference')
     tipomel = fields.Many2one('leulit.mel_tipo_operacion', 'Kind', readonly=True)
-    categoria = fields.Char('Category', size=2, readonly=True)
+    categoria = fields.Char('Category',  readonly=True)
     numinstaladomel = fields.Integer('Nº installed', readonly=True)
-    numexpmel = fields.Char('Nº expedition', size=20, readonly=True)
+    numexpmel = fields.Char('Nº expedition',  readonly=True)
     pom = fields.Selection([('Sí','Sí'),('No','No')],'POM')
     limita = fields.Selection([('Sí', 'Sí'), ('No', 'No')], 'POM')
     tenerencuentamel = fields.Text('POI / Exceptions',)
@@ -230,8 +230,8 @@ class leulit_anomalia(models.Model):
 
     discrepancia = fields.Text('Discrepancia/Anomalía', required=True)
     motivodiferir = fields.Text('Acción considerada')
-    comentario = fields.Char('Comentario', size=200)
-    lugar_crs = fields.Char('Lugar CRS', size=200)
+    comentario = fields.Char('Comentario', )
+    lugar_crs = fields.Char('Lugar CRS', )
     comentario_crs = fields.Char('Comentario CRS')
     fecha = fields.Date('Fecha', required=True, readonly=True)
 
@@ -247,14 +247,14 @@ class leulit_anomalia(models.Model):
     firma_diferido_por = fields.Binary(related='diferido_por.firma',string='Firma diferido por')
     sello_diferido_por = fields.Binary(related='diferido_por.sello',string='Sello diferido por')
     date_deferred = fields.Datetime(string="Deferred", readonly=False)
-    days_deferred = fields.Integer(compute=_get_days_between_create_deferred, stirng="Days to deferred", store=False)
+    days_deferred = fields.Integer(compute=_get_days_between_create_deferred, string="Days to deferred", store=False)
 
     cerrado_por = fields.Many2one('res.partner', 'Cerrado por', readonly=True)
     cerrado_por_company = fields.Char(related='cerrado_por.company_id.name',string='Compañía')
     firma_cerrado_por = fields.Binary(related='cerrado_por.firma',string='Firma cerrado por')
     sello_cerrado_por = fields.Binary(related='cerrado_por.sello',string='Sello cerrado por')
     date_closed = fields.Datetime(string="Closed", readonly=False)
-    days_close = fields.Integer(compute=_get_days_between_create_close, stirng="Days to Close", store=False)
+    days_close = fields.Integer(compute=_get_days_between_create_close, string="Days to Close", store=False)
 
     cancelado_por = fields.Many2one('res.partner', 'Cancelado por', readonly=True)
     firma_cancelado_por = fields.Binary(related='cancelado_por.firma',string='Firma cancelado por')
@@ -264,7 +264,7 @@ class leulit_anomalia(models.Model):
     accion = fields.Text('Motivo cierre')
     fecha_accion = fields.Date('Fecha cierre')
     hora_cierre = fields.Float('Hora cierre')
-    cas = fields.Char('CAS', size=255)
+    cas = fields.Char('CAS', )
 
     vuelo_id = fields.Many2one('leulit.vuelo','Vuelo origen')
 

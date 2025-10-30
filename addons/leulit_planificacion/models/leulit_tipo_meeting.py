@@ -13,5 +13,5 @@ class leulit_tipo_meeting(models.Model):
     _name = 'leulit.tipo_meeting'
     _description = 'leulit_tipo_meeting'
 
-    name = fields.Char('Descripción', size=255)
+    name = fields.Char('Descripción', )
     reunion_id = fields.Many2one('calendar.event', 'Reunión')

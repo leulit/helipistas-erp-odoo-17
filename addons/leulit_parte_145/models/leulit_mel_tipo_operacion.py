@@ -14,5 +14,5 @@ class leulit_mel_tipo_operacion(models.Model):
     _description    = "leulit_mel_tipo_operacion"
     
     
-    name = fields.Char('Descripción',size=100,required=True)
+    name = fields.Char('Descripción',required=True)
     

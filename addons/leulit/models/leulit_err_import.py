@@ -24,6 +24,6 @@ class leulit_error_import(models.Model):
 
     tabla = fields.Char(string='Tabla',)
     campos = fields.Text(string='Campos',)
-    datos = fields.Text(String='Datos',)
-    comments = fields.Text(String='Comentarios',)
-    fecha = fields.Datetime(String='Fecha',)
+    datos = fields.Text(string='Datos',)
+    comments = fields.Text(string='Comentarios',)
+    fecha = fields.Datetime(string='Fecha',)

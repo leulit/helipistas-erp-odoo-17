@@ -39,7 +39,7 @@ class SignatureDocQuery(models.Model):
 
 
     
-    csvcode = fields.Char('CSV Code', size=500, help="Código CSV")
+    csvcode = fields.Char('CSV Code',  help="Código CSV")
 
 
     

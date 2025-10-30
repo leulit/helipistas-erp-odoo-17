@@ -29,10 +29,10 @@ class leulit_modelohelicoptero(models.Model):
             item.helinobaja = [(6, False, h)]
 
 
-    name = fields.Char(string='Indicativo', size=255, required=True)
-    descripcion = fields.Char(string='Descripción', size=255)
-    codigo = fields.Char(string='Codigo', size=50)
-    pesomax = fields.Float(string='Peso max. (kg)', size=50)
+    name = fields.Char(string='Indicativo',  required=True)
+    descripcion = fields.Char(string='Descripción', )
+    codigo = fields.Char(string='Codigo', )
+    pesomax = fields.Float(string='Peso max. (kg)', )
     tipo = fields.Selection(_get_tipos,string='Tipo', required=True)
     helicoptero_ids = fields.One2many(comodel_name='leulit.helicoptero', inverse_name='modelo', string='Helicópteros')
     performance_altura_velocidad = fields.Image(string='Performance de Altura por Velocidad')

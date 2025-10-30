@@ -153,10 +153,10 @@ class ResUsers(models.Model):
         raise UserError('Funcionalidad no migrada boton')
         
 
-    otp_key = fields.Char(string='OTP key', size=128, help="This is the OTP secret (private) key")
+    otp_key = fields.Char(string='OTP key',  help="This is the OTP secret (private) key")
     otp_show = fields.Boolean(string='Show characters')
     otp_type = fields.Selection([('time',_('Time based')),('count',_('Counter based'))],"Type")
-    otp_secret = fields.Char(string="Secret",size=16,help='16 character base32 secret')
+    otp_secret = fields.Char(string="Secret",help='16 character base32 secret')
     otp_counter = fields.Integer(string="Counter")
     otp_digits = fields.Integer(string="Digits",help="Length of the PIN")
     otp_period = fields.Integer(string="Period",help="Number seconds PIN is active")

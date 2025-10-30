@@ -9,8 +9,8 @@ class MgmtsystemReview(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Review"
 
-    name = fields.Char(size=50, required=True)
-    reference = fields.Char(size=64, required=True, default="NEW")
+    name = fields.Char( required=True)
+    reference = fields.Char(required=True, default="NEW")
     date = fields.Datetime(required=True)
     user_ids = fields.Many2many(
         "res.users",

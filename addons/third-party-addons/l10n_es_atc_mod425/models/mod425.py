@@ -83,7 +83,7 @@ class L10nEsAtcMod425Report(models.Model):
     main_activity_iae = fields.Char(
         string="Epígrafe I.A.E. actividad principal",
         readonly=True,
-        size=4,
+        
     )
     main_activity_pro_prorrata = fields.Integer("% Provisional de la prorrata genera")
     main_activity_def_prorrata = fields.Integer("% Definitivo de la prorrata genera")
@@ -98,7 +98,7 @@ class L10nEsAtcMod425Report(models.Model):
     )
     other_first_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 1ª régimen",
-        size=4,
+        
     )
     # Prorrata Especial
     other_first_activity_pro_prorrata = fields.Integer(
@@ -120,7 +120,7 @@ class L10nEsAtcMod425Report(models.Model):
     )
     other_second_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 2ª régimen",
-        size=4,
+        
     )
     # Prorrata Especial
     other_second_activity_pro_prorrata = fields.Integer(
@@ -140,7 +140,7 @@ class L10nEsAtcMod425Report(models.Model):
         selection=REGIMEN_CODE_SELECTION,
         string="Código 3ª régimen",
     )
-    other_third_activity_iae = fields.Char(string="Epígrafe I.A.E. 3ª régimen", size=4)
+    other_third_activity_iae = fields.Char(string="Epígrafe I.A.E. 3ª régimen", )
     # Prorrata Especial
     other_third_activity_pro_prorrata = fields.Integer(
         "% Provisional de la prorrata genera"
@@ -159,7 +159,7 @@ class L10nEsAtcMod425Report(models.Model):
         selection=REGIMEN_CODE_SELECTION,
         string="Código 4ª régimen",
     )
-    other_fourth_activity_iae = fields.Char(string="Epígrafe I.A.E. 4ª régimen", size=4)
+    other_fourth_activity_iae = fields.Char(string="Epígrafe I.A.E. 4ª régimen", )
     # Prorrata Especial
     other_fourth_activity_pro_prorrata = fields.Integer(
         "% Provisional de la prorrata genera"
@@ -172,7 +172,7 @@ class L10nEsAtcMod425Report(models.Model):
     )
     other_fifth_activity = fields.Char(
         string="5ª actividad",
-        size=40,
+        
     )
     other_fifth_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
@@ -184,7 +184,7 @@ class L10nEsAtcMod425Report(models.Model):
     )
     other_fifth_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 5ª régimen",
-        size=4,
+        
     )
     # Prorrata Especial
     other_fifth_activity_pro_prorrata = fields.Integer(
@@ -200,51 +200,51 @@ class L10nEsAtcMod425Report(models.Model):
     first_representative_name = fields.Char(
         string="Nombre del primer representante",
         readonly=True,
-        size=80,
+        
         help=REPRESENTATIVE_HELP,
     )
     first_representative_vat = fields.Char(
         string="NIF del primer representante",
         readonly=True,
-        size=9,
+        
     )
     first_representative_date = fields.Date(
         string="Fecha poder del primer representante"
     )
     first_representative_notary = fields.Char(
-        string="Notaría del primer representante", size=12, help=NOTARY_CODE_HELP
+        string="Notaría del primer representante",  help=NOTARY_CODE_HELP
     )
     second_representative_name = fields.Char(
         string="Nombre del segundo representante",
-        size=80,
+        
         help=REPRESENTATIVE_HELP,
     )
     second_representative_vat = fields.Char(
         string="NIF del segundo representante",
-        size=9,
+        
     )
     second_representative_date = fields.Date(
         string="Fecha poder del segundo representante"
     )
     second_representative_notary = fields.Char(
         string="Notaría del segundo representante",
-        size=12,
+        
         help=NOTARY_CODE_HELP,
     )
     third_representative_name = fields.Char(
         string="Nombre del tercer representante",
-        size=80,
+        
         help=REPRESENTATIVE_HELP,
     )
     third_representative_vat = fields.Char(
-        string="NIF del tercer representante", size=9
+        string="NIF del tercer representante", 
     )
     third_representative_date = fields.Date(
         string="Fecha poder del tercer representante"
     )
     third_representative_notary = fields.Char(
         string="Notaría del tercer representante",
-        size=12,
+        
         help=NOTARY_CODE_HELP,
     )
 

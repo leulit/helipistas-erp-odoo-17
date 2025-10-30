@@ -16,6 +16,6 @@ class leulit_checklist_tag(models.Model):
     _rec_name = "descriptor"
 
 
-    descriptor = fields.Char("Descriptor", size=100, required=True)
-    res_model = fields.Char('Resource Model',size=64, readonly=True, help="The database object this attachment will be attached to")
+    descriptor = fields.Char("Descriptor",  required=True)
+    res_model = fields.Char('Resource Model',readonly=True, help="The database object this attachment will be attached to")
     res_id = fields.Integer('Resource ID', readonly=True, help="The record id this is attached to")

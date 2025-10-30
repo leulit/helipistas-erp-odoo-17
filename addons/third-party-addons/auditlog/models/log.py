@@ -9,7 +9,7 @@ class AuditlogLog(models.Model):
     _description = "Auditlog - Log"
     _order = "create_date desc"
 
-    name = fields.Char("Resource Name", size=64)
+    name = fields.Char("Resource Name", )
     model_id = fields.Many2one(
         "ir.model", string="Model", index=True, ondelete="set null"
     )
@@ -17,7 +17,7 @@ class AuditlogLog(models.Model):
     model_model = fields.Char(string="Technical Model Name", readonly=True)
     res_id = fields.Integer("Resource ID")
     user_id = fields.Many2one("res.users", string="User")
-    method = fields.Char(size=64)
+    method = fields.Char()
     line_ids = fields.One2many("auditlog.log.line", "log_id", string="Fields updated")
     http_session_id = fields.Many2one(
         "auditlog.http.session", string="Session", index=True

@@ -399,18 +399,18 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
     partner_id = fields.Many2one(
         comodel_name="res.partner", string="Partner", required=True
     )
-    partner_vat = fields.Char(string="VAT number", size=9)
+    partner_vat = fields.Char(string="VAT number", )
     representative_vat = fields.Char(
-        string="L.R. VAT number", size=9, help="Legal Representative VAT number"
+        string="L.R. VAT number",  help="Legal Representative VAT number"
     )
     community_vat = fields.Char(
         string="Community vat number",
-        size=17,
+        
         help="VAT number for professionals established in other state "
         "member without national VAT",
     )
-    partner_country_code = fields.Char(string="Country Code", size=2)
-    partner_state_code = fields.Char(string="State Code", size=2)
+    partner_country_code = fields.Char(string="Country Code", )
+    partner_state_code = fields.Char(string="State Code", )
     first_quarter = fields.Float(
         string="First quarter operations",
         digits="Account",
@@ -678,11 +678,11 @@ class L10nEsAeatMod347RealStateRecord(models.Model):
     )
     partner_vat = fields.Char(
         string="VAT number",
-        size=32,
+        
     )
     representative_vat = fields.Char(
         string="L.R. VAT number",
-        size=32,
+        
         default=_default_representative_vat,
         help="Legal Representative VAT number",
     )
@@ -697,9 +697,9 @@ class L10nEsAeatMod347RealStateRecord(models.Model):
         string="Real estate Situation",
         required=True,
     )
-    reference = fields.Char(string="Catastral Reference", size=25)
-    address_type = fields.Char(size=5)
-    address = fields.Char(size=50)
+    reference = fields.Char(string="Catastral Reference", )
+    address_type = fields.Char()
+    address = fields.Char()
     number_type = fields.Selection(
         selection=[("NUM", "Number"), ("KM.", "Kilometer"), ("S/N", "Without number")],
     )
@@ -707,20 +707,20 @@ class L10nEsAeatMod347RealStateRecord(models.Model):
     number_calification = fields.Selection(
         selection=[("BIS", "Bis"), ("MOD", "Mod"), ("DUP", "Dup"), ("ANT", "Ant")],
     )
-    block = fields.Char(size=3)
-    portal = fields.Char(size=3)
-    stairway = fields.Char(size=3)
-    floor = fields.Char(size=3)
-    door = fields.Char(size=3)
+    block = fields.Char()
+    portal = fields.Char()
+    stairway = fields.Char()
+    floor = fields.Char()
+    door = fields.Char()
     complement = fields.Char(
-        size=40,
+        
         help="Complement (urbanization, industrial park...)",
     )
-    city = fields.Char(size=30)
-    township = fields.Char(size=30)
-    township_code = fields.Char(size=5)
-    state_code = fields.Char(size=2)
-    postal_code = fields.Char(size=5)
+    city = fields.Char()
+    township = fields.Char()
+    township_code = fields.Char()
+    state_code = fields.Char()
+    postal_code = fields.Char()
     check_ok = fields.Boolean(
         compute="_compute_check_ok",
         string="Record is OK",

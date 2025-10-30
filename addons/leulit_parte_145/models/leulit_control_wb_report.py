@@ -16,14 +16,14 @@ class leulit_informes_control_wb_report(models.Model):
     _order          = "modeloname"
 
 
-    matricula = fields.Char('Matrícula', size=50, readonly=True)
+    matricula = fields.Char('Matrícula',  readonly=True)
     fechalastWB = fields.Date('Último informe peso y centrado',readonly=True)
     emptyweight = fields.Float('Peso vacío (kg.)', readonly=True)
     longarm = fields.Float('CG. Long. cms.', readonly=True)
     latarm = fields.Float('CG. Lat. kg/cm', readonly=True)
     wblastmod = fields.Date('Fecha introducción de datos en ERP', readonly=True)
     pesomax = fields.Float('Peso max. (kgs.)', readonly=True)
-    modeloname = fields.Char('Modelo', size=50, readonly=True)
+    modeloname = fields.Char('Modelo',  readonly=True)
     ctrlmantenimiento = fields.Boolean('Gestión mantenimiento')
     
     
