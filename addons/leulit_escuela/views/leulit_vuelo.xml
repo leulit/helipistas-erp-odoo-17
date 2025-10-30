@@ -77,8 +77,8 @@
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
-                                        <field name="sil_test" invisible="0"/>
-                                        <field name="sil_valoracion" invisible="0"/>
+                                        <field name="sil_test" invisible="1"/>
+                                        <field name="sil_valoracion" invisible="1"/>
                                         <field name="todo_cerrar" invisible="1"/>
                                         <field name="rel_docs" invisible="1"/>
                                         <field name="valoracion" attrs="{'column_invisible': [('sil_valoracion', '=', False)]}"/>
@@ -142,8 +142,8 @@
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
-                                        <field name="sil_test" invisible="0"/>
-                                        <field name="sil_valoracion" invisible="0"/>
+                                        <field name="sil_test" invisible="1"/>
+                                        <field name="sil_valoracion" invisible="1"/>
                                         <field name="todo_cerrar" invisible="1"/>
                                         <field name="rel_docs" invisible="1"/>
                                         <field name="valoracion" attrs="{'column_invisible': [('sil_valoracion', '=', False)]}"/>
