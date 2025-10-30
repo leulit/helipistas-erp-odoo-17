@@ -44,7 +44,7 @@ class StockQuant(models.Model):
                 if product_qty != value:
                     ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
     
 

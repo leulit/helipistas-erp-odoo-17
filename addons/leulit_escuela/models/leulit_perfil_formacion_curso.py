@@ -251,7 +251,7 @@ class leulit_perfil_formacion_curso(models.Model):
                         ids.append(item.id)
 
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
     
     def _search_semaforo_dy(self, operator, value):
@@ -277,7 +277,7 @@ class leulit_perfil_formacion_curso(models.Model):
                 ids.append(item.id)
 
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
     
 
@@ -297,7 +297,7 @@ class leulit_perfil_formacion_curso(models.Model):
                 if item.perfil_formacion.alumno.id != value:
                     ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
 
 

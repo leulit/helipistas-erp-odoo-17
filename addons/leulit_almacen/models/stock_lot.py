@@ -232,7 +232,7 @@ class StockLot(models.Model):
                     if value.upper() not in name:
                         ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
 
 
@@ -262,7 +262,7 @@ class StockLot(models.Model):
                     if date != value_date:
                         ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
 
 
@@ -451,7 +451,7 @@ class StockLot(models.Model):
                     if product_qty != value:
                         ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
     
 
@@ -488,7 +488,7 @@ class StockLot(models.Model):
                 if product_qty != value:
                     ids.append(item.id)
         if ids:
-            return  [('id','=',ids)]
+            return  [('id','in',ids)]
         return  [('id','=','0')]
 
     
