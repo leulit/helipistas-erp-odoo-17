@@ -77,13 +77,13 @@
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
-                                        <field name="sil_test" column_invisible="1"/>
-                                        <field name="sil_valoracion" column_invisible="1"/>
-                                        <field name="todo_cerrar" column_invisible="1"/>
-                                        <field name="rel_docs" column_invisible="1"/>
-                                        <field name="valoracion"  column_invisible="not sil_valoracion" />
-                                        <field name="nota"  column_invisible="not sil_test" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="not sil_test"  class="oe_edit_only oe_highlight"/>
+                                        <field name="sil_test" invisible="0"/>
+                                        <field name="sil_valoracion" invisible="0"/>
+                                        <field name="todo_cerrar" invisible="1"/>
+                                        <field name="rel_docs" invisible="1"/>
+                                        <field name="valoracion" attrs="{'column_invisible': [('sil_valoracion', '=', False)]}"/>
+                                        <field name="nota" attrs="{'column_invisible': [('sil_test', '=', False)]}"/>
+                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc." attrs="{'column_invisible': [('sil_test', '=', False)]}" class="oe_edit_only oe_highlight"/>
                                     </tree>
                                 </field>
                             </group>
@@ -142,13 +142,13 @@
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
-                                        <field name="sil_test" column_invisible="1"/>
-                                        <field name="sil_valoracion" column_invisible="1"/>
-                                        <field name="todo_cerrar" column_invisible="1"/>
-                                        <field name="rel_docs" column_invisible="1"/>
-                                        <field name="valoracion"  column_invisible="not sil_valoracion" />
-                                        <field name="nota"  column_invisible="not sil_test" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc."  column_invisible="not sil_test"  class="oe_edit_only oe_highlight"/>
+                                        <field name="sil_test" invisible="0"/>
+                                        <field name="sil_valoracion" invisible="0"/>
+                                        <field name="todo_cerrar" invisible="1"/>
+                                        <field name="rel_docs" invisible="1"/>
+                                        <field name="valoracion" attrs="{'column_invisible': [('sil_valoracion', '=', False)]}"/>
+                                        <field name="nota" attrs="{'column_invisible': [('sil_test', '=', False)]}"/>
+                                        <button type="object" name="add_docs_rel_parte_escuela" string="Adjuntar Doc." attrs="{'column_invisible': [('sil_test', '=', False)]}" class="oe_edit_only oe_highlight"/>
                                     </tree>
                                 </field>
                             </group>
