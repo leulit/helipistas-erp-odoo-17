@@ -216,7 +216,7 @@
                                         <h5 class="card-header text-white bg-dark">Piloto</h5>
                                         <div class="card-body p-3">
                                             <field name="piloto_id" string="Piloto"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                            <span data-bs-toggle="collapse" href="#foto-piloto" role="button" aria-expanded="false" aria-controls="foto-piloto" class="text-primary fa fa-solid fa-camera px-2"/>
+                                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-piloto" role="button" aria-expanded="false" aria-controls="foto-piloto" class="text-primary fa fa-solid fa-camera px-2"/>
                                             <br/>
                                             <div class="collapse" colspan="4" id="foto-piloto" name="foto-piloto">
                                                 <field name="foto_piloto" widget="image" string="" />
@@ -227,7 +227,7 @@
                                         <h5 class="card-header text-white bg-dark">Operador</h5>
                                         <div class="card-body p-3">
                                             <field name="operador"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                            <span data-bs-toggle="collapse" href="#foto-operador" role="button" aria-expanded="false" aria-controls="foto-operador" class="text-primary fa fa-solid fa-camera px-2"/>
+                                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-operador" role="button" aria-expanded="false" aria-controls="foto-operador" class="text-primary fa fa-solid fa-camera px-2"/>
                                             <br/>
                                             <div class="collapse" colspan="4" id="foto-operador" name="foto-operador">
                                                 <field name="foto_operador" widget="image" string="" style="text-align: center"/>
@@ -238,7 +238,7 @@
                                         <h5 class="card-header text-white bg-dark">PIC Verificado</h5>
                                         <div class="card-body p-3">
                                             <field name="verificado"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                            <span data-bs-toggle="collapse" href="#foto-verificado" role="button" aria-expanded="false" aria-controls="foto-verificado" class="text-primary fa fa-solid fa-camera px-2"/>
+                                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-verificado" role="button" aria-expanded="false" aria-controls="foto-verificado" class="text-primary fa fa-solid fa-camera px-2"/>
                                             <br/>
                                             <div class="collapse" colspan="4" id="foto-verificado" name="foto-verificado">
                                                 <field name="foto_verificado" widget="image" string="" style="text-align: center"/>
@@ -249,7 +249,7 @@
                                         <h5 class="card-header text-white bg-dark">PIC Supervisor</h5>
                                         <div class="card-body p-3">
                                             <field name="piloto_supervisor_id"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                            <span data-bs-toggle="collapse" href="#foto-supervisor" role="button" aria-expanded="false" aria-controls="foto-supervisor" class="text-primary fa fa-solid fa-camera px-2"/>
+                                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-supervisor" role="button" aria-expanded="false" aria-controls="foto-supervisor" class="text-primary fa fa-solid fa-camera px-2"/>
                                             <br/>
                                             <div class="collapse" colspan="4" id="foto-supervisor" name="foto-supervisor">
                                                 <field name="foto_piloto_supervisor_id" widget="image" string="" style="text-align: center"/>
@@ -287,7 +287,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="oilqty_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#oilqty_kg" role="button" aria-expanded="false" aria-controls="oilqty_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#oilqty_kg" role="button" aria-expanded="false" aria-controls="oilqty_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="oilqty_kg">
                                                 <field name="oilqty_kg" readonly="1" force_save="1"/>
@@ -296,7 +296,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="oilqty_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#oilqty_gal" role="button" aria-expanded="false" aria-controls="oilqty_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#oilqty_gal" role="button" aria-expanded="false" aria-controls="oilqty_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="oilqty_gal">
                                                 <field name="oilqty_gal" readonly="1" force_save="1"/>
@@ -317,7 +317,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="fuelremanente_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#fuelremanente_kg" role="button" aria-expanded="false" aria-controls="fuelremanente_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelremanente_kg" role="button" aria-expanded="false" aria-controls="fuelremanente_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelremanente_kg">
                                                 <field name="fuelremanente_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -326,7 +326,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="fuelremanente_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#fuelremanente_gal" role="button" aria-expanded="false" aria-controls="fuelremanente_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelremanente_gal" role="button" aria-expanded="false" aria-controls="fuelremanente_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelremanente_gal">
                                                 <field name="fuelremanente_gal" string="Galones" readonly="1" force_save="1"/>
@@ -347,7 +347,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="fuelqty_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#fuelqty_kg" role="button" aria-expanded="false" aria-controls="fuelqty_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelqty_kg" role="button" aria-expanded="false" aria-controls="fuelqty_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelqty_kg">
                                                 <field name="fuelqty_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -356,7 +356,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="fuelqty_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#fuelqty_gal" role="button" aria-expanded="false" aria-controls="fuelqty_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelqty_gal" role="button" aria-expanded="false" aria-controls="fuelqty_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelqty_gal">
                                                 <field name="fuelqty_gal" string="Galones" readonly="1" force_save="1"/>
@@ -377,7 +377,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="fuelsalida_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#fuelsalida_kg" role="button" aria-expanded="false" aria-controls="fuelsalida_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelsalida_kg" role="button" aria-expanded="false" aria-controls="fuelsalida_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelsalida_kg">
                                                 <field name="fuelsalida_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -386,7 +386,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="fuelsalida_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#fuelsalida_gal" role="button" aria-expanded="false" aria-controls="fuelsalida_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelsalida_gal" role="button" aria-expanded="false" aria-controls="fuelsalida_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelsalida_gal">
                                                 <field name="fuelsalida_gal" string="Galones" readonly="1" force_save="1"/>
@@ -407,7 +407,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="combustiblelanding_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#combustiblelanding_kg" role="button" aria-expanded="false" aria-controls="combustiblelanding_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustiblelanding_kg" role="button" aria-expanded="false" aria-controls="combustiblelanding_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustiblelanding_kg">
                                                 <field name="combustiblelanding_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -416,7 +416,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="combustiblelanding_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#combustiblelanding_gal" role="button" aria-expanded="false" aria-controls="combustiblelanding_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustiblelanding_gal" role="button" aria-expanded="false" aria-controls="combustiblelanding_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustiblelanding_gal">
                                                 <field name="combustiblelanding_gal" string="Galones" readonly="1" force_save="1"/>
@@ -437,7 +437,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="combustibleextra_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#combustibleextra_kg" role="button" aria-expanded="false" aria-controls="combustibleextra_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibleextra_kg" role="button" aria-expanded="false" aria-controls="combustibleextra_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleextra_kg">
                                                 <field name="combustibleextra_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -446,7 +446,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="combustibleextra_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#combustibleextra_gal" role="button" aria-expanded="false" aria-controls="combustibleextra_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibleextra_gal" role="button" aria-expanded="false" aria-controls="combustibleextra_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleextra_gal">
                                                 <field name="combustibleextra_gal" string="Galones" readonly="1" force_save="1"/>
@@ -467,7 +467,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="consumomedio_vuelo_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#consumomedio_vuelo_kg" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#consumomedio_vuelo_kg" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;;" colspan="4" id="consumomedio_vuelo_kg">
                                                 <field name="consumomedio_vuelo_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -476,7 +476,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="consumomedio_vuelo_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#consumomedio_vuelo_gal" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#consumomedio_vuelo_gal" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="consumomedio_vuelo_gal">
                                                 <field name="consumomedio_vuelo_gal" string="Galones" readonly="1" force_save="1"/>
@@ -497,7 +497,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="combustibletrayecto_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#combustibletrayecto_kg" role="button" aria-expanded="false" aria-controls="combustibletrayecto_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibletrayecto_kg" role="button" aria-expanded="false" aria-controls="combustibletrayecto_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibletrayecto_kg">
                                                 <field name="combustibletrayecto_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -506,7 +506,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="combustibletrayecto_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#combustibletrayecto_gal" role="button" aria-expanded="false" aria-controls="combustibletrayecto_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibletrayecto_gal" role="button" aria-expanded="false" aria-controls="combustibletrayecto_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibletrayecto_gal">
                                                 <field name="combustibletrayecto_gal" string="Galones" readonly="1" force_save="1"/>
@@ -527,7 +527,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="combustibleminimo_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#combustibleminimo_kg" role="button" aria-expanded="false" aria-controls="combustibleminimo_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibleminimo_kg" role="button" aria-expanded="false" aria-controls="combustibleminimo_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleminimo_kg">
                                                 <field name="combustibleminimo_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -536,7 +536,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="combustibleminimo_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#combustibleminimo_gal" role="button" aria-expanded="false" aria-controls="combustibleminimo_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibleminimo_gal" role="button" aria-expanded="false" aria-controls="combustibleminimo_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleminimo_gal">
                                                 <field name="combustibleminimo_gal" string="Galones" readonly="1" force_save="1"/>
@@ -607,7 +607,7 @@
                                         <div class="float-left pr-2">
                                             <div class="o_row">
                                                 <label for="fuelllegada_kg" string="Kilos"/>
-                                                <span data-bs-toggle="collapse" href="#fuelllegada_kg" role="button" aria-expanded="false" aria-controls="fuelllegada_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelllegada_kg" role="button" aria-expanded="false" aria-controls="fuelllegada_kg" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelllegada_kg">
                                                 <field name="fuelllegada_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -616,7 +616,7 @@
                                         <div class="float-left">
                                             <div class="o_row">
                                                 <label for="fuelllegada_gal" string="Galones"/>
-                                                <span data-bs-toggle="collapse" href="#fuelllegada_gal" role="button" aria-expanded="false" aria-controls="fuelllegada_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                                <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelllegada_gal" role="button" aria-expanded="false" aria-controls="fuelllegada_gal" class="text-primary fa fa-arrow-circle-down"/>
                                             </div>
                                             <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelllegada_gal">
                                                 <field name="fuelllegada_gal" string="Galones" readonly="1" force_save="1"/>
@@ -967,7 +967,7 @@
                                     <h5 class="card-header text-white bg-dark">Piloto</h5>
                                     <div class="card-body p-3">
                                         <field name="piloto_id" string="Piloto"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                        <span data-bs-toggle="collapse" href="#foto-piloto" role="button" aria-expanded="false" aria-controls="foto-piloto" class="text-primary fa fa-solid fa-camera px-2"/>
+                                        <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-piloto" role="button" aria-expanded="false" aria-controls="foto-piloto" class="text-primary fa fa-solid fa-camera px-2"/>
                                         <br/>
                                         <div class="collapse" colspan="4" id="foto-piloto">
                                             <field name="foto_piloto" widget="image" string="" />
@@ -978,7 +978,7 @@
                                     <h5 class="card-header text-white bg-dark">Operador</h5>
                                     <div class="card-body p-3">
                                         <field name="operador"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                        <span data-bs-toggle="collapse" href="#foto-operador" role="button" aria-expanded="false" aria-controls="foto-operador" class="text-primary fa fa-solid fa-camera px-2"/>
+                                        <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-operador" role="button" aria-expanded="false" aria-controls="foto-operador" class="text-primary fa fa-solid fa-camera px-2"/>
                                         <br/>
                                         <div class="collapse" colspan="4" id="foto-operador">
                                             <field name="foto_operador" widget="image" string="" style="text-align: center"/>
@@ -989,7 +989,7 @@
                                     <h5 class="card-header text-white bg-dark">PIC Verificado</h5>
                                     <div class="card-body p-3">
                                         <field name="verificado"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                        <span data-bs-toggle="collapse" href="#foto-verificado" role="button" aria-expanded="false" aria-controls="foto-verificado" class="text-primary fa fa-solid fa-camera px-2"/>
+                                        <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-verificado" role="button" aria-expanded="false" aria-controls="foto-verificado" class="text-primary fa fa-solid fa-camera px-2"/>
                                         <br/>
                                         <div class="collapse" colspan="4" id="foto-verificado">
                                             <field name="foto_verificado" widget="image" string="" style="text-align: center"/>
@@ -1000,7 +1000,7 @@
                                     <h5 class="card-header text-white bg-dark">PIC Supervisor</h5>
                                     <div class="card-body p-3">
                                         <field name="piloto_supervisor_id"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                                        <span data-bs-toggle="collapse" href="#foto-supervisor" role="button" aria-expanded="false" aria-controls="foto-supervisor" class="text-primary fa fa-solid fa-camera px-2"/>
+                                        <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-supervisor" role="button" aria-expanded="false" aria-controls="foto-supervisor" class="text-primary fa fa-solid fa-camera px-2"/>
                                         <br/>
                                         <div class="collapse" colspan="4" id="foto-supervisor">
                                             <field name="foto_piloto_supervisor_id" widget="image" string="" style="text-align: center"/>
@@ -1038,7 +1038,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="oilqty_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#oilqty_kg" role="button" aria-expanded="false" aria-controls="oilqty_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#oilqty_kg" role="button" aria-expanded="false" aria-controls="oilqty_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="oilqty_kg">
                                             <field name="oilqty_kg" readonly="1" force_save="1"/>
@@ -1047,7 +1047,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="oilqty_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#oilqty_gal" role="button" aria-expanded="false" aria-controls="oilqty_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#oilqty_gal" role="button" aria-expanded="false" aria-controls="oilqty_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="oilqty_gal">
                                             <field name="oilqty_gal" readonly="1" force_save="1"/>
@@ -1068,7 +1068,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="fuelremanente_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#fuelremanente_kg" role="button" aria-expanded="false" aria-controls="fuelremanente_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelremanente_kg" role="button" aria-expanded="false" aria-controls="fuelremanente_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelremanente_kg">
                                             <field name="fuelremanente_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1077,7 +1077,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="fuelremanente_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#fuelremanente_gal" role="button" aria-expanded="false" aria-controls="fuelremanente_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelremanente_gal" role="button" aria-expanded="false" aria-controls="fuelremanente_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelremanente_gal">
                                             <field name="fuelremanente_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1098,7 +1098,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="fuelqty_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#fuelqty_kg" role="button" aria-expanded="false" aria-controls="fuelqty_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelqty_kg" role="button" aria-expanded="false" aria-controls="fuelqty_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelqty_kg">
                                             <field name="fuelqty_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1107,7 +1107,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="fuelqty_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#fuelqty_gal" role="button" aria-expanded="false" aria-controls="fuelqty_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelqty_gal" role="button" aria-expanded="false" aria-controls="fuelqty_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelqty_gal">
                                             <field name="fuelqty_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1128,7 +1128,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="fuelsalida_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#fuelsalida_kg" role="button" aria-expanded="false" aria-controls="fuelsalida_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelsalida_kg" role="button" aria-expanded="false" aria-controls="fuelsalida_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelsalida_kg">
                                             <field name="fuelsalida_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1137,7 +1137,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="fuelsalida_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#fuelsalida_gal" role="button" aria-expanded="false" aria-controls="fuelsalida_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelsalida_gal" role="button" aria-expanded="false" aria-controls="fuelsalida_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelsalida_gal">
                                             <field name="fuelsalida_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1158,7 +1158,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="combustiblelanding_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#combustiblelanding_kg" role="button" aria-expanded="false" aria-controls="combustiblelanding_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustiblelanding_kg" role="button" aria-expanded="false" aria-controls="combustiblelanding_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustiblelanding_kg">
                                             <field name="combustiblelanding_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1167,7 +1167,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="combustiblelanding_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#combustiblelanding_gal" role="button" aria-expanded="false" aria-controls="combustiblelanding_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustiblelanding_gal" role="button" aria-expanded="false" aria-controls="combustiblelanding_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustiblelanding_gal">
                                             <field name="combustiblelanding_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1188,7 +1188,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="combustibleextra_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#combustibleextra_kg" role="button" aria-expanded="false" aria-controls="combustibleextra_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibleextra_kg" role="button" aria-expanded="false" aria-controls="combustibleextra_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleextra_kg">
                                             <field name="combustibleextra_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1197,7 +1197,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="combustibleextra_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#combustibleextra_gal" role="button" aria-expanded="false" aria-controls="combustibleextra_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibleextra_gal" role="button" aria-expanded="false" aria-controls="combustibleextra_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleextra_gal">
                                             <field name="combustibleextra_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1218,7 +1218,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="consumomedio_vuelo_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#consumomedio_vuelo_kg" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#consumomedio_vuelo_kg" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;;" colspan="4" id="consumomedio_vuelo_kg">
                                             <field name="consumomedio_vuelo_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1227,7 +1227,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="consumomedio_vuelo_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#consumomedio_vuelo_gal" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#consumomedio_vuelo_gal" role="button" aria-expanded="false" aria-controls="consumomedio_vuelo_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="consumomedio_vuelo_gal">
                                             <field name="consumomedio_vuelo_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1248,7 +1248,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="combustibletrayecto_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#combustibletrayecto_kg" role="button" aria-expanded="false" aria-controls="combustibletrayecto_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibletrayecto_kg" role="button" aria-expanded="false" aria-controls="combustibletrayecto_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibletrayecto_kg">
                                             <field name="combustibletrayecto_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1257,7 +1257,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="combustibletrayecto_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#combustibletrayecto_gal" role="button" aria-expanded="false" aria-controls="combustibletrayecto_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibletrayecto_gal" role="button" aria-expanded="false" aria-controls="combustibletrayecto_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibletrayecto_gal">
                                             <field name="combustibletrayecto_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1278,7 +1278,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="combustibleminimo_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#combustibleminimo_kg" role="button" aria-expanded="false" aria-controls="combustibleminimo_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#combustibleminimo_kg" role="button" aria-expanded="false" aria-controls="combustibleminimo_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleminimo_kg">
                                             <field name="combustibleminimo_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1287,7 +1287,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="combustibleminimo_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#combustibleminimo_gal" role="button" aria-expanded="false" aria-controls="combustibleminimo_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#combustibleminimo_gal" role="button" aria-expanded="false" aria-controls="combustibleminimo_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="combustibleminimo_gal">
                                             <field name="combustibleminimo_gal" string="Galones" readonly="1" force_save="1"/>
@@ -1348,7 +1348,7 @@
                                     <div class="float-left pr-2">
                                         <div class="o_row">
                                             <label for="fuelllegada_kg" string="Kilos"/>
-                                            <span data-bs-toggle="collapse" href="#fuelllegada_kg" role="button" aria-expanded="false" aria-controls="fuelllegada_kg" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Kilogramos" data-bs-toggle="collapse" href="#fuelllegada_kg" role="button" aria-expanded="false" aria-controls="fuelllegada_kg" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelllegada_kg">
                                             <field name="fuelllegada_kg" string="Kilos" readonly="1" force_save="1"/>
@@ -1357,7 +1357,7 @@
                                     <div class="float-left">
                                         <div class="o_row">
                                             <label for="fuelllegada_gal" string="Galones"/>
-                                            <span data-bs-toggle="collapse" href="#fuelllegada_gal" role="button" aria-expanded="false" aria-controls="fuelllegada_gal" class="text-primary fa fa-arrow-circle-down"/>
+                                            <span title="Ver/Ocultar Galones" data-bs-toggle="collapse" href="#fuelllegada_gal" role="button" aria-expanded="false" aria-controls="fuelllegada_gal" class="text-primary fa fa-arrow-circle-down"/>
                                         </div>
                                         <div class="collapse" style="color: #17a2b8;" colspan="4" id="fuelllegada_gal">
                                             <field name="fuelllegada_gal" string="Galones" readonly="1" force_save="1"/>

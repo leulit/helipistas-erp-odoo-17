@@ -100,6 +100,7 @@
                             <div class="d-flex">
                                 <separator string="Documentos Firmados"></separator>
                                 <span 
+                                    title="Ver/Ocultar Documentos Firmados"
                                     data-bs-toggle="collapse" 
                                     href="#esignature_docs" 
                                     role="button" 
@@ -155,6 +156,7 @@
                             <div class="d-flex">
                                 <separator string="Documentos Firmados"></separator>
                                 <span 
+                                    title="Ver/Ocultar Documentos Firmados"
                                     data-bs-toggle="collapse" 
                                     href="#esignature_docs" 
                                     role="button" 

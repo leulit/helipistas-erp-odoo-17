@@ -52,7 +52,7 @@
                         Alumno</h5>
                         <div class="card-body p-3">
                             <field name="alumno"  invisible="(verificado)" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                            <span data-bs-toggle="collapse" href="#foto-alumno" role="button" aria-expanded="false" aria-controls="foto-alumno" class="text-primary fa fa-solid fa-camera px-2"/>
+                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-alumno" role="button" aria-expanded="false" aria-controls="foto-alumno" class="text-primary fa fa-solid fa-camera px-2"/>
                             <br/>
                             <div class="collapse" colspan="4" id="foto-alumno" name="foto-alumno">
                                 <field name="foto_alumno" widget="image" string="" style="text-align: center"  invisible="(verificado)" />
@@ -115,7 +115,7 @@
                         Alumno</h5>
                         <div class="card-body p-3">
                             <field name="alumno"  invisible="(verificado)" readonly="((estado in ['postvuelo', 'cerrado', 'cancelado']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                            <span data-bs-toggle="collapse" href="#foto-alumno" role="button" aria-expanded="false" aria-controls="foto-alumno" class="text-primary fa fa-solid fa-camera px-2"/>
+                            <span title="Ver/Ocultar imagen" data-bs-toggle="collapse" href="#foto-alumno" role="button" aria-expanded="false" aria-controls="foto-alumno" class="text-primary fa fa-solid fa-camera px-2"/>
                             <br/>
                             <div class="collapse" colspan="4" id="foto-alumno">
                                 <field name="foto_alumno" widget="image" string="" style="text-align: center"  invisible="(verificado)" />

@@ -14,6 +14,7 @@
                             <div class="d-flex">
                                 <separator string="Imputaciones de Tiempo"></separator>
                                 <span 
+                                    title="Ver/Ocultar Imputaciones de Tiempo"
                                     data-bs-toggle="collapse" 
                                     href="#account_analytic_lines" 
                                     role="button" 
@@ -52,6 +53,7 @@
                             <div class="d-flex">
                                 <separator string="Imputaciones de Tiempo"></separator>
                                 <span 
+                                    title="Ver/Ocultar Imputaciones de Tiempo"
                                     data-bs-toggle="collapse" 
                                     href="#account_analytic_lines" 
                                     role="button" 
