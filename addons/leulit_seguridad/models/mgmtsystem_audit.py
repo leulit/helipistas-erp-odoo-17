@@ -63,7 +63,7 @@ class MgmtsystemAudit(models.Model):
         self.message_post(body=_("Auditoría en borrador"))
         return self.write({"state": "draft"})
     
-    state = fields.Selection(selection_add=[("draft", "Borrador")], default="draft", ondelete='set default')
+    state = fields.Selection(selection_add=[("draft", "Borrador")], default="draft", ondelete='cascade')
     last_revision_norma = fields.Text(string='Última revisión norma')
     procedimiento_id = fields.Many2one(comodel_name="leulit.procedure_audit_question", string="Procedimiento")
     department_id = fields.Many2one(comodel_name="hr.department", string="Área")
