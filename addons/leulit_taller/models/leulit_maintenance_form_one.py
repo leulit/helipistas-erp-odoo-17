@@ -84,7 +84,7 @@ class LeulitMaintenanceFormOne(models.Model):
     tracking_number = fields.Char(string="Form Tracking Number")
     work_order_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order")
     task_id = fields.Many2one(comodel_name="project.task", domain="[('maintenance_request_id','=',work_order_id)]", string="Tarea")
-    items_ids = fields.One2many(comodel_name="leulit.rel_formone_lot", inverse_name="form_one", string="Items", ondelete="cascade")
+    items_ids = fields.One2many(comodel_name="leulit.rel_formone_lot", inverse_name="form_one", string="Items")
     remarks = fields.Text(string="Remarks", default="")
     certificador = fields.Many2one(comodel_name="leulit.mecanico", string="Certificator")
     fecha = fields.Date(string="Date")

@@ -18,7 +18,7 @@ class LeulitRelFormOneLot(models.Model):
         return False
 
 
-    form_one = fields.Many2one(comodel_name="leulit.maintenance_form_one", string="Form One")
+    form_one = fields.Many2one(comodel_name="leulit.maintenance_form_one", string="Form One", ondelete="cascade")
     item = fields.Integer(string="Item")
     pieza_id = fields.Many2one(comodel_name="stock.lot", string="Pieza", default=_get_pieza_default)
     qty = fields.Integer(string="Qty", default=1)
