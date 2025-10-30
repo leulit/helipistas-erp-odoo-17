@@ -71,7 +71,7 @@
                     <div class="card px-4 py-2 my-4" invisible="(not alumno and not verificado) or (estado_vista in ['cancelado', 'cerrado'])">
                         <separator string="Escuela"></separator>
                         <group style="max-width:60%;">
-                            <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus"  invisible="estado in ('cancelado', 'cerrado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  class="oe_highlight oe_edit_only"/>
+                            <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus" colspan="2" invisible="estado in ('cancelado', 'cerrado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  class="oe_highlight oe_edit_only"/>
                             <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" nolabel="1" colspan="2">
                                 <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                     <field name="rel_curso"/>
@@ -150,8 +150,8 @@
                             </field>
                         </group>
                         <group style="max-width:40%;">
-                            <field name="valoracion_escuela" readonly="((estado in ['cerrado', 'cancelado']))" />
-                            <field name="comentario_escuela" readonly="((estado in ['cerrado', 'cancelado']))" />
+                            <field name="valoracion_escuela" readonly="estado in ('cerrado', 'cancelado')" />
+                            <field name="comentario_escuela" readonly="estado in ('cerrado', 'cancelado')" />
                         </group>
                     </div>
                 </xpath>
