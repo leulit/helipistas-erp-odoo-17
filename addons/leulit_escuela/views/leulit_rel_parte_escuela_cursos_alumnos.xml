@@ -10,7 +10,7 @@
 				<form string="Adjuntar Documentos Silabus">
 					<group col="1">
 						<h3>Selecciona todos los archivos que deseas adjuntar:</h3>
-						<field name="rel_docs" no_label="1"/>
+						<field name="rel_docs" nolabel="1"/>
 					</group>
 				</form>
 			</field>

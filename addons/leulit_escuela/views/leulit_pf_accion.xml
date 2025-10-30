@@ -88,7 +88,7 @@
             <field name="arch" type="xml">
                 <form string="Marcar acción como realizada">
                     <group col="1">
-                        <h5><field name="actualizartodos" no_label="1"/> Seleccionar para actualizar todos</h5>
+                        <h5><field name="actualizartodos" nolabel="1"/> Seleccionar para actualizar todos</h5>
                     </group>
                     <group col="2">				
                         <field name="name" readonly="1"/>
@@ -113,7 +113,7 @@
                     <group col="1">
                         <field name="perfil_formacion_tmpl" invisible="1"/>
                         <separator string="Perfiles Formación"></separator>
-                        <field name="perfil_formacion_replica_ids" domain="[('perfil_tmpl','=',perfil_formacion_tmpl)]" no_label="1"/>
+                        <field name="perfil_formacion_replica_ids" domain="[('perfil_tmpl','=',perfil_formacion_tmpl)]" nolabel="1"/>
                     </group>
                     <footer>
                         <button name="metodo_popup_a_ejecutar" type="object" string="Realizar Cambios" class="oe_highlight"/>
@@ -132,7 +132,7 @@
                         <field name="perfil_formacion_tmpl" invisible="1"/>
                         <field name="pf_accion" invisible="1"/>
                         <separator string="Perfiles Formación"></separator>
-                        <field name="perfil_formacion_replica_ids" domain="[('perfil_tmpl','=',perfil_formacion_tmpl)]" no_label="1"/>
+                        <field name="perfil_formacion_replica_ids" domain="[('perfil_tmpl','=',perfil_formacion_tmpl)]" nolabel="1"/>
                     </group>
                     <footer>
                         <button name="replicar_accion_to_perfiles" type="object" string="Realizar Cambios" class="oe_highlight"/>

@@ -46,13 +46,13 @@
                         <group col="2">
                             <group col="1">
                                 <h3>Profesor</h3>
-                                <field name="profesor" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((vuelo_id) or (isreadonly == 'True'))"  no_label="1"/>
-                                <field name="profesor_foto" readonly="1" widget="image" class="oe_avatar oe_left" no_label="1"/>
+                                <field name="profesor" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((vuelo_id) or (isreadonly == 'True'))"  nolabel="1"/>
+                                <field name="profesor_foto" readonly="1" widget="image" class="oe_avatar oe_left" nolabel="1"/>
                             </group>
                             <group col="1">
                                 <h3>Profesor adjunto</h3>
-                                <field name="profesoradjunto" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((vuelo_id) or (isreadonly == 'True'))"  no_label="1"/>
-                                <field name="profesor_adjunto_foto" readonly="1" widget="image" class="oe_avatar oe_left" no_label="1"/>
+                                <field name="profesoradjunto" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((vuelo_id) or (isreadonly == 'True'))"  nolabel="1"/>
+                                <field name="profesor_adjunto_foto" readonly="1" widget="image" class="oe_avatar oe_left" nolabel="1"/>
                             </group>
                         </group>
                         <group col="2">
@@ -80,7 +80,7 @@
                                 <button name="verficar_por_orden" style="margin-right:10px" type="object" string="Verificar por orden" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"/>
                                 <button name="wizard_change_data" style="margin-right:10px" type="object" string="Cambiar Datos Silabus" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                 <button name="updateTiempos" type="object" string="Recalcular Tiempos" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
-                                <field name="rel_curso_alumno" no_label="1"  readonly="((isreadonly == 'True'))" >
+                                <field name="rel_curso_alumno" nolabel="1"  readonly="((isreadonly == 'True'))" >
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="verificado" readonly="1"/>
                                         <field name="verificado_por" readonly="1"/>
@@ -196,7 +196,7 @@
                         <button name="verificar_alumno_all" type="object" class="oe_highlight" string="Verificar Todo"   invisible="silverificado_por_alumno" /> 
                         <field name="silverificado_por_alumno" invisible="1"/>
                         <group col="1" colspan="3">
-                            <field name="domainSilabus" no_label="1" style="width:100%%">
+                            <field name="domainSilabus" nolabel="1" style="width:100%%">
                             	<tree create="false" edit="false" limit="200">
                             		<button name="verificar_alumno" type="object" string="verificar" class="oe_highlight"  invisible="verificado" />
                             		<field name="id" column_invisible="1"/>

@@ -27,7 +27,7 @@
                                 </field>
                             </page>
                             <page string="Sílabus teórico">
-                                <field name="silabus_teorico_ids" colspan="4" no_label="1">
+                                <field name="silabus_teorico_ids" colspan="4" nolabel="1">
                                     <tree string="Silabus" create="false" >
                                         <field name="name" />
                                         <field name="duracion" widget="float_time" sum="Total duración"/>
@@ -35,7 +35,7 @@
                                 </field>
                             </page>
                             <page string="Sílabus práctico"> 
-                                <field name="silabus_practico_ids" colspan="4" no_label="1">
+                                <field name="silabus_practico_ids" colspan="4" nolabel="1">
                                     <tree string="Silabus" create="false" >
                                         <field name="name" />
                                         <field name="duracion" widget="float_time" sum="Total duración"/>

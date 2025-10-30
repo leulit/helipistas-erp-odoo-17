@@ -13,7 +13,7 @@
                 </xpath>
                 <xpath expr="//field[@name='items']" position="after">
                     <h2  invisible="((not template))" >Partes de horas</h2>
-                    <field name="timesheet_ids" no_label="1"  invisible="((not template))"  context="{'default_name' : descriptor, 'default_project_id' : project_id, 'default_company_id' : company_id, 'default_account_id' : account_id, 'default_unit_amount' : tiempo_previsto}">
+                    <field name="timesheet_ids" nolabel="1"  invisible="((not template))"  context="{'default_name' : descriptor, 'default_project_id' : project_id, 'default_company_id' : company_id, 'default_account_id' : account_id, 'default_unit_amount' : tiempo_previsto}">
                         <tree editable="bottom" default_order="date">
                             <field name="user_id" column_invisible="1"/>
                             <field name="project_id" column_invisible="1"/>

@@ -62,7 +62,7 @@
                             </group>
                             <notebook colspan="2">
                                 <page string="Cursos">
-                                    <field name="cursos" no_label="1" 
+                                    <field name="cursos" nolabel="1" 
                                     context="{'default_perfil_formacion_id' : id,'default_is_template': True, 'form_view_ref' : 'leulit_escuela.leulit_perfil_formacion_curso_master_form'}">
                                         <tree string="Cursos" delete="false">
                                             <button name="replicar_curso_to_perfiles" string="Replicar curso" type="object"  class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
@@ -74,7 +74,7 @@
                                     </field>
                                 </page>
                                 <page string="Acciones">
-                                    <field name="acciones_new" no_label="1" context="{'default_perfil_formacion_id' : id}">
+                                    <field name="acciones_new" nolabel="1" context="{'default_perfil_formacion_id' : id}">
                                         <tree string="Acciones" editable="bottom">
                                             <button name="replicar_accion_to_perfiles" string="Replicar acción" type="object" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                             <field name="accion"/>
@@ -86,7 +86,7 @@
                                 </page>
                                 <page string="Histórico cursos">
                                     <group col="1">
-                                        <field name="cursos_finalizados" no_label="1"  options="{'reload_on_button': true}"
+                                        <field name="cursos_finalizados" nolabel="1"  options="{'reload_on_button': true}"
                                         context="{'default_perfil_formacion_id' : id,'default_is_template': False, 'form_view_ref' : 'leulit_perfil_formacion.leulit_perfil_formacion_curso_form'}">
                                             <tree delete="false" edit="true" create="false" decoration-danger="semaforo_dy == 'red'" decoration-success="semaforo_dy == 'green'" decoration-warning="semaforo_dy == 'yellow'">
                                                 <field name="semaforo_dy" column_invisible="1"/>
@@ -169,7 +169,7 @@
                             <notebook>
                                 <page string="Cursos">
                                     <group col="1">
-                                        <field name="cursos" no_label="1"  options="{'reload_on_button': true}"
+                                        <field name="cursos" nolabel="1"  options="{'reload_on_button': true}"
                                             context="{'default_perfil_formacion_id' : id,'default_is_template': False}">
                                             <tree  delete="false" edit="true" create="false">
                                                 <field name="id" column_invisible="1"/>
@@ -187,7 +187,7 @@
                                 </page>
                                 <page string="Acciones">
                                     <group col="1">
-                                        <field name="acciones_new" no_label="1">
+                                        <field name="acciones_new" nolabel="1">
                                             <tree delete="true" edit="true" create="false">
                                                 <field name="id" column_invisible="1"/>
                                                 <button name="done_course" string="Realizado" class="oe_highlight" type="object" groups="leulit.ROperaciones_gestor"/>
@@ -203,7 +203,7 @@
                                 </page>
                                 <page string="Histórico cursos">
                                     <group col="1">
-                                        <field name="cursos_finalizados" no_label="1"  options="{'reload_on_button': true}"
+                                        <field name="cursos_finalizados" nolabel="1"  options="{'reload_on_button': true}"
                                         context="{'default_perfil_formacion_id' : id,'default_is_template': False, 'form_view_ref' : 'leulit_perfil_formacion.leulit_perfil_formacion_curso_form'}">
                                             <tree delete="false" edit="true" create="false" decoration-danger="semaforo_dy == 'red'" decoration-success="semaforo_dy == 'green'" decoration-warning="semaforo_dy == 'yellow'">
                                                 <field name="descripcion"/>

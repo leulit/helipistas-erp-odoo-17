@@ -28,7 +28,7 @@
             <field name="arch" type="xml">
                 <form string="Marcar curso como realizada">
                     <group col="1">
-                    <h5><field name="actualizarTodos" no_label="1"/>Seleccionar para actualizar todos</h5>
+                    <h5><field name="actualizarTodos" nolabel="1"/>Seleccionar para actualizar todos</h5>
                     </group>
                     <group col="2">
                         <field name="pf_curso" invisible="1"/>
@@ -66,7 +66,7 @@
                             <field name="semaforo_dy" readonly="1" widget="semaforo_char"/>
                             <notebook colspan="2">
                                 <page string="Histórico realización curso">
-                                    <field name="last_done_history" no_label="1">
+                                    <field name="last_done_history" nolabel="1">
                                         <tree delete="true" create="false" edit="true" decoration-muted="is_last == False">
                                             <field name="id" column_invisible="1" />
                                             <field name="is_last" column_invisible="1"/>

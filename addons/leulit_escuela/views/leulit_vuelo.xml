@@ -73,7 +73,7 @@
                         <div class="d-flex flex-row flex-wrap">
                             <group style="max-width:50%;">
                                 <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus"  invisible="estado in ('cancelado', 'cerrado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  class="oe_highlight oe_edit_only"/>
-                                <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" no_label="1" colspan="2">
+                                <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" nolabel="1" colspan="2">
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
@@ -138,7 +138,7 @@
                         <div class="d-flex flex-row flex-wrap">
                             <group style="max-width:50%;">
                                 <button name="wizard_add_parte_escuela" type="object" string="Añadir Silabus"  invisible="estado in ('cancelado', 'cerrado')" readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"  class="oe_highlight oe_edit_only"/>
-                                <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" no_label="1" colspan="2">
+                                <field name="silabus_ids" options="{'limit': 3}" string="Sílabus" nolabel="1" colspan="2">
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="rel_curso"/>
                                         <field name="rel_silabus"/>
