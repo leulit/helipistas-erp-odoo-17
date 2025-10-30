@@ -19,7 +19,7 @@ class leulit_profesor(models.Model):
 
 
     adjunto = fields.Boolean('Profesor adjunto')
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Partner')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', required=True, ondelete='cascade')
     profesor_erp = fields.Integer('Profesor ERP')
     partes_escuela = fields.One2many('leulit.parte_escuela', 'profesor', 'Partes Escuela')
     employee = fields.Many2one(related='partner_id.user_ids.employee_id',comodel_name='hr.employee',string='Empleado')
