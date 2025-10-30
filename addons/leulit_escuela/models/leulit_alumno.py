@@ -475,7 +475,7 @@ class leulit_alumno(models.Model):
     total_horas = fields.Float(compute='_get_total_horas',string='Total horas')
     attachement_ids = fields.One2many(compute='_get_attachments',string='Ficheros',store=False,comodel_name='ir.attachment')
     activo = fields.Boolean(compute='alumno_activo',string='Activo',store=False,search=_search_alumno_activo)
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     fecha_nacimiento = fields.Date("Fecha de nacimiento", required=False)
     piloto = fields.One2many(compute=_piloto, string='Piloto', comodel_name='leulit.piloto')
     userid = fields.One2many(compute=_userId, string='Usuario', comodel_name='res.users')

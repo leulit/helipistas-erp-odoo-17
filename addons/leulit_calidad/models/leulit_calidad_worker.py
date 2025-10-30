@@ -24,7 +24,7 @@ class LeulitCalidadWorker(models.Model):
 
 
     user_id = fields.Many2one(compute=_userId, string='Usuario', comodel_name='res.users')
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     employee_id = fields.Many2one(related='user_id.employee_id', comodel_name='hr.employee', string='Empleado')
     emergency_contact_empl = fields.Char(related='employee_id.emergency_contact', string='Contacto de Emergencia')
     emergency_phone_empl = fields.Char(related='employee_id.emergency_phone', string='Teléfono de emergencia')

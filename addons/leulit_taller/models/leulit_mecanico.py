@@ -29,7 +29,7 @@ class LeulitMecanico(models.Model):
 
 
     user_id = fields.Many2one(compute=_userId, string='Usuario', comodel_name='res.users', store=True)
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     employee_id = fields.Many2one(related='user_id.employee_id', comodel_name='hr.employee', string='Empleado')
     emergency_contact = fields.Char(string='Contacto de Emergencia')
     emergency_phone = fields.Char(string='Teléfono de emergencia')

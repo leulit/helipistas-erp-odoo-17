@@ -178,7 +178,7 @@ class leulit_perfil_formacion_curso_last_done(models.Model):
                 raise UserError(_(u'La fecha seleccionada no és correcta'))
 
 
-    pf_curso = fields.Many2one('leulit.perfil_formacion_curso', 'Perfil formacion curso')
+    pf_curso = fields.Many2one('leulit.perfil_formacion_curso', 'Perfil formacion curso', ondelete='cascade')
     name = fields.Char("Descripcion")
     done_date = fields.Date('Done date')
     is_last = fields.Boolean('¿Es último?')

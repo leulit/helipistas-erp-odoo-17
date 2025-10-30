@@ -431,7 +431,7 @@ class leulit_parte_escuela(models.Model):
     estado = fields.Selection([('pendiente','Pendiente'),('cerrado','Cerrado'),('cancelado','Cancelado')], 'Estado',default="pendiente", required=True)
     write_uid = fields.Many2one(comodel_name='res.users', string='by User', readonly=True)
     create_uid = fields.Many2one(comodel_name='res.users', string='created by User', readonly=True)
-    rel_curso_alumno = fields.One2many('leulit.rel_parte_escuela_cursos_alumnos','rel_parte_escuela', 'Relación', ondelete='set null')
+    rel_curso_alumno = fields.One2many('leulit.rel_parte_escuela_cursos_alumnos','rel_parte_escuela', 'Relación')
     cursos = fields.One2many(compute=_get_cursos,comodel_name='leulit.curso',string='Cursos',search=_search_curso)
     ato = fields.Boolean(compute=_get_ato, string='ATO', search=_search_ato)
     alumnos = fields.One2many(compute=_get_alumnos,comodel_name='leulit.alumno',string='Alumnos',search=_search_alumno)

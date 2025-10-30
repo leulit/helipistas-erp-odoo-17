@@ -352,7 +352,7 @@ class leulit_calendar_event(models.Model):
 
 
     partner_ids = fields.Many2many('res.partner', 'calendar_event_res_partner_rel', string='Attendees', default=_default_partners, domain="[('user_ids', '!=', False)]")
-    resource_fields = fields.One2many(comodel_name='leulit.event_resource', inverse_name='event', string='Recurso', ondelete="")
+    resource_fields = fields.One2many(comodel_name='leulit.event_resource', inverse_name='event', string='Recurso')
     create_uid = fields.Integer(string='Creador')
     write_uid = fields.Integer(string='Modificador')
     tipo = fields.Selection(selection=_get_tipos, string='Tipo', required=False)

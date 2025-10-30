@@ -359,7 +359,7 @@ class StockLot(models.Model):
     interval_days = fields.Integer('Intervalo Dias')
     tolerance_hours = fields.Integer('Tolerancia Horas')
     tolerance_days = fields.Integer('Tolerancia Dias')
-    rel_stock_picking = fields.Many2one(comoddel_name="stock.picking",string="Albarán de entrada")
+    rel_stock_picking = fields.Many2one(comodel_name="stock.picking",string="Albarán de entrada")
     rel_docs = fields.One2many(comodel_name='ir.attachment', inverse_name='rel_production_lot', string='Documentos')
     lot_hlp_ica = fields.Many2one(comodel_name='stock.lot', string='Pieza HLP-ICA')
     can_print = fields.Boolean(compute=_get_printable_etiqueta, store=False, string="¿Se puede imprimir etiqueta?")

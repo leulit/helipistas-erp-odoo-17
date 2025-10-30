@@ -20,7 +20,7 @@ class leulit_operador(models.Model):
     def getPartnerId(self):
         return self.partner_id.id
     
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     employee = fields.Many2one(related='partner_id.user_ids.employee_id',comodel_name='hr.employee',string='Empleado')
 
 

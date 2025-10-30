@@ -312,7 +312,7 @@ class leulit_piloto(models.Model):
     hist_16bravo = fields.One2many('leulit.hist_16bravo', 'piloto_id', string='Histórico 16 Bravo')
     airtime = fields.Float(compute='_calc_airtime_piloto',string='Total Airtime',help='Total Airtime')
     
-    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     alumno = fields.One2many(compute=_alumno, string='Alumno', comodel_name='leulit.alumno')
     profesor = fields.One2many(compute=_profesor, string='Profesor', comodel_name='leulit.profesor')
     employee = fields.Many2one(related='partner_id.user_ids.employee_id',comodel_name='hr.employee',string='Empleado')

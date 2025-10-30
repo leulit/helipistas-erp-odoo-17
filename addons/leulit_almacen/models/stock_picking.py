@@ -117,7 +117,6 @@ class StockPicking(models.Model):
     flag_moves_to_icarus = fields.Boolean(string="Movimientos hasta Icarus", default=False)
     owner_id = fields.Many2one(
         'res.partner', 'Assign Owner',
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
         check_company=True,
         help="When validating the transfer, the products will be assigned to this owner.",default=1)
     is_instalacion = fields.Boolean(compute="get_tipo_instalacion", string="¿Es instalacion?", store=False)
