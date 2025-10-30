@@ -68,7 +68,7 @@
                     <attribute name="readonly">(estado in ['postvuelo','cerrado','cancelado'])</attribute>
                 </xpath>
                 <xpath expr="//div[@id='datos_generales_parte_vuelo']" position="after">
-                    <div class="card px-4 py-2 my-4"  invisible="('estado_vista', 'in', ['cerrado', 'cancelado']) or ('alumno', '=', False) and ('verificado', '=', False)" >
+                    <div class="card px-4 py-2 my-4"  invisible="('estado_vista', 'in', ['cerrado', 'cancelado']) or (('alumno', '=', False) and ('verificado', '=', False))" >
                         <separator string="Escuela"></separator>
                         <div class="d-flex flex-row flex-wrap">
                             <group style="max-width:50%;">
