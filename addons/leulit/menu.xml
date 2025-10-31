@@ -13,7 +13,7 @@
         id="leulit_20230224_1041_menuitem"
         name="Gestión Documental"
         action="leulit_20230224_1041_action"
-        web_icon="leulit,static/description/documentacion_compartida_.png"
+        web_icon="leulit,static/description/documentacion_.png"
         sequence="191"
         groups="hr.group_hr_user"
     />

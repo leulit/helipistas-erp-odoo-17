@@ -4,7 +4,7 @@
     <menuitem 
         id="leulit_20200818_1028_menuitem" 
         name="Externo"
-        web_icon="leulit_trabajador_externo,static/description/icon.png"
+        web_icon="leulit_trabajador_externo,static/description/externo_.png"
         sequence="10000"
     />
     <menuitem 
