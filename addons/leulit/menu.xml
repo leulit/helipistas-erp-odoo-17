@@ -30,7 +30,7 @@
         id="leulit_20200818_1028_menuitem" 
         name="Helipistas"
         web_icon="leulit,static/description/helipistas_.png"
-        sequence="30"
+        sequence="10"
     />
 
         <menuitem 
@@ -103,7 +103,7 @@
         id="leulit_20200618_1104_menuitem"
         name="Operaciones"
         web_icon="leulit,static/description/operaciones-aeronauticas_.png"
-        sequence="40"
+        sequence="20"
         groups="ROperaciones_operador,RCampaña_operador"
     />
 
@@ -113,7 +113,7 @@
         id="leulit_20201109_1035_menuitem"
         name="Camo"
         web_icon="leulit,static/description/camo_.png"
-        sequence="100"
+        sequence="50"
         groups="RCAMO_base"
     />
         <menuitem
@@ -136,7 +136,7 @@
         id="leulit_20201118_1606_menuitem"
         name="Calidad"
         web_icon="leulit,static/description/calidad_.png"
-        sequence="170"
+        sequence="60"
         groups="RCalidad_base"
     />    
         <menuitem
@@ -152,7 +152,7 @@
         id="leulit_20201120_1140_menuitem"
         name="Taller"
         web_icon="leulit,static/description/taller_.png"
-        sequence="110"
+        sequence="40"
         groups="RTaller_base"
     />
         <menuitem
@@ -255,7 +255,7 @@
         id="leulit_20201125_1200_menuitem"
         name="Formación"
         web_icon="leulit,static/description/formacion_.png"
-        sequence="70"
+        sequence="30"
         groups="ROperaciones_piloto"
     />
     
