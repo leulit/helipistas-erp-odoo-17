@@ -13,10 +13,14 @@
             <field name="name">Base</field>
             <field name="category_id" ref="base_rol_category"/>
         </record>
-        
+        <record id="RBase_employee" model="res.groups">
+            <field name="name">Empleado</field>
+            <field name="implied_ids" eval="[(4, ref('RBase'))]"/>
+            <field name="category_id" ref="base_rol_category"/>
+        </record>
         <record id="RBase_hide" model="res.groups">
             <field name="name">Hide</field>
-            <field name="implied_ids" eval="[(4, ref('RBase'))]"/>
+            <field name="implied_ids" eval="[(4, ref('RBase_employee'))]"/>
             <field name="category_id" ref="base_rol_category"/>
         </record>
 
