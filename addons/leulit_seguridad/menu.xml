@@ -2,8 +2,7 @@
 <odoo>
 
     <!-- Menú Helipiistas -->
-    TODO: hacerlo con helpdesk
-    <!-- <menuitem
+    <menuitem
         id="leulit_20241002_1146_menuitem"
         name="Ocurrencias"
         parent="leulit.leulit_20200818_1028_menuitem"
@@ -13,16 +12,16 @@
             id="leulit_20241028_1152_menuitem"
             name="Ocurrencias Reportadas"
             parent="leulit_20241002_1146_menuitem"
-            action="leulit_20241028_1152_action"
+            action="leulit_20251103_1138_action"
             sequence="10"
         />
         <menuitem
             id="leulit_20241028_1153_menuitem"
             name="Ocurrencias Asignadas"
             parent="leulit_20241002_1146_menuitem"
-            action="leulit_20241028_1153_action"
+            action="leulit_20251103_1139_action"
             sequence="20"
-        /> -->
+        />
 
 
     <!-- Menu OPERACIONES -->
