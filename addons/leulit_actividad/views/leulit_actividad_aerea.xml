@@ -46,8 +46,8 @@
                     <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
                     <field name="max_duracion" string="Max. AA" widget="float_time"/>
                     
-                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_activity_time'}" />
-                    <field name="valid_activity_time" column_invisible="1" />
+                    <field name="tiempo" string="TAA"/>
+                    <field name="valid_activity_time" widget="semaforo_char"/>
                     <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range1'}" />
