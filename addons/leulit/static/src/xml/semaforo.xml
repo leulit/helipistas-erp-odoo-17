@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="leulit.SemaforoBool">
+        <t t-if="props.readonly">
+            <img t-if="imageUrl" t-att-src="imageUrl"/>
+        </t>
+    </t>
+
+    <t t-name="leulit.SemaforoChar">
+        <t t-if="props.readonly">
+            <t t-if="imageUrl">
+                <img t-att-src="imageUrl"/>
+            </t>
+            <t t-else="">
+                <span>N.A.</span>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="leulit.SemaforoFloatTimeCell">
+        <t t-if="props.readonly">
+            <span class="leulit-semaforo-cell">
+                <img t-if="imageUrl" t-att-src="imageUrl" class="leulit-semaforo-icon"/>
+                <span class="leulit-semaforo-value"><t t-esc="valueDisplay"/></span>
+            </span>
+        </t>
+    </t>
+
+    <t t-name="leulit.SemaforoIntegerCell">
+        <t t-if="props.readonly">
+            <span class="leulit-semaforo-cell">
+                <img t-if="imageUrl" t-att-src="imageUrl" class="leulit-semaforo-icon"/>
+                <span class="leulit-semaforo-value"><t t-esc="valueDisplay"/></span>
+            </span>
+        </t>
+    </t>
+
+</templates>

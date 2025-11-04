@@ -38,9 +38,7 @@
                     <field name="fecha" string="Fecha"/>
                     <field name="partner" string="Usuario" />
                     <field name="user_id" column_invisible="1"/>
-                    <!--field name="airtime" string="Airtime" widget="float_time"/-->
                     <field name="tiempo_vuelo" string="Tiempo" widget="float_time"/>
-                    <!--field name="ato" string="ATO"/-->
                     <button name="aplica_descanso_parcial" string="Aplica" type="object" class="btn btn-primary"  invisible="aplica_desc_parcial" />
                     <button name="no_aplica_descanso_parcial" string="No aplica" type="object" class="btn btn-primary"  invisible="not aplica_desc_parcial" />
                     <field name="aplica_desc_parcial" string="Aplica T.D.P." />
