@@ -84,8 +84,7 @@ class leulit_circular(models.Model):
 
     @api.onchange('area')
     def onchange_area(self):
-        for item in self:
-            item.create_historial_circular()
+        self.create_historial_circular()
             
         
     @api.depends('autor_id','historial_ids')
