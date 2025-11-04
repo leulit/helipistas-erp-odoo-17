@@ -48,31 +48,41 @@ class leulit_circular(models.Model):
                 self._cr.execute(sql)
 
 
-    def create_historial_circular(self):
+    def create_historial_circular(self, from_onchange=False):
         if self.area:
+            nuevos_historiales = []
+            partner_ids_existentes = [h.partner_id.id for h in self.historial_ids if h.partner_id]
+            
             if self.area.name == 'Alumnos Activos':
                 alumnos_activos = self.env['leulit.alumno'].search([('activo','=',True)])
                 for alumno in alumnos_activos:
-                    existe = False
                     if not alumno.userid.employee_id:
-                        if alumno.partner_id:
-                            for historial in self.historial_ids:
-                                if historial.partner_id.id == alumno.partner_id.id:
-                                    existe = True
-                            if not existe:
-                                self.env['leulit.historial_circular'].create({'partner_id':alumno.partner_id.id, 'circular_id':self.id})
+                        if alumno.partner_id and alumno.partner_id.id not in partner_ids_existentes:
+                            if from_onchange:
+                                # Usar comando (0, 0, vals) para crear en onchange
+                                nuevos_historiales.append((0, 0, {'partner_id': alumno.partner_id.id}))
+                            else:
+                                self.env['leulit.historial_circular'].create({
+                                    'partner_id': alumno.partner_id.id, 
+                                    'circular_id': self.id
+                                })
             else:
                 empleados = self.env['hr.employee'].search([('department_id','=', self.area.id)])
                 _logger.error("Empleados area {0}: {1}".format(self.area.name, len(empleados)))
                 for empleado in empleados:
-                    existe = False
-                    if empleado.user_id:
-                        if empleado.user_id.partner_id:
-                            for historial in self.historial_ids:
-                                if historial.partner_id.id == empleado.user_id.partner_id.id:
-                                    existe = True
-                            if not existe:
-                                self.env['leulit.historial_circular'].create({'partner_id':empleado.user_id.partner_id.id, 'circular_id':self.id})
+                    if empleado.user_id and empleado.user_id.partner_id:
+                        if empleado.user_id.partner_id.id not in partner_ids_existentes:
+                            if from_onchange:
+                                # Usar comando (0, 0, vals) para crear en onchange
+                                nuevos_historiales.append((0, 0, {'partner_id': empleado.user_id.partner_id.id}))
+                            else:
+                                self.env['leulit.historial_circular'].create({
+                                    'partner_id': empleado.user_id.partner_id.id, 
+                                    'circular_id': self.id
+                                })
+            
+            if from_onchange and nuevos_historiales:
+                self.historial_ids = nuevos_historiales
     
 
     @api.model
@@ -84,7 +94,7 @@ class leulit_circular(models.Model):
 
     @api.onchange('area')
     def onchange_area(self):
-        self.create_historial_circular()
+        self.create_historial_circular(from_onchange=True)
             
         
     @api.depends('autor_id','historial_ids')
