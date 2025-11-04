@@ -22,7 +22,7 @@
                     <field name="airtime" string="Airtime"  widget="float_time"/>
                     <field name="coe_mayoracion" string="C.M." />
                     <field name="delta_pre" string="Pre V."  widget="float_time"/>
-                    <field name="tiempo_calc" string="T.A."  widget="semaforo_float_time_cell" semafor_field="valid_flight_time" />
+                    <field name="tiempo_calc" string="T.A."  widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_flight_time'}" />
                     <field name="valid_flight_time" column_invisible="1"/>
                 </tree>
             </field>
@@ -46,23 +46,23 @@
                     <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
                     <field name="max_duracion" string="Max. AA" widget="float_time"/>
                     
-                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" semafor_field="valid_activity_time" />
+                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_activity_time'}" />
                     <field name="valid_activity_time" column_invisible="1" />
                     <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range1" />
+                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range1'}" />
                     <field name="valid_time_flight_range1" column_invisible="1" />
                     <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range3" />
+                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range3'}" />
                     <field name="valid_time_flight_range3" column_invisible="1" />
                     <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range2" />
+                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range2'}" />
                     <field name="valid_time_flight_range2" column_invisible="1" />
                     <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" semafor_field="valid_dias_trabajados_mes" />
+                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" options="{'semafor_field': 'valid_dias_trabajados_mes'}" />
                     <field name="valid_dias_trabajados_mes" column_invisible="1" />
                     <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
                 </tree>
@@ -85,23 +85,23 @@
                     <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
                     <field name="max_duracion" string="Max. AA" widget="float_time"/>
 
-                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" semafor_field="valid_activity_time" />
+                    <field name="tiempo" string="TAA" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_activity_time'}" />
                     <field name="valid_activity_time" column_invisible="1" />
                     <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range1" />
+                    <field name="time_flight_range1" string="TV 28d" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range1'}" />
                     <field name="valid_time_flight_range1" column_invisible="1" />
                     <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range3" />
+                    <field name="time_flight_range3" string="TV 3m" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range3'}" />
                     <field name="valid_time_flight_range3" column_invisible="1" />
                     <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" semafor_field="valid_time_flight_range2" />
+                    <field name="time_flight_range2" string="TV 12m" widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_time_flight_range2'}" />
                     <field name="valid_time_flight_range2" column_invisible="1" />
                     <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
 
-                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" semafor_field="valid_dias_trabajados_mes" />
+                    <field name="dias_trabajados_mes" string="Dias mes" widget="semaforo_integer_cell" options="{'semafor_field': 'valid_dias_trabajados_mes'}" />
                     <field name="valid_dias_trabajados_mes" column_invisible="1" />
                     <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
                 </tree>
