@@ -22,8 +22,8 @@
                     <field name="airtime" string="Airtime"  widget="float_time"/>
                     <field name="coe_mayoracion" string="C.M." />
                     <field name="delta_pre" string="Pre V."  widget="float_time"/>
-                    <field name="tiempo_calc" string="T.A."  widget="semaforo_float_time_cell" options="{'semafor_field': 'valid_flight_time'}" />
-                    <field name="valid_flight_time" column_invisible="1"/>
+                    <field name="tiempo_calc" string="T.A." widget="float_time"/>
+                    <field name="valid_flight_time" widget="semaforo_char" string="...."/>
                 </tree>
             </field>
         </record>   
