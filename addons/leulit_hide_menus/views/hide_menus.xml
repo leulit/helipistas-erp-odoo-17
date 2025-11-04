@@ -34,6 +34,26 @@
         <record id="fleet.menu_root" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
+        <!-- Apps -->
+        <record id="base.menu_management" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RolIT_developer')])]"/>
+        </record>
+        <!-- Contactos -->
+        <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="sequence" eval="290"/>
+        </record>
+        <!-- Empleados -->
+        <record id="hr.menu_hr_root" model="ir.ui.menu">
+            <field name="sequence" eval="300"/>
+        </record>
+        <!-- Ventas -->
+        <record id="sale.sale_menu_root" model="ir.ui.menu">
+            <field name="sequence" eval="230"/>
+        </record>
+        <!-- Facturación -->
+        <record id="account.menu_finance" model="ir.ui.menu">
+            <field name="sequence" eval="240"/>
+        </record>
 
     </data>
 </odoo>
