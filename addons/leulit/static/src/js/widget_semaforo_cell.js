@@ -23,7 +23,6 @@ export class SemaforoFloatTimeCell extends Component {
 
     get imageUrl() {
         const semaforField = this.props.options?.semafor_field;
-        if (!semaforField) return null;
         const field = this.props.record.data[semaforField];
         return getSemaforoImage(field);
     }
@@ -45,7 +44,6 @@ export class SemaforoIntegerCell extends Component {
 
     get imageUrl() {
         const semaforField = this.props.options?.semafor_field;
-        if (!semaforField) return null;
         const field = this.props.record.data[semaforField];
         return getSemaforoImage(field);
     }
