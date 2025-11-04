@@ -54,6 +54,10 @@
         <record id="account.menu_finance" model="ir.ui.menu">
             <field name="sequence" eval="240"/>
         </record>
+        <!-- Conocimiento -->
+        <record id="document_knowledge.menu_document_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
+        </record>
 
     </data>
 </odoo>
