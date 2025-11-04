@@ -67,21 +67,23 @@
                     </header>
                     <sheet>
                         <field name="id" invisible="1"/>
-                        <group col="4">
-                            <field name="fecha_emision"/>
-                            <field name="fecha_fin"/>
-                            <field name="area" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                            <field name="tipo" />
-                            <field name="name"/>
-                            <field name="autor_id"/>
+                        <group>
+                            <group>
+                                <field name="fecha_emision"/>
+                                <field name="area" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="fecha_fin"/>
+                                <field name="tipo" />
+                                <field name="autor_id"/>
+                            </group>
                         </group>
-                        <group col="2" colspan="4">
+                        <group>
                             <field name="description"/>
-                        </group>
-                        <group col="1">
-                            <field name="historial_ids" nolabel="1">
-                                <tree string="historial_ids"  editable="bottom">
-                                    <field name="partner_id"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                            <field name="historial_ids" nolabel="1" colspan="2">
+                                <tree string="historial_ids" editable="bottom">
+                                    <field name="partner_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                                     <field name="partner_email" string="Email"/>
                                     <field name="user_id" column_invisible="1"/>
                                     <field name="enviado"/>

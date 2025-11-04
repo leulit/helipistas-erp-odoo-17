@@ -63,6 +63,7 @@ class leulit_circular(models.Model):
                                 self.env['leulit.historial_circular'].create({'partner_id':alumno.partner_id.id, 'circular_id':self.id})
             else:
                 empleados = self.env['hr.employee'].search([('department_id','=', self.area.id)])
+                _logger.error("Empleados area {0}: {1}".format(self.area.name, len(empleados)))
                 for empleado in empleados:
                     existe = False
                     if empleado.user_id:

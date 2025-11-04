@@ -26,7 +26,7 @@
                     <field name="valid_flight_time" widget="semaforo_char" string="...."/>
                 </tree>
             </field>
-        </record>   
+        </record>
 
 
         <record model="ir.ui.view" id="leulit_202011281520_tree">
