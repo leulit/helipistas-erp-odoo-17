@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <!-- <menuitem
+    <menuitem
         id="leulit_20220103_1018_menuitem"
         name="ERP Antic"
         action="leulit_20220103_1018_action"
         web_icon="leulit,static/description/icon_new.png"
         sequence="300"
-        groups="hr.group_hr_user"
-    /> -->
+        groups="leulit.RBase_employee"
+    />
     <menuitem
         id="leulit_20230224_1041_menuitem"
         name="Gestión Documental"
         action="leulit_20230224_1041_action"
         web_icon="leulit,static/description/documentacion_.png"
         sequence="70"
-        groups="hr.group_hr_user"
+        groups="leulit.RBase_employee"
     />
     <menuitem
         id="leulit_20230328_1139_menuitem"
         name="Documentación ATO"
         action="leulit_20230328_1139_action"
         web_icon="leulit,static/description/documentacion_ato_.png"
-        groups="hr.group_hr_user,leulit.ROperaciones_alumno"
+        groups="leulit.ROperaciones_alumno"
         sequence="80"
     />
     <!-- Menu Helipistas -->
