@@ -1,40 +1,57 @@
 /** @odoo-module **/
 
-import { CharField } from '@web/views/fields/char/char_field';
-import { registry } from '@web/core/registry';
-import { formatFloatTime } from '@web/views/fields/formatters';
+import { registry } from "@web/core/registry";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { CharField } from "@web/views/fields/char/char_field";
+import { formatFloatTime } from "@web/views/fields/formatters";
+import { Component } from "@odoo/owl";
 
-export class SemaforoFloatTimeCell extends CharField {
-    _render() {
-        const semaforValue = this.props.record.data[this.props.attrs.semafor_field];
-        const valor = formatFloatTime(this.props.value);
-        let img = '';
-        if (semaforValue === 'green') img = 'semaforo_green.png';
-        else if (semaforValue === 'red') img = 'semaforo_red.png';
-        else if (semaforValue === 'yellow') img = 'semaforo_yellow.png';
+// Función utilitaria compartida
+function getSemaforoImage(value) {
+    if (!value) return null;
+    const val = value.toLowerCase();
+    if (val === "green") return "/leulit/static/src/images/semaforo_green.png";
+    if (val === "yellow") return "/leulit/static/src/images/semaforo_yellow.png";
+    if (val === "red") return "/leulit/static/src/images/semaforo_red.png";
+    return null;
+}
 
-        this.el.innerHTML = `
-            <span style="display: block;width:100%; text-align:right;vertical-align:middle; padding: 2px">
-                <span style="margin-right:10px"><img src="/leulit/static/src/images/${img}"/></span>
-                <span style="display:inline-block;width:40px">${valor}</span>
-            </span>`;
+// ---------- SEMAFORO FLOAT TIME ----------
+export class SemaforoFloatTimeCell extends Component {
+    static template = "leulit.SemaforoFloatTimeCell";
+    static props = standardFieldProps;
+
+    get imageUrl() {
+        const field = this.props.record.data[this.props.attrs.semafor_field];
+        return getSemaforoImage(field);
+    }
+
+    get valueDisplay() {
+        return formatFloatTime(this.props.record.data[this.props.name]) || "";
     }
 }
-registry.category('fields').add('semaforo_float_time_cell', SemaforoFloatTimeCell);
 
-export class SemaforoIntegerCell extends CharField {
-    _render() {
-        const semaforValue = this.props.record.data[this.props.attrs.semafor_field];
-        let img = '';
-        if (semaforValue === 'green') img = 'semaforo_green.png';
-        else if (semaforValue === 'red') img = 'semaforo_red.png';
-        else if (semaforValue === 'yellow') img = 'semaforo_yellow.png';
+registry.category("fields").add("semaforo_float_time_cell", {
+    component: SemaforoFloatTimeCell,
+    supportedTypes: ["float"],
+});
 
-        this.el.innerHTML = `
-            <span style="display: block;width:100%; text-align:right;vertical-align:middle; padding: 2px">
-                <span style="margin-right:10px"><img src="/leulit/static/src/images/${img}"/></span>
-                <span style="display:inline-block;width:40px">${this.props.value}</span>
-            </span>`;
+// ---------- SEMAFORO INTEGER ----------
+export class SemaforoIntegerCell extends Component {
+    static template = "leulit.SemaforoIntegerCell";
+    static props = standardFieldProps;
+
+    get imageUrl() {
+        const field = this.props.record.data[this.props.attrs.semafor_field];
+        return getSemaforoImage(field);
+    }
+
+    get valueDisplay() {
+        return this.props.record.data[this.props.name] ?? "";
     }
 }
-registry.category('fields').add('semaforo_integer_cell', SemaforoIntegerCell);
+
+registry.category("fields").add("semaforo_integer_cell", {
+    component: SemaforoIntegerCell,
+    supportedTypes: ["integer", "char"],
+});
