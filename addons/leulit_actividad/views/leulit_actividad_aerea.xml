@@ -47,23 +47,23 @@
                     <field name="max_duracion" string="Max. AA" widget="float_time"/>
                     
                     <field name="tiempo" string="TAA" widget="float_time"/>
-                    <field name="valid_activity_time" widget="semaforo_char" string=""/>
+                    <field name="valid_activity_time" widget="semaforo_char" string="..."/>
                     <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range1" string="TV 28d" widget="float_time"/>
-                    <field name="valid_time_flight_range1" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range1" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range3" string="TV 3m" widget="float_time"/>
-                    <field name="valid_time_flight_range3" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range3" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range2" string="TV 12m" widget="float_time"/>
-                    <field name="valid_time_flight_range2" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range2" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="dias_trabajados_mes" string="Dias mes"/>
-                    <field name="valid_dias_trabajados_mes" widget="semaforo_char" string=""/>
+                    <field name="valid_dias_trabajados_mes" widget="semaforo_char" string="..."/>
                     <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
                 </tree>
             </field>
@@ -78,31 +78,29 @@
                 <tree string="Actividad 16bravo" create="false" edit="false" default_order="fecha asc">                   
                     <field name="fecha" string="Fecha"/>
                     <field name="partner" string="Usuario" />                    
-                    <!--field name="airtime" string="Airtime" widget="float_time"/-->
                     <field name="tiempo_vuelo" string="Tiempo" widget="float_time"/>
-                    <!--field name="ato" string="ATO"/-->
                     <field name="tiempo_desc_parcial" string="T.D.P." widget="float_time"/>
                     <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
                     <field name="max_duracion" string="Max. AA" widget="float_time"/>
 
                     <field name="tiempo" string="TAA" widget="float_time"/>
-                    <field name="valid_activity_time" widget="semaforo_char" string=""/>
+                    <field name="valid_activity_time" widget="semaforo_char" string="..."/>
                     <button name="detalle_av" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range1" string="TV 28d" widget="float_time"/>
-                    <field name="valid_time_flight_range1" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range1" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_1" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range3" string="TV 3m" widget="float_time"/>
-                    <field name="valid_time_flight_range3" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range3" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_3" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="time_flight_range2" string="TV 12m" widget="float_time"/>
-                    <field name="valid_time_flight_range2" widget="semaforo_char" string=""/>
+                    <field name="valid_time_flight_range2" widget="semaforo_char" string="..."/>
                     <button name="detalle_timerange_2" type="object" string="..." class="btn btn-primary"/>
 
                     <field name="dias_trabajados_mes" string="Dias mes"/>
-                    <field name="valid_dias_trabajados_mes" widget="semaforo_char" string=""/>
+                    <field name="valid_dias_trabajados_mes" widget="semaforo_char" string="..."/>
                     <button name="detalle_dias_mes" type="object" string="..." class="btn btn-primary"/>
                 </tree>
             </field>
