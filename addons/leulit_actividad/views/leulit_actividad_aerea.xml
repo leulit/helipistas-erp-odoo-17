@@ -41,8 +41,8 @@
                     <!--field name="airtime" string="Airtime" widget="float_time"/-->
                     <field name="tiempo_vuelo" string="Tiempo" widget="float_time"/>
                     <!--field name="ato" string="ATO"/-->
-                    <button name="aplica_descanso_parcial" string="Aplica" type="object" class="btn btn-primary"  column_invisible="((aplica_desc_parcial))" />
-                    <button name="no_aplica_descanso_parcial" string="No aplica" type="object" class="btn btn-primary"  column_invisible="((not aplica_desc_parcial))" />
+                    <button name="aplica_descanso_parcial" string="Aplica" type="object" class="btn btn-primary"  invisible="aplica_desc_parcial" />
+                    <button name="no_aplica_descanso_parcial" string="No aplica" type="object" class="btn btn-primary"  invisible="not aplica_desc_parcial" />
                     <field name="aplica_desc_parcial" string="Aplica T.D.P." />
                     <field name="tiempo_desc_parcial" string="T.D.P." widget="float_time"/>
                     <field name="tiempo_amplia" string="Ampliación" widget="float_time"/>
