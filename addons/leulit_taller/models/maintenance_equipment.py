@@ -222,7 +222,32 @@ class MaintenanceEquipment(models.Model):
     first_parent = fields.Many2one(compute=_get_first_parent ,comodel_name="maintenance.equipment", string="Primer Padre", store=True)
     aviso = fields.Char(string="Aviso")
     external_aircraft = fields.Boolean(string="External Aircraft", help="Indicates if the equipment is an external aircraft, not managed by the maintenance system.")
-
+    
+    def recalcular_todos_first_parent(self):
+        """Método para recalcular first_parent de todos los equipos (usar desde código/shell)
+        
+        Uso desde shell de Odoo:
+        >>> equipos = self.env['maintenance.equipment']
+        >>> equipos.recalcular_todos_first_parent()
+        """
+        equipos = self.search([])
+        total = len(equipos)
+        _logger.info("Iniciando recálculo de first_parent para %s equipos", total)
+        
+        contador = 0
+        errores = 0
+        for equipo in equipos:
+            try:
+                equipo._get_first_parent()
+                contador += 1
+                if contador % 100 == 0:
+                    _logger.info("Progreso: %s/%s equipos procesados", contador, total)
+            except Exception as e:
+                errores += 1
+                _logger.error("Error recalculando equipo %s (ID: %s): %s", equipo.name, equipo.id, str(e))
+        
+        _logger.info("Recálculo completado: %s exitosos, %s errores de %s total", contador, errores, total)
+        return True
 
     def action_change_production_lot(self):
         self.ensure_one()
