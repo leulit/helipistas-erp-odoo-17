@@ -33,7 +33,7 @@
                         </field>
                         <group>
                             <field name="template_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                            <field name="remarks" widget="html"  readonly="((estado != 'borrador'))" />
+                            <field name="remarks" readonly="((estado != 'borrador'))" />
                         </group>
                         <group col="4" name="last_info_formone">
                             <field name="part_45"  readonly="((estado != 'borrador'))" />

@@ -49,7 +49,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
     estado = fields.Selection([('borrador', 'Borrador'),('pendiente', 'Pendiente Firma'),('firmado','Firmado')], string='Estado', default="borrador")
     herramienta_ids = fields.Many2many('stock.lot', 'rel_boroscopia_lot' , 'boroscopia_id' ,'stock_production_lot_id' ,'Herramientas')
     task = fields.Many2one(comodel_name="project.task", domain="[('maintenance_request_id','=',request)]", string="Tarea")
-    resultado_inspeccion = fields.Text(string="Resultado de la inspección")
+    resultado_inspeccion = fields.Html(string="Resultado de la inspección")
     form_one_ids = fields.One2many(comodel_name="leulit.maintenance_form_one", inverse_name="boroscopia_id", string="Form One")
     flag_form_one = fields.Boolean(compute=_get_flag_form_one, string="Create Form One")
 
