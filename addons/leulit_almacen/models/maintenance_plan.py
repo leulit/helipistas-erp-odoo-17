@@ -15,10 +15,11 @@ class MaintenancePlan(models.Model):
     def _get_componentes_from_equipment(self):
         for item in self:
             lots = []
-            for child in item.equipment_id.get_all_childs():
-                if child.production_lot:
-                    lots.append(child.production_lot.id)
-            item.componentes = lots
+            if item.equipment_id:
+                for child in item.equipment_id.get_all_childs():
+                    if child.production_lot:
+                        lots.append(child.production_lot.id)
+            item.componentes = [(6, 0, lots)]
 
     
-    componentes = fields.One2many(compute=_get_componentes_from_equipment, comodel_name="stock.lot", inverse_name="plan_id", string="Componentes")
+    componentes = fields.Many2many(compute=_get_componentes_from_equipment, comodel_name="stock.lot", string="Componentes")
