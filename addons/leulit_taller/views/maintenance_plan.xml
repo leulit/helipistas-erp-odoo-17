@@ -66,7 +66,7 @@
                             <page string="Actividades Programadas" name="page_actividades_programadas">
                                 <button name="create_plan_activity" type="object" class="oe_highlight" string="Agregar Item"/>
                                 <field name="planned_activity_ids" open="false">
-                                    <tree limit="100">
+                                    <tree limit="100" edit="false" default_order="sequence">
                                         <field name="sequence" widget="handle"/>
                                         <button name="open_planned_activity" string="Editar" type="object" class="oe_highlight"/>
                                         <field name="int_h"/>
