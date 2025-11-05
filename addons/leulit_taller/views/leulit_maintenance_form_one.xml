@@ -28,7 +28,7 @@
                                 <field name="qty"/>
                                 <field name="move_created" column_invisible="1"/>
                                 <field name="estado" column_invisible="1"/>
-                                <button name="do_move_certificate" string="Movimiento certificado" type="object" class="oe_highlight"  column_invisible="((estado == 'borrador') or (move_created))" />
+                                <button name="do_move_certificate" string="Movimiento certificado" type="object" class="oe_highlight"  invisible="estado == 'borrador' or move_created" />
                             </tree>
                         </field>
                         <group>
