@@ -216,7 +216,7 @@ class MaintenanceEquipment(models.Model):
     sn = fields.Char('Serial Number')
     production_lot = fields.Many2one(comodel_name="stock.lot", string="Nº Serie")
     airtime_helicopter = fields.Float(related="helicoptero.airtime", string="Total Airtime - TSN (hh:mm)")
-    first_parent = fields.Many2one(compute=_get_first_parent ,comodel_name="maintenance.equipment", string="Primer Padre", store=False)
+    first_parent = fields.Many2one(compute=_get_first_parent ,comodel_name="maintenance.equipment", string="Primer Padre", store=True)
     aviso = fields.Char(string="Aviso")
     external_aircraft = fields.Boolean(string="External Aircraft", help="Indicates if the equipment is an external aircraft, not managed by the maintenance system.")
 
