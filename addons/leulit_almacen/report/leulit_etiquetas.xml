@@ -209,7 +209,7 @@
                             </td>
                             <td style="vertical-align:top; overflow-y: hidden; border:1px solid transparent;">
                                 <t t-if="qr != ''">
-                                    <img t-att-src="'data:image/png;base64,%s' % to_text(qr)" style="width:auto;height:25mm;"/>
+                                    <img t-att-src="'data:image/png;base64,%s' % qr" style="width:auto;height:25mm;"/>
                                 </t>
                             </td>
                         </tr>
