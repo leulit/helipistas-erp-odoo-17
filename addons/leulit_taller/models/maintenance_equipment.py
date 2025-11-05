@@ -40,7 +40,9 @@ class MaintenanceEquipment(models.Model):
 
 
     def get_all_childs(self):
-        return self.search([('first_parent','=',self.id)])
+        _logger.error('Getting all childs for equipment ID: %s', self.id)
+        items = self.search([('first_parent','=',self.id)])
+        return items
 
 
     def get_all_childs_app(self):
