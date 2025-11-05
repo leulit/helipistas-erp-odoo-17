@@ -13,11 +13,11 @@ class MaintenanceEquipment(models.Model):
     _inherit = "maintenance.equipment"
     
 
-    @api.onchange('parent_id')
-    def onchange_parent(self):
-        if self._origin:
-            if self._origin.parent_id != False:
-                raise UserError('No se puede cambiar el equipamiento padre.')
+    # @api.onchange('parent_id')
+    # def onchange_parent(self):
+    #     if self._origin:
+    #         if self._origin.parent_id != False:
+    #             raise UserError('No se puede cambiar el equipamiento padre.')
             
 
     def write(self, vals):
