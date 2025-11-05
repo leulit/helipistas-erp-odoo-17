@@ -2,27 +2,16 @@
 <odoo>
     <data>
 
-        <!-- REPORT CONTROL DE TAREAS CON DOBLE CHECK -->
-        <report
-            id="leulit_20230926_1711_report"
-            string="Control de tareas con Doble Check"
-            model="maintenance.request"
-            report_type="qweb-pdf"
-            file="leulit_taller.leulit_20230926_1711_informe"
-            name="leulit_taller.leulit_20230926_1711_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
-
-        <template id="doble_check_report_header">
+        <template id="defectos_report_header">
             <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.doble_check_report_css"/>
+                <t t-call="leulit_taller.defectos_report_css"/>
                 <table class="fullwidth">
                     <tr>
                         <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
                             <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
                         </td>
                         <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span><b>Control de tareas con<br/> Doble Check</b></span>
+                            <span><b>Defectos encontrados<br/>durante el mantenimiento</b></span>
                         </td>
                         <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
                             <span>Nº Exp de Mant:</span>
@@ -43,7 +32,7 @@
             </div>
         </template>
 
-        <template id="doble_check_report_css">
+        <template id="defectos_report_css">
             <style>
                 html {
                     font-family: sans-serif; /* 1 */
@@ -97,8 +86,7 @@
                     color: #ffffff;
                 }
                 .centertext {text-align:center;}
-                .thheightrow {height: 70px;}
-                .heightrow {height: 120px;}
+                .heightrow {height: 70px;}
                 .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
                 tfoot { display: table-header-group }
@@ -119,59 +107,48 @@
             </style>
         </template>
 
-        <template id="leulit_20230926_1711_informe">
+        <template id="leulit_20230926_1832_informe">
             <t t-call="web.html_container">
                 <t t-set="data_report_header_spacing" t-value="20"/>
                 <t t-set="data_report_margin_top" t-value="30"/>
                 <div class="page">
-                    <t t-call="leulit_taller.doble_check_report_css"/>
-                    <t t-call="leulit_taller.doble_check_report_header" />
+                    <t t-call="leulit_taller.defectos_report_css"/>
+                    <t t-call="leulit_taller.defectos_report_header" />
                     <div class="row">
-                        <t t-if="tareas_dc">
-                            <t t-foreach="tareas_dc" t-as="tarea">
+                        <t t-if="tareas_defectos">
+                            <t t-foreach="tareas_defectos" t-as="tarea">
                                 <table class="fullwidth" style="width: 100%;">
                                     <tr>
-                                        <td class="centertext">Doble check Nº</td>
-                                        <td class="theadtitle centertext thheightrow tdcolored" colspan="3" rowspan="2">
-                                            <span>Efectuada inspección doble en el siguiente componente / sistema o conjunto vital</span>
+                                        <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
+                                        <td class="tdcolored" colspan="5">
+                                            <span>Defecto encontrado:</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="centertext"><span t-esc="tarea['item']"/></td>
+                                        <td class="centertext heightrow"><span t-esc="tarea['code']"/></td>
+                                        <td colspan="5"><span t-raw="tarea['descripcion']"/></td>
                                     </tr>
                                     <tr>
-                                        <td class="heightrow" style="vertical-align:top;" colspan="4">
-                                            <span>Descripción del componente, sistema o conjunto inspeccionados:</span><br/><br/>
-                                            <b><span t-esc="tarea['name']"/></b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tdcolored" style="width: 15%">
-                                            <span>1er Nombre:</span>
-                                        </td>
-                                        <td style="width: 50%">
-                                            <span t-esc="tarea['primera_persona']"/>
-                                        </td>
-                                        <td class="tdcolored">
-                                            <span>Fecha y Hora:</span>
-                                        </td>
-                                        <td class="centertext">
-                                            <span t-esc="tarea['primera_fecha']"/>
+                                        <td class="tdcolored" style="width: 30%;" colspan="6">
+                                            <span>Detalle del trabajo realizado:</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="tdcolored" style="width: 15%">
-                                            <span>2º Nombre:</span>
+                                        <td class="heightrow" colspan="6"><span t-esc="tarea['name']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Nombre:</span>
                                         </td>
-                                        <td style="width: 50%">
-                                            <span t-esc="tarea['segunda_persona']"/>
+                                        <td style="width: 20%;"><span t-esc="tarea['asignado']"/></td>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Fecha:</span>
                                         </td>
-                                        <td class="tdcolored">
-                                            <span>Fecha y Hora:</span>
+                                        <td class="centertext" style="width: 20%;"><span t-esc="tarea['fecha']"/></td>
+                                        <td class="tdcolored" style="width: 20%;">
+                                            <span>Doble check técnico:</span>
                                         </td>
-                                        <td class="centertext">
-                                            <span t-esc="tarea['segunda_fecha']"/>
-                                        </td>
+                                        <td class=""><span t-esc="tarea['doble_check_tecnico']"/></td>
                                     </tr>
                                 </table>
                                 <br/>
@@ -182,43 +159,36 @@
                             <t t-foreach="items" t-as="item">
                                 <table class="fullwidth" style="width: 100%;">
                                     <tr>
-                                        <td class="centertext">Doble check Nº</td>
-                                        <td class="theadtitle centertext thheightrow tdcolored" colspan="3" rowspan="2">
-                                            <span>Efectuada inspección doble en el siguiente componente / sistema o conjunto vital</span>
+                                        <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
+                                        <td class="tdcolored" colspan="5">
+                                            <span>Defecto encontrado:</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="centertext"><span t-esc="item+1"/></td>
+                                        <td class="centertext heightrow"></td>
+                                        <td colspan="5"></td>
                                     </tr>
                                     <tr>
-                                        <td class="heightrow" style="vertical-align:top;" colspan="4">
-                                            <span>Descripción del componente, sistema o conjunto inspeccionados:</span><br/><br/>
-                                            <b>N/A</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tdcolored" style="width: 15%">
-                                            <span>1er Nombre:</span>
-                                        </td>
-                                        <td style="width: 50%">
-                                        </td>
-                                        <td class="tdcolored" style="width: 13%">
-                                            <span>Fecha y Hora:</span>
-                                        </td>
-                                        <td class="centertext">
+                                        <td class="tdcolored" style="width: 30%;" colspan="6">
+                                            <span>Detalle del trabajo realizado:</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="tdcolored" style="width: 15%">
-                                            <span>2º Nombre:</span>
+                                        <td class="heightrow" colspan="6"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Nombre:</span>
                                         </td>
-                                        <td style="width: 50%">
+                                        <td style="width: 20%;"></td>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Fecha:</span>
                                         </td>
-                                        <td class="tdcolored" style="width: 13%">
-                                            <span>Fecha y Hora:</span>
+                                        <td class="centertext" style="width: 20%;"></td>
+                                        <td class="tdcolored" style="width: 20%;">
+                                            <span>Doble check técnico:</span>
                                         </td>
-                                        <td class="centertext">
-                                        </td>
+                                        <td></td>
                                     </tr>
                                 </table>
                                 <br/>
@@ -231,11 +201,11 @@
                                 <ul class="list-inline mt-2">
                                     <li class="list-inline-item" style="font-size:10px;">Página:</li>
                                     <li class="list-inline-item">
-                                        <span style="font-size:10px;">E-</span><span class="page" style="font-size:10px;"/>
+                                        <span style="font-size:10px;">B-</span><span class="page" style="font-size:10px;"/>
                                     </li>
                                     <li class="list-inline-item" style="font-size:10px;">de</li>
                                     <li class="list-inline-item">
-                                        <span style="font-size:10px;">E-</span><span class="topage" style="font-size:10px;"/>
+                                        <span style="font-size:10px;">B-</span><span class="topage" style="font-size:10px;"/>
                                     </li>
                                 </ul>
                             </div>

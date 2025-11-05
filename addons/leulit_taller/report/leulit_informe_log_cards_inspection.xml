@@ -2,17 +2,6 @@
 <odoo>
     <data>
 
-        <!-- REPORT DEFECTOS ENCONTRADOS DURANTE EL MANTENIMIENTO -->
-        <report
-            id="leulit_20231019_0745_report"
-            string="Log Cards Inspection"
-            model="maintenance.request"
-            report_type="qweb-pdf"
-            file="leulit_taller.leulit_20231019_0745_informe"
-            name="leulit_taller.leulit_20231019_0745_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
-
         <template id="log_cards_inspection_report_header">
             <div class="header" style="width:100%; margin-top: 10px; position: static;">
                 <t t-call="leulit_taller.defectos_report_css"/>

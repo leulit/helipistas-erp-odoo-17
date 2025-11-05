@@ -2,17 +2,6 @@
 <odoo>
     <data>
 
-        <report
-            id="leulit_20230118_1037_report"
-            string="Material Utilizado"
-            model="maintenance.request"
-            report_type="qweb-pdf"
-            file="leulit_taller.leulit_20241127_1528_informe"
-            name="leulit_taller.leulit_20241127_1528_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera2"
-        />
-
-
         <template id="material_report_css">
             <style>
                 html {

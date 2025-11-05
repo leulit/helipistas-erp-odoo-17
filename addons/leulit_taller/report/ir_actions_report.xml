@@ -1,14 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="ficha_vuelo_report" model="ir.actions.report">
-        <field name="name">Parte Operacional</field>
-        <field name="model">leulit.vuelo</field>
+
+    <!-- REPORT WORK ORDER -->
+    <record id="leulit_20230905_1226_report" model="ir.actions.report">
+        <field name="name">Work Order</field>
+        <field name="model">maintenance.request</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">leulit_operaciones.leulit_20221003_1001_informe</field>
-        <field name="report_file">leulit_operaciones.leulit_20221003_1001_informe</field>
+        <field name="report_name">leulit_taller.leulit_20230905_1226_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230905_1226_informe</field>
         <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
-        <field name="print_report_name">'POV-%s' % (object.codigo or '')</field>
-        <field name="binding_model_id" ref="model_leulit_vuelo"/>
+        <field name="print_report_name">'WO-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
         <field name="binding_type">report</field>
     </record>
+    <!-- REPORT DEFECTOS ENCONTRADOS DURANTE EL MANTENIMIENTO -->
+    <record id="leulit_20230926_1832_report" model="ir.actions.report">
+        <field name="name">Defectos encontrados durante el mantenimiento</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20230926_1832_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230926_1832_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Defectos encontrados durante el mantenimiento-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT CONTROL DE TAREAS CON DOBLE CHECK -->
+    <record id="leulit_20230926_1711_report" model="ir.actions.report">
+        <field name="name">Control de tareas con Doble Check</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20230926_1711_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230926_1711_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Control de tareas con Doble Check-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT INSPECCION DE SEGURIDAD -->
+    <record id="leulit_20230926_1322_report" model="ir.actions.report">
+        <field name="name">Inspección de Seguridad</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20230926_1323_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230926_1323_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Inspección de Seguridad-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT DEFECTOS ENCONTRADOS DURANTE EL MANTENIMIENTO -->
+    <record id="leulit_20231019_0745_report" model="ir.actions.report">
+        <field name="name">Log Cards Inspection</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20231019_0745_informe</field>
+        <field name="report_file">leulit_taller.leulit_20231019_0745_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Log Cards Inspection-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT MATERIAL UTILIZADO -->
+    <record id="leulit_20230118_1037_report" model="ir.actions.report">
+        <field name="name">Material Utilizado</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20241127_1528_informe</field>
+        <field name="report_file">leulit_taller.leulit_20241127_1528_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera2"/>
+        <field name="print_report_name">'Material Utilizado-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT CONTROL DE TAREAS SENSIBLES PARA LA SEGURIDAD -->
+    <record id="leulit_20230927_1958_report" model="ir.actions.report">
+        <field name="name">Control de Tareas Sensibles para la Seguridad</field>
+        <field name="model">maintenance.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20230927_1958_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230927_1958_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Control de Tareas Sensibles para la Seguridad-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+
 </odoo>

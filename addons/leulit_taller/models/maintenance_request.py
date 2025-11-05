@@ -753,7 +753,7 @@ class MaintenanceRequest(models.Model):
                 cont = cont0 + 0.1
                 lista_tareas = []
                 for task in self.task_planned_ids.filtered(lambda t: t.maintenance_planned_activity_id.int_h == tag).sorted(key=lambda r: r.id):
-                    lista = [round(cont,1), task.maintenance_planned_activity_id.descripcion, task.maintenance_planned_activity_id.tarea_preventiva_id.referencia, task.user_id.name if task.user_id and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
+                    lista = [round(cont,1), task.maintenance_planned_activity_id.descripcion, task.maintenance_planned_activity_id.tarea_preventiva_id.referencia, task.user_ids.name if task.user_ids and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
                     cont += 0.1
                     lista_tareas.append(lista)
                 trabajos_realizar[int(tag)] = lista_tareas
@@ -761,7 +761,7 @@ class MaintenanceRequest(models.Model):
             lista_tareas = []
             for task in self.task_planned_ids.filtered(lambda t: t.maintenance_planned_activity_id.int_h == 0).sorted(key=lambda r: r.id):
                 cont = cont0 + 0.1
-                lista = [round(cont,1), task.maintenance_planned_activity_id.descripcion, task.maintenance_planned_activity_id.tarea_preventiva_id.referencia, task.user_id.name if task.user_id and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
+                lista = [round(cont,1), task.maintenance_planned_activity_id.descripcion, task.maintenance_planned_activity_id.tarea_preventiva_id.referencia, task.user_ids.name if task.user_ids and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
                 cont += 0.1
                 lista_tareas.append(lista)
             if len(lista_tareas) > 0:
@@ -780,7 +780,7 @@ class MaintenanceRequest(models.Model):
                     if manual.pn:
                         referencia_task += ' (' +  manual.pn + ')'
                     break
-                lista = [round(cont,1), task.name, referencia_task, task.user_id.name if task.user_id and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
+                lista = [round(cont,1), task.name, referencia_task, task.user_ids.name if task.user_ids and task.stage_id.name not in ['Pendiente','En proceso'] else '', task.supervisado_por.name if task.supervisado_por else '', True if task.stage_id.name == 'N/A' else False]
                 cont += 0.1
                 lista_tareas.append(lista)
             trabajos_realizar[''] = lista_tareas
@@ -815,7 +815,7 @@ class MaintenanceRequest(models.Model):
                 'item' : cont_sb,
                 'name' : task.name,
                 'referencia' : referencia,
-                'asignado' : task.user_id.name,
+                'asignado' : task.user_ids.name,
             }
             service_bulletins.append(tarea)
             cont_sb += 1
@@ -889,13 +889,13 @@ class MaintenanceRequest(models.Model):
                 if subtask.subtask_count == 0:
                     subtarea = {
                         'name' : subtask.name,
-                        'realizado_por' : subtask.user_id.name if subtask.stage_id.name not in ['Pendiente','En proceso'] else '',
+                        'realizado_por' : subtask.user_ids.name if subtask.stage_id.name not in ['Pendiente','En proceso'] else '',
                         'supervisado_por' : subtask.supervisado_por.name if subtask.stage_id.name not in ['Pendiente','En proceso'] and subtask.supervisado_por else ''
                     }
                     subtareas.append(subtarea)
             tarea = {
                 'name' : task.name,
-                'realizado_por' : task.user_id.name if task.stage_id.name not in ['Pendiente','En proceso'] else '',
+                'realizado_por' : task.user_ids.name if task.stage_id.name not in ['Pendiente','En proceso'] else '',
                 'supervisado_por' : task.supervisado_por.name if task.stage_id.name not in ['Pendiente','En proceso'] and task.supervisado_por else '',
                 'subtareas' : subtareas if len(subtareas) != 0 else False
             }

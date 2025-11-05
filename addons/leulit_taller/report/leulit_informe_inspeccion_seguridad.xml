@@ -2,16 +2,6 @@
 <odoo>
     <data>
 
-        <!-- REPORT INSPECCION DE SEGURIDAD -->
-        <report
-            id="leulit_20230926_1322_report"
-            string="Inspección de Seguridad"
-            model="maintenance.request"
-            report_type="qweb-pdf"
-            file="leulit_taller.leulit_20230926_1323_informe"
-            name="leulit_taller.leulit_20230926_1323_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
 
         <template id="inspeccion_seguridad_report_header">
             <div style="width:100%;" class="header">

@@ -2,17 +2,6 @@
 <odoo>
     <data>
 
-        <!-- REPORT CONTROL DE TAREAS SENSIBLES PARA LA SEGURIDAD -->
-        <report
-            id="leulit_20230927_1958_report"
-            string="Control de Tareas Sensibles para la Seguridad"
-            model="maintenance.request"
-            report_type="qweb-pdf"
-            file="leulit_taller.leulit_20230927_1958_informe"
-            name="leulit_taller.leulit_20230927_1958_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
-
         <template id="tareas_sensibles_seguridad_report_header">
             <div style="width:100%;" class="header">
                 <t t-call="leulit_taller.tareas_sensibles_seguridad_report_css"/>
