@@ -724,8 +724,10 @@ class MaintenanceRequest(models.Model):
     
 
     def print_wo(self):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         data = self._get_data_work_order()
-        pdf = self.env.ref('leulit_taller.leulit_20230905_1226_report')._render_qweb_pdf(self, data=data)[0]
+        report = self.env.ref('leulit_taller.leulit_20230905_1226_report', False)
+        pdf, _ = self.env['ir.actions.report'].with_context(base_url=base_url)._render_qweb_pdf(report,None,data=data)
         self.encoded_pdf = base64.b64encode(pdf)
         self.filename = "{0}.pdf".format(self.name)
 
