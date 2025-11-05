@@ -78,7 +78,7 @@ class LeulitMaintenanceCRS(models.Model):
     lugar = fields.Char(string="Lugar", default="LEUL")
     fecha = fields.Date(string="Fecha", default=fields.Date.context_today)
     certificador = fields.Many2one(comodel_name="leulit.mecanico", string="Técnico Certificador", domain=[('certificador','=',True)])
-    tareas = fields.Text(string="Detalles de trabajo")
+    tareas = fields.Html(string="Detalles de trabajo")
     estado = fields.Selection([('borrador', 'Borrador'),('pendiente', 'Pendiente Firma'),('firmado','Firmado')], string='Estado', default="borrador")
     rev = fields.Char(string="Rev.", default="")
     

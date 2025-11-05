@@ -35,7 +35,7 @@
                     </group>
                     <separator string="Datos CRS"/>
                     <group>
-                        <field name="tareas" widget="html"  readonly="((estado != 'borrador'))" />
+                        <field name="tareas" readonly="estado != 'borrador'" />
                     </group>
                     <group>
                         <field name="limitaciones" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))"  required="1"/>
