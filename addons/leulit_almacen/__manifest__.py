@@ -19,7 +19,6 @@
         "views/stock_lot.xml",
         "views/stock_picking.xml",
         "views/product_product.xml",
-        "views/leulit_etiquetas.xml",
         "views/maintenance_equipment.xml",
         # "views/stock_warehouse_orderpoint.xml",
         "views/leulit_calibracion.xml",
@@ -32,6 +31,8 @@
         "views/purchase_order.xml",
         "views/leulit_maintenance_boroscopia.xml",
         "views/maintenance_plan.xml",
+        "report/leulit_etiquetas.xml",
+        "report/ir_actions_report.xml",
         "data/stock_warehouse_orderpoint_notify_stock_minimo.xml",
         "data/stock_production_lot_notify_expiration_date.xml",
         "menu.xml"

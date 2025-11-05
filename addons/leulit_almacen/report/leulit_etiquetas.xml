@@ -2,15 +2,6 @@
 <odoo>
     <data>
 
-
-        <report string="Etiqueta"
-            id="etiqueta_report"
-            model="stock.lot"
-            name="leulit_almacen.leulit_20221117_1102_informe"
-            report_type="qweb-pdf"
-            paperformat="leulit.paperformat_B8_landscape"/>
-
-
         <template id="etiqueta_report_css">
             <style>
                 table {
