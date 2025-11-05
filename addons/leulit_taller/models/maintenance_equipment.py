@@ -37,7 +37,7 @@ class MaintenanceEquipment(models.Model):
 
     def get_childs(self):
         return self.search([('parent_id','=',self.id)])
-    
+
 
     def get_all_childs(self):
         return self.search([('first_parent','=',self.id)])
@@ -182,6 +182,46 @@ class MaintenanceEquipment(models.Model):
             else:
                 item.first_parent = False
 
+    def _search_first_parent(self, operator, value):
+        """
+        Función de búsqueda para el campo first_parent.
+        Permite hacer búsquedas como: [('first_parent', '=', equipment_id)]
+        """
+        ids = []
+        
+        # Si el operador es '=' o '!=' y value es un ID o False
+        if operator in ('=', '!=', 'in', 'not in'):
+            # Obtener todos los equipos
+            all_equipments = self.search([])
+            
+            for equipment in all_equipments:
+                # Calcular el first_parent de cada equipo
+                first_parent_id = False
+                if equipment.parent_id:
+                    parent = equipment.parent_id
+                    if parent.parent_id:
+                        while parent.parent_id.id != False:
+                            parent = parent.parent_id
+                    first_parent_id = parent.id
+                
+                # Aplicar el operador
+                if operator == '=':
+                    if first_parent_id == value:
+                        ids.append(equipment.id)
+                elif operator == '!=':
+                    if first_parent_id != value:
+                        ids.append(equipment.id)
+                elif operator == 'in':
+                    if first_parent_id in value:
+                        ids.append(equipment.id)
+                elif operator == 'not in':
+                    if first_parent_id not in value:
+                        ids.append(equipment.id)
+        
+        if ids:
+            return [('id', 'in', ids)]
+        return [('id', '=', 0)]
+
 
     display_name = fields.Char(compute=_get_display_name, string="Display name")
     helicoptero = fields.Many2one('leulit.helicoptero', 'Helicóptero')
@@ -216,7 +256,7 @@ class MaintenanceEquipment(models.Model):
     sn = fields.Char('Serial Number')
     production_lot = fields.Many2one(comodel_name="stock.lot", string="Nº Serie")
     airtime_helicopter = fields.Float(related="helicoptero.airtime", string="Total Airtime - TSN (hh:mm)")
-    first_parent = fields.Many2one(compute=_get_first_parent ,comodel_name="maintenance.equipment", string="Primer Padre", store=True)
+    first_parent = fields.Many2one(compute=_get_first_parent, comodel_name="maintenance.equipment", string="Primer Padre", store=False, search=_search_first_parent)
     aviso = fields.Char(string="Aviso")
     external_aircraft = fields.Boolean(string="External Aircraft", help="Indicates if the equipment is an external aircraft, not managed by the maintenance system.")
 
