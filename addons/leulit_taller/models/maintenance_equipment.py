@@ -259,6 +259,7 @@ class MaintenanceEquipment(models.Model):
     first_parent = fields.Many2one(compute=_get_first_parent, comodel_name="maintenance.equipment", string="Primer Padre", store=False, search=_search_first_parent)
     aviso = fields.Char(string="Aviso")
     external_aircraft = fields.Boolean(string="External Aircraft", help="Indicates if the equipment is an external aircraft, not managed by the maintenance system.")
+    owner = fields.Many2one(comodel_name="res.partner", string="Propietario")
 
 
     def action_change_production_lot(self):

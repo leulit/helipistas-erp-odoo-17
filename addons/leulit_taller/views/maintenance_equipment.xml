@@ -52,6 +52,7 @@
                     <field name="helicoptero_pieza" invisible="1"/>
                     <field name="external_aircraft"  invisible="category_id != 1" />
                     <field name="helicoptero"  invisible="category_id != 1" />
+                    <field name="owner" invisible="category_id != 1"/>
                 </xpath>
                 <xpath expr="//page[@name='maintenance']" position="after">
                     <page string="Helicóptero Pieza" name="helicoptero_pieza_helipistas"  invisible="not helicoptero_pieza"  groups="leulit.RolIT_developer">
