@@ -129,31 +129,31 @@ class LeulitAccounAnalyticLineByDay(models.Model):
         threaded_calculation.start()
 
     def run_set_in_byday_acc_an_line(self):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
-            context = dict(self._context)
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            
             if datetime.now().day <= 10:
                 fecha = (datetime.now() - relativedelta(months=1)).date()
             else:
                 fecha = datetime.strptime("{0}-{1}-01".format(datetime.now().year,datetime.now().month),"%Y-%m-%d").date()
-            project_maintenance_id = int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
+            project_maintenance_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
 
-            for aaline in self.env['account.analytic.line'].with_context(context).sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)]):
+            for aaline in env['account.analytic.line'].sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)]):
                 if aaline.employee_id and aaline.date:
-                    aaline_byday = self.env['leulit.account.analytic.line.byday'].with_context(context).sudo().search([('employee_id','=',aaline.employee_id.id),('fecha','=',aaline.date)])
+                    aaline_byday = env['leulit.account.analytic.line.byday'].sudo().search([('employee_id','=',aaline.employee_id.id),('fecha','=',aaline.date)])
                     if not aaline_byday:
-                        aaline_byday_new = self.env['leulit.account.analytic.line.byday'].with_context(context).sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
+                        aaline_byday_new = env['leulit.account.analytic.line.byday'].sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
                         aaline.write({'byday_id':aaline_byday_new.id})
                     else:
                         aaline.write({'byday_id':aaline_byday.id})
-                    self.env.cr.commit()
+                    new_cr.commit()
             
-            model = self.env["leulit.account.analytic.line.byday"]
+            model = env["leulit.account.analytic.line.byday"]
             ids = [x.get('id') for x in model.search_read([], ['id'])]
-            self.env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
-            self.env.all.tocompute[model._fields['horas_imputadas']].update(ids)
-            self.env.all.tocompute[model._fields['horas_facturables']].update(ids)
+            env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
+            env.all.tocompute[model._fields['horas_imputadas']].update(ids)
+            env.all.tocompute[model._fields['horas_facturables']].update(ids)
             model.recompute()
         _logger.error('################### actualizar datos actividad laboral fin thread')
 
@@ -166,27 +166,27 @@ class LeulitAccounAnalyticLineByDay(models.Model):
         threaded_calculation.start()
 
     def run_set_in_byday_acc_an_line_with_fecha(self, fecha='2025-01-01'):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
-            context = dict(self._context)
-            project_maintenance_id = int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
-            for aaline in self.env['account.analytic.line'].with_context(context).sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)], order="date ASC"):
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            
+            project_maintenance_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
+            for aaline in env['account.analytic.line'].sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)], order="date ASC"):
                 _logger.error('################### account_analytic_line --> %r',aaline)
                 _logger.error('################### account_analytic_line --> %r',aaline.date)
                 if aaline.employee_id and aaline.date:
-                    aaline_byday = self.env['leulit.account.analytic.line.byday'].with_context(context).sudo().search([('employee_id','=',aaline.employee_id.id),('fecha','=',aaline.date)])
+                    aaline_byday = env['leulit.account.analytic.line.byday'].sudo().search([('employee_id','=',aaline.employee_id.id),('fecha','=',aaline.date)])
                     if not aaline_byday:
-                        aaline_byday_new = self.env['leulit.account.analytic.line.byday'].with_context(context).sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
+                        aaline_byday_new = env['leulit.account.analytic.line.byday'].sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
                         aaline.write({'byday_id':aaline_byday_new.id})
                     else:
                         aaline.write({'byday_id':aaline_byday.id})
-                    self.env.cr.commit()
+                    new_cr.commit()
             
-            model = self.env["leulit.account.analytic.line.byday"]
+            model = env["leulit.account.analytic.line.byday"]
             ids = [x.get('id') for x in model.search_read([], ['id'])]
-            self.env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
-            self.env.all.tocompute[model._fields['horas_imputadas']].update(ids)
-            self.env.all.tocompute[model._fields['horas_facturables']].update(ids)
+            env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
+            env.all.tocompute[model._fields['horas_imputadas']].update(ids)
+            env.all.tocompute[model._fields['horas_facturables']].update(ids)
             model.recompute()
         _logger.error('################### actualizar datos actividad laboral fin thread')
