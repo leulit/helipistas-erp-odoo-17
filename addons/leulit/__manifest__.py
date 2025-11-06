@@ -38,7 +38,7 @@
         "views/res_company.xml",
         "views/project_project_views.xml",
         "views/leulit_circular.xml",
-        "views/err_import.xml",
+        "views/actions.xml",
         "views/stock.xml",
         "views/sale_order.xml",
         "views/leulit_checklist.xml",
