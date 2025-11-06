@@ -1,0 +1,75 @@
+services:
+  postgresOdoo16:
+    image: postgres:15
+    container_name: helipistas_postgres
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: helipistas@2025
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - /efs/HELIPISTAS-ODOO-17/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - helipistas_network
+
+  helipistas_odoo:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: helipistas_odoo
+    depends_on:
+      - postgresOdoo16
+    environment:
+      HOST: postgresOdoo16
+      USER: odoo
+      PASSWORD: helipistas@2025
+      ODOO_LONGPOLLING_PORT: 8072
+      LANG: es_ES.UTF-8
+      LANGUAGE: es_ES:es
+      LC_ALL: es_ES.UTF-8
+    volumes:
+      - /efs/HELIPISTAS-ODOO-17/odoo/conf:/etc/odoo
+      - /efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17/addons:/mnt/extra-addons
+      - /efs/HELIPISTAS-ODOO-17/odoo/filestore:/var/lib/odoo/filestore
+      - /efs/HELIPISTAS-ODOO-17/odoo/sessiones:/var/lib/odoo/sessions
+    ports:
+      - "8069:8069"
+      - "8082:8082"
+      - "8072:8072"
+    restart: unless-stopped
+    networks:
+      - helipistas_network
+
+  nginx:
+    image: nginx:latest
+    container_name: helipistas_nginx
+    depends_on:
+      - helipistas_odoo
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /efs/HELIPISTAS-ODOO-17/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
+      - /efs/HELIPISTAS-ODOO-17/nginx/ssl:/etc/nginx/ssl
+      - /efs/HELIPISTAS-ODOO-17/certbot/www:/var/www/certbot
+      - /efs/HELIPISTAS-ODOO-17/certbot/conf:/etc/letsencrypt
+    restart: unless-stopped
+    networks:
+      - helipistas_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: helipistas_certbot
+    volumes:
+      - /efs/HELIPISTAS-ODOO-17/certbot/www:/var/www/certbot
+      - /efs/HELIPISTAS-ODOO-17/certbot/conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - helipistas_network
+
+networks:
+  helipistas_network:
+    driver: bridge

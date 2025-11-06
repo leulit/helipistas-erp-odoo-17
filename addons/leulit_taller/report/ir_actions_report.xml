@@ -94,8 +94,32 @@
         <field name="report_file">leulit_taller.leulit_20230707_1128_informe</field>
         <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
         <field name="print_report_name">'%s' % (object._get_report_filename())</field>
-        <field name="binding_model_id" ref="model_maintenance_request"/>
+        <field name="binding_model_id" ref="model_maintenance_crs"/>
         <field name="binding_type">report</field>
     </record>
-
+    <!-- REPORT FORM ONE -->
+    <record id="leulit_20230706_1118_report" model="ir.actions.report">
+        <field name="name">Form One</field>
+        <field name="model">leulit.maintenance_form_one</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20230706_1118_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230706_1118_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_landscape_form_one"/>
+        <field name="print_report_name">'Form One-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_form_one"/>
+        <field name="binding_type">report</field>
+    </record>
+    <!-- REPORT BOROSCOPIA -->
+    <record id="leulit_20240214_0956_report" model="ir.actions.report">
+        <field name="name">Boroscopia</field>
+        <field name="model">leulit.maintenance_boroscopia</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_taller.leulit_20240214_0956_informe</field>
+        <field name="report_file">leulit_taller.leulit_20240214_0956_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Boroscopia-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_maintenance_boroscopia"/>
+        <field name="binding_type">report</field>
+    </record>
+    
 </odoo>
