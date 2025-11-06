@@ -13,14 +13,20 @@
                     <field name="unit_amount" string="Duración" widget="float_time"/>
                 </xpath>
                 <xpath expr="//field[@name='date_time_end']" position="after">
-                    <field name="maintenance_request_id" string="Petición de Mantenimiento"/>
-                    <field name="sale_order" string="Presupuesto"/>
+                    <field name="maintenance_request_id" string="Petición de Mantenimiento" options="{'create': False, 'edit': False, 'delete': False}"/>
+                    <field name="sale_order" string="Presupuesto" options="{'create': False, 'edit': False, 'delete': False}"/>
                 </xpath>
                 <xpath expr="//field[@name='date_time']" position="before">
-                    <field name="employee_id" string="Empleado"/>
+                    <field name="employee_id" string="Empleado" options="{'create': False, 'edit': False, 'delete': False}"/>
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="attributes">
-                    <attribute name="options">{'no_open':true}</attribute>
+                    <attribute name="options">{'create': False, 'edit': False, 'delete': False, 'no_open':true}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='project_id']" position="attributes">
+                    <attribute name="options">{'create': False, 'edit': False, 'delete': False, 'no_open':true}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='task_id']" position="attributes">
+                    <attribute name="options">{'create': False, 'edit': False, 'delete': False, 'no_open':true}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='date_time_end']" position="attributes">
                     <attribute name="readonly">1</attribute>
