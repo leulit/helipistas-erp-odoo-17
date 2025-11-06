@@ -3,6 +3,7 @@
 import { patch } from "@web/core/utils/patch";
 import { FormRenderer } from "@web/views/form/form_renderer";
 import { FormController } from "@web/views/form/form_controller";
+import { onMounted, onWillUnmount } from "@odoo/owl";
 
 /* ---- Constantes y utilidades de dibujo ---- */
 const CanvasWidth = 400;
@@ -211,69 +212,102 @@ function drawAll(stateData) {
     return changes;
 }
 
-/* ---- Parches OWL sin this._super ---- */
-
-const _frMounted = FormRenderer.prototype.mounted;
-const _frConfirm = FormRenderer.prototype.confirmChange;
+/* ---- Parches OWL para Odoo 17 ---- */
 
 patch(FormRenderer.prototype, {
-    name: "leulit_operaciones.weight_and_balance_renderer",
-
-    mounted() {
-        if (_frMounted) _frMounted.apply(this, arguments);
-        const model = this.props?.record?.model || this.props?.archInfo?.model;
-        if (model !== "leulit.weight_and_balance") return;
-        drawAll(this.state?.data);
+    setup() {
+        super.setup();
+        const self = this;
+        
+        onMounted(() => {
+            const model = self.props?.record?.resModel;
+            if (model !== "leulit.weight_and_balance") return;
+            
+            setTimeout(() => {
+                const data = self.props?.record?.data || {};
+                drawAll(data);
+            }, 100);
+        });
     },
 
-    async confirmChange(state, id, fields, ev) {
-        const res = _frConfirm ? await _frConfirm.apply(this, arguments) : undefined;
-        const model = this.props?.record?.model || this.props?.archInfo?.model;
+    async updateRecord(changes) {
+        const res = await super.updateRecord(...arguments);
+        const model = this.props?.record?.resModel;
         if (model !== "leulit.weight_and_balance") return res;
-        const wb = drawAll(state?.data);
-        for (const k of Object.keys(wb)) {
-            if (!fields.includes(k)) fields.push(k);
-            ev.data.changes[k] = wb[k];
-            state.data[k] = wb[k];
-        }
+        
+        setTimeout(() => {
+            const data = this.props?.record?.data || {};
+            const wb = drawAll(data);
+            
+            // Actualizar los campos de validación
+            if (Object.keys(wb).length > 0 && this.props?.record?.update) {
+                this.props.record.update(wb);
+            }
+        }, 50);
+        
         return res;
     },
 });
 
-const _fcMounted = FormController.prototype.mounted;
-const _fcWillUnmount = FormController.prototype.willUnmount;
-const _fcSave = FormController.prototype.saveRecord;
-
 patch(FormController.prototype, {
-    name: "leulit_operaciones.weight_and_balance_controller",
-
-    mounted() {
-        if (_fcMounted) _fcMounted.apply(this, arguments);
-        this._kbdHandler = (ev) => {
-            if (ev.target && ev.target.closest("input.keyboarddisabled")) {
-                ev.stopPropagation();
-                ev.preventDefault();
+    setup() {
+        super.setup();
+        const self = this;
+        
+        onMounted(() => {
+            self._kbdHandler = (ev) => {
+                if (ev.target && ev.target.closest("input.keyboarddisabled")) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                }
+            };
+            if (self.root?.el) {
+                self.root.el.addEventListener("keydown", self._kbdHandler, true);
             }
-        };
-        this.el.addEventListener("keydown", this._kbdHandler, true);
+        });
+
+        onWillUnmount(() => {
+            if (self._kbdHandler && self.root?.el) {
+                self.root.el.removeEventListener("keydown", self._kbdHandler, true);
+            }
+        });
     },
 
-    willUnmount() {
-        if (this._kbdHandler) this.el.removeEventListener("keydown", this._kbdHandler, true);
-        if (_fcWillUnmount) _fcWillUnmount.apply(this, arguments);
-    },
-
-    async saveRecord(...args) {
+    async beforeLeave() {
+        await super.beforeLeave(...arguments);
+        
         try {
             const longC = document.getElementById("longcanvas");
             const latC = document.getElementById("latcanvas");
             const extra = {};
+            
             if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
             if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
-            if (Object.keys(extra).length && this.model?.root) {
+            
+            if (Object.keys(extra).length && this.model?.root?.update) {
                 await this.model.root.update(extra);
             }
-        } catch (_) {}
-        return _fcSave ? _fcSave.apply(this, args) : undefined;
+        } catch (error) {
+            console.error("Error saving canvas data:", error);
+        }
+    },
+
+    async saveButtonClicked(params = {}) {
+        try {
+            const longC = document.getElementById("longcanvas");
+            const latC = document.getElementById("latcanvas");
+            const extra = {};
+            
+            if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
+            if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
+            
+            if (Object.keys(extra).length && this.model?.root?.update) {
+                await this.model.root.update(extra);
+            }
+        } catch (error) {
+            console.error("Error saving canvas data:", error);
+        }
+        
+        return super.saveButtonClicked(...arguments);
     },
 });
