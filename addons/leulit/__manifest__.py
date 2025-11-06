@@ -53,7 +53,7 @@
         'web.assets_backend': [
             'leulit/static/src/js/widget_semaforo_field.js',
             'leulit/static/src/xml/semaforo_char.xml',
-            # 'leulit/static/src/js/widget_keyboardDisabled.js',
+            'leulit/static/src/js/widget_keyboardDisabled.js',
         ],
     },
     "demo": [],
