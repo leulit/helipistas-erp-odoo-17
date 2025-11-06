@@ -28,7 +28,7 @@
                 sequence="20"
                 parent="leulit_20220531_1156_menuitem"
                 action="leulit_20220428_0904_action"
-                groups="hr.group_hr_user,leulit.RCampaña_operador"
+                groups="leulit_actividad.RActividad_user"
             />
         <menuitem
             id="leulit_20220531_1159_menuitem"
