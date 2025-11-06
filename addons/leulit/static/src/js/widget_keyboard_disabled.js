@@ -3,26 +3,34 @@
 import { registry } from "@web/core/registry";
 import { FloatField } from "@web/views/fields/float/float_field";
 import { FloatTimeField } from "@web/views/fields/float_time/float_time_field";
-import { onRendered } from "@odoo/owl";
+import { onMounted } from "@odoo/owl";
 
 /**
- * Bloquea teclado y entrada en campos float o float_time.
+ * Desactiva el teclado en campos float y float_time.
+ * Previene cualquier modificación manual en el input.
  */
 
 export class KeyboardDisabledFloat extends FloatField {
     setup() {
         super.setup();
-        onRendered(() => this._disableInput());
+        onMounted(() => this._attachBlocker());
     }
 
-    _disableInput() {
-        const input = this.el.querySelector("input");
+    _attachBlocker() {
+        const input = this.el?.querySelector("input");
         if (!input) return;
 
-        input.addEventListener("keydown", ev => ev.preventDefault());
-        input.addEventListener("keypress", ev => ev.preventDefault());
-        input.addEventListener("input", ev => ev.preventDefault());
-        input.readOnly = true; // impide edición manual
+        const block = ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            return false;
+        };
+
+        ["keydown", "keypress", "input", "paste"].forEach(e =>
+            input.addEventListener(e, block)
+        );
+
+        input.readOnly = true;
         input.classList.add("o_keyboard_disabled");
     }
 }
@@ -35,16 +43,23 @@ registry.category("fields").add("keyboard_disabled", {
 export class KeyboardDisabledFloatTime extends FloatTimeField {
     setup() {
         super.setup();
-        onRendered(() => this._disableInput());
+        onMounted(() => this._attachBlocker());
     }
 
-    _disableInput() {
-        const input = this.el.querySelector("input");
+    _attachBlocker() {
+        const input = this.el?.querySelector("input");
         if (!input) return;
 
-        input.addEventListener("keydown", ev => ev.preventDefault());
-        input.addEventListener("keypress", ev => ev.preventDefault());
-        input.addEventListener("input", ev => ev.preventDefault());
+        const block = ev => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            return false;
+        };
+
+        ["keydown", "keypress", "input", "paste"].forEach(e =>
+            input.addEventListener(e, block)
+        );
+
         input.readOnly = true;
         input.classList.add("o_keyboard_disabled");
     }
