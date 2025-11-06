@@ -5,35 +5,13 @@ import { FloatField } from "@web/views/fields/float/float_field";
 import { FloatTimeField } from "@web/views/fields/float_time/float_time_field";
 
 /**
- * Bloquea edición en campos float y float_time.
- * Anula directamente los controladores internos de Odoo.
+ * Widget que fuerza modo readonly real en campos float y float_time.
+ * Anula la lógica interna de edición.
  */
 
 export class KeyboardDisabledFloat extends FloatField {
-    setup() {
-        super.setup();
-    }
-
-    // Odoo usa onInput / onChange / onKeydown para actualizar el valor.
-    // Los anulamos para bloquear toda interacción del usuario.
-    onInput(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    onKeydown(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    onChange(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    // Si se enfoca, quitamos focus inmediatamente.
-    onFocus(ev) {
-        ev.target.blur();
+    _isReadonly() {
+        return true;
     }
 }
 
@@ -43,27 +21,8 @@ registry.category("fields").add("keyboard_disabled", {
 });
 
 export class KeyboardDisabledFloatTime extends FloatTimeField {
-    setup() {
-        super.setup();
-    }
-
-    onInput(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    onKeydown(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    onChange(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-    }
-
-    onFocus(ev) {
-        ev.target.blur();
+    _isReadonly() {
+        return true;
     }
 }
 
