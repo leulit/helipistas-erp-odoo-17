@@ -3,51 +3,37 @@
 import { registry } from "@web/core/registry";
 import { FloatField } from "@web/views/fields/float/float_field";
 import { FloatTimeField } from "@web/views/fields/float_time/float_time_field";
-import { onMounted, onWillUnmount } from "@odoo/owl";
 
 /**
- * Campos float/float_time con teclado bloqueado (sin edición manual).
+ * Bloquea edición en campos float y float_time.
+ * Anula directamente los controladores internos de Odoo.
  */
-
-function protectInput(el) {
-    const input = el?.querySelector("input");
-    if (!input) return;
-
-    const block = ev => {
-        ev.stopPropagation();
-        ev.preventDefault();
-        return false;
-    };
-
-    ["keydown", "keypress", "input", "paste"].forEach(e =>
-        input.addEventListener(e, block)
-    );
-    input.readOnly = true;
-    input.classList.add("o_keyboard_disabled");
-}
 
 export class KeyboardDisabledFloat extends FloatField {
     setup() {
         super.setup();
-        this._observer = null;
-        onMounted(() => this._startObserver());
-        onWillUnmount(() => this._stopObserver());
     }
 
-    _startObserver() {
-        const target = this.el;
-        if (!target) return;
-        protectInput(target);
-
-        this._observer = new MutationObserver(() => protectInput(target));
-        this._observer.observe(target, { childList: true, subtree: true });
+    // Odoo usa onInput / onChange / onKeydown para actualizar el valor.
+    // Los anulamos para bloquear toda interacción del usuario.
+    onInput(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
     }
 
-    _stopObserver() {
-        if (this._observer) {
-            this._observer.disconnect();
-            this._observer = null;
-        }
+    onKeydown(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+    }
+
+    onChange(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+    }
+
+    // Si se enfoca, quitamos focus inmediatamente.
+    onFocus(ev) {
+        ev.target.blur();
     }
 }
 
@@ -59,25 +45,25 @@ registry.category("fields").add("keyboard_disabled", {
 export class KeyboardDisabledFloatTime extends FloatTimeField {
     setup() {
         super.setup();
-        this._observer = null;
-        onMounted(() => this._startObserver());
-        onWillUnmount(() => this._stopObserver());
     }
 
-    _startObserver() {
-        const target = this.el;
-        if (!target) return;
-        protectInput(target);
-
-        this._observer = new MutationObserver(() => protectInput(target));
-        this._observer.observe(target, { childList: true, subtree: true });
+    onInput(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
     }
 
-    _stopObserver() {
-        if (this._observer) {
-            this._observer.disconnect();
-            this._observer = null;
-        }
+    onKeydown(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+    }
+
+    onChange(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+    }
+
+    onFocus(ev) {
+        ev.target.blur();
     }
 }
 
