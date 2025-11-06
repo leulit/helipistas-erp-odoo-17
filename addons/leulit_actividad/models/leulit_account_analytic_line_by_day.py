@@ -156,14 +156,15 @@ class LeulitAccounAnalyticLineByDay(models.Model):
             # Forzar recálculo de campos computados en Odoo 17
             if byday_ids_to_recompute:
                 records_to_recompute = env['leulit.account.analytic.line.byday'].browse(list(byday_ids_to_recompute))
-                # Forzar el cálculo accediendo a los campos computados
-                for record in records_to_recompute:
-                    # Acceder a los campos para forzar su cálculo
-                    _ = record.total_horas_imputadas
-                    _ = record.horas_imputadas
-                    _ = record.horas_facturables
-                    _ = record.ruta
-                    _ = record.guardia
+                # Invalidar caché para forzar recálculo
+                records_to_recompute.invalidate_recordset()
+                # Llamar directamente a los métodos compute
+                records_to_recompute._compute_total_horas_imputadas()
+                records_to_recompute._compute_horas_imputadas()
+                records_to_recompute._compute_horas_facturables()
+                records_to_recompute._get_ruta_line()
+                records_to_recompute._get_guardia_line()
+                # Flush para guardar en BD
                 env.flush_all()
                 new_cr.commit()
                 _logger.error('################### Recalculados %s registros byday', len(byday_ids_to_recompute))
@@ -203,14 +204,15 @@ class LeulitAccounAnalyticLineByDay(models.Model):
             # Forzar recálculo de campos computados en Odoo 17
             if byday_ids_to_recompute:
                 records_to_recompute = env['leulit.account.analytic.line.byday'].browse(list(byday_ids_to_recompute))
-                # Forzar el cálculo accediendo a los campos computados
-                for record in records_to_recompute:
-                    # Acceder a los campos para forzar su cálculo
-                    _ = record.total_horas_imputadas
-                    _ = record.horas_imputadas
-                    _ = record.horas_facturables
-                    _ = record.ruta
-                    _ = record.guardia
+                # Invalidar caché para forzar recálculo
+                records_to_recompute.invalidate_recordset()
+                # Llamar directamente a los métodos compute
+                records_to_recompute._compute_total_horas_imputadas()
+                records_to_recompute._compute_horas_imputadas()
+                records_to_recompute._compute_horas_facturables()
+                records_to_recompute._get_ruta_line()
+                records_to_recompute._get_guardia_line()
+                # Flush para guardar en BD
                 env.flush_all()
                 new_cr.commit()
                 _logger.error('################### Recalculados %s registros byday', len(byday_ids_to_recompute))
