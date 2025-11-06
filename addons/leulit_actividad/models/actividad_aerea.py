@@ -159,7 +159,7 @@ class ParteEscuelaHandler(actividad.AbstractHandler):
             for item in o_ipe.search([('fecha','=',request.fecha),('estado','=','cerrado'),('vuelo_id','=',False)],order="fecha ASC, hora_start ASC"):
                 if item.sudo().profesor.partner_id.id == request.partner:
                     iaa_domain_search = [('modelo','=','leulit.vuelo'),('fecha','=',request.fecha),('partner','=',request.partner),('prevista','=',False),('inicio','>=',item.hora_end)]
-                    nitems = o_iaa.search(iaa_domain_search,count=True)
+                    nitems = o_iaa.search_count(iaa_domain_search)
                     _logger.error("-AA--> ParteEscuelaHandler nitems = %r", nitems)
                     if nitems > 0:
                         datos = {
