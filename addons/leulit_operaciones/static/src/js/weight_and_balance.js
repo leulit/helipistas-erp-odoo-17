@@ -3,7 +3,7 @@
 import { patch } from "@web/core/utils/patch";
 import { FormRenderer } from "@web/views/form/form_renderer";
 import { FormController } from "@web/views/form/form_controller";
-import { onMounted, onWillUnmount, onPatched } from "@odoo/owl";
+import { onMounted, onPatched } from "@odoo/owl";
 import { Record } from "@web/model/relational_model/record";
 
 /* ---- Constantes y utilidades de dibujo ---- */
@@ -283,29 +283,6 @@ patch(FormRenderer.prototype, {
 });
 
 patch(FormController.prototype, {
-    setup() {
-        super.setup();
-        const self = this;
-        
-        onMounted(() => {
-            self._kbdHandler = (ev) => {
-                if (ev.target && ev.target.closest("input.keyboarddisabled")) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
-                }
-            };
-            if (self.root?.el) {
-                self.root.el.addEventListener("keydown", self._kbdHandler, true);
-            }
-        });
-
-        onWillUnmount(() => {
-            if (self._kbdHandler && self.root?.el) {
-                self.root.el.removeEventListener("keydown", self._kbdHandler, true);
-            }
-        });
-    },
-
     async beforeLeave() {
         await super.beforeLeave(...arguments);
         
