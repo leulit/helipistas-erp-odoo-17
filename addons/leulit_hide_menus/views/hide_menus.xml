@@ -58,6 +58,18 @@
         <record id="document_knowledge.menu_document_root" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
         </record>
+        <!-- Inventario -->
+        <record id="stock.menu_stock_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
+        </record>
+        <!-- Mantenimiento -->
+        <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
+        </record>
+        <!-- Mantenimiento -->
+        <record id="repair.menu_repair_order" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('leulit.RBase_hide')])]"/>
+        </record>
 
     </data>
 </odoo>
