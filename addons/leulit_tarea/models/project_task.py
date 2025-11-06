@@ -16,7 +16,7 @@ class ProjectTask(models.Model):
     def onchange_stage_id(self):
         if self.stage_id:
             if self.stage_id.name in ['Hecho','Realizada','Finalizado']:
-                self.date_finish = datetime.now()
+                self.date_end = datetime.now()
 
 
     def _get_default_project(self):
