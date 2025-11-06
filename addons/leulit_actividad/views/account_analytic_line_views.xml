@@ -14,7 +14,7 @@
                 <div colspan="2">
                     <group col="4">
                         <field name="vuelo_no_hlp" groups="leulit.ROperaciones_piloto"/>
-                        <field name="vuelo_tipo_act_id" attrs="{'invisible': [('vuelo_no_hlp', '=', False)]}"/>
+                        <field name="vuelo_tipo_act_id" groups="leulit.ROperaciones_piloto" invisible="not vuelo_no_hlp"/>
                     </group>
                 </div>
             </field>

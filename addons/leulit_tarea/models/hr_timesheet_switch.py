@@ -28,8 +28,20 @@ class HrTimesheetSwitch(models.TransientModel):
     def _default_project_id(self):
         return self.env['project.project'].search([('name','=','Internal'),('company_id','=',self.env.company.id)])
 
+    def _get_tipo_trabajo(self):
+        return (
+            ('AOC', 'AOC'),
+            ('Trabajo Aereo', 'Trabajo Aereo'),
+            ('Escuela', 'Escuela'),
+            ('LCI', 'LCI'),
+            ('NCO', 'NCO'),
+        )
 
     employee_id = fields.Many2one(comodel_name="hr.employee", string="Empleado", default=lambda self: self.env.user.employee_id.id)
     until_date = fields.Datetime(string="Hasta")
     recurrency = fields.Boolean(string="Recurrente")
     project_id = fields.Many2one('project.project', 'Project', default=_default_project_id)
+    ruta = fields.Boolean(string="Ruta")
+    guardia = fields.Boolean(string="Guardia")
+    vuelo_no_hlp = fields.Boolean(string="Vuelo NO Helipistas")
+    vuelo_tipo_act_id = fields.Selection(_get_tipo_trabajo, 'Actividad vuelo')
