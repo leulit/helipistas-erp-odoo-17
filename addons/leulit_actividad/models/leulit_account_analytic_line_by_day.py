@@ -139,25 +139,31 @@ class LeulitAccounAnalyticLineByDay(models.Model):
                 fecha = datetime.strptime("{0}-{1}-01".format(datetime.now().year,datetime.now().month),"%Y-%m-%d").date()
             project_maintenance_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
 
+            byday_ids_to_recompute = set()
+            
             for aaline in env['account.analytic.line'].sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)]):
                 if aaline.employee_id and aaline.date:
                     aaline_byday = env['leulit.account.analytic.line.byday'].sudo().search([('employee_id','=',aaline.employee_id.id),('fecha','=',aaline.date)])
                     if not aaline_byday:
                         aaline_byday_new = env['leulit.account.analytic.line.byday'].sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
                         aaline.write({'byday_id':aaline_byday_new.id})
+                        byday_ids_to_recompute.add(aaline_byday_new.id)
                     else:
                         aaline.write({'byday_id':aaline_byday.id})
+                        byday_ids_to_recompute.add(aaline_byday.id)
                     new_cr.commit()
             
-            model = env["leulit.account.analytic.line.byday"]
-            ids = [x.get('id') for x in model.search_read([], ['id'])]
-            env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
-            env.all.tocompute[model._fields['horas_imputadas']].update(ids)
-            env.all.tocompute[model._fields['horas_facturables']].update(ids)
-            model.recompute()
+            # Forzar recálculo de campos computados en Odoo 17
+            if byday_ids_to_recompute:
+                records_to_recompute = env['leulit.account.analytic.line.byday'].browse(list(byday_ids_to_recompute))
+                records_to_recompute.modified(['account_analytic_lines'])
+                records_to_recompute.recompute()
+                new_cr.commit()
+                _logger.error('################### Recalculados %s registros byday', len(byday_ids_to_recompute))
+        
         _logger.error('################### actualizar datos actividad laboral fin thread')
 
-    
+
 
     def set_in_byday_acc_an_line_with_fecha(self, fecha):
         _logger.error("################### actualizar datos actividad laboral ")
@@ -171,6 +177,8 @@ class LeulitAccounAnalyticLineByDay(models.Model):
             env = api.Environment(new_cr, self.env.uid, self.env.context)
             
             project_maintenance_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
+            byday_ids_to_recompute = set()
+            
             for aaline in env['account.analytic.line'].sudo().search([('project_id','!=',project_maintenance_id),('date','>=',fecha),('vuelo_no_hlp','=',False)], order="date ASC"):
                 _logger.error('################### account_analytic_line --> %r',aaline)
                 _logger.error('################### account_analytic_line --> %r',aaline.date)
@@ -179,14 +187,18 @@ class LeulitAccounAnalyticLineByDay(models.Model):
                     if not aaline_byday:
                         aaline_byday_new = env['leulit.account.analytic.line.byday'].sudo().create({'employee_id':aaline.employee_id.id,'fecha':aaline.date})
                         aaline.write({'byday_id':aaline_byday_new.id})
+                        byday_ids_to_recompute.add(aaline_byday_new.id)
                     else:
                         aaline.write({'byday_id':aaline_byday.id})
+                        byday_ids_to_recompute.add(aaline_byday.id)
                     new_cr.commit()
             
-            model = env["leulit.account.analytic.line.byday"]
-            ids = [x.get('id') for x in model.search_read([], ['id'])]
-            env.all.tocompute[model._fields['total_horas_imputadas']].update(ids)
-            env.all.tocompute[model._fields['horas_imputadas']].update(ids)
-            env.all.tocompute[model._fields['horas_facturables']].update(ids)
-            model.recompute()
+            # Forzar recálculo de campos computados en Odoo 17
+            if byday_ids_to_recompute:
+                records_to_recompute = env['leulit.account.analytic.line.byday'].browse(list(byday_ids_to_recompute))
+                records_to_recompute.modified(['account_analytic_lines'])
+                records_to_recompute.recompute()
+                new_cr.commit()
+                _logger.error('################### Recalculados %s registros byday', len(byday_ids_to_recompute))
+        
         _logger.error('################### actualizar datos actividad laboral fin thread')
