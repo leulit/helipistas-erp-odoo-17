@@ -111,7 +111,7 @@
                                         <span style="font-size:15px">TEÓRICO</span>
                                     </th>
                                     <th style="width:130px" rowspan="2">
-                                        <img t-att-src="'data:image/png;base64,%s' % to_text(o.logo_reports)" style="width:auto;height:60px;"/>
+                                        <img t-att-src="'data:image/png;base64,%s' % o.logo_reports" style="width:auto;height:60px;"/>
                                     </th>
                                 </tr>
                                 <tr>
@@ -151,7 +151,7 @@
                                         <span style="font-size:15px">PRÁCTICO</span>
                                     </th>
                                     <th style="width:130px" rowspan="2">
-                                        <img t-att-src="'data:image/png;base64,%s' % to_text(o.logo_reports)" style="width:auto;height:60px;"/>
+                                        <img t-att-src="'data:image/png;base64,%s' % o.logo_reports" style="width:auto;height:60px;"/>
                                     </th>
                                 </tr>
                                 <tr>

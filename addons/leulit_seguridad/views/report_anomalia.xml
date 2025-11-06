@@ -286,7 +286,7 @@
                                                     <table class="anomalia_tabla anomalia fullwidth">
                                                         <tr>
                                                             <th style="text-align:center;vertical-align: middle" class="noborder" colspan="2">
-                                                                <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                                                                <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                                                             </th>
                                                             <th class="literal theadtitle centertext" style="width:100%; font-size:17px" colspan="8">
                                                                 ANOMALIES / DEFECTS

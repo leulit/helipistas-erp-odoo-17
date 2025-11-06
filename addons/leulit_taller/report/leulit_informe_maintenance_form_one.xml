@@ -123,7 +123,7 @@
                                 <span style="margin-left: 35%;"><b>ES.145.173</b></span><br/><br/>
                             </td>
                             <td style="border-left:0px;border-right:0px;text-align:right;">
-                                <img t-att-src="'data:image/png;base64,%s' % to_text(logo)" style="width:auto;height:30px;"/>
+                                <img t-att-src="'data:image/png;base64,%s' % logo" style="width:auto;height:30px;"/>
                             </td>
                             <td style="border-left:0px;text-align:left;">
                                 <pre><b>Icarus Manteniment, S.L.
@@ -225,8 +225,8 @@ that work the items are considered ready for release to service.</pre>
                             </td>
                             <td style="width:25%;">
                                 <span>14b. Authorised Signature</span><br/>
-                                <img t-att-src="'data:image/png;base64,%s' % to_text(formone['firma'])" style="width:auto;height:20px;"/>
-                                <img t-att-src="'data:image/png;base64,%s' % to_text(formone['sello'])" style="width:auto;height:30px;"/>
+                                <img t-att-src="'data:image/png;base64,%s' % formone['firma']" style="width:auto;height:20px;"/>
+                                <img t-att-src="'data:image/png;base64,%s' % formone['sello']" style="width:auto;height:30px;"/>
                             </td>
                             <td style="width:25%;">
                                 <span>14c. Certificate/Approval Ref. No.</span><br/>

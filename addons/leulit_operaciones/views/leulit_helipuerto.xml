@@ -192,7 +192,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                            <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                         </td>
                         <td class="literal theadtitle" style="width:100%vertical-align: middle;">
                             <span class="theadtitle" style="font-size: 6mm !important;"><span t-esc="nombre"/></span>
@@ -492,12 +492,12 @@
                         </table>
                         <table class="fullwidth">
                             <tr>
-                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_1)" style="width:100%;height:auto"/></td>
-                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_2)" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % img_1" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % img_2" style="width:100%;height:auto"/></td>
                             </tr>
                             <tr>
-                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_3)" style="width:100%;height:auto"/></td>
-                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % to_text(img_4)" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % img_3" style="width:100%;height:auto"/></td>
+                                <td class="borde" style="width:50%" align="middle"><img t-att-src="'data:image/png;base64,%s' % img_4" style="width:100%;height:auto"/></td>
                             </tr>
                         </table>
                     </div>

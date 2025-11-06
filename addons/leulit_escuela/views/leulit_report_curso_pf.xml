@@ -36,7 +36,7 @@
             <table class="table table-bordered fullwidth">
                 <tr>
                     <td style="text-align:center;vertical-align: middle; width:20%">
-                        <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/>
+                        <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/>
                     </td>
                     <td class="literal theadtitle centertext" style="width:80%">
                         INFORME GENERAL

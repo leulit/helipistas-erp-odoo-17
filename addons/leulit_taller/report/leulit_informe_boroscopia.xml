@@ -57,7 +57,7 @@
                                         <table class="fullwidth">
                                             <tr>
                                                 <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:left">
-                                                    <img t-att-src="'data:image/png;base64,%s' % to_text(logo_ica)" style="width:auto;height:25px;"/><br/>
+                                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:25px;"/><br/>
                                                 </td>
                                                 <td class="noborde" style="font-size:20px; white-space: nowrap; text-align:center">
                                                     <span><b>Informe de Boroscopia</b></span><br/>

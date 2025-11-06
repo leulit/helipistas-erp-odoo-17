@@ -36,7 +36,7 @@
                 <t t-foreach="docs" t-as="o">
                     <div class="page">
                         <div style="text-align: center; margin-bottom: 20px;">
-                            <img t-att-src="'data:image/png;base64,%s' % to_text(o.company.logo_reports)" style="width:auto;height:60px;"/>
+                            <img t-att-src="'data:image/png;base64,%s' % o.company.logo_reports" style="width:auto;height:60px;"/>
                             <h2>Certificado de Actividad Aerea</h2>
                         </div>
                         <p><br/><br/><strong><span t-field="o.user.name"/></strong> certifica a fecha <span t-field="o.date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> que:</p>

@@ -235,7 +235,7 @@
                                         <table class="fullwidth header-table">
                                             <tr>
                                                 <td style="font-size:12px; white-space: nowrap; text-align:center; width:25%;" rowspan="3">
-                                                    <img t-att-src="'data:image/png;base64,%s' % to_text(logo_ica)" style="width:auto;height:30px;"/><br/>
+                                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
                                                     <span>ES. 145.173</span>
                                                 </td>
                                                 <td style="font-size:20px; white-space: nowrap; text-align:center" rowspan="3">
