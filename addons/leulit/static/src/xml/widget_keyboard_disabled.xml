@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="leulit.KeyboardDisabledFloat">
+        <FloatField t-props="props"/>
+    </t>
+
+    <t t-name="leulit.KeyboardDisabledFloatTime">
+        <FloatTimeField t-props="props"/>
+    </t>
+
+</templates>
