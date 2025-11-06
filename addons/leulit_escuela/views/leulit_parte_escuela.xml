@@ -76,11 +76,11 @@
                         <notebook>
                             <page name="rel_curso_alumno" string="Silabus">
                                 <separator string="Curso-Silabus-Alumnos (1)"/>
-                                <button name="metodo_a_ejecutar" style="margin-right:10px" type="object" string="Añadir" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_edit_only oe_highlight"  invisible="((vuelo_id) or (isreadonly == 'True'))" />
+                                <button name="metodo_a_ejecutar" style="margin-right:10px" type="object" string="Añadir" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_edit_only oe_highlight"  invisible="vuelo_id or isreadonly" />
                                 <button name="verficar_por_orden" style="margin-right:10px" type="object" string="Verificar por orden" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"/>
                                 <button name="wizard_change_data" style="margin-right:10px" type="object" string="Cambiar Datos Silabus" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                 <button name="updateTiempos" type="object" string="Recalcular Tiempos" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
-                                <field name="rel_curso_alumno" nolabel="1"  readonly="((isreadonly == 'True'))" >
+                                <field name="rel_curso_alumno" nolabel="1"  readonly="isreadonly" >
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">
                                         <field name="verificado" readonly="1"/>
                                         <field name="verificado_por" readonly="1"/>
@@ -92,10 +92,10 @@
                                         <field name="sil_test" column_invisible="1"/>
                                         <field name="sil_valoracion" column_invisible="1"/>
                                         <field name="todo_cerrar" column_invisible="1"/>
-                                        <field name="rel_docs" inviscolumn_invisibleible="1"/>
-                                        <field name="valoracion"  column_invisible="((not sil_valoracion))" />
-                                        <field name="nota"  column_invisible="((not sil_test))" />
-                                        <button type="object" name="add_docs_rel_parte_escuela" class="oe_highlight" string="Adjuntar Doc."  column_invisible="((not sil_test))" />
+                                        <field name="rel_docs" column_invisible="1"/>
+                                        <field name="valoracion"  invisible="not sil_valoracion" />
+                                        <field name="nota"  invisible="not sil_test" />
+                                        <button type="object" name="add_docs_rel_parte_escuela" class="oe_highlight" string="Adjuntar Doc."  invisible="not sil_test" />
                                     </tree>
                                 </field>
                             </page>
