@@ -81,17 +81,6 @@
     </record>
         
 
-    <!-- REPORT CRS -->
-    <report
-        id="leulit_20230707_1128_report"
-        string="CRS"
-        model="leulit.maintenance_crs"
-        report_type="qweb-pdf"
-        name="leulit_taller.leulit_20230707_1128_informe"
-        file="leulit_taller.leulit_20230707_1128_informe"
-        paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        print_report_name="'%s' % (object._get_report_filename())"
-    />
 
 
 
