@@ -139,6 +139,13 @@
                 sequence="45"
                 groups="leulit_tarea.RT_administrador"
             />
+            <menuitem 
+                id="leulit_20231121_0827_menuitem"
+                name="Imputar Tiempo"
+                parent="leulit_20221128_1144_menuitem"
+                action="leulit_tarea.leulit_20230120_1637_action"
+                sequence="50"
+            />
 
 
         <menuitem

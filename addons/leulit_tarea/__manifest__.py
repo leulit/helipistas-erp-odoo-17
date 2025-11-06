@@ -16,6 +16,7 @@
         "views/project_task.xml",
         "views/sale_order.xml",
         "views/hr_timesheet_views.xml",
+        "views/hr_timesheet_switch_view.xml",
         "menu.xml"
     ],
     "demo": [],

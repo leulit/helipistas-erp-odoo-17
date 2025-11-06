@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="leulit_20230120_1637_form" model="ir.ui.view">
+            <field name="name">leulit_20230120_1637_form</field>
+            <field name="model">hr.timesheet.switch</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="1"/>
+            <field name="inherit_id" ref="project_timesheet_time_control.hr_timesheet_switch_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_time']" position="after">
+                    <field name="unit_amount" string="Duración"/>
+                </xpath>
+                <xpath expr="//field[@name='date_time']" position="before">
+                    <field name="employee_id" string="Empleado"/>
+                    <!-- <field name="sale_order"/> TODO: No existe el campo -->
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20230120_1637_action" model="ir.actions.act_window">
+            <field name="name">Imputar tiempo</field>
+            <field name="res_model">hr.timesheet.switch</field>
+            <field name="target">new</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="leulit_20230120_1637_form"/>
+            <field name="binding_view_types">form</field>
+            <field name="context">{'show_created_timer': True}</field>
+        </record>
+
+    </data>
+</odoo>

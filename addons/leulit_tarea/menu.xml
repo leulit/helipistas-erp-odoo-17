@@ -61,5 +61,13 @@
             action="hr_timesheet.act_hr_timesheet_line"
             sequence="30"
         />
+        <menuitem 
+            id="leulit_20220110_1107_menuitem"
+            name="Imputar Tiempo"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20230120_1637_action"
+            sequence="40"
+            groups="leulit_tarea.RT_administrador,leulit.RolIT_predev"
+        />
 
 </odoo>
