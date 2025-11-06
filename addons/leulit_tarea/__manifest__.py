@@ -8,7 +8,8 @@
     "version": "17.0.1.0.0",
     "depends": [
         "leulit",
-        "project_status"
+        "project_status",
+        "project_timesheet_time_control"
     ],
     "data": [
         "groups.xml",

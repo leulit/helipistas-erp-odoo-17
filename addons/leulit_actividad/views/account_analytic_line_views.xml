@@ -36,6 +36,12 @@
                 <field name="modelo" groups="leulit.RolIT_developer"/>
                 <field name="idmodelo" groups="leulit.RolIT_developer"/>
             </xpath>
+            <xpath expr="//field[@name='date']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='show_time_control']" position="attributes">
+                <attribute name="string"> </attribute>
+            </xpath>
         </field>
     </record>
     

@@ -2,10 +2,16 @@
 <odoo>
     <record id="hr_timesheet_line_tree" model="ir.ui.view">
         <field name="model">account.analytic.line</field>
-        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree" />
+        <field name="inherit_id" ref="project_timesheet_time_control.account_analytic_line_tree" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="sale_order"/>
+            </xpath>
+            <xpath expr="//field[@name='date']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='show_time_control']" position="attributes">
+                <attribute name="string"> </attribute>
             </xpath>
         </field>
     </record>
