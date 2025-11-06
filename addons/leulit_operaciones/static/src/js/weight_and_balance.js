@@ -3,7 +3,8 @@
 import { patch } from "@web/core/utils/patch";
 import { FormRenderer } from "@web/views/form/form_renderer";
 import { FormController } from "@web/views/form/form_controller";
-import { onMounted, onWillUnmount } from "@odoo/owl";
+import { onMounted, onWillUnmount, onPatched } from "@odoo/owl";
+import { Record } from "@web/model/relational_model/record";
 
 /* ---- Constantes y utilidades de dibujo ---- */
 const CanvasWidth = 400;
@@ -214,6 +215,36 @@ function drawAll(stateData) {
 
 /* ---- Parches OWL para Odoo 17 ---- */
 
+// Patch al Record para interceptar cambios en el modelo
+patch(Record.prototype, {
+    async update(changes, options) {
+        const result = await super.update(changes, options);
+        
+        // Solo actuar si es el modelo weight_and_balance
+        if (this.resModel === "leulit.weight_and_balance") {
+            console.log("Weight & Balance - Record updated with changes:", Object.keys(changes));
+            
+            // Redibujar los canvas después de actualizar el modelo
+            setTimeout(() => {
+                const data = this.data || {};
+                const wb = drawAll(data);
+                
+                // Si hay campos de validación para actualizar
+                if (Object.keys(wb).length > 0) {
+                    // Actualizar sin disparar onChange ni guardar
+                    for (const [key, value] of Object.entries(wb)) {
+                        if (this.data[key] !== value) {
+                            this.data[key] = value;
+                        }
+                    }
+                }
+            }, 10);
+        }
+        
+        return result;
+    },
+});
+
 patch(FormRenderer.prototype, {
     setup() {
         super.setup();
@@ -223,29 +254,31 @@ patch(FormRenderer.prototype, {
             const model = self.props?.record?.resModel;
             if (model !== "leulit.weight_and_balance") return;
             
+            console.log("Weight & Balance mounted - initial draw");
             setTimeout(() => {
                 const data = self.props?.record?.data || {};
-                drawAll(data);
+                const wb = drawAll(data);
+                
+                // Actualizar los campos de validación en el modelo
+                if (Object.keys(wb).length > 0 && self.props?.record) {
+                    for (const [key, value] of Object.entries(wb)) {
+                        if (self.props.record.data[key] !== value) {
+                            self.props.record.data[key] = value;
+                        }
+                    }
+                }
             }, 100);
         });
-    },
 
-    async updateRecord(changes) {
-        const res = await super.updateRecord(...arguments);
-        const model = this.props?.record?.resModel;
-        if (model !== "leulit.weight_and_balance") return res;
-        
-        setTimeout(() => {
-            const data = this.props?.record?.data || {};
-            const wb = drawAll(data);
+        // onPatched se ejecuta cada vez que el componente se re-renderiza por cambios
+        onPatched(() => {
+            const model = self.props?.record?.resModel;
+            if (model !== "leulit.weight_and_balance") return;
             
-            // Actualizar los campos de validación
-            if (Object.keys(wb).length > 0 && this.props?.record?.update) {
-                this.props.record.update(wb);
-            }
-        }, 50);
-        
-        return res;
+            console.log("Weight & Balance patched - redrawing");
+            const data = self.props?.record?.data || {};
+            drawAll(data);
+        });
     },
 });
 
