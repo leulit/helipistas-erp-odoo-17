@@ -9,9 +9,9 @@
             <field name="priority" eval="1"/>
             <field name="inherit_id" ref="project_timesheet_time_control.hr_timesheet_switch_form" />
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='date_time']" position="after">
+                <!-- <xpath expr="//field[@name='date_time']" position="after">
                     <field name="unit_amount" string="Duración"/>
-                </xpath>
+                </xpath> -->
                 <xpath expr="//field[@name='date_time']" position="before">
                     <field name="employee_id" string="Empleado"/>
                     <!-- <field name="sale_order"/> TODO: No existe el campo -->

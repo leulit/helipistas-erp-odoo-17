@@ -33,5 +33,3 @@ class HrTimesheetSwitch(models.TransientModel):
     until_date = fields.Datetime(string="Hasta")
     recurrency = fields.Boolean(string="Recurrente")
     project_id = fields.Many2one('project.project', 'Project', default=_default_project_id)
-
-    
