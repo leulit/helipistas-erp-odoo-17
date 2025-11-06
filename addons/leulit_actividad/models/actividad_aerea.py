@@ -122,7 +122,7 @@ class ActividadAereaPreVueloHandler(actividad.AbstractHandler):
             o_iaa = request.env['leulit.item_actividad_aerea']
             for item in o_iaa.search([('fecha','=',request.fecha),('partner','=',request.partner),('prevista','=',False)],order="fecha ASC, inicio ASC"):
                 if item.modelo == 'leulit.vuelo':
-                    nitems = o_iaa.search([('fecha','=',item.fecha),('fin', '<=', item.inicio),('partner','=',item.partner.id),('prevista','=',False),('modelo','=','leulit.vuelo')], order="fecha ASC, inicio ASC", count=True)
+                    nitems = o_iaa.search_count([('fecha','=',item.fecha),('fin', '<=', item.inicio),('partner','=',item.partner.id),('prevista','=',False),('modelo','=','leulit.vuelo')])
                     deltapre = o_iaa.value_delta_pre if nitems == 0 else 0
                 else:
                     deltapre = 0
@@ -260,7 +260,7 @@ class CoeficienteMayoracionHandler(actividad.AbstractHandler):
             _logger.error("-AA--> CoeficienteMayoracionHandler")
             o_iaa = request.env['leulit.item_actividad_aerea']
             for item in o_iaa.search([('fecha','=',request.fecha),('partner','=',request.partner),('prevista','=',False)],order="fecha ASC, inicio ASC"):
-                nitems = o_iaa.search_count([('modelo','=','leulit.vuelo'),('fecha','=',item.fecha),('inicio', '>=', item.fin),('partner','=',item.partner.id),('prevista','=',False)], order="fecha ASC, inicio ASC")
+                nitems = o_iaa.search_count([('modelo','=','leulit.vuelo'),('fecha','=',item.fecha),('inicio', '>=', item.fin),('partner','=',item.partner.id),('prevista','=',False)])
                 coe_mayoracion = 1.5 if ((nitems >0) and item.escuela and (not item.ato)) else 1
                 item.coe_mayoracion = coe_mayoracion
             request.env.cr.commit()
@@ -336,7 +336,7 @@ class CalcularActividadAerea(actividad.AbstractHandler):
             # tiempoaa  = total                
 
             itemAA = o_aa.search([('fecha','=',request.fecha),('partner','=',request.partner)])
-            nItemsAAATO = o_iaa.search([('fecha','=',request.fecha),('partner','=',request.partner),('ato','=',True)], order="fecha ASC, inicio ASC", count=True)
+            nItemsAAATO = o_iaa.search_count([('fecha','=',request.fecha),('partner','=',request.partner),('ato','=',True)])
             datos = {
                 'fecha' : request.fecha,
                 'partner' : request.partner,
@@ -372,7 +372,7 @@ class UpdateATOActitivdadAreaHandler(actividad.AbstractHandler):
         if not request.error:
             o_iaa = request.env['leulit.item_actividad_aerea']
             o_aa = request.env['leulit.actividad_aerea']  
-            nItemsAAATO = o_iaa.search([('fecha','=',request.fecha),('partner','=',request.partner),('ato','=',True)], order="fecha ASC, inicio ASC", count=True)
+            nItemsAAATO = o_iaa.search_count([('fecha','=',request.fecha),('partner','=',request.partner),('ato','=',True)])
             o_aa.search([('fecha','=',request.fecha),('partner','=',request.partner)]).write({'ato':True if nItemsAAATO > 0 else False})
             request.env.cr.commit()
         return super().handle(request)
@@ -412,7 +412,7 @@ class DiasTrabajadosMesHandler(actividad.AbstractHandler):
             _logger.error("-AA--> DiasTrabajadosMesHandler")        
             fechasMonth = utilitylib.startEndMonth( objfecha = request.fecha )
             for item in request.env['leulit.actividad_aerea'].search([('fecha','>=',request.fecha), ('fecha','<=',fechasMonth['endmonth']), ('partner','=',request.partner)]):
-                numitems = request.env['leulit.actividad_aerea'].search([('fecha','>=',fechasMonth['startmonth']), ('fecha','<=',item.fecha), ('partner','=',request.partner)], count=True)  
+                numitems = request.env['leulit.actividad_aerea'].search_count([('fecha','>=',fechasMonth['startmonth']), ('fecha','<=',item.fecha), ('partner','=',request.partner)])
                 item.dias_trabajados_mes = numitems
             request.env.cr.commit()
             request.dias_trabajados_mes = numitems          
