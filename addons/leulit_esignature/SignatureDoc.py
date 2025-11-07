@@ -385,55 +385,50 @@ class SignatureDoc(models.Model):
             self.env['leulit_signaturedoc'].with_context(context).sudo().checksignatureRef()
 
 
-    def checksignatureRef(self, *args, **kwargs):
+    def checksignatureRef(self, datos_firma=None):
         result = False
         error = False
         errMsg = ""
         
         _logger.info("=== checksignatureRef DEBUG ===")
-        _logger.info(f"args recibidos: {args}")
-        _logger.info(f"kwargs recibidos: {kwargs}")
-        _logger.info(f"context: {self._context}")
+        _logger.info(f"datos_firma recibido: {datos_firma}")
+        _logger.info(f"tipo: {type(datos_firma)}")
         
-        datos = None
+        # Los datos vienen desde Flutter como primer argumento
+        # Estructura: datos_firma = {'otp': '...', 'notp': '...', 'modelo': '...', 'idmodelo': '...'}
+        if not datos_firma or not isinstance(datos_firma, dict):
+            # Intentar desde contexto (compatibilidad con versión antigua)
+            datos = self._context.get('args', [])
+            _logger.info(f"Intentando desde context args: {datos}")
+            if not datos or not isinstance(datos, dict):
+                return {
+                    'valid': False,
+                    'error': True,
+                    'errmsg': 'Parámetros inválidos - se esperaba un diccionario con otp, notp, modelo, idmodelo',
+                }
+        else:
+            datos = datos_firma
         
-        # Opción 1: Los datos vienen como primer argumento posicional
-        if args and len(args) > 0:
-            if isinstance(args[0], dict):
-                datos = args[0]
-                _logger.info(f"Datos extraídos de args[0]: {datos}")
-        
-        # Opción 2: Los datos vienen en kwargs
-        if not datos and kwargs:
-            # Puede venir como kwargs directos o dentro de un diccionario
-            if all(key in kwargs for key in ['otp', 'notp', 'modelo', 'idmodelo']):
-                datos = kwargs
-                _logger.info(f"Datos extraídos de kwargs: {datos}")
-        
-        # Opción 3: Intentar desde contexto (compatibilidad con versión antigua)
-        if not datos:
-            context_args = self._context.get('args', [])
-            _logger.info(f"context_args: {context_args}")
-            if isinstance(context_args, dict):
-                datos = context_args
-            elif isinstance(context_args, list) and len(context_args) > 0:
-                datos = context_args[0] if isinstance(context_args[0], dict) else {}
-        
-        if not datos or not isinstance(datos, dict):
-            _logger.error(f"No se pudieron obtener datos válidos. datos={datos}")
-            return {
-                'valid': False,
-                'error': True,
-                'errmsg': f'Parámetros inválidos - datos recibidos: args={args}, kwargs={kwargs}',
-            }
+        _logger.info(f"Datos a procesar: {datos}")
         
         # Validar que tenemos los campos necesarios
         if not all(key in datos for key in ['otp', 'notp', 'modelo', 'idmodelo']):
-            _logger.error(f"Faltan campos requeridos en datos: {datos}")
+            _logger.error(f"Faltan campos requeridos. Datos: {datos}")
             return {
                 'valid': False,
                 'error': True,
-                'errmsg': f'Faltan parámetros requeridos. Datos recibidos: {list(datos.keys())}',
+                'errmsg': f'Faltan parámetros requeridos. Recibidos: {list(datos.keys())}',
+            }
+        
+        # Convertir idmodelo a int si viene como string
+        try:
+            idmodelo = int(datos['idmodelo'])
+        except (ValueError, TypeError):
+            _logger.error(f"idmodelo inválido: {datos['idmodelo']}")
+            return {
+                'valid': False,
+                'error': True,
+                'errmsg': f'idmodelo debe ser un número',
             }
         
         codigo = datos['otp']
@@ -441,8 +436,8 @@ class SignatureDoc(models.Model):
         valid = False
         
         if result:
-            for item in self.env[datos['modelo']].search([('id','=',datos['idmodelo'])]):
-                esignature = self.buildSignature(datos['modelo'], datos['idmodelo'], codigo)
+            for item in self.env[datos['modelo']].search([('id','=',idmodelo)]):
+                esignature = self.buildSignature(datos['modelo'], idmodelo, codigo)
                 item.buildPdfSigned(datos, esignature)
             valid = True
         
