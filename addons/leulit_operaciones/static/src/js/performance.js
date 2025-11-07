@@ -210,6 +210,13 @@ patch(FormRenderer.prototype, {
                 canvas.id = canvasId;
                 canvas.width = width;
                 canvas.height = height;
+                
+                // Estilo para centrar y hacer responsive
+                canvas.style.maxWidth = "100%";
+                canvas.style.height = "auto";
+                canvas.style.display = "block";
+                canvas.style.margin = "0 auto";
+                
                 div.appendChild(canvas);
                 
                 // Cargar imagen
