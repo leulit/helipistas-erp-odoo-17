@@ -292,13 +292,20 @@ patch(FormController.prototype, {
 
         onMounted(() => {
             console.log("Performance controller mounted");
+            
+            // Esperar a que el DOM esté listo
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('.calcular_button');
+                console.log(`Found ${buttons.length} calcular buttons in DOM`);
+                buttons.forEach((btn, idx) => {
+                    console.log(`Button ${idx}:`, btn.className, btn.textContent?.trim());
+                });
+            }, 500);
 
             // Event handler para el botón "Calcular"
             clickHandler = (ev) => {
-                // Log para debugging - ver todos los clicks
-                if (ev.target.classList && ev.target.classList.contains("btn")) {
-                    console.log("Button clicked:", ev.target.className, ev.target.textContent?.trim());
-                }
+                // Log TODOS los clicks para debugging
+                console.log("Click detected on:", ev.target.tagName, ev.target.className);
                 
                 // Intentar encontrar el botón de varias formas
                 let btn = null;
