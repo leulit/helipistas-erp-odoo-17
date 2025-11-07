@@ -152,9 +152,6 @@ class SignatureDoc(models.Model):
 
     def allPendienteFirmaOdoo(self):
         import json
-        args = self._context.get('args',[])
-        params = args['params']
-        #modelo = params['modelo']
         jsonitems = []
         notp = self.env.user.get_otp()
         items = self.env['leulit.maintenance_boroscopia'].getAllPendientesFirma()
