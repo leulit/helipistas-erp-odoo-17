@@ -222,19 +222,28 @@ patch(FormRenderer.prototype, {
             // Inicializar inmediatamente
             setTimeout(initializeCanvas, 100);
             
-            // Observar cambios en el DOM para detectar cuando aparecen los divs de la segunda pestaña
+            // Capturar clicks en pestañas del notebook para reinicializar canvas
+            const notebookClickHandler = (ev) => {
+                const navLink = ev.target.closest('.nav-link');
+                if (navLink && navLink.closest('.o_notebook_headers')) {
+                    console.log("Notebook tab clicked, initializing canvas...");
+                    setTimeout(initializeCanvas, 100);
+                }
+            };
+            
+            // Registrar listener para clicks en pestañas
+            document.addEventListener('click', notebookClickHandler, true);
+            
+            // También observar cambios en atributos (class) para detectar cambios de pestaña activa
             const observer = new MutationObserver((mutations) => {
                 for (const mutation of mutations) {
-                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                        // Verificar si se han añadido divs de canvas
-                        for (const node of mutation.addedNodes) {
-                            if (node.nodeType === 1) { // Element node
-                                const divs = node.querySelectorAll ? node.querySelectorAll('[id$="_div"]') : [];
-                                if (divs.length > 0 || (node.id && node.id.endsWith('_div'))) {
-                                    console.log("New canvas div detected, initializing...");
-                                    setTimeout(initializeCanvas, 50);
-                                    return;
-                                }
+                    if (mutation.type === 'attributes' && 
+                        (mutation.attributeName === 'class' || mutation.attributeName === 'style')) {
+                        const target = mutation.target;
+                        if (target.classList && target.classList.contains('tab-pane')) {
+                            if (target.classList.contains('active')) {
+                                console.log("Tab pane became active, initializing canvas...");
+                                setTimeout(initializeCanvas, 50);
                             }
                         }
                     }
@@ -244,8 +253,18 @@ patch(FormRenderer.prototype, {
             // Observar el formulario completo
             const form = document.querySelector('.o_form_view');
             if (form) {
-                observer.observe(form, { childList: true, subtree: true });
+                observer.observe(form, { 
+                    attributes: true, 
+                    attributeFilter: ['class', 'style'],
+                    subtree: true 
+                });
             }
+            
+            // Cleanup al desmontar
+            onWillUnmount(() => {
+                document.removeEventListener('click', notebookClickHandler, true);
+                observer.disconnect();
+            });
         });
     },
 });
