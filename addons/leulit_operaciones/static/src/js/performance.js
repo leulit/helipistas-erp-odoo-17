@@ -326,6 +326,24 @@ patch(FormController.prototype, {
                 const p = d.peso;
                 
                 console.log(`=== CALCULANDO === peso: ${p}, temperatura: ${t}`);
+                
+                // Debug: verificar qué canvas están disponibles
+                console.log("Canvas disponibles:", {
+                    r22_in: !!el(K.canvas_r22_in),
+                    r22_out: !!el(K.canvas_r22_out),
+                    r22_2_in: !!el(K.canvas_r22_2_in),
+                    r22_2_out: !!el(K.canvas_r22_2_out),
+                    cabri_in: !!el(K.canvas_cabri_in),
+                    cabri_out: !!el(K.canvas_cabri_out),
+                    r44_in: !!el(K.canvas_r44_in),
+                    r44_out: !!el(K.canvas_r44_out),
+                    r44_2_in: !!el(K.canvas_r44_2_in),
+                    r44_2_out: !!el(K.canvas_r44_2_out),
+                    ec_in: !!el(K.canvas_ec_in),
+                    ec_out: !!el(K.canvas_ec_out),
+                    hil_in: !!el(K.canvas_hil_in),
+                    hil_out: !!el(K.canvas_hil_out),
+                });
 
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
                     const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
