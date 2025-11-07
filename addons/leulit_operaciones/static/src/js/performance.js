@@ -261,18 +261,6 @@ patch(FormRenderer.prototype, {
             // Inicializar inmediatamente
             setTimeout(() => {
                 initializeCanvas();
-                
-                // Auto-calcular si ya tiene datos
-                const data = self.props?.record?.data;
-                if (data && data.peso && data.temperatura) {
-                    console.log("Auto-calculating on mount - peso:", data.peso, "temperatura:", data.temperatura);
-                    setTimeout(() => {
-                        const calcButton = document.querySelector('button[name="calcular_performance"]');
-                        if (calcButton) {
-                            calcButton.click();
-                        }
-                    }, 500);
-                }
             }, 100);
             
             // Capturar clicks en pestañas del notebook para reinicializar canvas
@@ -341,7 +329,7 @@ patch(FormController.prototype, {
         onMounted(() => {
             console.log("Performance controller mounted");
 
-            // Función de cálculo
+            // Función de cálculo (ahora declarada antes para poder usarla en auto-cálculo)
             const doCalculation = () => {
                 const d = self.model?.root?.data || {};
                 const t = d.temperatura;
@@ -486,6 +474,15 @@ patch(FormController.prototype, {
             }, 300);
             
             console.log("All button listeners configured");
+            
+            // AUTO-CALCULAR si ya tiene datos al abrir el formulario
+            setTimeout(() => {
+                const data = self.model?.root?.data;
+                if (data && data.peso && data.temperatura) {
+                    console.log("🎯 AUTO-CALCULATING on mount - peso:", data.peso, "temperatura:", data.temperatura);
+                    doCalculation();
+                }
+            }, 800); // Dar tiempo para que los canvas se carguen completamente
         });
 
         onWillUnmount(() => {
