@@ -1,0 +1,11 @@
+/* Weight and Balance - CG Indicator Fields */
+.o_field_widget.wb_cg_indicator input {
+    font-weight: bold !important;
+    text-align: center !important;
+}
+
+/* Asegurar que los campos readonly puedan tener background-color personalizado */
+.o_field_widget.wb_cg_indicator input[readonly] {
+    background-color: inherit !important;
+    opacity: 1 !important;
+}

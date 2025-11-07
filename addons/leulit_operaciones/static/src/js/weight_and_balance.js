@@ -167,13 +167,27 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
         landing: { red: "magenta", green: "mediumseagreen" } 
     };
     
-    // Buscar el input por name attribute
-    const input = document.querySelector(`input[name='${tipo1}_gw_${tipo2}_arm']`);
+    // Buscar el input de múltiples formas para asegurar que lo encontramos
+    const fieldName = `${tipo1}_gw_${tipo2}_arm`;
+    let input = document.querySelector(`input[name='${fieldName}']`);
+    
+    // Si no lo encuentra, buscar por el div.o_field_widget que contiene ese campo
+    if (!input) {
+        const fieldDiv = document.querySelector(`div.o_field_widget[name='${fieldName}']`);
+        if (fieldDiv) {
+            input = fieldDiv.querySelector('input');
+        }
+    }
+    
+    // Aplicar el estilo si encontramos el input
     if (input) { 
         const bgColor = inside ? colors[tipo1].green : colors[tipo1].red;
         input.style.setProperty('background-color', bgColor, 'important');
         input.style.setProperty('color', '#fff', 'important');
         input.style.fontWeight = 'bold';
+        console.log(`Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
+    } else {
+        console.warn(`Could not find input for field: ${fieldName}`);
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);

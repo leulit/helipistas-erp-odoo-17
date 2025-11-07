@@ -51,6 +51,7 @@
     "css": [],
     'assets': {
         'web.assets_backend': [
+            'leulit_operaciones/static/src/css/weight_and_balance.css',
             'leulit_operaciones/static/src/js/gmap_aerovia.js',
             'leulit_operaciones/static/src/js/gmap_ruta.js',
             'leulit_operaciones/static/src/js/weight_and_balance.js',
