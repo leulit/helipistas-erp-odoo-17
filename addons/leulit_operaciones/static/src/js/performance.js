@@ -53,20 +53,16 @@ function startDraw(divPrefix, inSpec, outSpec, src_in, src_out) {
 }
 
 function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
-    console.log('🎨 paintPoint llamado:', { canvasId, peso, altura });
     const c = el(canvasId); 
     if (!c) {
-        console.warn('❌ Canvas no encontrado:', canvasId);
         return;
     }
-    console.log('✅ Canvas encontrado:', canvasId);
     
     const ctx = c.getContext("2d");
     const img = new Image(); 
     img.src = bgSrc;
     
     img.onload = () => {
-        console.log('🖼️ Imagen cargada, dibujando punto en', canvasId);
         // Redibujar la imagen de fondo
         ctx.clearRect(0, 0, c.width, c.height);
         ctx.drawImage(img, 0, 0);
@@ -78,8 +74,6 @@ function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
         const originY = y0 + imgH;
         const pointX = originX + peso;
         const pointY = originY + altura;
-        
-        console.log('📍 Dibujando punto en:', { pointX, pointY, originX, originY });
         
         // Dibujar el punto
         ctx.save();
@@ -321,11 +315,9 @@ patch(FormController.prototype, {
         onMounted(() => {
             // Función de cálculo (ahora declarada antes para poder usarla en auto-cálculo)
             const doCalculation = () => {
-                console.log('🔵 doCalculation EJECUTADO');
                 const d = self.model?.root?.data || {};
                 const t = d.temperatura;
                 const p = d.peso;
-                console.log('📊 Datos:', { temperatura: t, peso: p });
 
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
                     const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
@@ -386,7 +378,6 @@ patch(FormController.prototype, {
             // ESTRATEGIA AGRESIVA: Interceptar TODOS los clicks en el form
             const formElement = document.querySelector('.o_form_view');
             if (formElement) {
-                console.log('✅ Form element encontrado, registrando listener');
                 formElement.addEventListener('click', (ev) => {
                     // Buscar si el click fue en o cerca del botón calcular
                     const target = ev.target;
@@ -394,15 +385,7 @@ patch(FormController.prototype, {
                     const inButton = target.closest('.calcular_button');
                     const isCalcButton = target.getAttribute?.('name') === 'dummy_calcular';
                     
-                    console.log('🖱️ Click en form:', {
-                        tagName: target.tagName,
-                        classes: target.className,
-                        name: target.getAttribute?.('name'),
-                        isButton, inButton, isCalcButton
-                    });
-                    
                     if (isButton || inButton || isCalcButton) {
-                        console.log('🎯 CLICK EN BOTON CALCULAR DETECTADO');
                         ev.preventDefault();
                         ev.stopPropagation();
                         ev.stopImmediatePropagation();
@@ -410,21 +393,15 @@ patch(FormController.prototype, {
                         return false;
                     }
                 }, true); // Fase de captura - antes que nadie
-            } else {
-                console.warn('❌ Form element NO encontrado');
             }
             
             // PLAN B: También intentar con el botón directamente después de que se renderice
             setTimeout(() => {
                 const buttons = document.querySelectorAll('.calcular_button, button[name="dummy_calcular"]');
-                console.log(`🔍 Buscando botones calcular... encontrados: ${buttons.length}`);
                 
                 buttons.forEach((btn, idx) => {
-                    console.log(`   Botón ${idx}:`, btn.tagName, btn.className, btn.getAttribute('name'));
-                    
                     // Triple asignación por las dudas
                     btn.onclick = (ev) => {
-                        console.log('🟢 onclick disparado en botón', idx);
                         ev.preventDefault();
                         ev.stopPropagation();
                         doCalculation();
@@ -432,14 +409,12 @@ patch(FormController.prototype, {
                     };
                     
                     btn.addEventListener('click', (ev) => {
-                        console.log('🟢 addEventListener disparado en botón', idx);
                         ev.preventDefault();
                         ev.stopPropagation();
                         doCalculation();
                     }, true);
                     
                     btn.addEventListener('mousedown', (ev) => {
-                        console.log('🟡 mousedown en botón', idx);
                         ev.preventDefault();
                     });
                 });
