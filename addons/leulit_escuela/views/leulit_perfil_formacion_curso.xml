@@ -10,7 +10,7 @@
                 <form string="curso_master">
                     <field name="is_template"  invisible="1"/>
                     <group col="2">
-                        <field name="descripcion" widget="keyboard_disabled"/>
+                        <field name="descripcion" readonly="1"/>
                         <field name="curso" string="Curso" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                         <field name="periodicidad_dy" string="Periodicidad DY"/>
                         <field name="marge_dy"/>

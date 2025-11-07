@@ -11,7 +11,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -49,7 +49,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -87,7 +87,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -125,7 +125,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -163,7 +163,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -201,7 +201,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>
@@ -239,7 +239,7 @@
                     <group class="d-flex align-items-center">
                         <group col="2" colspan="2">
                             <group>
-                                <field name="peso" widget="keyboard_disabled"/>
+                                <field name="peso" readonly="1"/>
                             </group>
                             <group>
                                 <field name="temperatura"/>

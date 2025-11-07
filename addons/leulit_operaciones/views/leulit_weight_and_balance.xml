@@ -41,19 +41,19 @@
                         <tr>
                            <td>Basic empty mass</td>
                            <td>
-                              <field widget="keyboard_disabled" name="emptyweight" nolabel="1" />
+                              <field readonly="1" name="emptyweight" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="emptyweight_long_arm" nolabel="1"/>
+                              <field readonly="1" name="emptyweight_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="emptyweight_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="emptyweight_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="emptyweight_long_moment" nolabel="1"/>
+                              <field readonly="1" name="emptyweight_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="emptyweight_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="emptyweight_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -62,16 +62,16 @@
                               <field class="wb_field" name="frs" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frs_long_arm" nolabel="1"/>
+                              <field readonly="1" name="frs_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frs_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="frs_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frs_long_moment" nolabel="1"/>
+                              <field readonly="1" name="frs_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frs_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="frs_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -80,16 +80,16 @@
                               <field class="wb_field" name="fls" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fls_long_arm" nolabel="1"/>
+                              <field readonly="1" name="fls_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fls_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="fls_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fls_long_moment" nolabel="1"/>
+                              <field readonly="1" name="fls_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fls_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="fls_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2']))" >
@@ -98,16 +98,16 @@
                               <field class="wb_field" name="aftrp" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftrp_long_arm" nolabel="1"/>
+                              <field readonly="1" name="aftrp_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftrp_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="aftrp_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftrp_long_moment" nolabel="1"/>
+                              <field readonly="1" name="aftrp_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftrp_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="aftrp_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'CABRI G2']))" >
@@ -116,16 +116,16 @@
                               <field class="wb_field" name="aftlp" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftlp_long_arm" nolabel="1"/>
+                              <field readonly="1" name="aftlp_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftlp_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="aftlp_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftlp_long_moment" nolabel="1"/>
+                              <field readonly="1" name="aftlp_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftlp_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="aftlp_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -134,16 +134,16 @@
                               <field class="wb_field" name="aftcp" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftcp_long_arm" nolabel="1"/>
+                              <field readonly="1" name="aftcp_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftcp_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="aftcp_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftcp_long_moment" nolabel="1"/>
+                              <field readonly="1" name="aftcp_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aftcp_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="aftcp_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'EC120B']))" >
@@ -152,16 +152,16 @@
                               <field class="wb_field" name="front_baggage" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="front_baggage_long_arm" nolabel="1"/>
+                              <field readonly="1" name="front_baggage_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="front_baggage_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="front_baggage_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="front_baggage_long_moment" nolabel="1"/>
+                              <field readonly="1" name="front_baggage_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="front_baggage_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="front_baggage_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'EC120B']))" >
@@ -170,16 +170,16 @@
                               <field class="wb_field" name="main_baggage" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="main_baggage_long_arm" nolabel="1"/>
+                              <field readonly="1" name="main_baggage_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="main_baggage_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="main_baggage_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="main_baggage_long_moment" nolabel="1"/>
+                              <field readonly="1" name="main_baggage_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="main_baggage_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="main_baggage_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -188,16 +188,16 @@
                               <field class="wb_field" name="baggage_zonac" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonac_long_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonac_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonac_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonac_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonac_long_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonac_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonac_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonac_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -206,16 +206,16 @@
                               <field class="wb_field" name="baggage_zonad" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonad_long_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonad_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonad_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonad_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonad_long_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonad_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_zonad_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_zonad_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']))" >
@@ -224,16 +224,16 @@
                               <field class="wb_field" name="bufrs" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufrs_long_arm" nolabel="1"/>
+                              <field readonly="1" name="bufrs_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufrs_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="bufrs_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufrs_long_moment" nolabel="1"/>
+                              <field readonly="1" name="bufrs_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufrs_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="bufrs_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']))" >
@@ -242,16 +242,16 @@
                               <field class="wb_field" name="bufls" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufls_long_arm" nolabel="1"/>
+                              <field readonly="1" name="bufls_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufls_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="bufls_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufls_long_moment" nolabel="1"/>
+                              <field readonly="1" name="bufls_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="bufls_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="bufls_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']))" >
@@ -260,16 +260,16 @@
                               <field class="wb_field" name="buaftrs" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftrs_long_arm" nolabel="1"/>
+                              <field readonly="1" name="buaftrs_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftrs_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="buaftrs_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftrs_long_moment" nolabel="1"/>
+                              <field readonly="1" name="buaftrs_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftrs_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="buaftrs_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']))" >
@@ -278,16 +278,16 @@
                               <field class="wb_field" name="buaftls" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftls_long_arm" nolabel="1"/>
+                              <field readonly="1" name="buaftls_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftls_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="buaftls_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftls_long_moment" nolabel="1"/>
+                              <field readonly="1" name="buaftls_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="buaftls_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="buaftls_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -296,16 +296,16 @@
                               <field class="wb_field" name="forward_right_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_right_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="forward_right_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_right_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="forward_right_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_right_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="forward_right_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_right_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="forward_right_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -314,16 +314,16 @@
                               <field class="wb_field" name="forward_left_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_left_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="forward_left_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_left_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="forward_left_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_left_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="forward_left_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="forward_left_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="forward_left_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']))" >
@@ -332,16 +332,16 @@
                               <field class="wb_field" name="aft_right_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_right_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="aft_right_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_right_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="aft_right_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_right_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="aft_right_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_right_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="aft_right_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']))" >
@@ -350,16 +350,16 @@
                               <field class="wb_field" name="aft_left_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_left_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="aft_left_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_left_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="aft_left_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_left_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="aft_left_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="aft_left_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="aft_left_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -368,16 +368,16 @@
                               <field class="wb_field" name="sliding_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="sliding_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="sliding_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="sliding_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="sliding_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="sliding_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="sliding_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="sliding_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="sliding_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -386,16 +386,16 @@
                               <field class="wb_field" name="rear_cargo_door" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rear_cargo_door_long_arm" nolabel="1"/>
+                              <field readonly="1" name="rear_cargo_door_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rear_cargo_door_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="rear_cargo_door_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rear_cargo_door_long_moment" nolabel="1"/>
+                              <field readonly="1" name="rear_cargo_door_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rear_cargo_door_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="rear_cargo_door_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (cyclic == 0))" >
@@ -404,16 +404,16 @@
                               <field class="wb_field" name="cyclic" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cyclic_long_arm" nolabel="1"/>
+                              <field readonly="1" name="cyclic_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cyclic_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="cyclic_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cyclic_long_moment" nolabel="1"/>
+                              <field readonly="1" name="cyclic_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cyclic_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="cyclic_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (collective == 0))" >
@@ -422,16 +422,16 @@
                               <field class="wb_field" name="collective" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="collective_long_arm" nolabel="1"/>
+                              <field readonly="1" name="collective_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="collective_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="collective_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="collective_long_moment" nolabel="1"/>
+                              <field readonly="1" name="collective_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="collective_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="collective_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (pedals == 0))" >
@@ -440,16 +440,16 @@
                               <field class="wb_field" name="pedals" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="pedals_long_arm" nolabel="1"/>
+                              <field readonly="1" name="pedals_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="pedals_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="pedals_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="pedals_long_moment" nolabel="1"/>
+                              <field readonly="1" name="pedals_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="pedals_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="pedals_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (dualcontrols == 0))" >
@@ -458,16 +458,16 @@
                               <field class="wb_field" name="dualcontrols" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_long_arm" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_long_moment" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (items_on_mount_bar_right_long_arm == 0))" >
@@ -476,16 +476,16 @@
                               <field class="wb_field" name="items_on_mount_bar_right" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_right_long_arm" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_right_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_right_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_right_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_right_long_moment" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_right_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_right_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_right_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['EC120B', 'CABRI G2']) or (items_on_mount_bar_left_long_arm == 0))" >
@@ -494,16 +494,16 @@
                               <field class="wb_field" name="items_on_mount_bar_left" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_left_long_arm" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_left_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_left_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_left_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_left_long_moment" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_left_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="items_on_mount_bar_left_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="items_on_mount_bar_left_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']) or (tyler_long_arm != 0))" >
@@ -512,16 +512,16 @@
                               <field class="wb_field" name="cineflex" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cineflex_long_arm" nolabel="1"/>
+                              <field readonly="1" name="cineflex_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cineflex_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="cineflex_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cineflex_long_moment" nolabel="1"/>
+                              <field readonly="1" name="cineflex_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="cineflex_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="cineflex_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']) or (tyler_long_arm == 0))" >
@@ -530,16 +530,16 @@
                               <field class="wb_field" name="tyler" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="tyler_long_arm" nolabel="1"/>
+                              <field readonly="1" name="tyler_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="tyler_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="tyler_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="tyler_long_moment" nolabel="1"/>
+                              <field readonly="1" name="tyler_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="tyler_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="tyler_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'EC120B', 'CABRI G2']) or (gss_long_arm == 0))" >
@@ -548,16 +548,16 @@
                               <field class="wb_field" name="gss" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gss_long_arm" nolabel="1"/>
+                              <field readonly="1" name="gss_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gss_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="gss_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gss_long_moment" nolabel="1"/>
+                              <field readonly="1" name="gss_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gss_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="gss_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo != 'EC120B'))" >
@@ -566,16 +566,16 @@
                               <field class="wb_field" name="af120_camera_mount" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="af120_camera_mount_long_arm" nolabel="1"/>
+                              <field readonly="1" name="af120_camera_mount_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="af120_camera_mount_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="af120_camera_mount_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="af120_camera_mount_long_moment" nolabel="1"/>
+                              <field readonly="1" name="af120_camera_mount_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="af120_camera_mount_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="af120_camera_mount_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -584,16 +584,16 @@
                               <field class="wb_field" name="dualcontrols" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_long_arm" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_long_moment" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="dualcontrols_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="dualcontrols_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -602,16 +602,16 @@
                               <field class="wb_field" name="frontseat" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frontseat_long_arm" nolabel="1"/>
+                              <field readonly="1" name="frontseat_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frontseat_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="frontseat_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frontseat_long_moment" nolabel="1"/>
+                              <field readonly="1" name="frontseat_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="frontseat_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="frontseat_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -620,16 +620,16 @@
                               <field class="wb_field" name="rearseat" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rearseat_long_arm" nolabel="1"/>
+                              <field readonly="1" name="rearseat_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rearseat_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="rearseat_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rearseat_long_moment" nolabel="1"/>
+                              <field readonly="1" name="rearseat_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="rearseat_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="rearseat_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['R22', 'R44', 'CABRI G2']))" >
@@ -638,16 +638,16 @@
                               <field class="wb_field" name="baggage_noseats" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_noseats_long_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_noseats_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_noseats_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="baggage_noseats_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_noseats_long_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_noseats_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="baggage_noseats_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="baggage_noseats_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_matricula != 'EC-HIL'))" >
@@ -656,16 +656,16 @@
                               <field class="wb_field" name="carga_externa" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_long_arm" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_long_moment" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_matricula != 'EC-HIL'))" >
@@ -674,16 +674,16 @@
                               <field class="wb_field" name="gancho_carga" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_long_arm" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_long_moment" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
@@ -692,16 +692,16 @@
                               <field class="wb_field" name="carga_externa" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_long_arm" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_long_moment" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="carga_externa_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="carga_externa_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_tipo in ['CABRI G2', 'EC120B']))" >
@@ -710,16 +710,16 @@
                               <field class="wb_field" name="gancho_carga" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_long_arm" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_long_moment" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="gancho_carga_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="gancho_carga_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr  invisible="((helicoptero_matricula != 'EC-HIL'))" >
@@ -728,16 +728,16 @@
                               <field class="wb_field" name="espejo" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="espejo_long_arm" nolabel="1"/>
+                              <field readonly="1" name="espejo_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="espejo_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="espejo_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="espejo_long_moment" nolabel="1"/>
+                              <field readonly="1" name="espejo_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="espejo_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="espejo_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -752,10 +752,10 @@
                               <field class="wb_field" name="misc1_lat_arm" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="misc1_long_moment" nolabel="1"/>
+                              <field readonly="1" name="misc1_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="misc1_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="misc1_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -770,46 +770,46 @@
                               <field class="wb_field" name="misc2_lat_arm" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="misc2_long_moment" nolabel="1"/>
+                              <field readonly="1" name="misc2_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="misc2_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="misc2_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
                            <td>Mass without fuel</td>
                            <td>
-                              <field widget="keyboard_disabled" name="maswithoutfuel" nolabel="1" />
+                              <field readonly="1" name="maswithoutfuel" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="maswithoutfuel_long_arm" nolabel="1"/>
+                              <field readonly="1" name="maswithoutfuel_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="maswithoutfuel_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="maswithoutfuel_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="maswithoutfuel_long_moment" nolabel="1"/>
+                              <field readonly="1" name="maswithoutfuel_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="maswithoutfuel_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="maswithoutfuel_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
                            <td>Fuel mass take off</td>
                            <td>
-                              <field widget="keyboard_disabled" name="fueltakeoff" nolabel="1" />
+                              <field readonly="1" name="fueltakeoff" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fueltakeoff_long_arm" nolabel="1"/>
+                              <field readonly="1" name="fueltakeoff_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fueltakeoff_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="fueltakeoff_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fueltakeoff_long_moment" nolabel="1"/>
+                              <field readonly="1" name="fueltakeoff_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fueltakeoff_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="fueltakeoff_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -817,37 +817,37 @@
                               <b>Take off gross mass and CG ***</b>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="takeoff_gw" nolabel="1" />
+                              <field readonly="1" name="takeoff_gw" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="takeoff_gw_long_arm" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="takeoff_gw_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="takeoff_gw_long_moment" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="takeoff_gw_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
                            <td>Estimated landing fuel mass</td>
                            <td>
-                              <field widget="keyboard_disabled" name="fuellanding" nolabel="1"/>
+                              <field readonly="1" name="fuellanding" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fuellanding_long_arm" nolabel="1"/>
+                              <field readonly="1" name="fuellanding_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fuellanding_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="fuellanding_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fuellanding_long_moment" nolabel="1"/>
+                              <field readonly="1" name="fuellanding_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="fuellanding_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="fuellanding_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                         <tr>
@@ -855,19 +855,19 @@
                               <b>Estimated landing gross mass and CG ***</b>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="landing_gw" nolabel="1" />
+                              <field readonly="1" name="landing_gw" nolabel="1" />
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="landing_gw_long_arm" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="landing_gw_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_lat_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="landing_gw_long_moment" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_long_moment" nolabel="1"/>
                            </td>
                            <td>
-                              <field widget="keyboard_disabled" name="landing_gw_lat_moment" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_lat_moment" nolabel="1"/>
                            </td>
                         </tr>
                      </tbody>
