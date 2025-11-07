@@ -339,21 +339,27 @@ patch(FormRenderer.prototype, {
             const model = self.props?.record?.resModel;
             if (model !== "leulit.weight_and_balance") return;
             
-            // Esperar a que el DOM esté completamente renderizado Y los datos cargados
-            setTimeout(async () => {
+            // Esperar múltiples ciclos para asegurar que TODOS los campos relacionados estén cargados
+            const tryDrawCanvas = (attempt = 1) => {
+                const maxAttempts = 5;
+                
                 // Verificar que tenemos un record válido con datos
                 if (!self.props?.record?.data) {
-                    console.warn("Weight&Balance: No hay datos del record disponibles en onMounted");
+                    if (attempt < maxAttempts) {
+                        setTimeout(() => tryDrawCanvas(attempt + 1), 200 * attempt);
+                    }
                     return;
                 }
                 
                 const data = self.props.record.data;
                 
                 // Debug: ver qué datos tenemos
-                console.log("Weight&Balance onMounted - datos cargados:", {
+                console.log(`Weight&Balance onMounted (intento ${attempt}) - datos cargados:`, {
                     helicoptero_tipo: data.helicoptero_tipo,
                     helicoptero_modelo: data.helicoptero_modelo,
                     helicoptero_matricula: data.helicoptero_matricula,
+                    frs: data.frs,
+                    fls: data.fls,
                     takeoff_gw: data.takeoff_gw,
                     takeoff_gw_long_arm: data.takeoff_gw_long_arm,
                     landing_gw: data.landing_gw,
@@ -362,12 +368,27 @@ patch(FormRenderer.prototype, {
                 // Asegurar que los canvas existen primero
                 ensureCanvases();
                 
-                // Dibujar SOLO si tenemos datos válidos (no todos a cero/undefined)
+                // Verificar si tenemos datos de helicóptero
                 const hasValidData = data.helicoptero_tipo || data.helicoptero_modelo;
                 if (!hasValidData) {
-                    console.warn("Weight&Balance: No hay tipo/modelo de helicóptero, esperando datos...");
+                    console.warn(`Weight&Balance: No hay tipo/modelo de helicóptero (intento ${attempt}/${maxAttempts})`);
+                    if (attempt < maxAttempts) {
+                        setTimeout(() => tryDrawCanvas(attempt + 1), 200 * attempt);
+                    }
                     return;
                 }
+                
+                // Verificar si tenemos datos calculados (los campos computados tardan en cargar)
+                const hasComputedData = data.takeoff_gw_long_arm !== undefined && data.takeoff_gw_long_arm !== false;
+                if (!hasComputedData) {
+                    console.warn(`Weight&Balance: Campos computados aún no cargados (intento ${attempt}/${maxAttempts})`);
+                    if (attempt < maxAttempts) {
+                        setTimeout(() => tryDrawCanvas(attempt + 1), 300 * attempt);
+                    }
+                    return;
+                }
+                
+                console.log("Weight&Balance: Todos los datos cargados, dibujando canvas...");
                 
                 // Dibujar los gráficos con los datos reales del formulario
                 const wb = drawAll(data);
@@ -384,9 +405,12 @@ patch(FormRenderer.prototype, {
                 
                 // Actualizar los campos de validación y canvas en el modelo
                 if (Object.keys(wb).length > 0 && self.props.record?.update) {
-                    await self.props.record.update(wb, { save: false });
+                    self.props.record.update(wb, { save: false });
                 }
-            }, 300); // Aumentar el delay para asegurar que los datos están cargados
+            };
+            
+            // Iniciar el primer intento
+            setTimeout(() => tryDrawCanvas(1), 100);
         });
 
         // onPatched se ejecuta cada vez que el componente se re-renderiza por cambios
