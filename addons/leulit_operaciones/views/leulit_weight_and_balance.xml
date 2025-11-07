@@ -886,8 +886,6 @@
                         </div>
                      </div>
                   </div>
-                  <button name="btn_save_wizard" type="object" string="Guardar" class="oe_highlight"/>
-                  <button string="Cancelar" special="cancel"/>
             </form>
          </field>
       </record>

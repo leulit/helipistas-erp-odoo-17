@@ -259,7 +259,21 @@ patch(FormRenderer.prototype, {
             };
             
             // Inicializar inmediatamente
-            setTimeout(initializeCanvas, 100);
+            setTimeout(() => {
+                initializeCanvas();
+                
+                // Auto-calcular si ya tiene datos
+                const data = self.props?.record?.data;
+                if (data && data.peso && data.temperatura) {
+                    console.log("Auto-calculating on mount - peso:", data.peso, "temperatura:", data.temperatura);
+                    setTimeout(() => {
+                        const calcButton = document.querySelector('button[name="calcular_performance"]');
+                        if (calcButton) {
+                            calcButton.click();
+                        }
+                    }, 500);
+                }
+            }, 100);
             
             // Capturar clicks en pestañas del notebook para reinicializar canvas
             notebookClickHandler = (ev) => {
