@@ -294,38 +294,12 @@ patch(FormRenderer.prototype, {
                 // Asegurar que los canvas existen primero
                 ensureCanvases();
                 
-                // Restaurar canvas guardados si existen
-                const longCanvas = document.getElementById("longcanvas");
-                const latCanvas = document.getElementById("latcanvas");
+                // Siempre dibujar los gráficos al abrir el formulario
+                const wb = drawAll(data);
                 
-                if (data.canvas_long && longCanvas) {
-                    const ctxLong = longCanvas.getContext("2d");
-                    const imgLong = new Image();
-                    imgLong.onload = function() {
-                        ctxLong.drawImage(imgLong, 0, 0);
-                    };
-                    // El campo Binary en Odoo ya viene con el prefijo data:image
-                    imgLong.src = data.canvas_long;
-                }
-                
-                if (data.canvas_lat && latCanvas) {
-                    const ctxLat = latCanvas.getContext("2d");
-                    const imgLat = new Image();
-                    imgLat.onload = function() {
-                        ctxLat.drawImage(imgLat, 0, 0);
-                    };
-                    // El campo Binary en Odoo ya viene con el prefijo data:image
-                    imgLat.src = data.canvas_lat;
-                }
-                
-                // Si no hay canvas guardados, dibujar desde cero
-                if (!data.canvas_long || !data.canvas_lat) {
-                    const wb = drawAll(data);
-                    
-                    // Actualizar los campos de validación en el modelo usando update()
-                    if (Object.keys(wb).length > 0 && self.props?.record?.update) {
-                        await self.props.record.update(wb, { save: false });
-                    }
+                // Actualizar los campos de validación en el modelo
+                if (Object.keys(wb).length > 0 && self.props?.record?.update) {
+                    await self.props.record.update(wb, { save: false });
                 }
             }, 100);
         });
