@@ -157,210 +157,66 @@ patch(FormRenderer.prototype, {
             
             console.log("Performance form mounted - initializing canvas...");
             
+            // Función auxiliar para crear un canvas con imagen
+            const createCanvas = (divId, canvasId, width, height, imgSrc) => {
+                const div = el(divId);
+                if (!div) return;
+                
+                // Si el canvas ya existe, verificar si tiene contenido
+                let canvas = el(canvasId);
+                if (canvas) {
+                    // Canvas existe, no hacer nada
+                    return;
+                }
+                
+                // Crear nuevo canvas
+                console.log(`Creating canvas: ${canvasId}`);
+                canvas = document.createElement("canvas");
+                canvas.id = canvasId;
+                canvas.width = width;
+                canvas.height = height;
+                div.appendChild(canvas);
+                
+                // Cargar imagen
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                img.onload = () => { 
+                    ctx.drawImage(img, 0, 0); 
+                    console.log(`Image loaded: ${imgSrc}`);
+                };
+                img.onerror = () => console.error(`Failed to load: ${imgSrc}`);
+                img.src = imgSrc;
+            };
+            
             // Función para inicializar canvas
             const initializeCanvas = () => {
-                console.log("Initializing canvas...");
-                
-                // Listar todos los divs disponibles
-                const allDivs = document.querySelectorAll('[id$="_div"]');
-                console.log("Available divs:", Array.from(allDivs).map(d => d.id));
-                
-                // Inicializar cada par de canvas de forma independiente
                 // EC-HIL
-                if (el(K.canvas_hil_in + "_div")) {
-                    if (!el(K.canvas_hil_in)) {
-                        console.log("Initializing EC-HIL IN canvas");
-                        const inDiv = el(K.canvas_hil_in + "_div");
-                        inDiv.innerHTML = '';
-                        const inCanvas = document.createElement("canvas");
-                        inCanvas.id = K.canvas_hil_in;
-                        inCanvas.width = 500;
-                        inCanvas.height = 725;
-                        inDiv.appendChild(inCanvas);
-                        
-                        const ctx = inCanvas.getContext("2d");
-                        const img = new Image();
-                        img.onload = () => { 
-                            ctx.drawImage(img, 0, 0); 
-                            console.log(`Image loaded: ${K.src_hil_in}`);
-                        };
-                        img.onerror = () => console.error(`Failed to load: ${K.src_hil_in}`);
-                        img.src = K.src_hil_in;
-                    }
-                }
-                if (el(K.canvas_hil_out + "_div")) {
-                    if (!el(K.canvas_hil_out)) {
-                        console.log("Initializing EC-HIL OUT canvas");
-                        const outDiv = el(K.canvas_hil_out + "_div");
-                        outDiv.innerHTML = '';
-                        const outCanvas = document.createElement("canvas");
-                        outCanvas.id = K.canvas_hil_out;
-                        outCanvas.width = 520;
-                        outCanvas.height = 770;
-                        outDiv.appendChild(outCanvas);
-                        
-                        const ctx = outCanvas.getContext("2d");
-                        const img = new Image();
-                        img.onload = () => { 
-                            ctx.drawImage(img, 0, 0); 
-                            console.log(`Image loaded: ${K.src_hil_out}`);
-                        };
-                        img.onerror = () => console.error(`Failed to load: ${K.src_hil_out}`);
-                        img.src = K.src_hil_out;
-                    }
-                }
+                createCanvas(K.canvas_hil_in + "_div", K.canvas_hil_in, 500, 725, K.src_hil_in);
+                createCanvas(K.canvas_hil_out + "_div", K.canvas_hil_out, 520, 770, K.src_hil_out);
                 
                 // EC120B
-                if (el(K.canvas_ec_in + "_div") && !el(K.canvas_ec_in)) {
-                    console.log("Initializing EC120B IN canvas");
-                    const inDiv = el(K.canvas_ec_in + "_div");
-                    inDiv.innerHTML = '';
-                    const inCanvas = document.createElement("canvas");
-                    inCanvas.id = K.canvas_ec_in;
-                    inCanvas.width = 500;
-                    inCanvas.height = 725;
-                    inDiv.appendChild(inCanvas);
-                    const ctx = inCanvas.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_ec_in}`); };
-                    img.onerror = () => console.error(`Failed to load: ${K.src_ec_in}`);
-                    img.src = K.src_ec_in;
-                }
-                if (el(K.canvas_ec_out + "_div") && !el(K.canvas_ec_out)) {
-                    console.log("Initializing EC120B OUT canvas");
-                    const outDiv = el(K.canvas_ec_out + "_div");
-                    outDiv.innerHTML = '';
-                    const outCanvas = document.createElement("canvas");
-                    outCanvas.id = K.canvas_ec_out;
-                    outCanvas.width = 520;
-                    outCanvas.height = 770;
-                    outDiv.appendChild(outCanvas);
-                    const ctx = outCanvas.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_ec_out}`); };
-                    img.onerror = () => console.error(`Failed to load: ${K.src_ec_out}`);
-                    img.src = K.src_ec_out;
-                }
+                createCanvas(K.canvas_ec_in + "_div", K.canvas_ec_in, 500, 725, K.src_ec_in);
+                createCanvas(K.canvas_ec_out + "_div", K.canvas_ec_out, 520, 770, K.src_ec_out);
                 
-                // R22 (similar para todos los demás...)
-                if (el(K.canvas_r22_in + "_div") && !el(K.canvas_r22_in)) {
-                    const inDiv = el(K.canvas_r22_in + "_div");
-                    inDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r22_in; c.width = 500; c.height = 725;
-                    inDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_in}`); };
-                    img.src = K.src_r22_in;
-                }
-                if (el(K.canvas_r22_out + "_div") && !el(K.canvas_r22_out)) {
-                    const outDiv = el(K.canvas_r22_out + "_div");
-                    outDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r22_out; c.width = 520; c.height = 770;
-                    outDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_out}`); };
-                    img.src = K.src_r22_out;
-                }
+                // R22
+                createCanvas(K.canvas_r22_in + "_div", K.canvas_r22_in, 500, 725, K.src_r22_in);
+                createCanvas(K.canvas_r22_out + "_div", K.canvas_r22_out, 520, 770, K.src_r22_out);
                 
                 // R22 II
-                if (el(K.canvas_r22_2_in + "_div") && !el(K.canvas_r22_2_in)) {
-                    const inDiv = el(K.canvas_r22_2_in + "_div");
-                    inDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r22_2_in; c.width = 500; c.height = 717;
-                    inDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_2_in}`); };
-                    img.src = K.src_r22_2_in;
-                }
-                if (el(K.canvas_r22_2_out + "_div") && !el(K.canvas_r22_2_out)) {
-                    const outDiv = el(K.canvas_r22_2_out + "_div");
-                    outDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r22_2_out; c.width = 500; c.height = 790;
-                    outDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_2_out}`); };
-                    img.src = K.src_r22_2_out;
-                }
+                createCanvas(K.canvas_r22_2_in + "_div", K.canvas_r22_2_in, 500, 717, K.src_r22_2_in);
+                createCanvas(K.canvas_r22_2_out + "_div", K.canvas_r22_2_out, 500, 790, K.src_r22_2_out);
                 
                 // R44 ASTRO
-                if (el(K.canvas_r44_in + "_div") && !el(K.canvas_r44_in)) {
-                    const inDiv = el(K.canvas_r44_in + "_div");
-                    inDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r44_in; c.width = 620; c.height = 900;
-                    inDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_in}`); };
-                    img.src = K.src_r44_in;
-                }
-                if (el(K.canvas_r44_out + "_div") && !el(K.canvas_r44_out)) {
-                    const outDiv = el(K.canvas_r44_out + "_div");
-                    outDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r44_out; c.width = 620; c.height = 900;
-                    outDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_out}`); };
-                    img.src = K.src_r44_out;
-                }
+                createCanvas(K.canvas_r44_in + "_div", K.canvas_r44_in, 620, 900, K.src_r44_in);
+                createCanvas(K.canvas_r44_out + "_div", K.canvas_r44_out, 620, 900, K.src_r44_out);
                 
                 // R44 II
-                if (el(K.canvas_r44_2_in + "_div") && !el(K.canvas_r44_2_in)) {
-                    const inDiv = el(K.canvas_r44_2_in + "_div");
-                    inDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r44_2_in; c.width = 500; c.height = 725;
-                    inDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_2_in}`); };
-                    img.src = K.src_r44_2_in;
-                }
-                if (el(K.canvas_r44_2_out + "_div") && !el(K.canvas_r44_2_out)) {
-                    const outDiv = el(K.canvas_r44_2_out + "_div");
-                    outDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_r44_2_out; c.width = 520; c.height = 770;
-                    outDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_2_out}`); };
-                    img.src = K.src_r44_2_out;
-                }
+                createCanvas(K.canvas_r44_2_in + "_div", K.canvas_r44_2_in, 500, 725, K.src_r44_2_in);
+                createCanvas(K.canvas_r44_2_out + "_div", K.canvas_r44_2_out, 520, 770, K.src_r44_2_out);
                 
                 // CABRI G2
-                if (el(K.canvas_cabri_in + "_div") && !el(K.canvas_cabri_in)) {
-                    const inDiv = el(K.canvas_cabri_in + "_div");
-                    inDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_cabri_in; c.width = 500; c.height = 725;
-                    inDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_cabri_in}`); };
-                    img.src = K.src_cabri_in;
-                }
-                if (el(K.canvas_cabri_out + "_div") && !el(K.canvas_cabri_out)) {
-                    const outDiv = el(K.canvas_cabri_out + "_div");
-                    outDiv.innerHTML = '';
-                    const c = document.createElement("canvas");
-                    c.id = K.canvas_cabri_out; c.width = 520; c.height = 770;
-                    outDiv.appendChild(c);
-                    const ctx = c.getContext("2d");
-                    const img = new Image();
-                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_cabri_out}`); };
-                    img.src = K.src_cabri_out;
-                }
+                createCanvas(K.canvas_cabri_in + "_div", K.canvas_cabri_in, 500, 725, K.src_cabri_in);
+                createCanvas(K.canvas_cabri_out + "_div", K.canvas_cabri_out, 520, 770, K.src_cabri_out);
             };
             
             // Inicializar inmediatamente
