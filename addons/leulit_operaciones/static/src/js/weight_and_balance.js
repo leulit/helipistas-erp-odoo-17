@@ -225,18 +225,14 @@ patch(Record.prototype, {
             console.log("Weight & Balance - Record updated with changes:", Object.keys(changes));
             
             // Redibujar los canvas después de actualizar el modelo
-            setTimeout(() => {
+            setTimeout(async () => {
                 const data = this.data || {};
                 const wb = drawAll(data);
                 
-                // Si hay campos de validación para actualizar
+                // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
                 if (Object.keys(wb).length > 0) {
-                    // Actualizar sin disparar onChange ni guardar
-                    for (const [key, value] of Object.entries(wb)) {
-                        if (this.data[key] !== value) {
-                            this.data[key] = value;
-                        }
-                    }
+                    // Actualizar usando update() para que se persistan los cambios
+                    await this.update(wb, { save: false });
                 }
             }, 10);
         }
@@ -255,17 +251,13 @@ patch(FormRenderer.prototype, {
             if (model !== "leulit.weight_and_balance") return;
             
             console.log("Weight & Balance mounted - initial draw");
-            setTimeout(() => {
+            setTimeout(async () => {
                 const data = self.props?.record?.data || {};
                 const wb = drawAll(data);
                 
-                // Actualizar los campos de validación en el modelo
-                if (Object.keys(wb).length > 0 && self.props?.record) {
-                    for (const [key, value] of Object.entries(wb)) {
-                        if (self.props.record.data[key] !== value) {
-                            self.props.record.data[key] = value;
-                        }
-                    }
+                // Actualizar los campos de validación en el modelo usando update()
+                if (Object.keys(wb).length > 0 && self.props?.record?.update) {
+                    await self.props.record.update(wb, { save: false });
                 }
             }, 100);
         });
@@ -284,40 +276,51 @@ patch(FormRenderer.prototype, {
 
 patch(FormController.prototype, {
     async beforeLeave() {
-        await super.beforeLeave(...arguments);
-        
+        // Primero guardar los canvas antes de salir
         try {
-            const longC = document.getElementById("longcanvas");
-            const latC = document.getElementById("latcanvas");
-            const extra = {};
-            
-            if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
-            if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
-            
-            if (Object.keys(extra).length && this.model?.root?.update) {
-                await this.model.root.update(extra);
+            const model = this.model?.root?.resModel;
+            if (model === "leulit.weight_and_balance") {
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                const extra = {};
+                
+                if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
+                if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
+                
+                if (Object.keys(extra).length && this.model?.root?.update) {
+                    console.log("Saving canvas images before leaving...");
+                    await this.model.root.update(extra, { save: true });
+                }
             }
         } catch (error) {
             console.error("Error saving canvas data:", error);
         }
+        
+        return super.beforeLeave(...arguments);
     },
 
     async saveButtonClicked(params = {}) {
+        // Guardar los canvas antes de llamar al save original
         try {
-            const longC = document.getElementById("longcanvas");
-            const latC = document.getElementById("latcanvas");
-            const extra = {};
-            
-            if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
-            if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
-            
-            if (Object.keys(extra).length && this.model?.root?.update) {
-                await this.model.root.update(extra);
+            const model = this.model?.root?.resModel;
+            if (model === "leulit.weight_and_balance") {
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                const extra = {};
+                
+                if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
+                if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
+                
+                if (Object.keys(extra).length && this.model?.root?.update) {
+                    console.log("Saving canvas images on save button...");
+                    await this.model.root.update(extra, { save: false });
+                }
             }
         } catch (error) {
             console.error("Error saving canvas data:", error);
         }
         
-        return super.saveButtonClicked(...arguments);
+        // Llamar al guardado original que guardará todo junto
+        return super.saveButtonClicked(params);
     },
 });
