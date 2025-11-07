@@ -415,7 +415,7 @@ patch(FormRenderer.prototype, {
             if (model !== "leulit.weight_and_balance") return;
             
             // Esperar múltiples ciclos para asegurar que TODOS los campos relacionados estén cargados
-            const tryDrawCanvas = (attempt = 1) => {
+            const tryDrawCanvas = async (attempt = 1) => {
                 const maxAttempts = 5;
                 
                 // Verificar que tenemos un record válido con datos
@@ -464,6 +464,28 @@ patch(FormRenderer.prototype, {
                 }
                 
                 console.log("Weight&Balance: Todos los datos cargados, dibujando canvas...");
+                
+                // FORZAR recálculo de los totales si es un registro existente
+                // El problema es que updateTotals() solo se ejecuta con @api.onchange
+                // pero si abres un registro guardado, los campos ya tienen valores
+                // y no se dispara el onchange. Solución: forzar un cambio dummy.
+                if (data.id && data.frs !== undefined) {
+                    console.log("Weight&Balance: Forzando recálculo de totales...");
+                    // Guardar el valor original
+                    const originalFrs = data.frs;
+                    // Hacer un cambio dummy para disparar onchange
+                    await self.props.record.update({ frs: originalFrs + 0.0001 }, { save: false });
+                    // Restaurar el valor original (esto dispara onchange de nuevo)
+                    await self.props.record.update({ frs: originalFrs }, { save: false });
+                    // Esperar un poco para que se completen los cálculos
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    // Actualizar los datos después del recálculo
+                    Object.assign(data, self.props.record.data);
+                    console.log("Weight&Balance: Totales recalculados:", {
+                        takeoff_gw_long_arm: data.takeoff_gw_long_arm,
+                        takeoff_gw: data.takeoff_gw
+                    });
+                }
                 
                 // Dibujar los gráficos con los datos reales del formulario
                 const wb = drawAll(data);
