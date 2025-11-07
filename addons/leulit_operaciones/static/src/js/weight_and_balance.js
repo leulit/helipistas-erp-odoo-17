@@ -280,8 +280,10 @@ patch(Record.prototype, {
                     
                     // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
                     if (Object.keys(wb).length > 0) {
-                        // Actualizar usando update() para que se persistan los cambios
-                        await this.update(wb, { save: false });
+                        // Actualizar directamente usando super.update() para evitar
+                        // reentrada en este parche (this.update llamaría de nuevo
+                        // a la función parcheada y puede provocar bucles).
+                        await super.update(wb, { save: false });
                     }
                 } finally {
                     isUpdatingCanvas = false;
