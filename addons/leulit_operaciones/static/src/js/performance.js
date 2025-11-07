@@ -156,69 +156,226 @@ patch(FormRenderer.prototype, {
             if (model !== "leulit.performance") return;
             
             console.log("Performance form mounted - initializing canvas...");
-            console.log("Checking for canvas divs...");
             
-            // Listar todos los divs disponibles
-            const allDivs = document.querySelectorAll('[id$="_div"]');
-            console.log("Available divs with _div suffix:", Array.from(allDivs).map(d => d.id));
-            
-            // Esperar un momento para que el DOM esté completamente renderizado
-            setTimeout(() => {
-                console.log("Starting canvas initialization after delay...");
+            // Función para inicializar canvas
+            const initializeCanvas = () => {
+                console.log("Initializing canvas...");
                 
-                // Inicializar canvas según el tipo de helicóptero
-                if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
-                    console.log("Initializing EC-HIL canvas");
-                    startDraw("micanvas_hil_", 
-                        { id: K.canvas_hil_in, width: 500, height: 725 }, 
-                        { id: K.canvas_hil_out, width: 520, height: 770 }, 
-                        K.src_hil_in, K.src_hil_out);
+                // Listar todos los divs disponibles
+                const allDivs = document.querySelectorAll('[id$="_div"]');
+                console.log("Available divs:", Array.from(allDivs).map(d => d.id));
+                
+                // Inicializar cada par de canvas de forma independiente
+                // EC-HIL
+                if (el(K.canvas_hil_in + "_div")) {
+                    if (!el(K.canvas_hil_in)) {
+                        console.log("Initializing EC-HIL IN canvas");
+                        const inDiv = el(K.canvas_hil_in + "_div");
+                        inDiv.innerHTML = '';
+                        const inCanvas = document.createElement("canvas");
+                        inCanvas.id = K.canvas_hil_in;
+                        inCanvas.width = 500;
+                        inCanvas.height = 725;
+                        inDiv.appendChild(inCanvas);
+                        
+                        const ctx = inCanvas.getContext("2d");
+                        const img = new Image();
+                        img.onload = () => { 
+                            ctx.drawImage(img, 0, 0); 
+                            console.log(`Image loaded: ${K.src_hil_in}`);
+                        };
+                        img.onerror = () => console.error(`Failed to load: ${K.src_hil_in}`);
+                        img.src = K.src_hil_in;
+                    }
                 }
-                if (el(K.canvas_ec_in + "_div") && el(K.canvas_ec_out + "_div")) {
-                    console.log("Initializing EC120B canvas");
-                    startDraw("micanvas_ec_", 
-                        { id: K.canvas_ec_in, width: 500, height: 725 }, 
-                        { id: K.canvas_ec_out, width: 520, height: 770 }, 
-                        K.src_ec_in, K.src_ec_out);
-                }
-                if (el(K.canvas_r44_in + "_div") && el(K.canvas_r44_out + "_div")) {
-                    console.log("Initializing R44 ASTRO canvas");
-                    startDraw("micanvas_r44_", 
-                        { id: K.canvas_r44_in, width: 620, height: 900 }, 
-                        { id: K.canvas_r44_out, width: 620, height: 900 }, 
-                        K.src_r44_in, K.src_r44_out);
-                }
-                if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) {
-                    console.log("Initializing R44 II canvas");
-                    startDraw("micanvas_r44_2_", 
-                        { id: K.canvas_r44_2_in, width: 500, height: 725 }, 
-                        { id: K.canvas_r44_2_out, width: 520, height: 770 }, 
-                        K.src_r44_2_in, K.src_r44_2_out);
-                }
-                if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) {
-                    console.log("Initializing CABRI G2 canvas");
-                    startDraw("micanvas_cabri_", 
-                        { id: K.canvas_cabri_in, width: 500, height: 725 }, 
-                        { id: K.canvas_cabri_out, width: 520, height: 770 }, 
-                        K.src_cabri_in, K.src_cabri_out);
-                }
-                if (el(K.canvas_r22_in + "_div") && el(K.canvas_r22_out + "_div")) {
-                    console.log("Initializing R22 canvas");
-                    startDraw("micanvas_r22_", 
-                        { id: K.canvas_r22_in, width: 500, height: 725 }, 
-                        { id: K.canvas_r22_out, width: 520, height: 770 }, 
-                        K.src_r22_in, K.src_r22_out);
-                }
-                if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) {
-                    console.log("Initializing R22 II canvas");
-                    startDraw("micanvas_r22_2_", 
-                        { id: K.canvas_r22_2_in, width: 500, height: 717 }, 
-                        { id: K.canvas_r22_2_out, width: 500, height: 790 }, 
-                        K.src_r22_2_in, K.src_r22_2_out);
+                if (el(K.canvas_hil_out + "_div")) {
+                    if (!el(K.canvas_hil_out)) {
+                        console.log("Initializing EC-HIL OUT canvas");
+                        const outDiv = el(K.canvas_hil_out + "_div");
+                        outDiv.innerHTML = '';
+                        const outCanvas = document.createElement("canvas");
+                        outCanvas.id = K.canvas_hil_out;
+                        outCanvas.width = 520;
+                        outCanvas.height = 770;
+                        outDiv.appendChild(outCanvas);
+                        
+                        const ctx = outCanvas.getContext("2d");
+                        const img = new Image();
+                        img.onload = () => { 
+                            ctx.drawImage(img, 0, 0); 
+                            console.log(`Image loaded: ${K.src_hil_out}`);
+                        };
+                        img.onerror = () => console.error(`Failed to load: ${K.src_hil_out}`);
+                        img.src = K.src_hil_out;
+                    }
                 }
                 
-                console.log("Canvas initialization complete");
-            }, 250);
+                // EC120B
+                if (el(K.canvas_ec_in + "_div") && !el(K.canvas_ec_in)) {
+                    console.log("Initializing EC120B IN canvas");
+                    const inDiv = el(K.canvas_ec_in + "_div");
+                    inDiv.innerHTML = '';
+                    const inCanvas = document.createElement("canvas");
+                    inCanvas.id = K.canvas_ec_in;
+                    inCanvas.width = 500;
+                    inCanvas.height = 725;
+                    inDiv.appendChild(inCanvas);
+                    const ctx = inCanvas.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_ec_in}`); };
+                    img.onerror = () => console.error(`Failed to load: ${K.src_ec_in}`);
+                    img.src = K.src_ec_in;
+                }
+                if (el(K.canvas_ec_out + "_div") && !el(K.canvas_ec_out)) {
+                    console.log("Initializing EC120B OUT canvas");
+                    const outDiv = el(K.canvas_ec_out + "_div");
+                    outDiv.innerHTML = '';
+                    const outCanvas = document.createElement("canvas");
+                    outCanvas.id = K.canvas_ec_out;
+                    outCanvas.width = 520;
+                    outCanvas.height = 770;
+                    outDiv.appendChild(outCanvas);
+                    const ctx = outCanvas.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_ec_out}`); };
+                    img.onerror = () => console.error(`Failed to load: ${K.src_ec_out}`);
+                    img.src = K.src_ec_out;
+                }
+                
+                // R22 (similar para todos los demás...)
+                if (el(K.canvas_r22_in + "_div") && !el(K.canvas_r22_in)) {
+                    const inDiv = el(K.canvas_r22_in + "_div");
+                    inDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r22_in; c.width = 500; c.height = 725;
+                    inDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_in}`); };
+                    img.src = K.src_r22_in;
+                }
+                if (el(K.canvas_r22_out + "_div") && !el(K.canvas_r22_out)) {
+                    const outDiv = el(K.canvas_r22_out + "_div");
+                    outDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r22_out; c.width = 520; c.height = 770;
+                    outDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_out}`); };
+                    img.src = K.src_r22_out;
+                }
+                
+                // R22 II
+                if (el(K.canvas_r22_2_in + "_div") && !el(K.canvas_r22_2_in)) {
+                    const inDiv = el(K.canvas_r22_2_in + "_div");
+                    inDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r22_2_in; c.width = 500; c.height = 717;
+                    inDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_2_in}`); };
+                    img.src = K.src_r22_2_in;
+                }
+                if (el(K.canvas_r22_2_out + "_div") && !el(K.canvas_r22_2_out)) {
+                    const outDiv = el(K.canvas_r22_2_out + "_div");
+                    outDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r22_2_out; c.width = 500; c.height = 790;
+                    outDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r22_2_out}`); };
+                    img.src = K.src_r22_2_out;
+                }
+                
+                // R44 ASTRO
+                if (el(K.canvas_r44_in + "_div") && !el(K.canvas_r44_in)) {
+                    const inDiv = el(K.canvas_r44_in + "_div");
+                    inDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r44_in; c.width = 620; c.height = 900;
+                    inDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_in}`); };
+                    img.src = K.src_r44_in;
+                }
+                if (el(K.canvas_r44_out + "_div") && !el(K.canvas_r44_out)) {
+                    const outDiv = el(K.canvas_r44_out + "_div");
+                    outDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r44_out; c.width = 620; c.height = 900;
+                    outDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_out}`); };
+                    img.src = K.src_r44_out;
+                }
+                
+                // R44 II
+                if (el(K.canvas_r44_2_in + "_div") && !el(K.canvas_r44_2_in)) {
+                    const inDiv = el(K.canvas_r44_2_in + "_div");
+                    inDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r44_2_in; c.width = 500; c.height = 725;
+                    inDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_2_in}`); };
+                    img.src = K.src_r44_2_in;
+                }
+                if (el(K.canvas_r44_2_out + "_div") && !el(K.canvas_r44_2_out)) {
+                    const outDiv = el(K.canvas_r44_2_out + "_div");
+                    outDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_r44_2_out; c.width = 520; c.height = 770;
+                    outDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_r44_2_out}`); };
+                    img.src = K.src_r44_2_out;
+                }
+                
+                // CABRI G2
+                if (el(K.canvas_cabri_in + "_div") && !el(K.canvas_cabri_in)) {
+                    const inDiv = el(K.canvas_cabri_in + "_div");
+                    inDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_cabri_in; c.width = 500; c.height = 725;
+                    inDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_cabri_in}`); };
+                    img.src = K.src_cabri_in;
+                }
+                if (el(K.canvas_cabri_out + "_div") && !el(K.canvas_cabri_out)) {
+                    const outDiv = el(K.canvas_cabri_out + "_div");
+                    outDiv.innerHTML = '';
+                    const c = document.createElement("canvas");
+                    c.id = K.canvas_cabri_out; c.width = 520; c.height = 770;
+                    outDiv.appendChild(c);
+                    const ctx = c.getContext("2d");
+                    const img = new Image();
+                    img.onload = () => { ctx.drawImage(img, 0, 0); console.log(`Image loaded: ${K.src_cabri_out}`); };
+                    img.src = K.src_cabri_out;
+                }
+            };
+            
+            // Inicializar inmediatamente
+            setTimeout(initializeCanvas, 100);
+            
+            // Escuchar clicks en las pestañas del notebook para re-inicializar cuando cambian
+            const observer = new MutationObserver(() => {
+                setTimeout(initializeCanvas, 50);
+            });
+            
+            // Observar cambios en el DOM (cuando se cambia de pestaña del notebook)
+            const form = document.querySelector('.o_form_view');
+            if (form) {
+                observer.observe(form, { childList: true, subtree: true });
+            }
         });
     },
 });
