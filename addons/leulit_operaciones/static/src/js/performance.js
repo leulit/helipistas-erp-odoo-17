@@ -295,10 +295,26 @@ patch(FormController.prototype, {
 
             // Event handler para el botón "Calcular"
             clickHandler = (ev) => {
-                const btn = ev.target.closest(".calcular_button");
-                if (!btn) return;
+                // Log para debugging - ver todos los clicks
+                if (ev.target.classList && ev.target.classList.contains("btn")) {
+                    console.log("Button clicked:", ev.target.className, ev.target.textContent?.trim());
+                }
                 
-                console.log("Calcular button clicked!");
+                // Intentar encontrar el botón de varias formas
+                let btn = null;
+                
+                // 1. Verificar si el target mismo tiene la clase
+                if (ev.target.classList && ev.target.classList.contains("calcular_button")) {
+                    btn = ev.target;
+                }
+                // 2. Buscar hacia arriba si es un elemento dentro del botón
+                if (!btn) {
+                    btn = ev.target.closest(".calcular_button");
+                }
+                
+                if (!btn) return; // No es el botón calcular
+                
+                console.log("Calcular button clicked!", btn);
                 ev.preventDefault();
                 ev.stopPropagation();
                 
