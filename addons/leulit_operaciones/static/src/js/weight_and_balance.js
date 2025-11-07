@@ -236,21 +236,64 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
 function ensureCanvases() {
     let longDiv = document.getElementById("longcanvasdiv");
     let latDiv = document.getElementById("latcanvasdiv");
-    if (!longDiv || !latDiv) return;
+    
+    console.log("ensureCanvases - Buscando divs:", { 
+        longDiv: longDiv ? "ENCONTRADO" : "NO ENCONTRADO", 
+        latDiv: latDiv ? "ENCONTRADO" : "NO ENCONTRADO" 
+    });
+    
+    if (!longDiv || !latDiv) {
+        console.warn("ensureCanvases - Los divs contenedores no existen en el DOM");
+        return false;
+    }
+    
     if (!document.getElementById("longcanvas")) {
-        const c1 = document.createElement("canvas"); c1.id = "longcanvas"; c1.width = CanvasWidth; c1.height = CanvasHeight;
-        longDiv.appendChild(c1); const ctx = c1.getContext("2d"); ctx.fillStyle = "white"; ctx.fillRect(0, 0, c1.width, c1.height);
+        const c1 = document.createElement("canvas"); 
+        c1.id = "longcanvas"; 
+        c1.width = CanvasWidth; 
+        c1.height = CanvasHeight;
+        longDiv.appendChild(c1); 
+        const ctx = c1.getContext("2d"); 
+        ctx.fillStyle = "white"; 
+        ctx.fillRect(0, 0, c1.width, c1.height);
+        console.log("ensureCanvases - Canvas LONG creado");
     }
+    
     if (!document.getElementById("latcanvas")) {
-        const c2 = document.createElement("canvas"); c2.id = "latcanvas"; c2.width = CanvasWidth; c2.height = CanvasHeight;
-        latDiv.appendChild(c2); const ctx = c2.getContext("2d"); ctx.fillStyle = "yellow"; ctx.fillRect(0, 0, c2.width, c2.height);
+        const c2 = document.createElement("canvas"); 
+        c2.id = "latcanvas"; 
+        c2.width = CanvasWidth; 
+        c2.height = CanvasHeight;
+        latDiv.appendChild(c2); 
+        const ctx = c2.getContext("2d"); 
+        ctx.fillStyle = "yellow"; 
+        ctx.fillRect(0, 0, c2.width, c2.height);
+        console.log("ensureCanvases - Canvas LAT creado");
     }
+    
+    return true;
 }
 function drawAll(stateData) {
-    ensureCanvases();
+    console.log("drawAll - Iniciando...");
+    const canvasesOk = ensureCanvases();
+    
+    if (!canvasesOk) {
+        console.warn("drawAll - No se pudieron crear los canvas");
+        return {};
+    }
+    
     const longC = document.getElementById("longcanvas");
     const latC = document.getElementById("latcanvas");
-    if (!longC || !latC) return {};
+    
+    console.log("drawAll - Canvas encontrados:", { 
+        longC: longC ? "SI" : "NO", 
+        latC: latC ? "SI" : "NO" 
+    });
+    
+    if (!longC || !latC) {
+        console.warn("drawAll - Los canvas no existen después de ensureCanvases");
+        return {};
+    }
 
     const d = stateData || {};
     const tipo = d["helicoptero_tipo"];
@@ -268,12 +311,16 @@ function drawAll(stateData) {
     if (matricula === "EC-HIL" && gancho === true) key = "EC-HIL";
     else if (tipo === "R44" && modelo) key = modelo;
     else key = tipo;
+    
+    console.log(`drawAll - Buscando polígono para key="${key}"`);
 
     const group = Polygons[key];
     if (!group) {
         console.warn(`Weight&Balance drawAll: No se encontró polígono para key="${key}"`);
         return {};
     }
+    
+    console.log("drawAll - Polígono encontrado, dibujando...");
 
     const longInfo = drawPoly(group.long, longC);
     const latInfo = drawPoly(group.lat, latC);
@@ -289,6 +336,11 @@ function drawAll(stateData) {
     const landingGw = parseFloat(d["landing_gw"]);
     const landingLatArm = parseFloat(d["landing_gw_lat_arm"]);
     
+    console.log("drawAll - Valores para dibujar puntos:", {
+        takeoffLongArm, takeoffGw, takeoffLatArm,
+        landingLongArm, landingGw, landingLatArm
+    });
+    
     if (!isNaN(takeoffLongArm) && !isNaN(takeoffGw)) {
         changes = checkValidity("takeoff", { x: takeoffLongArm, y: takeoffGw }, group.long, "long", maxmins, changes);
     }
@@ -301,6 +353,8 @@ function drawAll(stateData) {
     if (!isNaN(landingLongArm) && !isNaN(landingLatArm)) {
         changes = checkValidity("landing", { x: landingLongArm, y: landingLatArm }, group.lat, "lat", maxmins, changes);
     }
+    
+    console.log("drawAll - Finalizado. Changes:", changes);
     
     return changes;
 }
