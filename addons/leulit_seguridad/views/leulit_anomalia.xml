@@ -37,139 +37,119 @@
                             <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
                             <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
                         </group>
-                        <div>
-                            <group col="2">
-                                <field name="codigo" string="Code"/>
+                        
+                        <group col="2">
+                            <field name="codigo" string="Code"/>
+                        </group>
+                        
+                        <group col="6">
+                            <group colspan="2">
+                                <field name="vuelo_id" string="Flight"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="fechavuelo" string="Date" readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="maintenance_request_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                            <group col="3">
-                                <div>
-                                    <group col="2">
-                                        <field name="vuelo_id" string="Flight"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="fechavuelo" string="Date" readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="maintenance_request_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                    </group>
-                                </div>
-                                <div>
-                                    <group col="2">
-                                        <field name="lugarsalida" string="Take off" readonly="1" />
-                                        <field name="lugarllegada" string="Landing" readonly="1" />
-                                        <field name="horasalida" string="Take off time" readonly="1" widget="float_time"/>
-                                        <field name="horallegada" string="Landing time" readonly="1" widget="float_time"/>
-                                    </group>
-                                </div>
-                                <div>
-                                    <group col="2">
-                                        <field name="oilqty" string="Oil added" readonly="1" />
-                                        <field name="fuelqty" string="Fuel added" readonly="1" />
-                                        <field name="consumomedio_vuelo" string="Avg fuel consumption" readonly="1" />
-                                        <field name="fuelsalida_kg" string="Fuel on landing" readonly="1"/>
-                                    </group>
-                                </div>
+                            <group colspan="2">
+                                <field name="lugarsalida" string="Take off" readonly="1" />
+                                <field name="lugarllegada" string="Landing" readonly="1" />
+                                <field name="horasalida" string="Take off time" readonly="1" widget="float_time"/>
+                                <field name="horallegada" string="Landing time" readonly="1" widget="float_time"/>
                             </group>
-                        </div>
-                        <div>
-                            <h3>Report</h3>
-                            <group col="2">
+                            <group colspan="2">
+                                <field name="oilqty" string="Oil added" readonly="1" />
+                                <field name="fuelqty" string="Fuel added" readonly="1" />
+                                <field name="consumomedio_vuelo" string="Avg fuel consumption" readonly="1" />
+                                <field name="fuelsalida_kg" string="Fuel on landing" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Report">
+                            <group>
                                 <field name="fecha" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <div colspan="2">
-                                    <group col="5">
-                                        <field name="informado_por" string="Who"/>
-                                        <p>(</p>
-                                        <field name="rol_informa" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <p>)</p>
-                                    </group>
+                                <label for="informado_por" string="Who"/>
+                                <div class="o_row">
+                                    <field name="informado_por" nolabel="1"/>
+                                    <span>(</span>
+                                    <field name="rol_informa" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                    <span>)</span>
                                 </div>
                                 <field name="lugaranomalia" string="Place"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                            </group>
+                            <group>
                                 <field name="discrepancia" string="Comment"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                                 <field name="notificacion_sms" string="SMS Report" />
                             </group>
-                        </div>
-                        <div>
-                            <h3>Action</h3>
-                            <group col="2">
+                        </group>
+                        
+                        <group string="Action">
+                            <group>
                                 <field name="fechadiferido" string="Date"/>
                                 <field name="date_deferred" invisible="1"/>
                                 <field name="days_deferred" invisible="1"/>
-                                <div colspan="2">
-                                    <group col="5">
-                                        <field name="diferido_por" string="Who"/>
-                                        <p>(</p>
-                                        <field name="rol_difiere" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <p>)</p>
-                                    </group>
+                                <label for="diferido_por" string="Who"/>
+                                <div class="o_row">
+                                    <field name="diferido_por" nolabel="1"/>
+                                    <span>(</span>
+                                    <field name="rol_difiere" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                    <span>)</span>
                                 </div>
+                            </group>
+                            <group>
                                 <field name="motivodiferir" string="Reason"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                        </div>
-                        <div>
-                            <h3>Mel</h3>
-                            <group col="3">
-                                <div>
-                                    <group col="2">
-                                        <field name="melref" domain="[('helicoptero_ids','in',[helicoptero_id])]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                                        <field name="tenerencuentamel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="fechalimite"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                    </group>
-                                </div>
-                                <div>
-                                    <group col="2">
-                                        <field name="linemel_id" domain="[('mel_id','=',melref)]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                                        <field name="numinstaladomel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="pom"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                    </group>
-                                </div>
-                                <div>
-                                    <group col="2">
-                                        <field name="categoria"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="numexpmel" />
-                                    </group>
-                                </div>
+                        </group>
+                        
+                        <group string="Mel" col="6">
+                            <group colspan="2">
+                                <field name="melref" domain="[('helicoptero_ids','in',[helicoptero_id])]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="tenerencuentamel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="fechalimite"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                        </div>
-                        <div>
-                            <group col="2">
-                                <div>
-                                    <h3>Close</h3>
-                                    <group col="2">
-                                        <field name="fecha_accion" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="date_closed" invisible="1"/>
-                                        <field name="days_close" invisible="1"/>
-                                        <div colspan="2">
-                                            <group col="5">
-                                                <field name="cerrado_por" string="Who"/>
-                                                <p>(</p>
-                                                <field name="rol_close" nolabel="1"  readonly="((estado in ['closed']))" />
-                                                <p>)</p>
-                                            </group>
-                                        </div>
-                                        <field name="cerrado_por_company" string="Company" />
-                                        <field name="accion" string="Reason"  readonly="((estado in ['closed']))" />
-                                        <field name="cas" string="CAS"  readonly="((estado in ['closed']))" />
-                                        <field name="comentario" string="Comment"  readonly="((estado in ['closed']))" />
-                                    </group>
-                                </div>
-                                <div>
-                                    <h3>CRS</h3>
-                                    <group col="2">
-                                        <field name="fecha_crs" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                        <field name="crs_por" string="Who"/>
-                                        <field name="lugar_crs" string="Place"  readonly="((estado in ['closed']))" />
-                                        <field name="comentario_crs" string="Comment"  readonly="((estado in ['closed']))" />
-                                    </group>
-                                </div>
+                            <group colspan="2">
+                                <field name="linemel_id" domain="[('mel_id','=',melref)]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="numinstaladomel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="pom"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                        </div>
-                        <div id="materials_anomalia">
-                            <h3>Materials</h3>
+                            <group colspan="2">
+                                <field name="categoria"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="numexpmel" />
+                            </group>
+                        </group>
+                        
+                        <group col="2">
+                            <group string="Close">
+                                <field name="fecha_accion" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="date_closed" invisible="1"/>
+                                <field name="days_close" invisible="1"/>
+                                <label for="cerrado_por" string="Who"/>
+                                <div class="o_row">
+                                    <field name="cerrado_por" nolabel="1"/>
+                                    <span>(</span>
+                                    <field name="rol_close" nolabel="1"  readonly="((estado in ['closed']))" />
+                                    <span>)</span>
+                                </div>
+                                <field name="cerrado_por_company" string="Company" />
+                                <field name="accion" string="Reason"  readonly="((estado in ['closed']))" />
+                                <field name="cas" string="CAS"  readonly="((estado in ['closed']))" />
+                                <field name="comentario" string="Comment"  readonly="((estado in ['closed']))" />
+                            </group>
+                            <group string="CRS">
+                                <field name="fecha_crs" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="crs_por" string="Who"/>
+                                <field name="lugar_crs" string="Place"  readonly="((estado in ['closed']))" />
+                                <field name="comentario_crs" string="Comment"  readonly="((estado in ['closed']))" />
+                            </group>
+                        </group>
+                        
+                        <group string="Materials">
                             <field name="domain_materiales" invisible="1"/>
-                            <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]">
+                            <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]" nolabel="1">
                                 <tree>
                                     <field name="name"/>
                                     <field name="production_lot"/>
                                 </tree>
                             </field>
-                        </div>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
