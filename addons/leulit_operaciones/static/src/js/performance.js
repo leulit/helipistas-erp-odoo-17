@@ -222,12 +222,26 @@ patch(FormRenderer.prototype, {
             // Inicializar inmediatamente
             setTimeout(initializeCanvas, 100);
             
-            // Escuchar clicks en las pestañas del notebook para re-inicializar cuando cambian
-            const observer = new MutationObserver(() => {
-                setTimeout(initializeCanvas, 50);
+            // Observar cambios en el DOM para detectar cuando aparecen los divs de la segunda pestaña
+            const observer = new MutationObserver((mutations) => {
+                for (const mutation of mutations) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        // Verificar si se han añadido divs de canvas
+                        for (const node of mutation.addedNodes) {
+                            if (node.nodeType === 1) { // Element node
+                                const divs = node.querySelectorAll ? node.querySelectorAll('[id$="_div"]') : [];
+                                if (divs.length > 0 || (node.id && node.id.endsWith('_div'))) {
+                                    console.log("New canvas div detected, initializing...");
+                                    setTimeout(initializeCanvas, 50);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
             });
             
-            // Observar cambios en el DOM (cuando se cambia de pestaña del notebook)
+            // Observar el formulario completo
             const form = document.querySelector('.o_form_view');
             if (form) {
                 observer.observe(form, { childList: true, subtree: true });
@@ -257,9 +271,15 @@ patch(FormController.prototype, {
                 const btn = ev.target.closest(".calcular_button");
                 if (!btn) return;
                 
+                console.log("Calcular button clicked!");
+                ev.preventDefault();
+                ev.stopPropagation();
+                
                 const d = self.model?.root?.data || {};
                 const t = d.temperatura;
                 const p = d.peso;
+                
+                console.log(`Calculating with peso: ${p}, temperatura: ${t}`);
 
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
                     const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
@@ -317,16 +337,16 @@ patch(FormController.prototype, {
                 }
             };
             
-            // Registrar el event listener
-            if (self.el) {
-                self.el.addEventListener("click", clickHandler, true);
-            }
+            // Registrar el event listener en el documento para capturar todos los clicks
+            document.addEventListener("click", clickHandler, true);
+            
+            console.log("Calcular button listener registered");
         });
 
         onWillUnmount(() => {
             // Limpiar event listener al desmontar
-            if (clickHandler && self.el) {
-                self.el.removeEventListener("click", clickHandler, true);
+            if (clickHandler) {
+                document.removeEventListener("click", clickHandler, true);
             }
         });
     },
