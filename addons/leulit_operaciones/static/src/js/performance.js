@@ -151,12 +151,21 @@ patch(FormRenderer.prototype, {
         
         onMounted(() => {
             const model = self.props?.record?.resModel;
+            console.log("FormRenderer mounted - Model:", model);
+            
             if (model !== "leulit.performance") return;
             
             console.log("Performance form mounted - initializing canvas...");
+            console.log("Checking for canvas divs...");
+            
+            // Listar todos los divs disponibles
+            const allDivs = document.querySelectorAll('[id$="_div"]');
+            console.log("Available divs with _div suffix:", Array.from(allDivs).map(d => d.id));
             
             // Esperar un momento para que el DOM esté completamente renderizado
             setTimeout(() => {
+                console.log("Starting canvas initialization after delay...");
+                
                 // Inicializar canvas según el tipo de helicóptero
                 if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
                     console.log("Initializing EC-HIL canvas");
@@ -207,6 +216,8 @@ patch(FormRenderer.prototype, {
                         { id: K.canvas_r22_2_out, width: 500, height: 790 }, 
                         K.src_r22_2_in, K.src_r22_2_out);
                 }
+                
+                console.log("Canvas initialization complete");
             }, 250);
         });
     },
