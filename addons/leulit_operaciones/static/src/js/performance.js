@@ -149,6 +149,10 @@ patch(FormRenderer.prototype, {
         super.setup();
         const self = this;
         
+        // Variables para cleanup
+        let notebookClickHandler = null;
+        let observer = null;
+        
         onMounted(() => {
             const model = self.props?.record?.resModel;
             console.log("FormRenderer mounted - Model:", model);
@@ -223,7 +227,7 @@ patch(FormRenderer.prototype, {
             setTimeout(initializeCanvas, 100);
             
             // Capturar clicks en pestañas del notebook para reinicializar canvas
-            const notebookClickHandler = (ev) => {
+            notebookClickHandler = (ev) => {
                 const navLink = ev.target.closest('.nav-link');
                 if (navLink && navLink.closest('.o_notebook_headers')) {
                     console.log("Notebook tab clicked, initializing canvas...");
@@ -235,7 +239,7 @@ patch(FormRenderer.prototype, {
             document.addEventListener('click', notebookClickHandler, true);
             
             // También observar cambios en atributos (class) para detectar cambios de pestaña activa
-            const observer = new MutationObserver((mutations) => {
+            observer = new MutationObserver((mutations) => {
                 for (const mutation of mutations) {
                     if (mutation.type === 'attributes' && 
                         (mutation.attributeName === 'class' || mutation.attributeName === 'style')) {
@@ -259,12 +263,16 @@ patch(FormRenderer.prototype, {
                     subtree: true 
                 });
             }
-            
-            // Cleanup al desmontar
-            onWillUnmount(() => {
+        });
+        
+        // Cleanup al desmontar - DEBE estar en el nivel de setup(), no dentro de onMounted()
+        onWillUnmount(() => {
+            if (notebookClickHandler) {
                 document.removeEventListener('click', notebookClickHandler, true);
+            }
+            if (observer) {
                 observer.disconnect();
-            });
+            }
         });
     },
 });
