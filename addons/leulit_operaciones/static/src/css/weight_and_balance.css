@@ -9,3 +9,13 @@
     background-color: inherit !important;
     opacity: 1 !important;
 }
+
+/* Permitir que los colores aplicados por JavaScript funcionen en campos readonly */
+table input[readonly] {
+    opacity: 1 !important;
+}
+
+/* Asegurar que los colores inline tengan prioridad sobre los estilos de Odoo */
+table input[style*="background-color"] {
+    opacity: 1 !important;
+}

@@ -18,9 +18,9 @@
                   <field name="canvas_lat" invisible="1" on_change="onchange_lat(vuelo_id,canvas_lat)"/>
                   <group col="6">
                      <field name="tipocalculopasajeros" colspan="6"/>
-                     <field name="helicoptero_tipo" readonly="1"/>
-                     <field name="helicoptero_modelo" readonly="1"/>
-                     <field name="helicoptero_matricula" readonly="1"/>
+                     <field name="helicoptero_tipo" readonly="1" colspan="2"/>
+                     <field name="helicoptero_modelo" readonly="1" colspan="2"/>
+                     <field name="helicoptero_matricula" readonly="1" colspan="2"/>
                   </group>
                   <table>
                      <thead>

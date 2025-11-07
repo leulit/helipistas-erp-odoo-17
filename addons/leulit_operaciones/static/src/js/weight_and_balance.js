@@ -171,54 +171,55 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     const fieldName = `${tipo1}_gw_${tipo2}_arm`;
     let input = null;
     
-    // Método 1: Buscar por name attribute del input
-    input = document.querySelector(`input[name='${fieldName}']`);
+    // Método 1: Buscar input directamente por name (funciona en Odoo 17)
+    input = document.querySelector(`input[id*='${fieldName}']`);
     
-    // Método 2: Buscar el div.o_field_widget con ese name
+    // Método 2: Buscar el div.o_field_widget con ese name y luego su input
     if (!input) {
-        const fieldDiv = document.querySelector(`div.o_field_widget[name='${fieldName}']`);
+        const fieldDiv = document.querySelector(`div[name='${fieldName}']`);
         if (fieldDiv) {
             input = fieldDiv.querySelector('input');
         }
     }
     
-    // Método 3: Buscar por clase wb_cg_indicator que añadimos
+    // Método 3: Buscar en todos los inputs dentro de la tabla
     if (!input) {
-        const allCgFields = document.querySelectorAll('.wb_cg_indicator input');
-        for (const el of allCgFields) {
-            // Comprobar si el input pertenece a un field widget con ese nombre
-            const parentWidget = el.closest('.o_field_widget');
-            if (parentWidget && parentWidget.getAttribute('name') === fieldName) {
+        const allInputs = document.querySelectorAll('table input');
+        for (const el of allInputs) {
+            if (el.id && el.id.includes(fieldName)) {
                 input = el;
                 break;
             }
         }
     }
     
-    // Método 4: Buscar en toda la tabla por el td que contiene el field
+    // Método 4: Buscar por atributo data-field-name (Odoo 17)
     if (!input) {
-        const allInputs = document.querySelectorAll('table input[type="text"]');
-        for (const el of allInputs) {
-            const widget = el.closest('.o_field_widget');
-            if (widget && widget.getAttribute('name') === fieldName) {
-                input = el;
-                break;
-            }
-        }
+        input = document.querySelector(`input[data-field-name='${fieldName}']`);
     }
     
     // Aplicar el estilo si encontramos el input
     if (input) { 
         const bgColor = inside ? colors[tipo1].green : colors[tipo1].red;
+        
+        // Aplicar múltiples formas para asegurar que el estilo se aplique
         input.style.setProperty('background-color', bgColor, 'important');
         input.style.setProperty('color', '#fff', 'important');
-        input.style.fontWeight = 'bold';
-        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
+        input.style.setProperty('font-weight', 'bold', 'important');
+        input.style.setProperty('text-align', 'center', 'important');
+        
+        // También aplicar al padre si existe
+        const parent = input.closest('.o_field_widget');
+        if (parent) {
+            parent.style.setProperty('background-color', bgColor, 'important');
+        }
+        
+        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside}), input id: ${input.id}`);
     } else {
         // Debug: mostrar qué campos hay disponibles
-        const allWidgets = document.querySelectorAll('.o_field_widget[name*="gw"]');
+        const allInputs = document.querySelectorAll('table input');
         console.warn(`✗ Could not find input for field: ${fieldName}`);
-        console.log('Available gw fields:', Array.from(allWidgets).map(w => w.getAttribute('name')));
+        console.log('Available inputs with IDs:', Array.from(allInputs).filter(i => i.id).map(i => i.id));
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
