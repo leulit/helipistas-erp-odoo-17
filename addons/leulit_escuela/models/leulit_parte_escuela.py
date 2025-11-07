@@ -172,7 +172,7 @@ class leulit_parte_escuela(models.Model):
     
     def isvueloato(self, idvuelo):
         cursosato = self.env['leulit.curso']._curso_ato()
-        return self.env['leulit.parte_escuela'].search([('cursos','in',cursosato),('vuelo_id','=',idvuelo)], count=True) > 0
+        return self.env['leulit.parte_escuela'].search_count([('cursos','in',cursosato),('vuelo_id','=',idvuelo)]) > 0
 
 
     def _search_curso(self, operator, value):

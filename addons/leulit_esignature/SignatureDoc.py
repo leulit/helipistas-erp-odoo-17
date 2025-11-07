@@ -385,64 +385,19 @@ class SignatureDoc(models.Model):
             self.env['leulit_signaturedoc'].with_context(context).sudo().checksignatureRef()
 
 
-    def checksignatureRef(self, datos_firma=None):
+    def checksignatureRef(self):
         result = False
         error = False
         errMsg = ""
-        
-        _logger.info("=== checksignatureRef DEBUG ===")
-        _logger.info("self._context --> %r" % self._context)
-        _logger.info(f"datos_firma recibido: {datos_firma}")
-        _logger.info(f"tipo: {type(datos_firma)}")
-        
-        # Los datos vienen desde Flutter como primer argumento
-        # Estructura: datos_firma = {'otp': '...', 'notp': '...', 'modelo': '...', 'idmodelo': '...'}
-        if not datos_firma or not isinstance(datos_firma, dict):
-            # Intentar desde contexto (compatibilidad con versión antigua)
-            datos = self._context.get('args', [])
-            _logger.info(f"Intentando desde context args: {datos}")
-            if not datos or not isinstance(datos, dict):
-                return {
-                    'valid': False,
-                    'error': True,
-                    'errmsg': 'Parámetros inválidos - se esperaba un diccionario con otp, notp, modelo, idmodelo',
-                }
-        else:
-            datos = datos_firma
-        
-        _logger.info(f"Datos a procesar: {datos}")
-        
-        # Validar que tenemos los campos necesarios
-        if not all(key in datos for key in ['otp', 'notp', 'modelo', 'idmodelo']):
-            _logger.error(f"Faltan campos requeridos. Datos: {datos}")
-            return {
-                'valid': False,
-                'error': True,
-                'errmsg': f'Faltan parámetros requeridos. Recibidos: {list(datos.keys())}',
-            }
-        
-        # Convertir idmodelo a int si viene como string
-        try:
-            idmodelo = int(datos['idmodelo'])
-        except (ValueError, TypeError):
-            _logger.error(f"idmodelo inválido: {datos['idmodelo']}")
-            return {
-                'valid': False,
-                'error': True,
-                'errmsg': f'idmodelo debe ser un número',
-            }
-        
+        datos = self._context.get('args',[])
         codigo = datos['otp']
-        result = datos['otp'] == datos['notp']
+        result = datos['otp'] ==  datos['notp']
         valid = False
-        
         if result:
-            for item in self.env[datos['modelo']].search([('id','=',idmodelo)]):
-                esignature = self.buildSignature(datos['modelo'], idmodelo, codigo)
+            for item in self.env[datos['modelo']].search([('id','=',datos['idmodelo'])]):
+                esignature = self.buildSignature(datos['modelo'], datos['idmodelo'], codigo)
                 item.buildPdfSigned(datos, esignature)
             valid = True
-        
-        _logger.info(f"checksignatureRef resultado: valid={valid}")
         resultado = {
             'valid': valid,
             'error': error,
