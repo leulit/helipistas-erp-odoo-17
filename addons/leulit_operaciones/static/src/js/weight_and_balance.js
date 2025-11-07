@@ -304,7 +304,8 @@ patch(FormRenderer.prototype, {
                     imgLong.onload = function() {
                         ctxLong.drawImage(imgLong, 0, 0);
                     };
-                    imgLong.src = "data:image/jpeg;base64," + data.canvas_long;
+                    // El campo Binary en Odoo ya viene con el prefijo data:image
+                    imgLong.src = data.canvas_long;
                 }
                 
                 if (data.canvas_lat && latCanvas) {
@@ -313,7 +314,8 @@ patch(FormRenderer.prototype, {
                     imgLat.onload = function() {
                         ctxLat.drawImage(imgLat, 0, 0);
                     };
-                    imgLat.src = "data:image/jpeg;base64," + data.canvas_lat;
+                    // El campo Binary en Odoo ya viene con el prefijo data:image
+                    imgLat.src = data.canvas_lat;
                 }
                 
                 // Si no hay canvas guardados, dibujar desde cero
