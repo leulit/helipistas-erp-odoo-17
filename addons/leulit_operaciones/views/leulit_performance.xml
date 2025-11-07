@@ -140,16 +140,18 @@
                             <field name="oge" invisible="1"/>
                         </div>
                     </group>
-                    <notebook>
-                        <page string="IN GROUND EFFECT">
+                    
+                    <!-- Gráficas lado a lado sin notebook -->
+                    <group>
+                        <group string="IN GROUND EFFECT">
                             <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_2_in_div">
                             </div>
-                        </page>
-                        <page string="OUT GROUND EFFECT">
-                            <div style=" height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_2_out_div">
+                        </group>
+                        <group string="OUT GROUND EFFECT">
+                            <div style="height: 500px; overflow:scroll; border:1px solid #000000;" id="micanvas_r22_2_out_div">
                             </div>
-                        </page>
-                    </notebook>
+                        </group>
+                    </group>
                 </form>
             </field>
         </record>
