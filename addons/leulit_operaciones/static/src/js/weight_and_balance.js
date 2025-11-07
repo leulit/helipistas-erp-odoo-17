@@ -203,10 +203,6 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
         targetElement.style.setProperty('text-align', 'center', 'important');
         targetElement.style.setProperty('padding', '2px 4px', 'important');
         targetElement.style.setProperty('border-radius', '3px', 'important');
-        
-        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
-    } else {
-        console.warn(`✗ Could not find element for field: ${fieldName}`);
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
@@ -266,8 +262,6 @@ patch(Record.prototype, {
         
         // Solo actuar si es el modelo weight_and_balance
         if (this.resModel === "leulit.weight_and_balance") {
-            console.log("Weight & Balance - Record updated with changes:", Object.keys(changes));
-            
             // Redibujar los canvas después de actualizar el modelo
             setTimeout(async () => {
                 const data = this.data || {};
@@ -294,14 +288,39 @@ patch(FormRenderer.prototype, {
             const model = self.props?.record?.resModel;
             if (model !== "leulit.weight_and_balance") return;
             
-            console.log("Weight & Balance mounted - initial draw");
             setTimeout(async () => {
                 const data = self.props?.record?.data || {};
-                const wb = drawAll(data);
                 
-                // Actualizar los campos de validación en el modelo usando update()
-                if (Object.keys(wb).length > 0 && self.props?.record?.update) {
-                    await self.props.record.update(wb, { save: false });
+                // Restaurar canvas guardados si existen
+                const longCanvas = document.getElementById("longcanvas");
+                const latCanvas = document.getElementById("latcanvas");
+                
+                if (data.canvas_long && longCanvas) {
+                    const ctxLong = longCanvas.getContext("2d");
+                    const imgLong = new Image();
+                    imgLong.onload = function() {
+                        ctxLong.drawImage(imgLong, 0, 0);
+                    };
+                    imgLong.src = "data:image/jpeg;base64," + data.canvas_long;
+                }
+                
+                if (data.canvas_lat && latCanvas) {
+                    const ctxLat = latCanvas.getContext("2d");
+                    const imgLat = new Image();
+                    imgLat.onload = function() {
+                        ctxLat.drawImage(imgLat, 0, 0);
+                    };
+                    imgLat.src = "data:image/jpeg;base64," + data.canvas_lat;
+                }
+                
+                // Si no hay canvas guardados, dibujar desde cero
+                if (!data.canvas_long || !data.canvas_lat) {
+                    const wb = drawAll(data);
+                    
+                    // Actualizar los campos de validación en el modelo usando update()
+                    if (Object.keys(wb).length > 0 && self.props?.record?.update) {
+                        await self.props.record.update(wb, { save: false });
+                    }
                 }
             }, 100);
         });
@@ -311,7 +330,6 @@ patch(FormRenderer.prototype, {
             const model = self.props?.record?.resModel;
             if (model !== "leulit.weight_and_balance") return;
             
-            console.log("Weight & Balance patched - redrawing");
             const data = self.props?.record?.data || {};
             drawAll(data);
         });
@@ -332,12 +350,11 @@ patch(FormController.prototype, {
                 if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
                 
                 if (Object.keys(extra).length && this.model?.root?.update) {
-                    console.log("Saving canvas images before leaving...");
                     await this.model.root.update(extra, { save: true });
                 }
             }
         } catch (error) {
-            console.error("Error saving canvas data:", error);
+            // Error saving canvas data
         }
         
         return super.beforeLeave(...arguments);
@@ -356,12 +373,11 @@ patch(FormController.prototype, {
                 if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
                 
                 if (Object.keys(extra).length && this.model?.root?.update) {
-                    console.log("Saving canvas images on save button...");
                     await this.model.root.update(extra, { save: false });
                 }
             }
         } catch (error) {
-            console.error("Error saving canvas data:", error);
+            // Error saving canvas data
         }
         
         // Llamar al guardado original que guardará todo junto
