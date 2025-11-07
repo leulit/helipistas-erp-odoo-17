@@ -385,36 +385,49 @@ class SignatureDoc(models.Model):
             self.env['leulit_signaturedoc'].with_context(context).sudo().checksignatureRef()
 
 
-    def checksignatureRef(self, otp='', notp='', modelo='', idmodelo=0):
+    def checksignatureRef(self, args=None):
         result = False
         error = False
         errMsg = ""
         
-        # Si no se pasan parámetros, intentar obtenerlos del contexto (compatibilidad con versión antigua)
-        if not otp and not modelo:
-            datos = self._context.get('args', {})
-            if isinstance(datos, dict):
-                codigo = datos.get('otp', '')
-                otp = datos.get('otp', '')
-                notp = datos.get('notp', '')
-                modelo = datos.get('modelo', '')
-                idmodelo = datos.get('idmodelo', 0)
+        # Los argumentos vienen desde Flutter como una lista con un diccionario dentro
+        # Estructura: args = [{'otp': '...', 'notp': '...', 'modelo': '...', 'idmodelo': ...}]
+        if args and isinstance(args, dict):
+            datos = args
+        elif args and isinstance(args, list) and len(args) > 0:
+            datos = args[0] if isinstance(args[0], dict) else {}
+        else:
+            # Intentar desde contexto (compatibilidad con versión antigua)
+            context_args = self._context.get('args', [])
+            if isinstance(context_args, dict):
+                datos = context_args
+            elif isinstance(context_args, list) and len(context_args) > 0:
+                datos = context_args[0] if isinstance(context_args[0], dict) else {}
             else:
                 return {
                     'valid': False,
                     'error': True,
-                    'errmsg': 'Parámetros inválidos',
+                    'errmsg': 'Parámetros inválidos - no se encontraron datos',
                 }
-        else:
-            codigo = otp
-            
-        result = otp == notp
+        
+        # Validar que tenemos los campos necesarios
+        if not all(key in datos for key in ['otp', 'notp', 'modelo', 'idmodelo']):
+            return {
+                'valid': False,
+                'error': True,
+                'errmsg': 'Faltan parámetros requeridos: otp, notp, modelo, idmodelo',
+            }
+        
+        codigo = datos['otp']
+        result = datos['otp'] == datos['notp']
         valid = False
+        
         if result:
-            for item in self.env[modelo].search([('id','=',idmodelo)]):
-                esignature = self.buildSignature(modelo, idmodelo, codigo)
-                item.buildPdfSigned({'otp': otp, 'notp': notp, 'modelo': modelo, 'idmodelo': idmodelo}, esignature)
+            for item in self.env[datos['modelo']].search([('id','=',datos['idmodelo'])]):
+                esignature = self.buildSignature(datos['modelo'], datos['idmodelo'], codigo)
+                item.buildPdfSigned(datos, esignature)
             valid = True
+            
         resultado = {
             'valid': valid,
             'error': error,
