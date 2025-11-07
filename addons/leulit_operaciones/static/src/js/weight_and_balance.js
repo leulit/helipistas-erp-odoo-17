@@ -171,8 +171,15 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     const fieldName = `${tipo1}_gw_${tipo2}_arm`;
     let input = null;
     
-    // Método 1: Buscar input directamente por name (funciona en Odoo 17)
-    input = document.querySelector(`input[id*='${fieldName}']`);
+    // Método 1: Buscar por clase wb_cg_indicator y el nombre del campo (más confiable)
+    const allCgIndicators = document.querySelectorAll('.wb_cg_indicator');
+    for (const widget of allCgIndicators) {
+        // Verificar si el widget tiene el atributo name correcto
+        if (widget.getAttribute('name') === fieldName) {
+            input = widget.querySelector('input');
+            if (input) break;
+        }
+    }
     
     // Método 2: Buscar el div.o_field_widget con ese name y luego su input
     if (!input) {
@@ -182,7 +189,7 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
         }
     }
     
-    // Método 3: Buscar en todos los inputs dentro de la tabla
+    // Método 3: Buscar input directamente por ID que contenga el nombre del campo
     if (!input) {
         const allInputs = document.querySelectorAll('table input');
         for (const el of allInputs) {
@@ -191,11 +198,6 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
                 break;
             }
         }
-    }
-    
-    // Método 4: Buscar por atributo data-field-name (Odoo 17)
-    if (!input) {
-        input = document.querySelector(`input[data-field-name='${fieldName}']`);
     }
     
     // Aplicar el estilo si encontramos el input
@@ -214,12 +216,9 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
             parent.style.setProperty('background-color', bgColor, 'important');
         }
         
-        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside}), input id: ${input.id}`);
+        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
     } else {
-        // Debug: mostrar qué campos hay disponibles
-        const allInputs = document.querySelectorAll('table input');
         console.warn(`✗ Could not find input for field: ${fieldName}`);
-        console.log('Available inputs with IDs:', Array.from(allInputs).filter(i => i.id).map(i => i.id));
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
