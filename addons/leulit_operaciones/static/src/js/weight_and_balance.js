@@ -291,6 +291,9 @@ patch(FormRenderer.prototype, {
             setTimeout(async () => {
                 const data = self.props?.record?.data || {};
                 
+                // Asegurar que los canvas existen primero
+                ensureCanvases();
+                
                 // Restaurar canvas guardados si existen
                 const longCanvas = document.getElementById("longcanvas");
                 const latCanvas = document.getElementById("latcanvas");
