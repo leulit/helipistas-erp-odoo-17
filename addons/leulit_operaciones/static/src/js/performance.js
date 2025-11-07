@@ -364,15 +364,36 @@ patch(FormController.prototype, {
                 }
             };
             
-            // Adjuntar listener directamente a los botones
+            // Adjuntar listener directamente a los botones usando onclick
             setTimeout(() => {
                 const buttons = document.querySelectorAll('.calcular_button');
                 console.log(`Attaching listeners to ${buttons.length} calcular buttons`);
                 buttons.forEach((btn, idx) => {
-                    btn.addEventListener('click', clickHandler, true);
+                    // Usar onclick en lugar de addEventListener para evitar que Odoo lo bloquee
+                    btn.onclick = (ev) => {
+                        console.log("Button onclick triggered!");
+                        clickHandler(ev);
+                        return false; // Prevenir comportamiento default
+                    };
                     console.log(`Listener ${idx} attached to:`, btn.textContent?.trim());
                 });
             }, 500);
+            
+            // También adjuntar después de 1 segundo por si el botón se renderiza tarde
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('.calcular_button');
+                if (buttons.length > 0) {
+                    buttons.forEach((btn) => {
+                        if (!btn.onclick) {
+                            btn.onclick = (ev) => {
+                                console.log("Button onclick triggered (delayed)!");
+                                clickHandler(ev);
+                                return false;
+                            };
+                        }
+                    });
+                }
+            }, 1000);
             
             // Registrar el event listener en el documento para capturar todos los clicks
             document.addEventListener("click", clickHandler, true);
