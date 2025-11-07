@@ -288,25 +288,17 @@ patch(FormController.prototype, {
         }
 
         const self = this;
-        let clickHandler = null;
 
         onMounted(() => {
             console.log("Performance controller mounted");
 
-            // Event handler para el botón "Calcular"
-            clickHandler = (ev) => {
-                const btn = ev.target.closest(".calcular_button");
-                if (!btn) return;
-                
-                console.log("Calcular button clicked!");
-                ev.preventDefault();
-                ev.stopPropagation();
-                
+            // Función de cálculo
+            const doCalculation = () => {
                 const d = self.model?.root?.data || {};
                 const t = d.temperatura;
                 const p = d.peso;
                 
-                console.log(`Calculating with peso: ${p}, temperatura: ${t}`);
+                console.log(`=== CALCULANDO === peso: ${p}, temperatura: ${t}`);
 
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
                     const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
@@ -362,68 +354,72 @@ patch(FormController.prototype, {
                     paintPoint(K.canvas_hil_in,  K.src_hil_in,  K.inicio_eje_x_hil_in,  K.inicio_eje_y_hil_in,  K.altura_imagen_hil_in,  p_in,  a_in);
                     paintPoint(K.canvas_hil_out, K.src_hil_out, K.inicio_eje_x_hil_out, K.inicio_eje_y_hil_out, K.altura_imagen_hil_out, p_out, a_out);
                 }
+                
+                console.log("=== CÁLCULO COMPLETADO ===");
             };
             
-            // Adjuntar listener directamente a los botones usando onclick
-            setTimeout(() => {
-                const buttons = document.querySelectorAll('.calcular_button');
-                console.log(`Attaching listeners to ${buttons.length} calcular buttons`);
-                buttons.forEach((btn, idx) => {
-                    console.log(`Button ${idx} details:`, {
-                        className: btn.className,
-                        text: btn.textContent?.trim(),
-                        tagName: btn.tagName,
-                        type: btn.type,
-                        hasOnclick: !!btn.onclick
-                    });
+            // ESTRATEGIA AGRESIVA: Interceptar TODOS los clicks en el form
+            const formElement = document.querySelector('.o_form_view');
+            if (formElement) {
+                console.log("Intercepting ALL clicks on form");
+                
+                formElement.addEventListener('click', (ev) => {
+                    console.log("CLICK DETECTED on:", ev.target.tagName, ev.target.className);
                     
-                    // IMPORTANTE: Cambiar el tipo del botón de submit a button
-                    if (btn.type === 'submit') {
-                        btn.type = 'button';
-                        console.log(`Changed button type from submit to button`);
-                    }
+                    // Buscar si el click fue en o cerca del botón calcular
+                    const target = ev.target;
+                    const isButton = target.classList?.contains('calcular_button');
+                    const inButton = target.closest('.calcular_button');
                     
-                    // Usar onclick en lugar de addEventListener para evitar que Odoo lo bloquee
-                    btn.onclick = (ev) => {
-                        console.log("Button onclick triggered!");
+                    if (isButton || inButton) {
+                        console.log("✓ CALCULAR BUTTON DETECTED!");
                         ev.preventDefault();
                         ev.stopPropagation();
-                        clickHandler(ev);
-                        return false; // Prevenir comportamiento default
-                    };
-                    
-                    // Verificar que se asignó
-                    console.log(`Listener ${idx} attached, onclick is now:`, typeof btn.onclick);
-                });
-            }, 500);
+                        ev.stopImmediatePropagation();
+                        doCalculation();
+                        return false;
+                    }
+                }, true); // Fase de captura - antes que nadie
+                
+                console.log("Global click interceptor installed");
+            }
             
-            // También adjuntar después de 1 segundo por si el botón se renderiza tarde
+            // PLAN B: También intentar con el botón directamente
             setTimeout(() => {
                 const buttons = document.querySelectorAll('.calcular_button');
-                if (buttons.length > 0) {
-                    buttons.forEach((btn) => {
-                        if (!btn.onclick) {
-                            btn.onclick = (ev) => {
-                                console.log("Button onclick triggered (delayed)!");
-                                clickHandler(ev);
-                                return false;
-                            };
-                        }
+                console.log(`Found ${buttons.length} calcular buttons`);
+                
+                buttons.forEach((btn, idx) => {
+                    console.log(`Button ${idx}:`, btn.tagName, btn.className, btn.type);
+                    
+                    // Forzar type="button"
+                    btn.setAttribute('type', 'button');
+                    
+                    // Triple asignación por las dudas
+                    btn.onclick = (ev) => {
+                        console.log("onclick fired!");
+                        ev.preventDefault();
+                        doCalculation();
+                        return false;
+                    };
+                    
+                    btn.addEventListener('click', (ev) => {
+                        console.log("addEventListener fired!");
+                        ev.preventDefault();
+                        doCalculation();
+                    }, true);
+                    
+                    btn.addEventListener('mousedown', () => {
+                        console.log("mousedown on button!");
                     });
-                }
-            }, 1000);
+                });
+            }, 300);
             
-            // Registrar el event listener en el documento para capturar todos los clicks
-            document.addEventListener("click", clickHandler, true);
-            
-            console.log("Calcular button listener registered");
+            console.log("All button listeners configured");
         });
 
         onWillUnmount(() => {
-            // Limpiar event listener al desmontar
-            if (clickHandler) {
-                document.removeEventListener("click", clickHandler, true);
-            }
+            console.log("Performance controller unmounting");
         });
     },
 
