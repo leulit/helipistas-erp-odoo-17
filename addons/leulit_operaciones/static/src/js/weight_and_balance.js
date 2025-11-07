@@ -171,13 +171,25 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     const fieldName = `${tipo1}_gw_${tipo2}_arm`;
     let input = null;
     
-    // Método 1: Buscar por clase wb_cg_indicator y el nombre del campo (más confiable)
+    // DEBUG: Ver qué tenemos en el DOM
+    console.log(`🔍 Buscando campo: ${fieldName}`);
     const allCgIndicators = document.querySelectorAll('.wb_cg_indicator');
+    console.log(`   Encontrados ${allCgIndicators.length} elementos con clase wb_cg_indicator`);
+    allCgIndicators.forEach((el, idx) => {
+        const name = el.getAttribute('name');
+        const hasInput = el.querySelector('input') !== null;
+        console.log(`   [${idx}] name="${name}", hasInput=${hasInput}, tagName=${el.tagName}`);
+    });
+    
+    // Método 1: Buscar por clase wb_cg_indicator y el nombre del campo (más confiable)
     for (const widget of allCgIndicators) {
         // Verificar si el widget tiene el atributo name correcto
         if (widget.getAttribute('name') === fieldName) {
             input = widget.querySelector('input');
-            if (input) break;
+            if (input) {
+                console.log(`   ✓ Encontrado input en wb_cg_indicator[name="${fieldName}"]`);
+                break;
+            }
         }
     }
     
