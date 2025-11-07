@@ -480,27 +480,72 @@ patch(FormController.prototype, {
     },
 
     async saveButtonClicked(params = {}) {
+        console.log("=== SAVE BUTTON CLICKED ===");
+        
         // Guardar canvas como imágenes antes del save
         if (this.props.resModel === "leulit.performance") {
             try {
                 let cin = "", cout = "";
                 
                 // Determinar qué canvas están activos
-                if (el(K.canvas_hil_in + "_div")   && el(K.canvas_hil_out + "_div"))   { cin = K.canvas_hil_in;   cout = K.canvas_hil_out; }
-                if (el(K.canvas_ec_in + "_div")    && el(K.canvas_ec_out + "_div"))    { cin = K.canvas_ec_in;    cout = K.canvas_ec_out; }
-                if (el(K.canvas_r44_in + "_div")   && el(K.canvas_r44_out + "_div"))   { cin = K.canvas_r44_in;   cout = K.canvas_r44_out; }
-                if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) { cin = K.canvas_r44_2_in; cout = K.canvas_r44_2_out; }
-                if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) { cin = K.canvas_cabri_in; cout = K.canvas_cabri_out; }
-                if (el(K.canvas_r22_in + "_div")   && el(K.canvas_r22_out + "_div"))   { cin = K.canvas_r22_in;   cout = K.canvas_r22_out; }
-                if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) { cin = K.canvas_r22_2_in; cout = K.canvas_r22_2_out; }
+                console.log("Checking for active canvas divs...");
+                
+                if (el(K.canvas_hil_in + "_div")   && el(K.canvas_hil_out + "_div"))   { 
+                    cin = K.canvas_hil_in;   
+                    cout = K.canvas_hil_out; 
+                    console.log("Found HIL canvas");
+                }
+                if (el(K.canvas_ec_in + "_div")    && el(K.canvas_ec_out + "_div"))    { 
+                    cin = K.canvas_ec_in;    
+                    cout = K.canvas_ec_out; 
+                    console.log("Found EC canvas");
+                }
+                if (el(K.canvas_r44_in + "_div")   && el(K.canvas_r44_out + "_div"))   { 
+                    cin = K.canvas_r44_in;   
+                    cout = K.canvas_r44_out; 
+                    console.log("Found R44 canvas");
+                }
+                if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) { 
+                    cin = K.canvas_r44_2_in; 
+                    cout = K.canvas_r44_2_out; 
+                    console.log("Found R44-2 canvas");
+                }
+                if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) { 
+                    cin = K.canvas_cabri_in; 
+                    cout = K.canvas_cabri_out; 
+                    console.log("Found CABRI canvas");
+                }
+                if (el(K.canvas_r22_in + "_div")   && el(K.canvas_r22_out + "_div"))   { 
+                    cin = K.canvas_r22_in;   
+                    cout = K.canvas_r22_out; 
+                    console.log("Found R22 canvas");
+                }
+                if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) { 
+                    cin = K.canvas_r22_2_in; 
+                    cout = K.canvas_r22_2_out; 
+                    console.log("Found R22-2 canvas");
+                }
+
+                console.log(`Active canvas: IN=${cin}, OUT=${cout}`);
 
                 const extra = {};
-                if (cin && el(cin))   extra.ige = el(cin).toDataURL("image/jpeg");
-                if (cout && el(cout)) extra.oge = el(cout).toDataURL("image/jpeg");
+                if (cin && el(cin)) {
+                    const canvasElement = el(cin);
+                    extra.ige = canvasElement.toDataURL("image/png");
+                    console.log(`IGE image size: ${extra.ige.length} bytes`);
+                }
+                if (cout && el(cout)) {
+                    const canvasElement = el(cout);
+                    extra.oge = canvasElement.toDataURL("image/png");
+                    console.log(`OGE image size: ${extra.oge.length} bytes`);
+                }
                 
                 if (Object.keys(extra).length && this.model?.root) {
-                    console.log("Saving performance canvas images...");
-                    await this.model.root.update(extra, { save: false });
+                    console.log("Saving performance canvas images to model...", Object.keys(extra));
+                    await this.model.root.update(extra);
+                    console.log("Canvas images saved to model successfully");
+                } else {
+                    console.warn("No canvas images to save or model not available");
                 }
             } catch (error) {
                 console.error("Error saving performance canvas:", error);
@@ -508,6 +553,9 @@ patch(FormController.prototype, {
         }
         
         // Llamar al save original
-        return super.saveButtonClicked(params);
+        console.log("Calling super.saveButtonClicked...");
+        const result = await super.saveButtonClicked(params);
+        console.log("Save completed");
+        return result;
     },
 });
