@@ -56,18 +56,45 @@ function startDraw(divPrefix, inSpec, outSpec, src_in, src_out) {
 }
 
 function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
-    const c = el(canvasId); if (!c) return;
+    const c = el(canvasId); 
+    if (!c) {
+        console.warn(`Canvas not found: ${canvasId}`);
+        return;
+    }
+    
     const ctx = c.getContext("2d");
-    const img = new Image(); img.src = bgSrc;
+    const img = new Image(); 
+    img.src = bgSrc;
+    
     img.onload = () => {
+        // Redibujar la imagen de fondo
+        ctx.clearRect(0, 0, c.width, c.height);
         ctx.drawImage(img, 0, 0);
+        
+        // Calcular la posición real del punto
+        const x = x0 + peso;
+        const y = y0 + imgH - altura; // Invertir Y porque canvas tiene origen arriba-izquierda
+        
+        console.log(`Drawing point at (${x}, ${y}) - peso: ${peso}, altura: ${altura}`);
+        console.log(`Canvas: ${canvasId}, size: ${c.width}x${c.height}`);
+        
+        // Dibujar el punto
+        ctx.save();
         ctx.beginPath();
-        ctx.translate(x0, y0 + imgH);
-        ctx.arc(peso, altura, 4, 0, Math.PI * 2, false);
+        ctx.arc(x, y, 6, 0, Math.PI * 2, false); // Radio 6 para que sea más visible
         ctx.fillStyle = "#FF0000";
-        ctx.translate(-x0, -(y0 + imgH));
         ctx.fill();
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 2;
+        ctx.stroke();
         ctx.closePath();
+        ctx.restore();
+        
+        console.log(`Point drawn successfully on ${canvasId}`);
+    };
+    
+    img.onerror = () => {
+        console.error(`Failed to load background image: ${bgSrc}`);
     };
 }
 
@@ -305,6 +332,7 @@ patch(FormController.prototype, {
                     const p_in  = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_in,  true, false);
                     const a_out = calc_altura(K.temperaturas_beta_out, t, p_out);
                     const a_in  = calc_altura(K.temperaturas_beta_in,  t, p_in);
+                    console.log(`R22: p_in=${p_in}, a_in=${a_in}, p_out=${p_out}, a_out=${a_out}`);
                     paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_beta_in,  K.inicio_eje_y_beta_in,  K.altura_imagen_beta_in,  p_in,  a_in);
                     paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_beta_out, K.inicio_eje_y_beta_out, K.altura_imagen_beta_out, p_out, a_out);
                 }
@@ -313,6 +341,7 @@ patch(FormController.prototype, {
                     const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_beta_2_in,  true, true);
                     const a_out = calc_altura(K.temperaturas_beta_2_out, t, p_out);
                     const a_in  = calc_altura(K.temperaturas_beta_2_in,  t, p_in);
+                    console.log(`R22-II: p_in=${p_in}, a_in=${a_in}, p_out=${p_out}, a_out=${a_out}`);
                     paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_beta_2_in,  K.inicio_eje_y_beta_2_in,  K.altura_imagen_beta_2_in,  p_in,  a_in);
                     paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_beta_2_out, K.inicio_eje_y_beta_2_out, K.altura_imagen_beta_2_out, p_out, a_out);
                 }
