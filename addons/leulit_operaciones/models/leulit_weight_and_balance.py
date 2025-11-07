@@ -16,6 +16,10 @@ class leulit_weight_and_balance(models.Model):
 
     def btn_save_wizard(self):
         for item in self:
+            # CRÍTICO: Recalcular totales antes de guardar
+            # El @api.onchange no guarda automáticamente en la BD
+            item._recalculate_and_save_totals()
+            
             item.vuelo_id.weight_and_balance_id = item.id
             if item.fueltakeoff < 0:
                 item.write({
@@ -454,6 +458,66 @@ class leulit_weight_and_balance(models.Model):
         self.maswithoutfuel_long_arm = (self.maswithoutfuel_long_moment / self.maswithoutfuel)  if self.maswithoutfuel > 0 else 0.0
         self.maswithoutfuel_lat_arm = (self.maswithoutfuel_lat_moment / self.maswithoutfuel)  if self.maswithoutfuel > 0 else 0.0
 
+    def _recalculate_and_save_totals(self):
+        """
+        Recalcula los totales y los guarda explícitamente en la base de datos.
+        Necesario porque @api.onchange no persiste automáticamente los cambios.
+        """
+        strFieldslist = self.fieldslist.replace('[','').replace(']','').replace("'",'').replace(' ','')
+        fieldslist = strFieldslist.split(',')
+        total = 0
+        total_longmoment = 0
+        total_latmoment = 0
+        
+        values_to_write = {}
+        
+        for key in fieldslist:
+            docalculation = True
+            if hasattr(self, key+'_cb'):
+                docalculation = getattr(self,key+'_cb')
+            if hasattr(self, key):
+                if docalculation:
+                    item1 = getattr(self,key)
+                    item2 = getattr(self,key+"_long_arm")
+                    valor = item1 * item2
+                    values_to_write[key+"_long_moment"] = valor
+
+                    item1 = getattr(self,key)
+                    item2 = getattr(self,key+"_lat_arm")
+                    valor = item1 * item2
+                    values_to_write[key+"_lat_moment"] = valor
+
+                    total += getattr(self,key)
+                    total_longmoment += values_to_write[key+"_long_moment"]
+                    total_latmoment += values_to_write[key+"_lat_moment"]
+                else:
+                    values_to_write[key+"_long_moment"] = 0
+                    values_to_write[key+"_lat_moment"] = 0
+        
+        # Calcular takeoff values
+        values_to_write['takeoff_gw'] = total - self.fuellanding
+        values_to_write['takeoff_gw_long_moment'] = total_longmoment - self.fuellanding_long_moment
+        values_to_write['takeoff_gw_lat_moment'] = total_latmoment - self.fuellanding_lat_moment
+        values_to_write['takeoff_gw_long_arm'] = (values_to_write['takeoff_gw_long_moment'] / values_to_write['takeoff_gw']) if values_to_write['takeoff_gw'] > 0 else 0.0
+        values_to_write['takeoff_gw_lat_arm'] = (values_to_write['takeoff_gw_lat_moment'] / values_to_write['takeoff_gw']) if values_to_write['takeoff_gw'] > 0 else 0.0
+        
+        # Calcular landing values
+        values_to_write['landing_gw'] = total - self.fueltakeoff
+        values_to_write['landing_gw_long_moment'] = total_longmoment - self.fueltakeoff_long_moment
+        values_to_write['landing_gw_lat_moment'] = total_latmoment - self.fueltakeoff_lat_moment
+        values_to_write['landing_gw_long_arm'] = (values_to_write['landing_gw_long_moment'] / values_to_write['landing_gw']) if values_to_write['landing_gw'] > 0 else 0.0
+        values_to_write['landing_gw_lat_arm'] = (values_to_write['landing_gw_lat_moment'] / values_to_write['landing_gw']) if values_to_write['landing_gw'] > 0 else 0.0
+
+        # Calcular mass without fuel
+        values_to_write['maswithoutfuel'] = total - self.fuellanding - self.fueltakeoff
+        values_to_write['maswithoutfuel_long_moment'] = total_longmoment - self.fuellanding_long_moment - self.fueltakeoff_long_moment
+        values_to_write['maswithoutfuel_lat_moment'] = total_latmoment - self.fuellanding_lat_moment - self.fueltakeoff_lat_moment
+        values_to_write['maswithoutfuel_long_arm'] = (values_to_write['maswithoutfuel_long_moment'] / values_to_write['maswithoutfuel']) if values_to_write['maswithoutfuel'] > 0 else 0.0
+        values_to_write['maswithoutfuel_lat_arm'] = (values_to_write['maswithoutfuel_lat_moment'] / values_to_write['maswithoutfuel']) if values_to_write['maswithoutfuel'] > 0 else 0.0
+        
+        # Guardar todo de una vez en la BD
+        self.write(values_to_write)
+        _logger.info(f"Weight & Balance totals recalculated and saved: takeoff_gw={values_to_write['takeoff_gw']}")
 
     vuelo_id = fields.Many2one('leulit.vuelo','Vuelo origen', required=True)
     helicoptero_matricula = fields.Char(related='vuelo_id.helicoptero_id.name')
