@@ -369,14 +369,32 @@ patch(FormController.prototype, {
                 const buttons = document.querySelectorAll('.calcular_button');
                 console.log(`Attaching listeners to ${buttons.length} calcular buttons`);
                 buttons.forEach((btn, idx) => {
+                    console.log(`Button ${idx} details:`, {
+                        className: btn.className,
+                        text: btn.textContent?.trim(),
+                        tagName: btn.tagName,
+                        type: btn.type,
+                        hasOnclick: !!btn.onclick
+                    });
+                    
                     // Usar onclick en lugar de addEventListener para evitar que Odoo lo bloquee
                     btn.onclick = (ev) => {
                         console.log("Button onclick triggered!");
                         clickHandler(ev);
                         return false; // Prevenir comportamiento default
                     };
-                    console.log(`Listener ${idx} attached to:`, btn.textContent?.trim());
+                    
+                    // Verificar que se asignó
+                    console.log(`Listener ${idx} attached, onclick is now:`, typeof btn.onclick);
                 });
+                
+                // Test: hacer click programático
+                if (buttons.length > 0) {
+                    console.log("Testing programmatic click...");
+                    setTimeout(() => {
+                        buttons[0].click();
+                    }, 2000);
+                }
             }, 500);
             
             // También adjuntar después de 1 segundo por si el botón se renderiza tarde
