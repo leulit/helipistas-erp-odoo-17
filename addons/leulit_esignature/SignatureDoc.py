@@ -385,18 +385,35 @@ class SignatureDoc(models.Model):
             self.env['leulit_signaturedoc'].with_context(context).sudo().checksignatureRef()
 
 
-    def checksignatureRef(self):
+    def checksignatureRef(self, otp='', notp='', modelo='', idmodelo=0):
         result = False
         error = False
         errMsg = ""
-        datos = self._context.get('args',[])
-        codigo = datos['otp']
-        result = datos['otp'] ==  datos['notp']
+        
+        # Si no se pasan parámetros, intentar obtenerlos del contexto (compatibilidad con versión antigua)
+        if not otp and not modelo:
+            datos = self._context.get('args', {})
+            if isinstance(datos, dict):
+                codigo = datos.get('otp', '')
+                otp = datos.get('otp', '')
+                notp = datos.get('notp', '')
+                modelo = datos.get('modelo', '')
+                idmodelo = datos.get('idmodelo', 0)
+            else:
+                return {
+                    'valid': False,
+                    'error': True,
+                    'errmsg': 'Parámetros inválidos',
+                }
+        else:
+            codigo = otp
+            
+        result = otp == notp
         valid = False
         if result:
-            for item in self.env[datos['modelo']].search([('id','=',datos['idmodelo'])]):
-                esignature = self.buildSignature(datos['modelo'], datos['idmodelo'], codigo)
-                item.buildPdfSigned(datos, esignature)
+            for item in self.env[modelo].search([('id','=',idmodelo)]):
+                esignature = self.buildSignature(modelo, idmodelo, codigo)
+                item.buildPdfSigned({'otp': otp, 'notp': notp, 'modelo': modelo, 'idmodelo': idmodelo}, esignature)
             valid = True
         resultado = {
             'valid': valid,
