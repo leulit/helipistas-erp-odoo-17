@@ -18,7 +18,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -56,7 +56,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -94,7 +94,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -132,7 +132,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -170,7 +170,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -208,7 +208,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
@@ -246,7 +246,7 @@
                             </group>
                         </group>
                         <div>
-                            <button class="oe_highlight m-1 calcular_button" string="Calcular"/>
+                            <button type="button" class="btn btn-primary oe_highlight m-1 calcular_button">Calcular</button>
                             <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
