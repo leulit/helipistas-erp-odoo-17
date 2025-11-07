@@ -820,10 +820,10 @@
                               <field readonly="1" name="takeoff_gw" nolabel="1" />
                            </td>
                            <td>
-                              <field readonly="1" name="takeoff_gw_long_arm" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_long_arm" nolabel="1" class="wb_cg_indicator"/>
                            </td>
                            <td>
-                              <field readonly="1" name="takeoff_gw_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="takeoff_gw_lat_arm" nolabel="1" class="wb_cg_indicator"/>
                            </td>
                            <td>
                               <field readonly="1" name="takeoff_gw_long_moment" nolabel="1"/>
@@ -858,10 +858,10 @@
                               <field readonly="1" name="landing_gw" nolabel="1" />
                            </td>
                            <td>
-                              <field readonly="1" name="landing_gw_long_arm" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_long_arm" nolabel="1" class="wb_cg_indicator"/>
                            </td>
                            <td>
-                              <field readonly="1" name="landing_gw_lat_arm" nolabel="1"/>
+                              <field readonly="1" name="landing_gw_lat_arm" nolabel="1" class="wb_cg_indicator"/>
                            </td>
                            <td>
                               <field readonly="1" name="landing_gw_long_moment" nolabel="1"/>

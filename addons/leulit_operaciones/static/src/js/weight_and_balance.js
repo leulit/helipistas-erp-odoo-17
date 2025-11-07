@@ -162,9 +162,20 @@ function pointInPoly(pt, poly) {
 }
 function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     const inside = pointInPoly(pt, poly);
-    const colors = { takeoff: { red: "red", green: "green" }, landing: { red: "magenta", green: "mediumseagreen" } };
+    const colors = { 
+        takeoff: { red: "red", green: "green" }, 
+        landing: { red: "magenta", green: "mediumseagreen" } 
+    };
+    
+    // Buscar el input por name attribute
     const input = document.querySelector(`input[name='${tipo1}_gw_${tipo2}_arm']`);
-    if (input) { input.style.backgroundColor = inside ? colors[tipo1].green : colors[tipo1].red; input.style.color = "#fff"; }
+    if (input) { 
+        const bgColor = inside ? colors[tipo1].green : colors[tipo1].red;
+        input.style.setProperty('background-color', bgColor, 'important');
+        input.style.setProperty('color', '#fff', 'important');
+        input.style.fontWeight = 'bold';
+    }
+    
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
     changes[`valid_${tipo1}_${tipo2}cg`] = inside;
     return changes;
