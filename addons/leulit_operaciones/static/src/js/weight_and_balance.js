@@ -377,9 +377,8 @@ patch(FormController.prototype, {
                 if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
                 
                 if (Object.keys(extra).length) {
-                    // Guardar directamente en data y luego en la base de datos
+                    // Asignar directamente a data sin disparar onchange
                     Object.assign(this.model.root.data, extra);
-                    await this.model.root.save();
                 }
             }
         }
