@@ -391,6 +391,7 @@ class SignatureDoc(models.Model):
         errMsg = ""
         
         _logger.info("=== checksignatureRef DEBUG ===")
+        _logger.info("self._context --> %r" % self._context)
         _logger.info(f"datos_firma recibido: {datos_firma}")
         _logger.info(f"tipo: {type(datos_firma)}")
         
