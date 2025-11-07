@@ -129,6 +129,7 @@ patch(FormController.prototype, {
         }
 
         const self = this;
+        let clickHandler = null;
 
         onMounted(() => {
             console.log("Performance form mounted");
@@ -178,7 +179,7 @@ patch(FormController.prototype, {
             }
 
             // Event handler para el botón "Calcular"
-            self._onCalc = (ev) => {
+            clickHandler = (ev) => {
                 const btn = ev.target.closest(".calcular_button");
                 if (!btn) return;
                 
@@ -243,13 +244,15 @@ patch(FormController.prototype, {
             };
             
             // Registrar el event listener
-            self.el.addEventListener("click", self._onCalc, true);
+            if (self.el) {
+                self.el.addEventListener("click", clickHandler, true);
+            }
         });
 
         onWillUnmount(() => {
             // Limpiar event listener al desmontar
-            if (self._onCalc) {
-                self.el.removeEventListener("click", self._onCalc, true);
+            if (clickHandler && self.el) {
+                self.el.removeEventListener("click", clickHandler, true);
             }
         });
     },
