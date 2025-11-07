@@ -2,6 +2,7 @@
 
 import { patch } from "@web/core/utils/patch";
 import { FormController } from "@web/views/form/form_controller";
+import { onMounted, onWillUnmount } from "@odoo/owl";
 import * as K from "@leulit_operaciones/js/performance_constants";
 
 const el = (id) => document.getElementById(id);
@@ -117,124 +118,171 @@ function calc_altura(temperaturas, temperatura, peso) {
     }
 }
 
-/* ---- Patch FormController sin this._super ---- */
-const _fcMounted = FormController.prototype.mounted;
-const _fcWillUnmount = FormController.prototype.willUnmount;
-const _fcSave = FormController.prototype.saveRecord;
-
+/* ---- Patch FormController con OWL hooks ---- */
 patch(FormController.prototype, {
-    name: "leulit_operaciones.performance_controller",
-
-    mounted() {
-        if (_fcMounted) _fcMounted.apply(this, arguments);
-
-        if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
-            startDraw("micanvas_hil_", { id: K.canvas_hil_in, width: 500, height: 725 }, { id: K.canvas_hil_out, width: 520, height: 770 }, K.src_hil_in, K.src_hil_out);
-        }
-        if (el(K.canvas_ec_in + "_div") && el(K.canvas_ec_out + "_div")) {
-            startDraw("micanvas_ec_", { id: K.canvas_ec_in, width: 500, height: 725 }, { id: K.canvas_ec_out, width: 520, height: 770 }, K.src_ec_in, K.src_ec_out);
-        }
-        if (el(K.canvas_r44_in + "_div") && el(K.canvas_r44_out + "_div")) {
-            startDraw("micanvas_r44_", { id: K.canvas_r44_in, width: 620, height: 900 }, { id: K.canvas_r44_out, width: 620, height: 900 }, K.src_r44_in, K.src_r44_out);
-        }
-        if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) {
-            startDraw("micanvas_r44_2_", { id: K.canvas_r44_2_in, width: 500, height: 725 }, { id: K.canvas_r44_2_out, width: 520, height: 770 }, K.src_r44_2_in, K.src_r44_2_out);
-        }
-        if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) {
-            startDraw("micanvas_cabri_", { id: K.canvas_cabri_in, width: 500, height: 725 }, { id: K.canvas_cabri_out, width: 520, height: 770 }, K.src_cabri_in, K.src_cabri_out);
-        }
-        if (el(K.canvas_r22_in + "_div") && el(K.canvas_r22_out + "_div")) {
-            startDraw("micanvas_r22_", { id: K.canvas_r22_in, width: 500, height: 725 }, { id: K.canvas_r22_out, width: 520, height: 770 }, K.src_r22_in, K.src_r22_out);
-        }
-        if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) {
-            startDraw("micanvas_r22_2_", { id: K.canvas_r22_2_in, width: 500, height: 717 }, { id: K.canvas_r22_2_out, width: 500, height: 790 }, K.src_r22_2_in, K.src_r22_2_out);
+    setup() {
+        super.setup();
+        
+        // Solo ejecutar para el modelo leulit.performance
+        if (this.props.resModel !== "leulit.performance") {
+            return;
         }
 
-        this._onCalc = (ev) => {
-            const btn = ev.target.closest(".calcular_button");
-            if (!btn) return;
-            const d = this.model?.root?.data || {};
-            const t = d.temperatura, p = d.peso;
+        const self = this;
 
-            if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
-                const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
-                const p_in  = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_in,  true, false);
-                const a_out = calc_altura(K.temperaturas_beta_out, t, p_out);
-                const a_in  = calc_altura(K.temperaturas_beta_in,  t, p_in);
-                paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_beta_in,  K.inicio_eje_y_beta_in,  K.altura_imagen_beta_in,  p_in,  a_in);
-                paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_beta_out, K.inicio_eje_y_beta_out, K.altura_imagen_beta_out, p_out, a_out);
+        onMounted(() => {
+            console.log("Performance form mounted");
+            
+            // Inicializar canvas según el tipo de helicóptero
+            if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
+                startDraw("micanvas_hil_", 
+                    { id: K.canvas_hil_in, width: 500, height: 725 }, 
+                    { id: K.canvas_hil_out, width: 520, height: 770 }, 
+                    K.src_hil_in, K.src_hil_out);
             }
-            if (el(K.canvas_r22_2_in) && el(K.canvas_r22_2_out)) {
-                const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_beta_2_out, true, false);
-                const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_beta_2_in,  true, true);
-                const a_out = calc_altura(K.temperaturas_beta_2_out, t, p_out);
-                const a_in  = calc_altura(K.temperaturas_beta_2_in,  t, p_in);
-                paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_beta_2_in,  K.inicio_eje_y_beta_2_in,  K.altura_imagen_beta_2_in,  p_in,  a_in);
-                paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_beta_2_out, K.inicio_eje_y_beta_2_out, K.altura_imagen_beta_2_out, p_out, a_out);
+            if (el(K.canvas_ec_in + "_div") && el(K.canvas_ec_out + "_div")) {
+                startDraw("micanvas_ec_", 
+                    { id: K.canvas_ec_in, width: 500, height: 725 }, 
+                    { id: K.canvas_ec_out, width: 520, height: 770 }, 
+                    K.src_ec_in, K.src_ec_out);
             }
-            if (el(K.canvas_cabri_in) && el(K.canvas_cabri_out)) {
-                const p_cabri = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri, false, true);
-                const a_in  = calc_altura(K.temperaturas_cabri_in,  t, p_cabri);
-                const a_out = calc_altura(K.temperaturas_cabri_out, t, p_cabri);
-                paintPoint(K.canvas_cabri_in,  K.src_cabri_in,  K.inicio_eje_x_cabri_in,  K.inicio_eje_y_cabri_in,  K.altura_imagen_cabri_in,  p_cabri, a_in);
-                paintPoint(K.canvas_cabri_out, K.src_cabri_out, K.inicio_eje_x_cabri_out, K.inicio_eje_y_cabri_out, K.altura_imagen_cabri_out, p_cabri, a_out);
+            if (el(K.canvas_r44_in + "_div") && el(K.canvas_r44_out + "_div")) {
+                startDraw("micanvas_r44_", 
+                    { id: K.canvas_r44_in, width: 620, height: 900 }, 
+                    { id: K.canvas_r44_out, width: 620, height: 900 }, 
+                    K.src_r44_in, K.src_r44_out);
             }
-            if (el(K.canvas_r44_2_in) && el(K.canvas_r44_2_out)) {
-                const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  true, false);
-                const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, true, false);
-                const a_in  = calc_altura(K.temperaturas_r44_2_ige, t, p_in);
-                const a_out = calc_altura(K.temperaturas_r44_2_oge, t, p_out);
-                paintPoint(K.canvas_r44_2_in,  K.src_r44_2_in,  K.inicio_eje_x_r44_2_in,  K.inicio_eje_y_r44_2_in,  K.altura_imagen_r44, p_in,  a_in);
-                paintPoint(K.canvas_r44_2_out, K.src_r44_2_out, K.inicio_eje_x_r44_2_out, K.inicio_eje_y_r44_2_out, K.altura_imagen_r44, p_out, a_out);
+            if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) {
+                startDraw("micanvas_r44_2_", 
+                    { id: K.canvas_r44_2_in, width: 500, height: 725 }, 
+                    { id: K.canvas_r44_2_out, width: 520, height: 770 }, 
+                    K.src_r44_2_in, K.src_r44_2_out);
             }
-            if (el(K.canvas_r44_in) && el(K.canvas_r44_out)) {
-                const p_r44 = calc_peso(p, K.inicio_eje_r44, K.proporcion_r44, true, false);
-                const a_in  = calc_altura(K.temperaturas_r44_ige, t, p_r44);
-                const a_out = calc_altura(K.temperaturas_r44_oge, t, p_r44);
-                paintPoint(K.canvas_r44_in,  K.src_r44_in,  K.inicio_eje_x_r44_in,  K.inicio_eje_y_r44_in,  K.altura_imagen_r44, p_r44, a_in);
-                paintPoint(K.canvas_r44_out, K.src_r44_out, K.inicio_eje_x_r44_out, K.inicio_eje_y_r44_out, K.altura_imagen_r44, p_r44, a_out);
+            if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) {
+                startDraw("micanvas_cabri_", 
+                    { id: K.canvas_cabri_in, width: 500, height: 725 }, 
+                    { id: K.canvas_cabri_out, width: 520, height: 770 }, 
+                    K.src_cabri_in, K.src_cabri_out);
             }
-            if (el(K.canvas_ec_in) && el(K.canvas_ec_out)) {
-                const p_in  = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_in,  false, false);
-                const p_out = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_out, false, false);
-                const a_in  = calc_altura(K.temperaturas_ec_in,  t, p_in);
-                const a_out = calc_altura(K.temperaturas_ec_out, t, p_out);
-                paintPoint(K.canvas_ec_in,  K.src_ec_in,  K.inicio_eje_x_ec_in,  K.inicio_eje_y_ec_in,  K.altura_imagen_ec_in,  p_in,  a_in);
-                paintPoint(K.canvas_ec_out, K.src_ec_out, K.inicio_eje_x_ec_out, K.inicio_eje_y_ec_out, K.altura_imagen_ec_out, p_out, a_out);
+            if (el(K.canvas_r22_in + "_div") && el(K.canvas_r22_out + "_div")) {
+                startDraw("micanvas_r22_", 
+                    { id: K.canvas_r22_in, width: 500, height: 725 }, 
+                    { id: K.canvas_r22_out, width: 520, height: 770 }, 
+                    K.src_r22_in, K.src_r22_out);
             }
-            if (el(K.canvas_hil_in) && el(K.canvas_hil_out)) {
-                const p_in  = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_in,  false, false);
-                const p_out = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_out, false, false);
-                const a_in  = calc_altura(K.temperaturas_hil_in,  t, p_in);
-                const a_out = calc_altura(K.temperaturas_hil_out, t, p_out);
-                paintPoint(K.canvas_hil_in,  K.src_hil_in,  K.inicio_eje_x_hil_in,  K.inicio_eje_y_hil_in,  K.altura_imagen_hil_in,  p_in,  a_in);
-                paintPoint(K.canvas_hil_out, K.src_hil_out, K.inicio_eje_x_hil_out, K.inicio_eje_y_hil_out, K.altura_imagen_hil_out, p_out, a_out);
+            if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) {
+                startDraw("micanvas_r22_2_", 
+                    { id: K.canvas_r22_2_in, width: 500, height: 717 }, 
+                    { id: K.canvas_r22_2_out, width: 500, height: 790 }, 
+                    K.src_r22_2_in, K.src_r22_2_out);
             }
-        };
-        this.el.addEventListener("click", this._onCalc, true);
+
+            // Event handler para el botón "Calcular"
+            self._onCalc = (ev) => {
+                const btn = ev.target.closest(".calcular_button");
+                if (!btn) return;
+                
+                const d = self.model?.root?.data || {};
+                const t = d.temperatura;
+                const p = d.peso;
+
+                if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
+                    const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_in,  true, false);
+                    const a_out = calc_altura(K.temperaturas_beta_out, t, p_out);
+                    const a_in  = calc_altura(K.temperaturas_beta_in,  t, p_in);
+                    paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_beta_in,  K.inicio_eje_y_beta_in,  K.altura_imagen_beta_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_beta_out, K.inicio_eje_y_beta_out, K.altura_imagen_beta_out, p_out, a_out);
+                }
+                if (el(K.canvas_r22_2_in) && el(K.canvas_r22_2_out)) {
+                    const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_beta_2_out, true, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_beta_2_in,  true, true);
+                    const a_out = calc_altura(K.temperaturas_beta_2_out, t, p_out);
+                    const a_in  = calc_altura(K.temperaturas_beta_2_in,  t, p_in);
+                    paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_beta_2_in,  K.inicio_eje_y_beta_2_in,  K.altura_imagen_beta_2_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_beta_2_out, K.inicio_eje_y_beta_2_out, K.altura_imagen_beta_2_out, p_out, a_out);
+                }
+                if (el(K.canvas_cabri_in) && el(K.canvas_cabri_out)) {
+                    const p_cabri = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri, false, true);
+                    const a_in  = calc_altura(K.temperaturas_cabri_in,  t, p_cabri);
+                    const a_out = calc_altura(K.temperaturas_cabri_out, t, p_cabri);
+                    paintPoint(K.canvas_cabri_in,  K.src_cabri_in,  K.inicio_eje_x_cabri_in,  K.inicio_eje_y_cabri_in,  K.altura_imagen_cabri_in,  p_cabri, a_in);
+                    paintPoint(K.canvas_cabri_out, K.src_cabri_out, K.inicio_eje_x_cabri_out, K.inicio_eje_y_cabri_out, K.altura_imagen_cabri_out, p_cabri, a_out);
+                }
+                if (el(K.canvas_r44_2_in) && el(K.canvas_r44_2_out)) {
+                    const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  true, false);
+                    const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, true, false);
+                    const a_in  = calc_altura(K.temperaturas_r44_2_ige, t, p_in);
+                    const a_out = calc_altura(K.temperaturas_r44_2_oge, t, p_out);
+                    paintPoint(K.canvas_r44_2_in,  K.src_r44_2_in,  K.inicio_eje_x_r44_2_in,  K.inicio_eje_y_r44_2_in,  K.altura_imagen_r44, p_in,  a_in);
+                    paintPoint(K.canvas_r44_2_out, K.src_r44_2_out, K.inicio_eje_x_r44_2_out, K.inicio_eje_y_r44_2_out, K.altura_imagen_r44, p_out, a_out);
+                }
+                if (el(K.canvas_r44_in) && el(K.canvas_r44_out)) {
+                    const p_r44 = calc_peso(p, K.inicio_eje_r44, K.proporcion_r44, true, false);
+                    const a_in  = calc_altura(K.temperaturas_r44_ige, t, p_r44);
+                    const a_out = calc_altura(K.temperaturas_r44_oge, t, p_r44);
+                    paintPoint(K.canvas_r44_in,  K.src_r44_in,  K.inicio_eje_x_r44_in,  K.inicio_eje_y_r44_in,  K.altura_imagen_r44, p_r44, a_in);
+                    paintPoint(K.canvas_r44_out, K.src_r44_out, K.inicio_eje_x_r44_out, K.inicio_eje_y_r44_out, K.altura_imagen_r44, p_r44, a_out);
+                }
+                if (el(K.canvas_ec_in) && el(K.canvas_ec_out)) {
+                    const p_in  = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_in,  false, false);
+                    const p_out = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_out, false, false);
+                    const a_in  = calc_altura(K.temperaturas_ec_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_ec_out, t, p_out);
+                    paintPoint(K.canvas_ec_in,  K.src_ec_in,  K.inicio_eje_x_ec_in,  K.inicio_eje_y_ec_in,  K.altura_imagen_ec_in,  p_in,  a_in);
+                    paintPoint(K.canvas_ec_out, K.src_ec_out, K.inicio_eje_x_ec_out, K.inicio_eje_y_ec_out, K.altura_imagen_ec_out, p_out, a_out);
+                }
+                if (el(K.canvas_hil_in) && el(K.canvas_hil_out)) {
+                    const p_in  = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_in,  false, false);
+                    const p_out = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_out, false, false);
+                    const a_in  = calc_altura(K.temperaturas_hil_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_hil_out, t, p_out);
+                    paintPoint(K.canvas_hil_in,  K.src_hil_in,  K.inicio_eje_x_hil_in,  K.inicio_eje_y_hil_in,  K.altura_imagen_hil_in,  p_in,  a_in);
+                    paintPoint(K.canvas_hil_out, K.src_hil_out, K.inicio_eje_x_hil_out, K.inicio_eje_y_hil_out, K.altura_imagen_hil_out, p_out, a_out);
+                }
+            };
+            
+            // Registrar el event listener
+            self.el.addEventListener("click", self._onCalc, true);
+        });
+
+        onWillUnmount(() => {
+            // Limpiar event listener al desmontar
+            if (self._onCalc) {
+                self.el.removeEventListener("click", self._onCalc, true);
+            }
+        });
     },
 
-    willUnmount() {
-        if (this._onCalc) this.el.removeEventListener("click", this._onCalc, true);
-        if (_fcWillUnmount) _fcWillUnmount.apply(this, arguments);
-    },
+    async saveButtonClicked(params = {}) {
+        // Guardar canvas como imágenes antes del save
+        if (this.props.resModel === "leulit.performance") {
+            try {
+                let cin = "", cout = "";
+                
+                // Determinar qué canvas están activos
+                if (el(K.canvas_hil_in + "_div")   && el(K.canvas_hil_out + "_div"))   { cin = K.canvas_hil_in;   cout = K.canvas_hil_out; }
+                if (el(K.canvas_ec_in + "_div")    && el(K.canvas_ec_out + "_div"))    { cin = K.canvas_ec_in;    cout = K.canvas_ec_out; }
+                if (el(K.canvas_r44_in + "_div")   && el(K.canvas_r44_out + "_div"))   { cin = K.canvas_r44_in;   cout = K.canvas_r44_out; }
+                if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) { cin = K.canvas_r44_2_in; cout = K.canvas_r44_2_out; }
+                if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) { cin = K.canvas_cabri_in; cout = K.canvas_cabri_out; }
+                if (el(K.canvas_r22_in + "_div")   && el(K.canvas_r22_out + "_div"))   { cin = K.canvas_r22_in;   cout = K.canvas_r22_out; }
+                if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) { cin = K.canvas_r22_2_in; cout = K.canvas_r22_2_out; }
 
-    async saveRecord(...args) {
-        try {
-            let cin = "", cout = "";
-            if (el(K.canvas_hil_in + "_div")  && el(K.canvas_hil_out + "_div"))  { cin = K.canvas_hil_in;  cout = K.canvas_hil_out; }
-            if (el(K.canvas_ec_in + "_div")   && el(K.canvas_ec_out + "_div"))   { cin = K.canvas_ec_in;   cout = K.canvas_ec_out; }
-            if (el(K.canvas_r44_in + "_div")  && el(K.canvas_r44_out + "_div"))  { cin = K.canvas_r44_in;  cout = K.canvas_r44_out; }
-            if (el(K.canvas_r44_2_in + "_div")&& el(K.canvas_r44_2_out + "_div")){ cin = K.canvas_r44_2_in;cout = K.canvas_r44_2_out; }
-            if (el(K.canvas_cabri_in + "_div")&& el(K.canvas_cabri_out + "_div")){ cin = K.canvas_cabri_in;cout = K.canvas_cabri_out; }
-            if (el(K.canvas_r22_in + "_div")  && el(K.canvas_r22_out + "_div"))  { cin = K.canvas_r22_in;  cout = K.canvas_r22_out; }
-            if (el(K.canvas_r22_2_in + "_div")&& el(K.canvas_r22_2_out + "_div")){ cin = K.canvas_r22_2_in;cout = K.canvas_r22_2_out; }
-
-            const extra = {};
-            if (cin && el(cin))  extra.ige = el(cin).toDataURL("image/jpeg");
-            if (cout && el(cout)) extra.oge = el(cout).toDataURL("image/jpeg");
-            if (Object.keys(extra).length && this.model?.root) await this.model.root.update(extra);
-        } catch (_) {}
-        return _fcSave ? _fcSave.apply(this, args) : undefined;
+                const extra = {};
+                if (cin && el(cin))   extra.ige = el(cin).toDataURL("image/jpeg");
+                if (cout && el(cout)) extra.oge = el(cout).toDataURL("image/jpeg");
+                
+                if (Object.keys(extra).length && this.model?.root) {
+                    console.log("Saving performance canvas images...");
+                    await this.model.root.update(extra, { save: false });
+                }
+            } catch (error) {
+                console.error("Error saving performance canvas:", error);
+            }
+        }
+        
+        // Llamar al save original
+        return super.saveButtonClicked(params);
     },
 });
