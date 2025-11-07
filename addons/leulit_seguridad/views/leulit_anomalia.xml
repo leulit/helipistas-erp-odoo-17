@@ -33,10 +33,8 @@
                         <button name="wizard_cerrar" type="object" string="Cerrar"  invisible="((estado in ['closed']))"  class="oe_right oe_highlight"/>
                     </header>
                     <sheet>
-                        <group>
                             <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
                             <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
-                        </group>
                         
                         <group col="2">
                             <field name="codigo" string="Code"/>
@@ -141,15 +139,14 @@
                             </group>
                         </group>
                         
-                        <group string="Materials">
-                            <field name="domain_materiales" invisible="1"/>
-                            <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]" nolabel="1">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="production_lot"/>
-                                </tree>
-                            </field>
-                        </group>
+                        <separator string="Materials"/>
+                        <field name="domain_materiales" invisible="1"/>
+                        <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]" nolabel="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="production_lot"/>
+                            </tree>
+                        </field>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>

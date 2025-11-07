@@ -28,7 +28,7 @@
                 <xpath expr="//button[@name='wizard_diferir']" position="attributes">
                     <attribute name="invisible">('estado','in',['deferred','closed','flightcanceled']),('check_firmado', '=', True)</attribute>
                 </xpath>
-                <xpath expr="//div[@id='materials_anomalia']" position="after">
+                <xpath expr="//sheet" position="inside">
                     <notebook colspan="4" >
                         <page string="Documentos firmados">
                             <field name="esignature_docs" colspan="4" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
