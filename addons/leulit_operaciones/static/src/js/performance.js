@@ -2,6 +2,7 @@
 
 import { patch } from "@web/core/utils/patch";
 import { FormController } from "@web/views/form/form_controller";
+import { FormRenderer } from "@web/views/form/form_renderer";
 import { onMounted, onWillUnmount } from "@odoo/owl";
 import * as K from "@leulit_operaciones/js/performance_constants";
 
@@ -10,24 +11,48 @@ const el = (id) => document.getElementById(id);
 function startDraw(divPrefix, inSpec, outSpec, src_in, src_out) {
     const inDiv = el(`${divPrefix}in_div`);
     const outDiv = el(`${divPrefix}out_div`);
-    if (!inDiv || !outDiv) return;
+    if (!inDiv || !outDiv) {
+        console.warn(`Cannot find divs: ${divPrefix}in_div or ${divPrefix}out_div`);
+        return;
+    }
+
+    // Limpiar contenido previo
+    inDiv.innerHTML = '';
+    outDiv.innerHTML = '';
 
     const inCanvas = document.createElement("canvas");
-    inCanvas.id = inSpec.id; inCanvas.width = inSpec.width; inCanvas.height = inSpec.height;
+    inCanvas.id = inSpec.id; 
+    inCanvas.width = inSpec.width; 
+    inCanvas.height = inSpec.height;
+    
     const outCanvas = document.createElement("canvas");
-    outCanvas.id = outSpec.id; outCanvas.width = outSpec.width; outCanvas.height = outSpec.height;
+    outCanvas.id = outSpec.id; 
+    outCanvas.width = outSpec.width; 
+    outCanvas.height = outSpec.height;
 
     inDiv.appendChild(inCanvas);
     outDiv.appendChild(outCanvas);
 
-    const loadImg = (canvasId, src) => {
-        const c = el(canvasId); if (!c) return;
-        const ctx = c.getContext("2d");
-        const img = new Image(); img.src = src;
-        img.onload = () => { ctx.drawImage(img, 0, 0); };
+    // Cargar imágenes
+    const loadImg = (canvas, src) => {
+        if (!canvas) {
+            console.warn(`Canvas not found for src: ${src}`);
+            return;
+        }
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        img.onload = () => { 
+            ctx.drawImage(img, 0, 0); 
+            console.log(`Image loaded: ${src}`);
+        };
+        img.onerror = () => {
+            console.error(`Failed to load image: ${src}`);
+        };
+        img.src = src;
     };
-    loadImg(inSpec.id, src_in);
-    loadImg(outSpec.id, src_out);
+    
+    loadImg(inCanvas, src_in);
+    loadImg(outCanvas, src_out);
 }
 
 function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
@@ -118,7 +143,76 @@ function calc_altura(temperaturas, temperatura, peso) {
     }
 }
 
-/* ---- Patch FormController con OWL hooks ---- */
+/* ---- Patch FormRenderer con OWL hooks ---- */
+patch(FormRenderer.prototype, {
+    setup() {
+        super.setup();
+        const self = this;
+        
+        onMounted(() => {
+            const model = self.props?.record?.resModel;
+            if (model !== "leulit.performance") return;
+            
+            console.log("Performance form mounted - initializing canvas...");
+            
+            // Esperar un momento para que el DOM esté completamente renderizado
+            setTimeout(() => {
+                // Inicializar canvas según el tipo de helicóptero
+                if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
+                    console.log("Initializing EC-HIL canvas");
+                    startDraw("micanvas_hil_", 
+                        { id: K.canvas_hil_in, width: 500, height: 725 }, 
+                        { id: K.canvas_hil_out, width: 520, height: 770 }, 
+                        K.src_hil_in, K.src_hil_out);
+                }
+                if (el(K.canvas_ec_in + "_div") && el(K.canvas_ec_out + "_div")) {
+                    console.log("Initializing EC120B canvas");
+                    startDraw("micanvas_ec_", 
+                        { id: K.canvas_ec_in, width: 500, height: 725 }, 
+                        { id: K.canvas_ec_out, width: 520, height: 770 }, 
+                        K.src_ec_in, K.src_ec_out);
+                }
+                if (el(K.canvas_r44_in + "_div") && el(K.canvas_r44_out + "_div")) {
+                    console.log("Initializing R44 ASTRO canvas");
+                    startDraw("micanvas_r44_", 
+                        { id: K.canvas_r44_in, width: 620, height: 900 }, 
+                        { id: K.canvas_r44_out, width: 620, height: 900 }, 
+                        K.src_r44_in, K.src_r44_out);
+                }
+                if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) {
+                    console.log("Initializing R44 II canvas");
+                    startDraw("micanvas_r44_2_", 
+                        { id: K.canvas_r44_2_in, width: 500, height: 725 }, 
+                        { id: K.canvas_r44_2_out, width: 520, height: 770 }, 
+                        K.src_r44_2_in, K.src_r44_2_out);
+                }
+                if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) {
+                    console.log("Initializing CABRI G2 canvas");
+                    startDraw("micanvas_cabri_", 
+                        { id: K.canvas_cabri_in, width: 500, height: 725 }, 
+                        { id: K.canvas_cabri_out, width: 520, height: 770 }, 
+                        K.src_cabri_in, K.src_cabri_out);
+                }
+                if (el(K.canvas_r22_in + "_div") && el(K.canvas_r22_out + "_div")) {
+                    console.log("Initializing R22 canvas");
+                    startDraw("micanvas_r22_", 
+                        { id: K.canvas_r22_in, width: 500, height: 725 }, 
+                        { id: K.canvas_r22_out, width: 520, height: 770 }, 
+                        K.src_r22_in, K.src_r22_out);
+                }
+                if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) {
+                    console.log("Initializing R22 II canvas");
+                    startDraw("micanvas_r22_2_", 
+                        { id: K.canvas_r22_2_in, width: 500, height: 717 }, 
+                        { id: K.canvas_r22_2_out, width: 500, height: 790 }, 
+                        K.src_r22_2_in, K.src_r22_2_out);
+                }
+            }, 250);
+        });
+    },
+});
+
+/* ---- Patch FormController para eventos y guardado ---- */
 patch(FormController.prototype, {
     setup() {
         super.setup();
@@ -132,51 +226,7 @@ patch(FormController.prototype, {
         let clickHandler = null;
 
         onMounted(() => {
-            console.log("Performance form mounted");
-            
-            // Inicializar canvas según el tipo de helicóptero
-            if (el(K.canvas_hil_in + "_div") && el(K.canvas_hil_out + "_div")) {
-                startDraw("micanvas_hil_", 
-                    { id: K.canvas_hil_in, width: 500, height: 725 }, 
-                    { id: K.canvas_hil_out, width: 520, height: 770 }, 
-                    K.src_hil_in, K.src_hil_out);
-            }
-            if (el(K.canvas_ec_in + "_div") && el(K.canvas_ec_out + "_div")) {
-                startDraw("micanvas_ec_", 
-                    { id: K.canvas_ec_in, width: 500, height: 725 }, 
-                    { id: K.canvas_ec_out, width: 520, height: 770 }, 
-                    K.src_ec_in, K.src_ec_out);
-            }
-            if (el(K.canvas_r44_in + "_div") && el(K.canvas_r44_out + "_div")) {
-                startDraw("micanvas_r44_", 
-                    { id: K.canvas_r44_in, width: 620, height: 900 }, 
-                    { id: K.canvas_r44_out, width: 620, height: 900 }, 
-                    K.src_r44_in, K.src_r44_out);
-            }
-            if (el(K.canvas_r44_2_in + "_div") && el(K.canvas_r44_2_out + "_div")) {
-                startDraw("micanvas_r44_2_", 
-                    { id: K.canvas_r44_2_in, width: 500, height: 725 }, 
-                    { id: K.canvas_r44_2_out, width: 520, height: 770 }, 
-                    K.src_r44_2_in, K.src_r44_2_out);
-            }
-            if (el(K.canvas_cabri_in + "_div") && el(K.canvas_cabri_out + "_div")) {
-                startDraw("micanvas_cabri_", 
-                    { id: K.canvas_cabri_in, width: 500, height: 725 }, 
-                    { id: K.canvas_cabri_out, width: 520, height: 770 }, 
-                    K.src_cabri_in, K.src_cabri_out);
-            }
-            if (el(K.canvas_r22_in + "_div") && el(K.canvas_r22_out + "_div")) {
-                startDraw("micanvas_r22_", 
-                    { id: K.canvas_r22_in, width: 500, height: 725 }, 
-                    { id: K.canvas_r22_out, width: 520, height: 770 }, 
-                    K.src_r22_in, K.src_r22_out);
-            }
-            if (el(K.canvas_r22_2_in + "_div") && el(K.canvas_r22_2_out + "_div")) {
-                startDraw("micanvas_r22_2_", 
-                    { id: K.canvas_r22_2_in, width: 500, height: 717 }, 
-                    { id: K.canvas_r22_2_out, width: 500, height: 790 }, 
-                    K.src_r22_2_in, K.src_r22_2_out);
-            }
+            console.log("Performance controller mounted");
 
             // Event handler para el botón "Calcular"
             clickHandler = (ev) => {
