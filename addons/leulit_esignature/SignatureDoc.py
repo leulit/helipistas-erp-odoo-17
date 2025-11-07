@@ -385,37 +385,55 @@ class SignatureDoc(models.Model):
             self.env['leulit_signaturedoc'].with_context(context).sudo().checksignatureRef()
 
 
-    def checksignatureRef(self, args=None):
+    def checksignatureRef(self, *args, **kwargs):
         result = False
         error = False
         errMsg = ""
         
-        # Los argumentos vienen desde Flutter como una lista con un diccionario dentro
-        # Estructura: args = [{'otp': '...', 'notp': '...', 'modelo': '...', 'idmodelo': ...}]
-        if args and isinstance(args, dict):
-            datos = args
-        elif args and isinstance(args, list) and len(args) > 0:
-            datos = args[0] if isinstance(args[0], dict) else {}
-        else:
-            # Intentar desde contexto (compatibilidad con versión antigua)
+        _logger.info("=== checksignatureRef DEBUG ===")
+        _logger.info(f"args recibidos: {args}")
+        _logger.info(f"kwargs recibidos: {kwargs}")
+        _logger.info(f"context: {self._context}")
+        
+        datos = None
+        
+        # Opción 1: Los datos vienen como primer argumento posicional
+        if args and len(args) > 0:
+            if isinstance(args[0], dict):
+                datos = args[0]
+                _logger.info(f"Datos extraídos de args[0]: {datos}")
+        
+        # Opción 2: Los datos vienen en kwargs
+        if not datos and kwargs:
+            # Puede venir como kwargs directos o dentro de un diccionario
+            if all(key in kwargs for key in ['otp', 'notp', 'modelo', 'idmodelo']):
+                datos = kwargs
+                _logger.info(f"Datos extraídos de kwargs: {datos}")
+        
+        # Opción 3: Intentar desde contexto (compatibilidad con versión antigua)
+        if not datos:
             context_args = self._context.get('args', [])
+            _logger.info(f"context_args: {context_args}")
             if isinstance(context_args, dict):
                 datos = context_args
             elif isinstance(context_args, list) and len(context_args) > 0:
                 datos = context_args[0] if isinstance(context_args[0], dict) else {}
-            else:
-                return {
-                    'valid': False,
-                    'error': True,
-                    'errmsg': 'Parámetros inválidos - no se encontraron datos',
-                }
         
-        # Validar que tenemos los campos necesarios
-        if not all(key in datos for key in ['otp', 'notp', 'modelo', 'idmodelo']):
+        if not datos or not isinstance(datos, dict):
+            _logger.error(f"No se pudieron obtener datos válidos. datos={datos}")
             return {
                 'valid': False,
                 'error': True,
-                'errmsg': 'Faltan parámetros requeridos: otp, notp, modelo, idmodelo',
+                'errmsg': f'Parámetros inválidos - datos recibidos: args={args}, kwargs={kwargs}',
+            }
+        
+        # Validar que tenemos los campos necesarios
+        if not all(key in datos for key in ['otp', 'notp', 'modelo', 'idmodelo']):
+            _logger.error(f"Faltan campos requeridos en datos: {datos}")
+            return {
+                'valid': False,
+                'error': True,
+                'errmsg': f'Faltan parámetros requeridos. Datos recibidos: {list(datos.keys())}',
             }
         
         codigo = datos['otp']
@@ -427,7 +445,8 @@ class SignatureDoc(models.Model):
                 esignature = self.buildSignature(datos['modelo'], datos['idmodelo'], codigo)
                 item.buildPdfSigned(datos, esignature)
             valid = True
-            
+        
+        _logger.info(f"checksignatureRef resultado: valid={valid}")
         resultado = {
             'valid': valid,
             'error': error,
