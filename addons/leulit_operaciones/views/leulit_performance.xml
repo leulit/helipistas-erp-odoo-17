@@ -142,16 +142,18 @@
                     </group>
                     
                     <!-- Gráficas lado a lado sin notebook -->
-                    <group col="2" class="o_group_col_12">
-                        <group string="IN GROUND EFFECT">
-                            <div style="overflow: auto; border: 1px solid #ccc; background: #fff;" id="micanvas_r22_2_in_div">
+                    <div class="row" style="width: 100%;">
+                        <div class="col-6">
+                            <h4>IN GROUND EFFECT</h4>
+                            <div style="overflow: auto; border: 1px solid #ccc; background: #fff; width: 100%;" id="micanvas_r22_2_in_div">
                             </div>
-                        </group>
-                        <group string="OUT GROUND EFFECT">
-                            <div style="overflow: auto; border: 1px solid #ccc; background: #fff;" id="micanvas_r22_2_out_div">
+                        </div>
+                        <div class="col-6">
+                            <h4>OUT GROUND EFFECT</h4>
+                            <div style="overflow: auto; border: 1px solid #ccc; background: #fff; width: 100%;" id="micanvas_r22_2_out_div">
                             </div>
-                        </group>
-                    </group>
+                        </div>
+                    </div>
                 </form>
             </field>
         </record>
