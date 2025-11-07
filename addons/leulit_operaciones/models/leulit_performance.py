@@ -47,3 +47,12 @@ class leulit_performance(models.Model):
         context = self.env.context
         self.write({'temperatura':context['temperatura'],'guardar':True})
         return True
+
+    def dummy_calcular(self):
+        """
+        Método dummy para el botón Calcular.
+        El cálculo real se hace en JavaScript (performance.js).
+        Este método solo existe para que Odoo valide el botón en el XML.
+        """
+        # JavaScript intercepta el click antes de que llegue aquí
+        return True

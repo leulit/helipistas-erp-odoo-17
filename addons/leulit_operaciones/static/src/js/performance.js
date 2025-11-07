@@ -370,8 +370,9 @@ patch(FormController.prototype, {
                     const target = ev.target;
                     const isButton = target.classList?.contains('calcular_button');
                     const inButton = target.closest('.calcular_button');
+                    const isCalcButton = target.getAttribute?.('name') === 'dummy_calcular';
                     
-                    if (isButton || inButton) {
+                    if (isButton || inButton || isCalcButton) {
                         console.log("✓ CALCULAR BUTTON DETECTED!");
                         ev.preventDefault();
                         ev.stopPropagation();
@@ -384,21 +385,19 @@ patch(FormController.prototype, {
                 console.log("Global click interceptor installed");
             }
             
-            // PLAN B: También intentar con el botón directamente
+            // PLAN B: También intentar con el botón directamente después de que se renderice
             setTimeout(() => {
-                const buttons = document.querySelectorAll('.calcular_button');
+                const buttons = document.querySelectorAll('.calcular_button, button[name="dummy_calcular"]');
                 console.log(`Found ${buttons.length} calcular buttons`);
                 
                 buttons.forEach((btn, idx) => {
-                    console.log(`Button ${idx}:`, btn.tagName, btn.className, btn.type);
-                    
-                    // Forzar type="button"
-                    btn.setAttribute('type', 'button');
+                    console.log(`Button ${idx}:`, btn.tagName, btn.className, btn.getAttribute('name'));
                     
                     // Triple asignación por las dudas
                     btn.onclick = (ev) => {
                         console.log("onclick fired!");
                         ev.preventDefault();
+                        ev.stopPropagation();
                         doCalculation();
                         return false;
                     };
@@ -406,11 +405,13 @@ patch(FormController.prototype, {
                     btn.addEventListener('click', (ev) => {
                         console.log("addEventListener fired!");
                         ev.preventDefault();
+                        ev.stopPropagation();
                         doCalculation();
                     }, true);
                     
-                    btn.addEventListener('mousedown', () => {
+                    btn.addEventListener('mousedown', (ev) => {
                         console.log("mousedown on button!");
+                        ev.preventDefault();
                     });
                 });
             }, 300);
