@@ -169,13 +169,41 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     
     // Buscar el input de múltiples formas para asegurar que lo encontramos
     const fieldName = `${tipo1}_gw_${tipo2}_arm`;
-    let input = document.querySelector(`input[name='${fieldName}']`);
+    let input = null;
     
-    // Si no lo encuentra, buscar por el div.o_field_widget que contiene ese campo
+    // Método 1: Buscar por name attribute del input
+    input = document.querySelector(`input[name='${fieldName}']`);
+    
+    // Método 2: Buscar el div.o_field_widget con ese name
     if (!input) {
         const fieldDiv = document.querySelector(`div.o_field_widget[name='${fieldName}']`);
         if (fieldDiv) {
             input = fieldDiv.querySelector('input');
+        }
+    }
+    
+    // Método 3: Buscar por clase wb_cg_indicator que añadimos
+    if (!input) {
+        const allCgFields = document.querySelectorAll('.wb_cg_indicator input');
+        for (const el of allCgFields) {
+            // Comprobar si el input pertenece a un field widget con ese nombre
+            const parentWidget = el.closest('.o_field_widget');
+            if (parentWidget && parentWidget.getAttribute('name') === fieldName) {
+                input = el;
+                break;
+            }
+        }
+    }
+    
+    // Método 4: Buscar en toda la tabla por el td que contiene el field
+    if (!input) {
+        const allInputs = document.querySelectorAll('table input[type="text"]');
+        for (const el of allInputs) {
+            const widget = el.closest('.o_field_widget');
+            if (widget && widget.getAttribute('name') === fieldName) {
+                input = el;
+                break;
+            }
         }
     }
     
@@ -185,9 +213,12 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
         input.style.setProperty('background-color', bgColor, 'important');
         input.style.setProperty('color', '#fff', 'important');
         input.style.fontWeight = 'bold';
-        console.log(`Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
+        console.log(`✓ Colored field ${fieldName}: ${bgColor} (inside: ${inside})`);
     } else {
-        console.warn(`Could not find input for field: ${fieldName}`);
+        // Debug: mostrar qué campos hay disponibles
+        const allWidgets = document.querySelectorAll('.o_field_widget[name*="gw"]');
+        console.warn(`✗ Could not find input for field: ${fieldName}`);
+        console.log('Available gw fields:', Array.from(allWidgets).map(w => w.getAttribute('name')));
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
