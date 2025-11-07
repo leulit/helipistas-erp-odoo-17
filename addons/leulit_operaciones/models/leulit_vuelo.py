@@ -1079,7 +1079,10 @@ class leulit_vuelo(models.Model):
             view = self.env.ref(vista,raise_if_not_found=False)
 
             if item.performance:
-                item.performance.write({'peso':peso,'ige':None,'oge':None})
+                # FORZAR actualización del peso desde weight_and_balance actual
+                # No usar el campo compute, escribir directamente el valor actual
+                peso_actual = item.weight_and_balance_id.takeoff_gw if item.weight_and_balance_id else peso
+                item.performance.write({'peso': peso_actual, 'ige': None, 'oge': None})
             else:
                 self.env['leulit.performance'].create({'peso':peso,'vuelo':item.id,'temperatura':0})
 
