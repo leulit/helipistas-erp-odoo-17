@@ -211,11 +211,8 @@ patch(FormRenderer.prototype, {
                 canvas.width = width;
                 canvas.height = height;
                 
-                // Estilo para centrar y hacer responsive
-                canvas.style.maxWidth = "100%";
-                canvas.style.height = "auto";
+                // Estilo para mejor visualización - mantener tamaño original
                 canvas.style.display = "block";
-                canvas.style.margin = "0 auto";
                 
                 div.appendChild(canvas);
                 
