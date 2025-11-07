@@ -255,28 +255,36 @@ function drawAll(stateData) {
 
 /* ---- Parches OWL para Odoo 17 ---- */
 
+// Variable para evitar loops infinitos
+let isUpdatingCanvas = false;
+
 // Patch al Record para interceptar cambios en el modelo
 patch(Record.prototype, {
     async update(changes, options) {
         const result = await super.update(changes, options);
         
-        // Solo actuar si es el modelo weight_and_balance
-        if (this.resModel === "leulit.weight_and_balance") {
+        // Solo actuar si es el modelo weight_and_balance y no estamos ya actualizando canvas
+        if (this.resModel === "leulit.weight_and_balance" && !isUpdatingCanvas) {
             // Redibujar los canvas después de actualizar el modelo
             setTimeout(async () => {
-                const data = this.data || {};
-                const wb = drawAll(data);
-                
-                // Guardar también los canvas como imágenes
-                const longC = document.getElementById("longcanvas");
-                const latC = document.getElementById("latcanvas");
-                if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
-                if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
-                
-                // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
-                if (Object.keys(wb).length > 0) {
-                    // Actualizar usando update() para que se persistan los cambios
-                    await this.update(wb, { save: false });
+                isUpdatingCanvas = true;
+                try {
+                    const data = this.data || {};
+                    const wb = drawAll(data);
+                    
+                    // Guardar también los canvas como imágenes
+                    const longC = document.getElementById("longcanvas");
+                    const latC = document.getElementById("latcanvas");
+                    if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
+                    if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                    
+                    // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
+                    if (Object.keys(wb).length > 0) {
+                        // Actualizar usando update() para que se persistan los cambios
+                        await this.update(wb, { save: false });
+                    }
+                } finally {
+                    isUpdatingCanvas = false;
                 }
             }, 10);
         }
