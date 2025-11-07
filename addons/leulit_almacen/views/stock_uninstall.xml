@@ -26,8 +26,8 @@
             <field name="arch" type="xml">
                 <form string="Uninstall">
                     <header>
-                        <button name="action_validate" invisible="state == 'draft'" string="Validate" type="object" class="oe_highlight" context="{'not_unlink_on_discard': True}" />
-                        <button name="action_create_lot" invisible="state == 'draft'" string="Crear Pieza" type="object" class="oe_highlight" />
+                        <button name="action_validate" invisible="state != 'draft'" string="Validate" type="object" class="oe_highlight" context="{'not_unlink_on_discard': True}" />
+                        <button name="action_create_lot" invisible="state != 'draft'" string="Crear Pieza" type="object" class="oe_highlight" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" />
                     </header>
                     <sheet>

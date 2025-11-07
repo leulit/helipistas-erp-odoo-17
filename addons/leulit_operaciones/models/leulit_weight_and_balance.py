@@ -14,7 +14,7 @@ class leulit_weight_and_balance(models.Model):
     _description    = "leulit_weight_and_balance"
 
 
-    def btn_save_wizard(self):        
+    def btn_save_wizard(self):
         for item in self:
             item.vuelo_id.weight_and_balance_id = item.id
             if item.fueltakeoff < 0:
