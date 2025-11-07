@@ -377,9 +377,17 @@ patch(FormController.prototype, {
                         hasOnclick: !!btn.onclick
                     });
                     
+                    // IMPORTANTE: Cambiar el tipo del botón de submit a button
+                    if (btn.type === 'submit') {
+                        btn.type = 'button';
+                        console.log(`Changed button type from submit to button`);
+                    }
+                    
                     // Usar onclick en lugar de addEventListener para evitar que Odoo lo bloquee
                     btn.onclick = (ev) => {
                         console.log("Button onclick triggered!");
+                        ev.preventDefault();
+                        ev.stopPropagation();
                         clickHandler(ev);
                         return false; // Prevenir comportamiento default
                     };
@@ -387,14 +395,6 @@ patch(FormController.prototype, {
                     // Verificar que se asignó
                     console.log(`Listener ${idx} attached, onclick is now:`, typeof btn.onclick);
                 });
-                
-                // Test: hacer click programático
-                if (buttons.length > 0) {
-                    console.log("Testing programmatic click...");
-                    setTimeout(() => {
-                        buttons[0].click();
-                    }, 2000);
-                }
             }, 500);
             
             // También adjuntar después de 1 segundo por si el botón se renderiza tarde
