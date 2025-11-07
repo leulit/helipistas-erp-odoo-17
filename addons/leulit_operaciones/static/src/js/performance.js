@@ -71,17 +71,21 @@ function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
         ctx.clearRect(0, 0, c.width, c.height);
         ctx.drawImage(img, 0, 0);
         
-        // Calcular la posición real del punto
-        const x = x0 + peso;
-        const y = y0 + imgH - altura; // Invertir Y porque canvas tiene origen arriba-izquierda
+        // Sistema de coordenadas original con translate
+        // El origen se traslada a (x0, y0 + imgH)
+        // Luego se dibuja en coordenadas relativas (peso, altura)
+        const originX = x0;
+        const originY = y0 + imgH;
+        const pointX = originX + peso;
+        const pointY = originY + altura;
         
-        console.log(`Drawing point at (${x}, ${y}) - peso: ${peso}, altura: ${altura}`);
-        console.log(`Canvas: ${canvasId}, size: ${c.width}x${c.height}`);
+        console.log(`Drawing point at (${pointX}, ${pointY}) - peso: ${peso}, altura: ${altura}`);
+        console.log(`Origin: (${originX}, ${originY}), Canvas: ${canvasId}, size: ${c.width}x${c.height}`);
         
         // Dibujar el punto
         ctx.save();
         ctx.beginPath();
-        ctx.arc(x, y, 6, 0, Math.PI * 2, false); // Radio 6 para que sea más visible
+        ctx.arc(pointX, pointY, 6, 0, Math.PI * 2, false); // Radio 6 para que sea más visible
         ctx.fillStyle = "#FF0000";
         ctx.fill();
         ctx.strokeStyle = "#FFFFFF";
