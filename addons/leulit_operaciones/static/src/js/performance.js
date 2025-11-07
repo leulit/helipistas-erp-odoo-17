@@ -542,8 +542,14 @@ patch(FormController.prototype, {
                 
                 if (Object.keys(extra).length && this.model?.root) {
                     console.log("Saving performance canvas images to model...", Object.keys(extra));
-                    await this.model.root.update(extra);
-                    console.log("Canvas images saved to model successfully");
+                    
+                    // Actualizar el modelo sin guardar aún
+                    await this.model.root.update(extra, { save: false });
+                    
+                    // Verificar que se actualizó
+                    console.log("Model IGE field:", this.model.root.data.ige ? `${this.model.root.data.ige.substring(0, 50)}...` : "empty");
+                    console.log("Model OGE field:", this.model.root.data.oge ? `${this.model.root.data.oge.substring(0, 50)}...` : "empty");
+                    console.log("Canvas images updated in model successfully");
                 } else {
                     console.warn("No canvas images to save or model not available");
                 }
@@ -552,7 +558,7 @@ patch(FormController.prototype, {
             }
         }
         
-        // Llamar al save original
+        // Llamar al save original - esto guardará todo incluyendo ige y oge
         console.log("Calling super.saveButtonClicked...");
         const result = await super.saveButtonClicked(params);
         console.log("Save completed");

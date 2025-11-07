@@ -19,7 +19,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -61,7 +60,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -103,7 +101,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -145,7 +142,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -187,7 +183,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -229,7 +224,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
@@ -271,7 +265,6 @@
                         </group>
                         <div>
                             <button name="dummy_calcular" type="object" string="Calcular" class="oe_highlight m-1 calcular_button"/>
-                            <button name="save_performance" type="object" string="Guardar" class="oe_highlight m-1" context="{'temperatura':temperatura}"/>
                             <field name="vuelo" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="ige" invisible="1"/>
