@@ -133,6 +133,7 @@ function drawPoly(poly, canvas) {
         maxx = Math.max(maxx, poly[i].x); minx = Math.min(minx, poly[i].x);
         maxy = Math.max(maxy, poly[i].y); miny = Math.min(miny, poly[i].y);
     }
+    
     ctx.clearRect(0, 0, cw, ch);
     ctx.fillStyle = "#D3D3D3";
     ctx.beginPath();
@@ -140,19 +141,37 @@ function drawPoly(poly, canvas) {
     for (let i = 1; i < poly.length; i++) {
         ctx.lineTo(calcPoint(poly[i].x, minx, cw, maxx, 0), calcPoint(poly[i].y, miny, ch, maxy, ch));
     }
-    ctx.closePath(); ctx.fill();
+    ctx.closePath(); 
+    ctx.fill();
+    
+    // Dibujar borde para hacer más visible el polígono
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
     return { minx, miny, maxx, maxy };
 }
 function drawPoint(x, y, tipo, color, maxmins) {
     const canvas = document.getElementById(`${tipo}canvas`);
-    if (!canvas) return;
+    if (!canvas) {
+        console.warn(`drawPoint - Canvas ${tipo}canvas no encontrado`);
+        return;
+    }
     const cw = canvas.width, ch = canvas.height;
     const ctx = canvas.getContext("2d");
     const { minx, miny, maxx, maxy } = maxmins[tipo];
     const px = calcPoint(x, minx, cw, maxx, 0);
     const py = calcPoint(y, miny, ch, maxy, ch);
-    ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2, false);
-    ctx.fillStyle = color; ctx.fill();
+    
+    ctx.beginPath(); 
+    ctx.arc(px, py, 5, 0, Math.PI * 2, false);
+    ctx.fillStyle = color; 
+    ctx.fill();
+    
+    // Dibujar borde negro al punto para hacerlo más visible
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
+    ctx.stroke();
 }
 function pointInPoly(pt, poly) {
     let c = false;
@@ -237,11 +256,6 @@ function ensureCanvases() {
     let longDiv = document.getElementById("longcanvasdiv");
     let latDiv = document.getElementById("latcanvasdiv");
     
-    console.log("ensureCanvases - Buscando divs:", { 
-        longDiv: longDiv ? "ENCONTRADO" : "NO ENCONTRADO", 
-        latDiv: latDiv ? "ENCONTRADO" : "NO ENCONTRADO" 
-    });
-    
     if (!longDiv || !latDiv) {
         console.warn("ensureCanvases - Los divs contenedores no existen en el DOM");
         return false;
@@ -256,7 +270,6 @@ function ensureCanvases() {
         const ctx = c1.getContext("2d"); 
         ctx.fillStyle = "white"; 
         ctx.fillRect(0, 0, c1.width, c1.height);
-        console.log("ensureCanvases - Canvas LONG creado");
     }
     
     if (!document.getElementById("latcanvas")) {
@@ -268,13 +281,11 @@ function ensureCanvases() {
         const ctx = c2.getContext("2d"); 
         ctx.fillStyle = "yellow"; 
         ctx.fillRect(0, 0, c2.width, c2.height);
-        console.log("ensureCanvases - Canvas LAT creado");
     }
     
     return true;
 }
 function drawAll(stateData) {
-    console.log("drawAll - Iniciando...");
     const canvasesOk = ensureCanvases();
     
     if (!canvasesOk) {
@@ -284,11 +295,6 @@ function drawAll(stateData) {
     
     const longC = document.getElementById("longcanvas");
     const latC = document.getElementById("latcanvas");
-    
-    console.log("drawAll - Canvas encontrados:", { 
-        longC: longC ? "SI" : "NO", 
-        latC: latC ? "SI" : "NO" 
-    });
     
     if (!longC || !latC) {
         console.warn("drawAll - Los canvas no existen después de ensureCanvases");
@@ -303,7 +309,7 @@ function drawAll(stateData) {
     
     // Validar que al menos tenemos tipo o modelo
     if (!tipo && !modelo && !matricula) {
-        console.warn("Weight&Balance drawAll: No hay datos de helicóptero para dibujar");
+        console.warn("drawAll - No hay datos de helicóptero para dibujar");
         return {};
     }
     
@@ -311,16 +317,12 @@ function drawAll(stateData) {
     if (matricula === "EC-HIL" && gancho === true) key = "EC-HIL";
     else if (tipo === "R44" && modelo) key = modelo;
     else key = tipo;
-    
-    console.log(`drawAll - Buscando polígono para key="${key}"`);
 
     const group = Polygons[key];
     if (!group) {
-        console.warn(`Weight&Balance drawAll: No se encontró polígono para key="${key}"`);
+        console.warn(`drawAll - No se encontró polígono para key="${key}"`);
         return {};
     }
-    
-    console.log("drawAll - Polígono encontrado, dibujando...");
 
     const longInfo = drawPoly(group.long, longC);
     const latInfo = drawPoly(group.lat, latC);
@@ -336,11 +338,6 @@ function drawAll(stateData) {
     const landingGw = parseFloat(d["landing_gw"]);
     const landingLatArm = parseFloat(d["landing_gw_lat_arm"]);
     
-    console.log("drawAll - Valores para dibujar puntos:", {
-        takeoffLongArm, takeoffGw, takeoffLatArm,
-        landingLongArm, landingGw, landingLatArm
-    });
-    
     if (!isNaN(takeoffLongArm) && !isNaN(takeoffGw)) {
         changes = checkValidity("takeoff", { x: takeoffLongArm, y: takeoffGw }, group.long, "long", maxmins, changes);
     }
@@ -353,8 +350,6 @@ function drawAll(stateData) {
     if (!isNaN(landingLongArm) && !isNaN(landingLatArm)) {
         changes = checkValidity("landing", { x: landingLongArm, y: landingLatArm }, group.lat, "lat", maxmins, changes);
     }
-    
-    console.log("drawAll - Finalizado. Changes:", changes);
     
     return changes;
 }
@@ -428,25 +423,12 @@ patch(FormRenderer.prototype, {
                 
                 const data = self.props.record.data;
                 
-                // Debug: ver qué datos tenemos
-                console.log(`Weight&Balance onMounted (intento ${attempt}) - datos cargados:`, {
-                    helicoptero_tipo: data.helicoptero_tipo,
-                    helicoptero_modelo: data.helicoptero_modelo,
-                    helicoptero_matricula: data.helicoptero_matricula,
-                    frs: data.frs,
-                    fls: data.fls,
-                    takeoff_gw: data.takeoff_gw,
-                    takeoff_gw_long_arm: data.takeoff_gw_long_arm,
-                    landing_gw: data.landing_gw,
-                });
-                
                 // Asegurar que los canvas existen primero
                 ensureCanvases();
                 
                 // Verificar si tenemos datos de helicóptero
                 const hasValidData = data.helicoptero_tipo || data.helicoptero_modelo;
                 if (!hasValidData) {
-                    console.warn(`Weight&Balance: No hay tipo/modelo de helicóptero (intento ${attempt}/${maxAttempts})`);
                     if (attempt < maxAttempts) {
                         setTimeout(() => tryDrawCanvas(attempt + 1), 200 * attempt);
                     }
@@ -456,21 +438,17 @@ patch(FormRenderer.prototype, {
                 // Verificar si tenemos datos calculados (los campos computados tardan en cargar)
                 const hasComputedData = data.takeoff_gw_long_arm !== undefined && data.takeoff_gw_long_arm !== false;
                 if (!hasComputedData) {
-                    console.warn(`Weight&Balance: Campos computados aún no cargados (intento ${attempt}/${maxAttempts})`);
                     if (attempt < maxAttempts) {
                         setTimeout(() => tryDrawCanvas(attempt + 1), 300 * attempt);
                     }
                     return;
                 }
                 
-                console.log("Weight&Balance: Todos los datos cargados, dibujando canvas...");
-                
                 // FORZAR recálculo de los totales si es un registro existente
                 // El problema es que updateTotals() solo se ejecuta con @api.onchange
                 // pero si abres un registro guardado, los campos ya tienen valores
                 // y no se dispara el onchange. Solución: forzar un cambio dummy.
                 if (data.id && data.frs !== undefined) {
-                    console.log("Weight&Balance: Forzando recálculo de totales...");
                     // Guardar el valor original
                     const originalFrs = data.frs;
                     // Hacer un cambio dummy para disparar onchange
@@ -481,10 +459,6 @@ patch(FormRenderer.prototype, {
                     await new Promise(resolve => setTimeout(resolve, 200));
                     // Actualizar los datos después del recálculo
                     Object.assign(data, self.props.record.data);
-                    console.log("Weight&Balance: Totales recalculados:", {
-                        takeoff_gw_long_arm: data.takeoff_gw_long_arm,
-                        takeoff_gw: data.takeoff_gw
-                    });
                 }
                 
                 // Dibujar los gráficos con los datos reales del formulario
