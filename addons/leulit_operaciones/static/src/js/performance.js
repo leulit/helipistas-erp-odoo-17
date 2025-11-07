@@ -292,36 +292,13 @@ patch(FormController.prototype, {
 
         onMounted(() => {
             console.log("Performance controller mounted");
-            
-            // Esperar a que el DOM esté listo
-            setTimeout(() => {
-                const buttons = document.querySelectorAll('.calcular_button');
-                console.log(`Found ${buttons.length} calcular buttons in DOM`);
-                buttons.forEach((btn, idx) => {
-                    console.log(`Button ${idx}:`, btn.className, btn.textContent?.trim());
-                });
-            }, 500);
 
             // Event handler para el botón "Calcular"
             clickHandler = (ev) => {
-                // Log TODOS los clicks para debugging
-                console.log("Click detected on:", ev.target.tagName, ev.target.className);
+                const btn = ev.target.closest(".calcular_button");
+                if (!btn) return;
                 
-                // Intentar encontrar el botón de varias formas
-                let btn = null;
-                
-                // 1. Verificar si el target mismo tiene la clase
-                if (ev.target.classList && ev.target.classList.contains("calcular_button")) {
-                    btn = ev.target;
-                }
-                // 2. Buscar hacia arriba si es un elemento dentro del botón
-                if (!btn) {
-                    btn = ev.target.closest(".calcular_button");
-                }
-                
-                if (!btn) return; // No es el botón calcular
-                
-                console.log("Calcular button clicked!", btn);
+                console.log("Calcular button clicked!");
                 ev.preventDefault();
                 ev.stopPropagation();
                 
@@ -386,6 +363,16 @@ patch(FormController.prototype, {
                     paintPoint(K.canvas_hil_out, K.src_hil_out, K.inicio_eje_x_hil_out, K.inicio_eje_y_hil_out, K.altura_imagen_hil_out, p_out, a_out);
                 }
             };
+            
+            // Adjuntar listener directamente a los botones
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('.calcular_button');
+                console.log(`Attaching listeners to ${buttons.length} calcular buttons`);
+                buttons.forEach((btn, idx) => {
+                    btn.addEventListener('click', clickHandler, true);
+                    console.log(`Listener ${idx} attached to:`, btn.textContent?.trim());
+                });
+            }, 500);
             
             // Registrar el event listener en el documento para capturar todos los clicks
             document.addEventListener("click", clickHandler, true);
