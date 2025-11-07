@@ -118,6 +118,9 @@ const Polygons = {
 };
 
 function calcPoint(p, min, cp, max, origen) {
+    // Prevenir división por cero
+    if (max === min) return origen > 0 ? origen : 0;
+    
     let valor = ((p - min) * cp) / (max - min);
     if (origen > 0) valor = origen - valor;
     return Math.trunc(valor);
@@ -233,23 +236,51 @@ function drawAll(stateData) {
     const modelo = d["helicoptero_modelo"];
     const matricula = d["helicoptero_matricula"];
     const gancho = d["gancho_carga_cb"];
+    
+    // Validar que al menos tenemos tipo o modelo
+    if (!tipo && !modelo && !matricula) {
+        console.warn("Weight&Balance drawAll: No hay datos de helicóptero para dibujar");
+        return {};
+    }
+    
     let key;
     if (matricula === "EC-HIL" && gancho === true) key = "EC-HIL";
     else if (tipo === "R44" && modelo) key = modelo;
     else key = tipo;
 
     const group = Polygons[key];
-    if (!group) return {};
+    if (!group) {
+        console.warn(`Weight&Balance drawAll: No se encontró polígono para key="${key}"`);
+        return {};
+    }
 
     const longInfo = drawPoly(group.long, longC);
     const latInfo = drawPoly(group.lat, latC);
     const maxmins = { long: longInfo, lat: latInfo };
 
     let changes = {};
-    changes = checkValidity("takeoff", { x: d["takeoff_gw_long_arm"], y: d["takeoff_gw"] }, group.long, "long", maxmins, changes);
-    changes = checkValidity("takeoff", { x: d["takeoff_gw_long_arm"], y: d["takeoff_gw_lat_arm"] }, group.lat, "lat", maxmins, changes);
-    changes = checkValidity("landing", { x: d["landing_gw_long_arm"], y: d["landing_gw"] }, group.long, "long", maxmins, changes);
-    changes = checkValidity("landing", { x: d["landing_gw_long_arm"], y: d["landing_gw_lat_arm"] }, group.lat, "lat", maxmins, changes);
+    
+    // Solo calcular validaciones si tenemos valores numéricos válidos
+    const takeoffLongArm = parseFloat(d["takeoff_gw_long_arm"]);
+    const takeoffGw = parseFloat(d["takeoff_gw"]);
+    const takeoffLatArm = parseFloat(d["takeoff_gw_lat_arm"]);
+    const landingLongArm = parseFloat(d["landing_gw_long_arm"]);
+    const landingGw = parseFloat(d["landing_gw"]);
+    const landingLatArm = parseFloat(d["landing_gw_lat_arm"]);
+    
+    if (!isNaN(takeoffLongArm) && !isNaN(takeoffGw)) {
+        changes = checkValidity("takeoff", { x: takeoffLongArm, y: takeoffGw }, group.long, "long", maxmins, changes);
+    }
+    if (!isNaN(takeoffLongArm) && !isNaN(takeoffLatArm)) {
+        changes = checkValidity("takeoff", { x: takeoffLongArm, y: takeoffLatArm }, group.lat, "lat", maxmins, changes);
+    }
+    if (!isNaN(landingLongArm) && !isNaN(landingGw)) {
+        changes = checkValidity("landing", { x: landingLongArm, y: landingGw }, group.long, "long", maxmins, changes);
+    }
+    if (!isNaN(landingLongArm) && !isNaN(landingLatArm)) {
+        changes = checkValidity("landing", { x: landingLongArm, y: landingLatArm }, group.lat, "lat", maxmins, changes);
+    }
+    
     return changes;
 }
 
@@ -272,11 +303,15 @@ patch(Record.prototype, {
                     const data = this.data || {};
                     const wb = drawAll(data);
                     
-                    // Guardar también los canvas como imágenes
-                    const longC = document.getElementById("longcanvas");
-                    const latC = document.getElementById("latcanvas");
-                    if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
-                    if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                    // Guardar también los canvas como imágenes (con try/catch por si falla toDataURL)
+                    try {
+                        const longC = document.getElementById("longcanvas");
+                        const latC = document.getElementById("latcanvas");
+                        if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
+                        if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                    } catch (canvasError) {
+                        console.warn("Error al convertir canvas a imagen:", canvasError);
+                    }
                     
                     // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
                     if (Object.keys(wb).length > 0) {
@@ -304,26 +339,54 @@ patch(FormRenderer.prototype, {
             const model = self.props?.record?.resModel;
             if (model !== "leulit.weight_and_balance") return;
             
+            // Esperar a que el DOM esté completamente renderizado Y los datos cargados
             setTimeout(async () => {
-                const data = self.props?.record?.data || {};
+                // Verificar que tenemos un record válido con datos
+                if (!self.props?.record?.data) {
+                    console.warn("Weight&Balance: No hay datos del record disponibles en onMounted");
+                    return;
+                }
+                
+                const data = self.props.record.data;
+                
+                // Debug: ver qué datos tenemos
+                console.log("Weight&Balance onMounted - datos cargados:", {
+                    helicoptero_tipo: data.helicoptero_tipo,
+                    helicoptero_modelo: data.helicoptero_modelo,
+                    helicoptero_matricula: data.helicoptero_matricula,
+                    takeoff_gw: data.takeoff_gw,
+                    takeoff_gw_long_arm: data.takeoff_gw_long_arm,
+                    landing_gw: data.landing_gw,
+                });
                 
                 // Asegurar que los canvas existen primero
                 ensureCanvases();
                 
-                // Siempre dibujar los gráficos al abrir el formulario
+                // Dibujar SOLO si tenemos datos válidos (no todos a cero/undefined)
+                const hasValidData = data.helicoptero_tipo || data.helicoptero_modelo;
+                if (!hasValidData) {
+                    console.warn("Weight&Balance: No hay tipo/modelo de helicóptero, esperando datos...");
+                    return;
+                }
+                
+                // Dibujar los gráficos con los datos reales del formulario
                 const wb = drawAll(data);
                 
-                // Guardar también los canvas como imágenes
-                const longC = document.getElementById("longcanvas");
-                const latC = document.getElementById("latcanvas");
-                if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
-                if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                // Guardar también los canvas como imágenes (con try/catch)
+                try {
+                    const longC = document.getElementById("longcanvas");
+                    const latC = document.getElementById("latcanvas");
+                    if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
+                    if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                } catch (canvasError) {
+                    console.warn("Error al convertir canvas a imagen en onMounted:", canvasError);
+                }
                 
                 // Actualizar los campos de validación y canvas en el modelo
-                if (Object.keys(wb).length > 0 && self.props?.record?.update) {
+                if (Object.keys(wb).length > 0 && self.props.record?.update) {
                     await self.props.record.update(wb, { save: false });
                 }
-            }, 100);
+            }, 300); // Aumentar el delay para asegurar que los datos están cargados
         });
 
         // onPatched se ejecuta cada vez que el componente se re-renderiza por cambios
@@ -332,18 +395,27 @@ patch(FormRenderer.prototype, {
             if (model !== "leulit.weight_and_balance") return;
             
             const data = self.props?.record?.data || {};
+            
+            // Solo redibujar si tenemos datos válidos
+            const hasValidData = data.helicoptero_tipo || data.helicoptero_modelo;
+            if (!hasValidData) return;
+            
             drawAll(data);
             
-            // Guardar los canvas actualizados en el modelo
+            // Guardar los canvas actualizados en el modelo (sin disparar update)
             setTimeout(() => {
-                const longC = document.getElementById("longcanvas");
-                const latC = document.getElementById("latcanvas");
-                if (longC && latC && self.props?.record) {
-                    const canvasData = {
-                        canvas_long: longC.toDataURL("image/jpeg"),
-                        canvas_lat: latC.toDataURL("image/jpeg")
-                    };
-                    Object.assign(self.props.record.data, canvasData);
+                try {
+                    const longC = document.getElementById("longcanvas");
+                    const latC = document.getElementById("latcanvas");
+                    if (longC && latC && self.props?.record) {
+                        const canvasData = {
+                            canvas_long: longC.toDataURL("image/jpeg"),
+                            canvas_lat: latC.toDataURL("image/jpeg")
+                        };
+                        Object.assign(self.props.record.data, canvasData);
+                    }
+                } catch (canvasError) {
+                    console.warn("Error al convertir canvas a imagen en onPatched:", canvasError);
                 }
             }, 50);
         });
