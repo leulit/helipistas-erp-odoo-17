@@ -18,9 +18,9 @@
                   <field name="canvas_lat" invisible="1" on_change="onchange_lat(vuelo_id,canvas_lat)"/>
                   <group col="6">
                      <field name="tipocalculopasajeros" colspan="6"/>
-                     <field name="helicoptero_tipo" readonly="1" colspan="2"/>
-                     <field name="helicoptero_modelo" readonly="1" colspan="2"/>
-                     <field name="helicoptero_matricula" readonly="1" colspan="2"/>
+                     <field name="helicoptero_tipo" readonly="1"/>
+                     <field name="helicoptero_modelo" readonly="1"/>
+                     <field name="helicoptero_matricula" readonly="1"/>
                   </group>
                   <table>
                      <thead>
@@ -858,10 +858,10 @@
                               <field readonly="1" name="landing_gw" nolabel="1" />
                            </td>
                            <td>
-                              <field readonly="1" name="landing_gw_long_arm" nolabel="1" class="wb_cg_indicator"/>
+                              <field readonly="1" name="landing_gw_long_arm" nolabel="1"/>
                            </td>
                            <td>
-                              <field readonly="1" name="landing_gw_lat_arm" nolabel="1" class="wb_cg_indicator"/>
+                              <field readonly="1" name="landing_gw_lat_arm" nolabel="1"/>
                            </td>
                            <td>
                               <field readonly="1" name="landing_gw_long_moment" nolabel="1"/>
@@ -886,6 +886,8 @@
                         </div>
                      </div>
                   </div>
+                  <button name="btn_save_wizard" type="object" string="Guardar" class="oe_highlight"/>
+                  <button string="Cancelar" special="cancel"/>
             </form>
          </field>
       </record>

@@ -267,6 +267,12 @@ patch(Record.prototype, {
                 const data = this.data || {};
                 const wb = drawAll(data);
                 
+                // Guardar también los canvas como imágenes
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
+                if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                
                 // Si hay campos de validación para actualizar, hacerlo con update() para que se guarden
                 if (Object.keys(wb).length > 0) {
                     // Actualizar usando update() para que se persistan los cambios
@@ -297,7 +303,13 @@ patch(FormRenderer.prototype, {
                 // Siempre dibujar los gráficos al abrir el formulario
                 const wb = drawAll(data);
                 
-                // Actualizar los campos de validación en el modelo
+                // Guardar también los canvas como imágenes
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                if (longC) wb.canvas_long = longC.toDataURL("image/jpeg");
+                if (latC) wb.canvas_lat = latC.toDataURL("image/jpeg");
+                
+                // Actualizar los campos de validación y canvas en el modelo
                 if (Object.keys(wb).length > 0 && self.props?.record?.update) {
                     await self.props.record.update(wb, { save: false });
                 }
@@ -311,6 +323,19 @@ patch(FormRenderer.prototype, {
             
             const data = self.props?.record?.data || {};
             drawAll(data);
+            
+            // Guardar los canvas actualizados en el modelo
+            setTimeout(() => {
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                if (longC && latC && self.props?.record) {
+                    const canvasData = {
+                        canvas_long: longC.toDataURL("image/jpeg"),
+                        canvas_lat: latC.toDataURL("image/jpeg")
+                    };
+                    Object.assign(self.props.record.data, canvasData);
+                }
+            }, 50);
         });
     },
 });
@@ -339,6 +364,29 @@ patch(FormController.prototype, {
         return super.beforeLeave(...arguments);
     },
 
+    async onButtonClicked(clickParams) {
+        // Interceptar el botón btn_save_wizard para guardar canvas antes de ejecutar Python
+        if (clickParams.name === "btn_save_wizard") {
+            const model = this.model?.root?.resModel;
+            if (model === "leulit.weight_and_balance") {
+                const longC = document.getElementById("longcanvas");
+                const latC = document.getElementById("latcanvas");
+                const extra = {};
+                
+                if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
+                if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
+                
+                if (Object.keys(extra).length) {
+                    // Guardar directamente en data y luego en la base de datos
+                    Object.assign(this.model.root.data, extra);
+                    await this.model.root.save();
+                }
+            }
+        }
+        
+        return super.onButtonClicked(clickParams);
+    },
+
     async saveButtonClicked(params = {}) {
         // Guardar los canvas antes de llamar al save original
         try {
@@ -351,15 +399,17 @@ patch(FormController.prototype, {
                 if (longC) extra.canvas_long = longC.toDataURL("image/jpeg");
                 if (latC) extra.canvas_lat = latC.toDataURL("image/jpeg");
                 
-                if (Object.keys(extra).length && this.model?.root?.update) {
-                    await this.model.root.update(extra, { save: false });
+                // Actualizar el modelo sin guardar aún - los datos quedarán en el record
+                if (Object.keys(extra).length && this.model?.root) {
+                    // Asignar directamente a los datos del record
+                    Object.assign(this.model.root.data, extra);
                 }
             }
         } catch (error) {
             // Error saving canvas data
         }
         
-        // Llamar al guardado original que guardará todo junto
+        // Llamar al guardado original que guardará todo junto incluyendo canvas_long y canvas_lat
         return super.saveButtonClicked(params);
     },
 });
