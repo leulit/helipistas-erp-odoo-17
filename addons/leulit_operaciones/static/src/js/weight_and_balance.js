@@ -172,40 +172,61 @@ function checkValidity(tipo1, pt, poly, tipo2, maxmins, changes) {
     
     // Buscar el campo (puede ser un input o un div readonly)
     const fieldName = `${tipo1}_gw_${tipo2}_arm`;
-    let targetElement = null;
-    
-    // Método 1: Buscar por clase wb_cg_indicator y el nombre del campo
-    const allCgIndicators = document.querySelectorAll('.wb_cg_indicator');
-    for (const widget of allCgIndicators) {
-        if (widget.getAttribute('name') === fieldName) {
-            // Para campos readonly, el widget mismo es el target
-            // Para campos editables, buscar el input dentro
-            const input = widget.querySelector('input');
-            targetElement = input || widget;
-            break;
-        }
-    }
-    
-    // Método 2: Buscar el div.o_field_widget con ese name
-    if (!targetElement) {
-        const fieldDiv = document.querySelector(`div[name='${fieldName}']`);
-        if (fieldDiv) {
-            const input = fieldDiv.querySelector('input');
-            targetElement = input || fieldDiv;
-        }
-    }
-    
-    // Aplicar el estilo si encontramos el elemento
-    if (targetElement) { 
-        const bgColor = inside ? colors[tipo1].green : colors[tipo1].red;
+  
+    // Función para aplicar estilos (la usaremos de forma asíncrona)
+    const applyStylesToField = () => {
+        let targetElement = null;
         
-        // Aplicar estilos al elemento encontrado
-        targetElement.style.setProperty('background-color', bgColor, 'important');
-        targetElement.style.setProperty('color', '#fff', 'important');
-        targetElement.style.setProperty('font-weight', 'bold', 'important');
-        targetElement.style.setProperty('text-align', 'center', 'important');
-        targetElement.style.setProperty('padding', '2px 4px', 'important');
-        targetElement.style.setProperty('border-radius', '3px', 'important');
+        // Método 1: Buscar por clase wb_cg_indicator y el nombre del campo
+        const allCgIndicators = document.querySelectorAll('.wb_cg_indicator');
+        for (const widget of allCgIndicators) {
+            if (widget.getAttribute('name') === fieldName) {
+                const input = widget.querySelector('input');
+                targetElement = input || widget;
+                break;
+            }
+        }
+        
+        // Método 2: Buscar el div.o_field_widget con ese name
+        if (!targetElement) {
+            const fieldDiv = document.querySelector(`div[name='${fieldName}']`);
+            if (fieldDiv) {
+                const input = fieldDiv.querySelector('input');
+                targetElement = input || fieldDiv;
+            }
+        }
+        
+        // Método 3: Buscar directamente por el input con name
+        if (!targetElement) {
+            const inputField = document.querySelector(`input[name='${fieldName}']`);
+            if (inputField) {
+                targetElement = inputField;
+            }
+        }
+        
+        // Aplicar el estilo si encontramos el elemento
+        if (targetElement) { 
+            const bgColor = inside ? colors[tipo1].green : colors[tipo1].red;
+            
+            // Aplicar estilos al elemento encontrado
+            targetElement.style.setProperty('background-color', bgColor, 'important');
+            targetElement.style.setProperty('color', '#fff', 'important');
+            targetElement.style.setProperty('font-weight', 'bold', 'important');
+            targetElement.style.setProperty('text-align', 'center', 'important');
+            targetElement.style.setProperty('padding', '2px 4px', 'important');
+            targetElement.style.setProperty('border-radius', '3px', 'important');
+            return true;
+        }
+        return false;
+    };
+    
+    // Intentar aplicar estilos inmediatamente
+    const applied = applyStylesToField();
+    
+    // Si no se aplicó (elemento aún no en DOM), reintentar después de un pequeño delay
+    if (!applied) {
+        setTimeout(applyStylesToField, 100);
+        setTimeout(applyStylesToField, 300);
     }
     
     drawPoint(pt.x, pt.y, tipo2, inside ? colors[tipo1].green : colors[tipo1].red, maxmins);
