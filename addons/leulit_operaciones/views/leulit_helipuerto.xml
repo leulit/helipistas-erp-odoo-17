@@ -60,72 +60,58 @@
                             </group>
                         </div>
                         <group col="2">
-                            <div id="servicios_instalaciones_helipuerto">
+                            <group id="servicios_instalaciones_helipuerto">
                                 <separator string="Servicios de Instalaciones"/>
-                                <group col="4">
-                                    <field name="hayjeta1"/>
-                                    <field name="hayavgas"/>
-                                    <field colspan="4" name="asistencia_tierra"/>
-                                </group>
-                            </div>
-                            <div id="horarios_helipuerto">
+                                <field name="hayjeta1"/>
+                                <field name="hayavgas"/>
+                                <field name="asistencia_tierra"/>
+                            </group>
+                            <group id="horarios_helipuerto">
                                 <separator string="Horarios"/>
-                                <group col="2">
-                                    <field name="horario_operacion"/>
-                                    <field name="horario_combustible"/>
-                                    <field name="procedimiento_activacion"/>
-                                </group>
-                            </div>
+                                <field name="horario_operacion"/>
+                                <field name="horario_combustible"/>
+                                <field name="procedimiento_activacion"/>
+                            </group>
                         </group>
                         <group col="2">
-                            <div id="detalles_area_movimiento_helipuerto">
+                            <group id="detalles_area_movimiento_helipuerto">
                                 <separator string="Detalles del área de movimiento"/>
-                                <group col="2">
-                                    <field name="rumbo_aproximacion"/>
-                                    <field name="rumbo_salida"/>
-                                    <field name="distancia"/>
-                                    <field name="tlof"/>
-                                    <field name="calle_rodaje"/>
-                                    <field name="obstaculos_area_movimiento"/>
-                                </group>
-                            </div>
-                            <div id="senales_balizas_helipuerto">
+                                <field name="rumbo_aproximacion"/>
+                                <field name="rumbo_salida"/>
+                                <field name="distancia"/>
+                                <field name="tlof"/>
+                                <field name="calle_rodaje"/>
+                                <field name="obstaculos_area_movimiento"/>
+                            </group>
+                            <group id="senales_balizas_helipuerto">
                                 <separator string="Señales y balizas"/>
-                                <group col="2">
-                                    <field name="viento"/>
-                                    <field name="balizaje"/>
-                                </group>
+                                <field name="viento"/>
+                                <field name="balizaje"/>
                                 <separator string="Frecuencias"/>
-                                <group col="2">
-                                    <field name="freq_aerodromo"/>
-                                    <field name="twrcerca"/>
-                                </group>
-                            </div>
+                                <field name="freq_aerodromo"/>
+                                <field name="twrcerca"/>
+                            </group>
                         </group>
                         <group col="2">
-                            <div id="meteo_helipuerto">
+                            <group id="meteo_helipuerto">
                                 <separator string="Mínimos meteorológicos para la utilización"/>
-                                <group col="2">
-                                    <field name="minimos_meteo"/>
-                                </group>
-                            </div>
-                            <div id="Categoría_aerodromo_y_performance_helipuerto">
+                                <field name="minimos_meteo"/>
+                            </group>
+                            <group id="Categoría_aerodromo_y_performance_helipuerto">
                                 <separator string="Categoría de aeródromo y datos de performance"/>
-                                <group col="2">
-                                    <field name="dificultad"/>
-                                    <field name="operaciones_performance" widget="many2many_tags"/>
-                                </group>
-                            </div>
+                                <field name="dificultad"/>
+                                <field name="operaciones_performance" widget="many2many_tags"/>
+                            </group>
                         </group>
-                        <div id="procedimiento_embarque_desembarque_pasajero_helipuerto">
+                        <group>
                             <separator string="Procedimiento para el embarque y desembarque de pasajeros"/>
-                            <field name="procedimiento_des_embarque_pasajeros"/>
-                        </div>
-                        <div id="procedimiento_llegadas_salidas_helipuerto">
+                            <field name="procedimiento_des_embarque_pasajeros" nolabel="1"/>
+                        </group>
+                        <group>
                             <separator string="Procedimiento de llegadas y salidas"/>
-                            <field name="procedimiento_llegadas_salidas"/>
-                        </div>
-                        <div id="imagenes_helipuerto">
+                            <field name="procedimiento_llegadas_salidas" nolabel="1"/>
+                        </group>
+                        <group>
                             <separator string="Imágenes Helipuerto/Aeródromo"/>
                             <group col="4">
                                 <field name="img_1" widget="image"/>
@@ -133,7 +119,7 @@
                                 <field name="img_3" widget="image"/>
                                 <field name="img_4" widget="image"/>
                             </group>
-                        </div>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
