@@ -1084,7 +1084,6 @@
                                                     <td style="with:50%;" align="center">
                                                         <!--div style="with:400px; margin-to:20px;border: 1px solid black;padding:10px" id="longcanvasdiv"-->
                                                         <img t-att-src="wandb['canvas_long']"/>
-                                                        <img t-att-src="image_data_uri(wandb['canvas_long'])" style="max-height: 4cm; max-width: 8cm;"/>
                                                         <!--/div-->
                                                     </td>
                                                     <td style="with:50%;"  align="center">                                                
