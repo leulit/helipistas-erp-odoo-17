@@ -478,6 +478,28 @@ class leulit_vuelo(models.Model):
                 else:
                     data['performance_h_v'] = img_data
             
+            # Agregar prefijo para los gráficos de weight and balance
+            if data.get('wandb'):
+                wandb = data['wandb']
+                
+                if wandb.get('canvas_long'):
+                    img_data = wandb['canvas_long']
+                    if isinstance(img_data, bytes):
+                        img_data = img_data.decode('utf-8')
+                    if not img_data.startswith('data:image'):
+                        wandb['canvas_long'] = f"data:image/png;base64,{img_data}"
+                    else:
+                        wandb['canvas_long'] = img_data
+                
+                if wandb.get('canvas_lat'):
+                    img_data = wandb['canvas_lat']
+                    if isinstance(img_data, bytes):
+                        img_data = img_data.decode('utf-8')
+                    if not img_data.startswith('data:image'):
+                        wandb['canvas_lat'] = f"data:image/png;base64,{img_data}"
+                    else:
+                        wandb['canvas_lat'] = img_data
+            
             data.update({
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
