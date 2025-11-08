@@ -78,6 +78,7 @@
 
 
         <template id="boroscopia_report_css">
+            <meta charset="utf-8"/>
             <style>
                 html {
                     font-family: sans-serif; /* 1 */

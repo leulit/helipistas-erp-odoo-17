@@ -38,6 +38,7 @@
         </template>
 
         <template id="log_cards_inspection_report_css">
+            <meta charset="utf-8"/>
             <style>
                 html {
                     font-family: sans-serif; /* 1 */

@@ -452,7 +452,8 @@ class leulit_vuelo(models.Model):
                 'firmado_por': datos.get('firmado_por'),
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
-            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
+            # Pasar [item.id] en lugar de None para que el contexto del registro esté disponible
+            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report, [item.id], data)
             return base64.b64encode(pdf)
 
     def imprimir_report(self,id):
