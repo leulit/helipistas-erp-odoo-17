@@ -451,10 +451,9 @@ class leulit_vuelo(models.Model):
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
             })
-            report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
-            # Pasar [item.id] en lugar de None para que el contexto del registro esté disponible
-            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report, [item.id], data)
-            return base64.b64encode(pdf)
+            # Patrón de Odoo 17: pasar nombre del reporte como string y IDs del registro
+            report = self.env['ir.actions.report']._render_qweb_pdf("leulit_operaciones.ficha_vuelo_report", item.ids, data=data)
+            return base64.b64encode(report[0])
 
     def imprimir_report(self,id):
         vuelo = self.search([('id','=',id)])
