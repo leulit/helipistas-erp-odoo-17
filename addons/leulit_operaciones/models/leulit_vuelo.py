@@ -447,6 +447,21 @@ class leulit_vuelo(models.Model):
     def pdf_vuelo_print_report(self, datos):
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
+            
+            # Agregar prefijo data URI para que wkhtmltopdf procese correctamente las imágenes
+            if data.get('performance_ige'):
+                # Si ya tiene el prefijo, no lo agregamos de nuevo
+                if not data['performance_ige'].startswith('data:image'):
+                    data['performance_ige'] = f"data:image/png;base64,{data['performance_ige']}"
+            
+            if data.get('performance_oge'):
+                if not data['performance_oge'].startswith('data:image'):
+                    data['performance_oge'] = f"data:image/png;base64,{data['performance_oge']}"
+            
+            if data.get('performance_h_v'):
+                if not data['performance_h_v'].startswith('data:image'):
+                    data['performance_h_v'] = f"data:image/png;base64,{data['performance_h_v']}"
+            
             data.update({
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
