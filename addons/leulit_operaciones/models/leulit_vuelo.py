@@ -445,7 +445,6 @@ class leulit_vuelo(models.Model):
         
 
     def pdf_vuelo_print_report(self, datos):
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
             data.update({
@@ -453,8 +452,7 @@ class leulit_vuelo(models.Model):
                 'firmado_por': datos.get('firmado_por'),
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
-            # Usar el mismo patrón exacto que pdf_parte_vuelo_print que SÍ funciona
-            pdf, _ = self.env['ir.actions.report'].with_context(base_url=base_url)._render_qweb_pdf(report, None, data=data)
+            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
             return base64.b64encode(pdf)
 
     def imprimir_report(self,id):
@@ -688,14 +686,20 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
+            
+            # Convertir campos Binary a data URI - los campos Binary ya vienen como string base64
+            performance_ige = f"data:image/png;base64,{item.performance.ige}" if item.performance.ige else False
+            performance_oge = f"data:image/png;base64,{item.performance.oge}" if item.performance.oge else False
+            performance_h_v = f"data:image/png;base64,{item.helicoptero_id.modelo.performance_altura_velocidad}" if item.helicoptero_id.modelo.performance_altura_velocidad else False
+            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': item.performance.ige,
-                'performance_oge': item.performance.oge,
-                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
+                'performance_ige': performance_ige,
+                'performance_oge': performance_oge,
+                'performance_h_v' : performance_h_v
             }
             return data
 
@@ -1081,10 +1085,7 @@ class leulit_vuelo(models.Model):
             view = self.env.ref(vista,raise_if_not_found=False)
 
             if item.performance:
-                # FORZAR actualización del peso desde weight_and_balance actual
-                # No usar el campo compute, escribir directamente el valor actual
-                peso_actual = item.weight_and_balance_id.takeoff_gw if item.weight_and_balance_id else peso
-                item.performance.write({'peso': peso_actual, 'ige': None, 'oge': None})
+                item.performance.write({'peso':peso,'ige':None,'oge':None})
             else:
                 self.env['leulit.performance'].create({'peso':peso,'vuelo':item.id,'temperatura':0})
 
