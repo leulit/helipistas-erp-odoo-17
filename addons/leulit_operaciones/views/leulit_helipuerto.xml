@@ -103,13 +103,11 @@
                                 <field name="operaciones_performance" widget="many2many_tags"/>
                             </group>
                         </group>
-                        <group>
-                            <separator string="Procedimiento para el embarque y desembarque de pasajeros"/>
-                            <field name="procedimiento_des_embarque_pasajeros" nolabel="1"/>
+                        <group string="Procedimiento para el embarque y desembarque de pasajeros">
+                            <field name="procedimiento_des_embarque_pasajeros" widget="text" nolabel="1"/>
                         </group>
-                        <group>
-                            <separator string="Procedimiento de llegadas y salidas"/>
-                            <field name="procedimiento_llegadas_salidas" nolabel="1"/>
+                        <group string="Procedimiento de llegadas y salidas">
+                            <field name="procedimiento_llegadas_salidas" widget="text" nolabel="1"/>
                         </group>
                         <group>
                             <separator string="Imágenes Helipuerto/Aeródromo"/>
