@@ -447,17 +447,9 @@ class leulit_vuelo(models.Model):
     def pdf_vuelo_print_report(self, datos):
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
-            # Convertir campos Binary a data URI - los campos Binary ya vienen como string base64
-            performance_ige = f"data:image/png;base64,{item.performance.ige}" if item.performance.ige else False
-            performance_oge = f"data:image/png;base64,{item.performance.oge}" if item.performance.oge else False
-            performance_h_v = f"data:image/png;base64,{item.helicoptero_id.modelo.performance_altura_velocidad}" if item.helicoptero_id.modelo.performance_altura_velocidad else False
-            
             data.update({
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
-                'performance_ige': performance_ige,
-                'performance_oge': performance_oge,
-                'performance_h_v': performance_h_v
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
             pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
@@ -699,9 +691,9 @@ class leulit_vuelo(models.Model):
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': item.performance.ige,
-                'performance_oge': item.performance.oge,
-                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
+                'performance_ige': item.performance.ige.decode() if item.performance.ige else False,
+                'performance_oge': item.performance.oge.decode() if item.performance.oge else False,
+                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad.decode() if item.helicoptero_id.modelo.performance_altura_velocidad else False
             }
             return data
 
