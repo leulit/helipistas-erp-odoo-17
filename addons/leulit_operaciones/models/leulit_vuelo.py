@@ -445,6 +445,7 @@ class leulit_vuelo(models.Model):
         
 
     def pdf_vuelo_print_report(self, datos):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
             data.update({
@@ -452,7 +453,8 @@ class leulit_vuelo(models.Model):
                 'firmado_por': datos.get('firmado_por'),
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
-            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
+            # Usar el mismo patrón exacto que pdf_parte_vuelo_print que SÍ funciona
+            pdf, _ = self.env['ir.actions.report'].with_context(base_url=base_url)._render_qweb_pdf(report, None, data=data)
             return base64.b64encode(pdf)
 
     def imprimir_report(self,id):
@@ -1079,7 +1081,10 @@ class leulit_vuelo(models.Model):
             view = self.env.ref(vista,raise_if_not_found=False)
 
             if item.performance:
-                item.performance.write({'peso':peso,'ige':None,'oge':None})
+                # FORZAR actualización del peso desde weight_and_balance actual
+                # No usar el campo compute, escribir directamente el valor actual
+                peso_actual = item.weight_and_balance_id.takeoff_gw if item.weight_and_balance_id else peso
+                item.performance.write({'peso': peso_actual, 'ige': None, 'oge': None})
             else:
                 self.env['leulit.performance'].create({'peso':peso,'vuelo':item.id,'temperatura':0})
 
