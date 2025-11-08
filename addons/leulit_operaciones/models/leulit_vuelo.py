@@ -453,10 +453,12 @@ class leulit_vuelo(models.Model):
             # Guardar imágenes temporalmente y usar file:// URLs
             temp_files = []
             try:
-                # Performance IGE
+                # Performance IGE - Los campos Binary ya vienen como bytes
                 if item.performance.ige:
                     temp_ige = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
-                    temp_ige.write(base64.b64decode(item.performance.ige))
+                    # Si es string, decodificar; si es bytes, usar directamente
+                    img_data = base64.b64decode(item.performance.ige) if isinstance(item.performance.ige, str) else item.performance.ige
+                    temp_ige.write(img_data)
                     temp_ige.close()
                     temp_files.append(temp_ige.name)
                     data['performance_ige'] = f'file://{temp_ige.name}'
@@ -464,7 +466,8 @@ class leulit_vuelo(models.Model):
                 # Performance OGE
                 if item.performance.oge:
                     temp_oge = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
-                    temp_oge.write(base64.b64decode(item.performance.oge))
+                    img_data = base64.b64decode(item.performance.oge) if isinstance(item.performance.oge, str) else item.performance.oge
+                    temp_oge.write(img_data)
                     temp_oge.close()
                     temp_files.append(temp_oge.name)
                     data['performance_oge'] = f'file://{temp_oge.name}'
@@ -472,7 +475,8 @@ class leulit_vuelo(models.Model):
                 # Performance H_V
                 if item.helicoptero_id.modelo.performance_altura_velocidad:
                     temp_hv = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
-                    temp_hv.write(base64.b64decode(item.helicoptero_id.modelo.performance_altura_velocidad))
+                    img_data = base64.b64decode(item.helicoptero_id.modelo.performance_altura_velocidad) if isinstance(item.helicoptero_id.modelo.performance_altura_velocidad, str) else item.helicoptero_id.modelo.performance_altura_velocidad
+                    temp_hv.write(img_data)
                     temp_hv.close()
                     temp_files.append(temp_hv.name)
                     data['performance_h_v'] = f'file://{temp_hv.name}'
@@ -725,20 +729,14 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
-            
-            # Convertir campos Binary a string para compatibilidad con _render_qweb_pdf
-            performance_ige = item.performance.ige.decode('utf-8') if item.performance.ige else False
-            performance_oge = item.performance.oge.decode('utf-8') if item.performance.oge else False
-            performance_h_v = item.helicoptero_id.modelo.performance_altura_velocidad.decode('utf-8') if item.helicoptero_id.modelo.performance_altura_velocidad else False
-            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': performance_ige,
-                'performance_oge': performance_oge,
-                'performance_h_v': performance_h_v
+                'performance_ige': item.performance.ige,
+                'performance_oge': item.performance.oge,
+                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
             }
             return data
 
