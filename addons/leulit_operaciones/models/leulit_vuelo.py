@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 import re
+import os
+import tempfile
 from odoo import models, fields, api, tools, exceptions, registry, _
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
 import logging
@@ -447,13 +449,50 @@ class leulit_vuelo(models.Model):
     def pdf_vuelo_print_report(self, datos):
         for item in self:
             data = item.get_data_vuelo_print_report(datos)
-            data.update({
-                'hashcode': datos.get('hashcode'),
-                'firmado_por': datos.get('firmado_por'),
-            })
-            report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
-            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
-            return base64.b64encode(pdf)
+            
+            # Guardar imágenes temporalmente y usar file:// URLs
+            temp_files = []
+            try:
+                # Performance IGE
+                if item.performance.ige:
+                    temp_ige = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
+                    temp_ige.write(base64.b64decode(item.performance.ige))
+                    temp_ige.close()
+                    temp_files.append(temp_ige.name)
+                    data['performance_ige'] = f'file://{temp_ige.name}'
+                
+                # Performance OGE
+                if item.performance.oge:
+                    temp_oge = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
+                    temp_oge.write(base64.b64decode(item.performance.oge))
+                    temp_oge.close()
+                    temp_files.append(temp_oge.name)
+                    data['performance_oge'] = f'file://{temp_oge.name}'
+                
+                # Performance H_V
+                if item.helicoptero_id.modelo.performance_altura_velocidad:
+                    temp_hv = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False)
+                    temp_hv.write(base64.b64decode(item.helicoptero_id.modelo.performance_altura_velocidad))
+                    temp_hv.close()
+                    temp_files.append(temp_hv.name)
+                    data['performance_h_v'] = f'file://{temp_hv.name}'
+                
+                data.update({
+                    'hashcode': datos.get('hashcode'),
+                    'firmado_por': datos.get('firmado_por'),
+                })
+                
+                report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
+                pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
+                
+                return base64.b64encode(pdf)
+            finally:
+                # Limpiar archivos temporales
+                for temp_file in temp_files:
+                    try:
+                        os.unlink(temp_file)
+                    except:
+                        pass
 
     def imprimir_report(self,id):
         vuelo = self.search([('id','=',id)])
