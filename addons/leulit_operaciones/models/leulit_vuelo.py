@@ -451,9 +451,9 @@ class leulit_vuelo(models.Model):
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
             })
-            # Patrón de Odoo 17: pasar nombre del reporte como string y IDs del registro
-            report = self.env['ir.actions.report']._render_qweb_pdf("leulit_operaciones.ficha_vuelo_report", item.ids, data=data)
-            return base64.b64encode(report[0])
+            report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
+            pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
+            return base64.b64encode(pdf)
 
     def imprimir_report(self,id):
         vuelo = self.search([('id','=',id)])
@@ -686,27 +686,14 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
-            
-            # Convertir las imágenes binarias a data URI para el PDF
-            performance_ige = False
-            performance_oge = False
-            performance_h_v = False
-            
-            if item.performance.ige:
-                performance_ige = 'data:image/png;base64,' + item.performance.ige.decode('utf-8')
-            if item.performance.oge:
-                performance_oge = 'data:image/png;base64,' + item.performance.oge.decode('utf-8')
-            if item.helicoptero_id.modelo.performance_altura_velocidad:
-                performance_h_v = 'data:image/png;base64,' + item.helicoptero_id.modelo.performance_altura_velocidad.decode('utf-8')
-            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': performance_ige,
-                'performance_oge': performance_oge,
-                'performance_h_v' : performance_h_v
+                'performance_ige': item.performance.ige,
+                'performance_oge': item.performance.oge,
+                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
             }
             return data
 
@@ -1092,10 +1079,7 @@ class leulit_vuelo(models.Model):
             view = self.env.ref(vista,raise_if_not_found=False)
 
             if item.performance:
-                # FORZAR actualización del peso desde weight_and_balance actual
-                # No usar el campo compute, escribir directamente el valor actual
-                peso_actual = item.weight_and_balance_id.takeoff_gw if item.weight_and_balance_id else peso
-                item.performance.write({'peso': peso_actual, 'ige': None, 'oge': None})
+                item.performance.write({'peso':peso,'ige':None,'oge':None})
             else:
                 self.env['leulit.performance'].create({'peso':peso,'vuelo':item.id,'temperatura':0})
 
