@@ -686,14 +686,27 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
+            
+            # Convertir las imágenes binarias a data URI para el PDF
+            performance_ige = False
+            performance_oge = False
+            performance_h_v = False
+            
+            if item.performance.ige:
+                performance_ige = 'data:image/png;base64,' + item.performance.ige.decode('utf-8')
+            if item.performance.oge:
+                performance_oge = 'data:image/png;base64,' + item.performance.oge.decode('utf-8')
+            if item.helicoptero_id.modelo.performance_altura_velocidad:
+                performance_h_v = 'data:image/png;base64,' + item.helicoptero_id.modelo.performance_altura_velocidad.decode('utf-8')
+            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': item.performance.ige,
-                'performance_oge': item.performance.oge,
-                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
+                'performance_ige': performance_ige,
+                'performance_oge': performance_oge,
+                'performance_h_v' : performance_h_v
             }
             return data
 
