@@ -450,6 +450,9 @@ class leulit_vuelo(models.Model):
             data.update({
                 'hashcode': datos.get('hashcode'),
                 'firmado_por': datos.get('firmado_por'),
+                'performance_ige': f"data:image/png;base64,{base64.b64encode(item.performance.ige).decode()}",
+                'performance_oge': f"data:image/png;base64,{base64.b64encode(item.performance.oge).decode()}",
+                'performance_h_v' : f"data:image/png;base64,{base64.b64encode(item.helicoptero_id.modelo.performance_altura_velocidad).decode()}"
             })
             report = self.env.ref('leulit_operaciones.ficha_vuelo_report', False)
             pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
@@ -686,20 +689,14 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
-            
-            # Convertir campos Binary a data URI - los campos Binary ya vienen como string base64
-            performance_ige = f"data:image/png;base64,{item.performance.ige}" if item.performance.ige else False
-            performance_oge = f"data:image/png;base64,{item.performance.oge}" if item.performance.oge else False
-            performance_h_v = f"data:image/png;base64,{item.helicoptero_id.modelo.performance_altura_velocidad}" if item.helicoptero_id.modelo.performance_altura_velocidad else False
-            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': performance_ige,
-                'performance_oge': performance_oge,
-                'performance_h_v' : performance_h_v
+                'performance_ige': item.performance.ige,
+                'performance_oge': item.performance.oge,
+                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
             }
             return data
 
