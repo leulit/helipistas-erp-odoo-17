@@ -686,14 +686,20 @@ class leulit_vuelo(models.Model):
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
+            
+            # Convertir campos Binary a string para compatibilidad con _render_qweb_pdf
+            performance_ige = item.performance.ige.decode('utf-8') if item.performance.ige else False
+            performance_oge = item.performance.oge.decode('utf-8') if item.performance.oge else False
+            performance_h_v = item.helicoptero_id.modelo.performance_altura_velocidad.decode('utf-8') if item.helicoptero_id.modelo.performance_altura_velocidad else False
+            
             data = {
                 'logo_hlp': company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else '',
                 'vuelos' : [vuelo],
                 'wandb' : arrawandb,
                 'hashcode_interno' : hashcode_interno,
-                'performance_ige': item.performance.ige.decode() if item.performance.ige else False,
-                'performance_oge': item.performance.oge.decode() if item.performance.oge else False,
-                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad.decode() if item.helicoptero_id.modelo.performance_altura_velocidad else False
+                'performance_ige': performance_ige,
+                'performance_oge': performance_oge,
+                'performance_h_v': performance_h_v
             }
             return data
 
