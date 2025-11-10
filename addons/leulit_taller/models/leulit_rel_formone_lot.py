@@ -29,7 +29,7 @@ class LeulitRelFormOneLot(models.Model):
     def do_move_certificate(self):
         if self.form_one and self.pieza_id:
             move_certificate = self.env['stock.move_certificate'].create({
-                'name': self.with_context(force_company=2).env['ir.sequence'].next_by_code('stock.move.certificate') or _('Nuevo'),
+                'name': self.with_company(2).env['ir.sequence'].next_by_code('stock.move.certificate') or _('Nuevo'),
                 'product_id': self.pieza_id.product_id.id,
                 'product_uom_id': self.pieza_id.product_id.uom_id.id,
                 'lot_id': self.pieza_id.id,

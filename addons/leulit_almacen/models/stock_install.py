@@ -141,7 +141,7 @@ class StockInstall(models.TransientModel):
     def do_install(self):
         self._check_company()
         for install in self:
-            install.name = self.with_context(force_company=2).env['ir.sequence'].next_by_code('stock.install') or _('New')
+            install.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.install') or _('New')
             move = self.env['stock.move'].create(install._prepare_move_values())
             move._action_done()
             install.write({'move_id': move.id, 'state': 'done'})

@@ -153,7 +153,7 @@ class StockUninstall(models.TransientModel):
     def do_uninstall(self):
         self._check_company()
         for uninstall in self:
-            uninstall.name = self.with_context(force_company=2).env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
+            uninstall.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
             move = self.env['stock.move'].create(uninstall._prepare_move_values())
             move._action_done()
             uninstall.write({'move_id': move.id, 'state': 'done'})

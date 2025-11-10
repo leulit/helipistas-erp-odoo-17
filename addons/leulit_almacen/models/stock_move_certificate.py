@@ -131,7 +131,7 @@ class StockMoveCertificate(models.TransientModel):
     def do_move_certificate(self):
         self._check_company()
         for move_certificate in self:
-            move_certificate.name = self.with_context(force_company=2).env['ir.sequence'].next_by_code('stock.move.certificate') or _('New')
+            move_certificate.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.move.certificate') or _('New')
             move = self.env['stock.move'].create(move_certificate._prepare_move_values())
             move._action_done()
             move_certificate.write({'move_id': move.id, 'state': 'done'})
