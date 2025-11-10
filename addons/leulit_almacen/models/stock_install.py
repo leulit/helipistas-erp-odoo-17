@@ -135,15 +135,14 @@ class StockInstall(models.TransientModel):
         for install in self:
             install.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.install') or _('New')
             move = self.env['stock.move'].create(install._prepare_move_values())
-            # Confirm the move to create move lines
+            # Confirm and assign the move to create and reserve move lines
             move._action_confirm()
-            # Set quantity, lot and owner on move lines
-            move.move_line_ids.write({
-                'quantity': install.install_qty,
-                'lot_id': install.lot_id.id,
-                'owner_id': install.owner_id.id,
-                'picked': True,
-            })
+            move._action_assign()
+            # Set lot, owner and mark as picked on move lines
+            for move_line in move.move_line_ids:
+                move_line.lot_id = install.lot_id.id
+                move_line.owner_id = install.owner_id.id
+                move_line.picked = True
             # Now mark as done
             move._action_done()
             install.write({'move_id': move.id, 'state': 'done'})
@@ -171,15 +170,14 @@ class StockInstall(models.TransientModel):
         for uninstall in self:
             name = self.env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
             move = self.env['stock.move'].create(uninstall._prepare_move_values_uninstall(name))
-            # Confirm the move to create move lines
+            # Confirm and assign the move to create and reserve move lines
             move._action_confirm()
-            # Set quantity, lot and owner on move lines
-            move.move_line_ids.write({
-                'quantity': uninstall.install_qty,
-                'lot_id': uninstall.desinstalacion_lot_id.id,
-                'owner_id': uninstall.owner_id.id,
-                'picked': True,
-            })
+            move._action_assign()
+            # Set lot, owner and mark as picked on move lines
+            for move_line in move.move_line_ids:
+                move_line.lot_id = uninstall.desinstalacion_lot_id.id
+                move_line.owner_id = uninstall.owner_id.id
+                move_line.picked = True
             # Now mark as done
             move._action_done()
         return move
