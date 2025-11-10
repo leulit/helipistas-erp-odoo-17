@@ -139,14 +139,6 @@ class StockUninstall(models.TransientModel):
             'location_id': self.location_id.id,
             'location_dest_id': self.uninstall_location_id.id,
             'date': self.date_done,
-            'move_line_ids': [(0, 0, {'product_id': self.product_id.id,
-                                           'product_uom_id': self.product_uom_id.id, 
-                                           'quantity': self.uninstall_qty,
-                                           'location_id': self.location_id.id,
-                                           'date': self.date_done,
-                                           'location_dest_id': self.uninstall_location_id.id,
-                                           'owner_id': self.owner_id.id,
-                                           'lot_id': self.lot_id.id, })],
             'picking_id': self.picking_id.id
         }
 
@@ -155,6 +147,15 @@ class StockUninstall(models.TransientModel):
         for uninstall in self:
             uninstall.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
             move = self.env['stock.move'].create(uninstall._prepare_move_values())
+            # Confirm and assign the move to create and reserve move lines
+            move._action_confirm()
+            move._action_assign()
+            # Set lot, owner and mark as picked on move lines
+            for move_line in move.move_line_ids:
+                move_line.lot_id = uninstall.lot_id.id
+                move_line.owner_id = uninstall.owner_id.id
+                move_line.picked = True
+            # Now mark as done
             move._action_done()
             uninstall.write({'move_id': move.id, 'state': 'done'})
             uninstall.date_done = fields.Datetime.now()

@@ -117,14 +117,6 @@ class StockMoveCertificate(models.TransientModel):
             'location_id': self.location_id.id,
             'location_dest_id': self.dest_location_id.id,
             'date': self.date_done,
-            'move_line_ids': [(0, 0, {'product_id': self.product_id.id,
-                                           'product_uom_id': self.product_uom_id.id, 
-                                           'quantity': self.qty,
-                                           'location_id': self.location_id.id,
-                                           'date': self.date_done,
-                                           'location_dest_id': self.dest_location_id.id,
-                                           'owner_id': self.owner_id.id,
-                                           'lot_id': self.lot_id.id, })],
             'picking_id': self.picking_id.id
         }
 
@@ -133,6 +125,15 @@ class StockMoveCertificate(models.TransientModel):
         for move_certificate in self:
             move_certificate.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.move.certificate') or _('New')
             move = self.env['stock.move'].create(move_certificate._prepare_move_values())
+            # Confirm and assign the move to create and reserve move lines
+            move._action_confirm()
+            move._action_assign()
+            # Set lot, owner and mark as picked on move lines
+            for move_line in move.move_line_ids:
+                move_line.lot_id = move_certificate.lot_id.id
+                move_line.owner_id = move_certificate.owner_id.id
+                move_line.picked = True
+            # Now mark as done
             move._action_done()
             move_certificate.write({'move_id': move.id, 'state': 'done'})
             move_certificate.date_done = fields.Datetime.now()
