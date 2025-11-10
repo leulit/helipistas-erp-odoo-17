@@ -127,15 +127,6 @@ class StockInstall(models.TransientModel):
             'location_id': self.location_id.id,
             'location_dest_id': self.install_location_id.id,
             'date': self.date_done,
-            'move_line_ids': [(0, 0, {'product_id': self.product_id.id,
-                                           'product_uom_id': self.product_uom_id.id, 
-                                           'quantity': self.install_qty,
-                                           'picked': True,
-                                           'location_id': self.location_id.id,
-                                           'date': self.date_done,
-                                           'location_dest_id': self.install_location_id.id,
-                                           'owner_id': self.owner_id.id,
-                                           'lot_id': self.lot_id.id, })],
             'picking_id': self.picking_id.id
         }
 
@@ -144,6 +135,16 @@ class StockInstall(models.TransientModel):
         for install in self:
             install.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.install') or _('New')
             move = self.env['stock.move'].create(install._prepare_move_values())
+            # Confirm the move to create move lines
+            move._action_confirm()
+            # Set quantity, lot and owner on move lines
+            move.move_line_ids.write({
+                'quantity': install.install_qty,
+                'lot_id': install.lot_id.id,
+                'owner_id': install.owner_id.id,
+                'picked': True,
+            })
+            # Now mark as done
             move._action_done()
             install.write({'move_id': move.id, 'state': 'done'})
             install.date_done = fields.Datetime.now()
@@ -162,15 +163,6 @@ class StockInstall(models.TransientModel):
             'location_id': self.install_location_id.id,
             'location_dest_id': self.uninstall_location_id.id,
             'date': self.date_done,
-            'move_line_ids': [(0, 0, {'product_id': self.desinstalacion_lot_id.product_id.id,
-                                           'product_uom_id': self.desinstalacion_lot_id.product_id.uom_id.id, 
-                                           'quantity': self.install_qty,
-                                           'picked': True,
-                                           'location_id': self.install_location_id.id,
-                                           'date': self.date_done,
-                                           'location_dest_id': self.uninstall_location_id.id,
-                                           'owner_id': self.owner_id.id,
-                                           'lot_id': self.desinstalacion_lot_id.id, })],
             'picking_id': self.picking_id.id
         }
 
@@ -179,6 +171,16 @@ class StockInstall(models.TransientModel):
         for uninstall in self:
             name = self.env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
             move = self.env['stock.move'].create(uninstall._prepare_move_values_uninstall(name))
+            # Confirm the move to create move lines
+            move._action_confirm()
+            # Set quantity, lot and owner on move lines
+            move.move_line_ids.write({
+                'quantity': uninstall.install_qty,
+                'lot_id': uninstall.desinstalacion_lot_id.id,
+                'owner_id': uninstall.owner_id.id,
+                'picked': True,
+            })
+            # Now mark as done
             move._action_done()
         return move
 
