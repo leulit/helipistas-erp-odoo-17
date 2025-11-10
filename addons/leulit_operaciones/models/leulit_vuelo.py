@@ -547,10 +547,11 @@ class leulit_vuelo(models.Model):
             for alternativo in item.alternativos:
                 alternativosarr.append(alternativo.name)
             combustiblealternativo = (item.consumomedio_vuelo if item.consumomedio_vuelo else 0.0) * (item.distancia_alternativo if item.distancia_alternativo else 0.0)
-            notam_info = item.notaminfo
+            notam_info = item.notaminfo or ""
             # notam_info = re.sub("(?s)<div(?: [^>]*)?>","", item.notaminfo)
             # notam_info = re.sub("</div>","", notam_info)
-            notam_info = re.sub("(?s)header","", item.notaminfo)
+            if notam_info:
+                notam_info = re.sub("(?s)header","", notam_info)
             datetime_salida_utc = self.getDateTimeUTC(item.fechavuelo, item.horasalida, item.lugarsalida.tz)
             hora_salida_utc = utilitylib.leulit_datetime_to_float_time(datetime_salida_utc)
             datetime_llegada_utc = self.getDateTimeUTC(item.fechavuelo, item.horallegadaprevista, item.lugarllegada.tz)
