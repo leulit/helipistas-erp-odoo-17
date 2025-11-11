@@ -21,7 +21,7 @@ class sale_order(models.Model):
         for order in self:
             name = order.name
             if order.partner_id.name:
-                name = '%s - %s' % (name, order.partner_id._compute_display_name())
+                name = '%s - %s' % (name, order.partner_id.complete_name)
             if order.origin:
                 name = '%s [%s]' % (name, order.origin)
             order.display_name = name
