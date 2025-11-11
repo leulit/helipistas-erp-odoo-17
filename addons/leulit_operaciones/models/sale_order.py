@@ -27,23 +27,17 @@ class sale_order(models.Model):
             order.display_name = name
 
     @api.model
-    def _search_display_name(self, operator, value):
-        """Permitir buscar por número de presupuesto, nombre del cliente u origen"""
-        if operator in ('=', '!=', 'like', 'ilike', 'in', 'not in'):
-            # Buscar por nombre del presupuesto
-            domain = [('name', operator, value)]
-            
-            # Buscar también por nombre del partner (cliente)
-            if isinstance(value, str):
-                domain = ['|', '|', 
-                    ('name', operator, value),
-                    ('partner_id.name', operator, value),
-                    ('origin', operator, value)
-                ]
-            
-            return domain
-        
-        return super()._search_display_name(operator, value)
+    def _name_search(self, name='', domain=None, operator='ilike', limit=None, order=None):
+        """Sobrescribir búsqueda para incluir búsqueda por nombre del cliente"""
+        domain = domain or []
+        if name:
+            # Buscar por número de presupuesto, nombre del cliente u origen
+            domain = ['|', '|', 
+                ('name', operator, name),
+                ('partner_id.name', operator, name),
+                ('origin', operator, name)
+            ] + domain
+        return self._search(domain, limit=limit, order=order)
     
     @api.depends('invoice_status')
     def _get_is_flight_part(self):
