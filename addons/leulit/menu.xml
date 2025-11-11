@@ -25,6 +25,11 @@
         groups="leulit.ROperaciones_alumno"
         sequence="80"
     />
+    S00895 usd
+    S01134 gbp
+    S00894 usd
+    S00779 usd
+    S00475 usd
     <!-- Menu Helipistas -->
     <menuitem 
         id="leulit_20200818_1028_menuitem" 
