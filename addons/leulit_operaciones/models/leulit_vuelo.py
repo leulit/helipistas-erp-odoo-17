@@ -2264,7 +2264,7 @@ class leulit_vuelo(models.Model):
     temperatura = fields.Float('Temperatura')
     performance = fields.One2many('leulit.performance','vuelo','Performance')
     active = fields.Boolean(string="Activo",default=True)
-    presupuesto_vuelo = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('tag_ids','=',False),('task_done','=',False)])
+    presupuesto_vuelo = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('task_done','=',False)])
     arlanding = fields.Integer(string='Autorotation Landings')
     
     # Fechas y horas UTC

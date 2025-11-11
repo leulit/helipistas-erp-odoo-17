@@ -16,16 +16,15 @@ class sale_order(models.Model):
     def _get_tipos(self):
         return utilitylib.leulit_get_tipos_helicopteros()
 
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
+        super()._compute_display_name()
         for order in self:
             name = order.name
             if order.partner_id.name:
                 name = '%s - %s' % (name, order.partner_id._get_name())
             if order.origin:
                 name = '%s [%s]' % (name, order.origin)
-            res.append((order.id, name))
-        return res
+            order.display_name = name
     
     @api.depends('invoice_status')
     def _get_is_flight_part(self):
