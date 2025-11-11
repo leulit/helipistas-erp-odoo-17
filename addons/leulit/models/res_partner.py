@@ -60,9 +60,10 @@ class res_partner(models.Model):
 
     def _recalcular_complete_name_thread(self, dbname, uid):
         """Función interna que se ejecuta en el thread"""
-        with api.Environment.manage():
-            new_cr = registry(dbname).cursor()
-            try:
+        try:
+            # Obtener el registry y crear un nuevo cursor
+            reg = registry(dbname)
+            with reg.cursor() as new_cr:
                 env = api.Environment(new_cr, uid, {})
                 warnings.filterwarnings('ignore')
                 
@@ -81,11 +82,8 @@ class res_partner(models.Model):
                 
                 new_cr.commit()
                 _logger.info('Recálculo de complete_name completado para %s partners', total)
-            except Exception as e:
-                _logger.error('Error en thread de recálculo: %s', str(e))
-                new_cr.rollback()
-            finally:
-                new_cr.close()
+        except Exception as e:
+            _logger.error('Error en thread de recálculo: %s', str(e))
 
     def recalcular_complete_name_async(self):
         """Método público para lanzar el recálculo en un thread"""
@@ -112,7 +110,7 @@ class res_partner(models.Model):
                 'sticky': False,
             }
         }
-                
+
 
 
     bool_cuentas_custom = fields.Boolean(string="",default=False)
