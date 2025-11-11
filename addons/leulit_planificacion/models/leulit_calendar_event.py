@@ -355,7 +355,7 @@ class leulit_calendar_event(models.Model):
     resource_fields = fields.One2many(comodel_name='leulit.event_resource', inverse_name='event', string='Recurso')
     create_uid = fields.Integer(string='Creador')
     write_uid = fields.Integer(string='Modificador')
-    tipo = fields.Selection(selection=_get_tipos, string='Tipo', required=False)
+    tipo = fields.Selection(selection=_get_tipos, string='Tipo Remove', required=False)
     type_event = fields.Many2one(comodel_name='leulit.tipo_planificacion', string='Tipo', required=True)
     tipo_vuelo = fields.Boolean(related='type_event.is_vuelo', string='Tipo vuelo')
     equipamientos_ids = fields.Many2many(comodel_name='leulit.equipamientos_planificacion', relation='leulit_equipamientos_evento', column1='evento_id', column2='equipamiento_id', string='Equipamientos')

@@ -22,8 +22,25 @@ class LeulitCalidadWorker(models.Model):
         for item in self:
             item.user_id = item.partner_id.user_ids
 
+    def _search_user_id(self, operator, value):
+        # Buscar workers por su user_id
+        all_workers = self.search([])
+        matching_ids = []
+        for worker in all_workers:
+            if worker.partner_id and worker.partner_id.user_ids:
+                user_id = worker.partner_id.user_ids.id if worker.partner_id.user_ids else False
+                if operator == '=' and user_id == value:
+                    matching_ids.append(worker.id)
+                elif operator == '!=' and user_id != value:
+                    matching_ids.append(worker.id)
+                elif operator == 'in' and user_id in value:
+                    matching_ids.append(worker.id)
+                elif operator == 'not in' and user_id not in value:
+                    matching_ids.append(worker.id)
+        return [('id', 'in', matching_ids)]
 
-    user_id = fields.Many2one(compute=_userId, string='Usuario', comodel_name='res.users')
+
+    user_id = fields.Many2one(compute='_userId', search='_search_user_id', string='Usuario', comodel_name='res.users')
     partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     employee_id = fields.Many2one(related='user_id.employee_id', comodel_name='hr.employee', string='Empleado')
     emergency_contact_empl = fields.Char(related='employee_id.emergency_contact', string='Contacto de Emergencia')

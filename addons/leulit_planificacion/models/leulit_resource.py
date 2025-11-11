@@ -75,6 +75,23 @@ class leulit_resource(models.Model):
                     valor = item.user.partner_id.id
             item.partner = valor
 
+    def _search_partner(self, operator, value):
+        # Buscar recursos por su partner
+        all_resources = self.search([])
+        matching_ids = []
+        for resource in all_resources:
+            if resource.user and resource.user.partner_id:
+                partner_id = resource.user.partner_id.id
+                if operator == '=' and partner_id == value:
+                    matching_ids.append(resource.id)
+                elif operator == '!=' and partner_id != value:
+                    matching_ids.append(resource.id)
+                elif operator == 'in' and partner_id in value:
+                    matching_ids.append(resource.id)
+                elif operator == 'not in' and partner_id not in value:
+                    matching_ids.append(resource.id)
+        return [('id', 'in', matching_ids)]
+
 
     name = fields.Char('Nombre', )
     event_resource = fields.One2many('leulit.event_resource', 'resource', 'Recurso')
@@ -82,7 +99,7 @@ class leulit_resource(models.Model):
     work_time = fields.Float(compute=_get_work_time,string='Tiempo de trabajo')
     availability_time = fields.Float(compute=_get_availability_time,string='Tiempo de disponibilidad')
     user = fields.Many2one('res.users','Usuario')
-    partner = fields.Many2one(compute=_get_partner,comodel_name='res.partner',string='Contacto',store=False)
+    partner = fields.Many2one(compute='_get_partner', search='_search_partner', comodel_name='res.partner', string='Contacto', store=False)
     email = fields.Char(related='partner.email',string='Mail',store=False)
     active = fields.Boolean(string='Estado')
     color = fields.Char('Color')
