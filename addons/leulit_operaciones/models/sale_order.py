@@ -25,6 +25,25 @@ class sale_order(models.Model):
             if order.origin:
                 name = '%s [%s]' % (name, order.origin)
             order.display_name = name
+
+    @api.model
+    def _search_display_name(self, operator, value):
+        """Permitir buscar por número de presupuesto, nombre del cliente u origen"""
+        if operator in ('=', '!=', 'like', 'ilike', 'in', 'not in'):
+            # Buscar por nombre del presupuesto
+            domain = [('name', operator, value)]
+            
+            # Buscar también por nombre del partner (cliente)
+            if isinstance(value, str):
+                domain = ['|', '|', 
+                    ('name', operator, value),
+                    ('partner_id.name', operator, value),
+                    ('origin', operator, value)
+                ]
+            
+            return domain
+        
+        return super()._search_display_name(operator, value)
     
     @api.depends('invoice_status')
     def _get_is_flight_part(self):
