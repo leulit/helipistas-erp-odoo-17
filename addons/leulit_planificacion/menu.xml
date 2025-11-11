@@ -80,7 +80,7 @@
         name="Reuniones"
         parent="leulit.leulit_20200818_1028_menuitem"
         sequence="40"
-        groups="hr.group_hr_user"
+        groups="leulit.RBase_employee"
     />
         <menuitem 
             id="leulit_20200827_1516_menuitem"
@@ -88,7 +88,7 @@
             parent="leulit_20200827_1515_menuitem"
             action="leulit_20200827_1515_action"
             sequence="10"
-            groups="hr.group_hr_user"
+            groups="leulit.RBase_employee"
         />
         <menuitem 
             id="leulit_20220815_1111_menuitem"
