@@ -18,7 +18,7 @@
             <field name="res_model">product.product</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="leulit_20221129_1527_search"/>
-            <field name="context">{'default_type': 'product','default_categ_id': 15,'default_tracking': 'lot','default_property_account_income_id': 481,'default_property_account_expense_id': 375}</field>
+            <field name="context">{'default_detailed_type': 'product', 'default_categ_id': 15,'default_tracking': 'lot','default_property_account_income_id': 5541,'default_property_account_expense_id': 5435}</field>
             <field name="domain">[('is_product_taller', '=', True)]</field>
         </record>
 
