@@ -1,11 +1,17 @@
 /** @odoo-module **/
 
-import { Component } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { sprintf } from "@web/core/utils/strings";
 import { formView } from "@web/views/form/form_view";
+import { FormRenderer } from "@web/views/form/form_renderer";
+import { onMounted, onWillStart, useRef, useState, useEffect } from "@odoo/owl";
 
+/**
+ * Convierte horas decimales a formato HH:MM
+ * @param {number} value - Valor en horas decimales
+ * @returns {string} Formato HH:MM
+ */
 function decimalHourToStr(value) {
     let pattern = '%02d:%02d';
     if (value < 0) {
@@ -14,143 +20,249 @@ function decimalHourToStr(value) {
     }
     let hour = Math.floor(value);
     let min = Math.round((value % 1) * 60);
-    if (min == 60) {
+    if (min === 60) {
         min = 0;
         hour = hour + 1;
     }
     return sprintf(pattern, hour, min);
 }
 
-export class TablaResumenAsignaturasVueloController extends formView.Controller {
+export class TablaResumenAsignaturasVueloRenderer extends FormRenderer {
+    static template = "leulit_escuela.TablaResumenAsignaturas";
+
     setup() {
         super.setup();
         this.orm = useService("orm");
-    }
-
-    async _applyChanges(dataPointID, changes, event) {
-        const result = await super._applyChanges(dataPointID, changes, event);
         
-        if (this.model.localData[dataPointID].data.rel_curso && this.model.localData[dataPointID].data.rel_curso.data) {
-            await this.renderer.getAsignaturas(this.model.localData[dataPointID].data.rel_curso.data.id);
-        } else {
-            await this.renderer.getAsignaturas(false);
-        }
+        // Referencias a elementos del DOM
+        this.selectorCurso = useRef("selectorCurso");
+        this.tablaTeoricasBody = useRef("tablaTeoricasBody");
+        this.tablaPracticasBody = useRef("tablaPracticasBody");
         
-        return result;
-    }
-}
-
-export class TablaResumenAsignaturasVueloRenderer extends formView.Renderer {
-    setup() {
-        super.setup();
-        this.orm = useService("orm");
-        this.combo_cursos = '#selector_curso_teoricas';
-        this.tabla_teoricas = '#tabla_resumen_teoricas';
-        this.tabla_practicas = '#tabla_resumen_practicas';
-        this.containerteoricas = '#container_tabla_asignaturas_teoricas';
-        this.containerpracticas = '#container_tabla_asignaturas_practicas';
-    }
-
-    async _renderView() {
-        await super._renderView();
-        const self = this;
-        const QWeb = self.env.qweb;
-        self.$el.find(self.containerteoricas).html(QWeb.render('escuela_tabla_resumen_asignaturas', { tipo: "teoricas" }));
-        self.$el.find(self.containerpracticas).html(QWeb.render('escuela_tabla_resumen_asignaturas', { tipo: "practicas" }));
-
-        // Get cursos
-        const result = await self.orm.call('leulit.alumno', 'xmlrpc_cursos', [self.state.resId]);
-        $(self.combo_cursos).empty();
-        for (let i = 0; i < result.length; i++) {
-            const item = result[i];
-            const selected = (i == 0) ? " selected='true' " : "";
-            self.$('#selector_curso_teoricas').append('<option ' + selected + 'value="' + item['id'] + '">' + item['name'] + '</option>');
-        }
-        self.getAsignaturas();
-        self.$(self.combo_cursos).change(function() {
-            self.getAsignaturas();
+        // Estado local
+        this.state = useState({
+            cursos: [],
+            cursoSeleccionado: null,
         });
+
+        onWillStart(async () => {
+            await this.loadCursos();
+        });
+
+        onMounted(() => {
+            this.setupEventListeners();
+        });
+
+        // Observar cambios en el campo rel_curso
+        useEffect(
+            () => {
+                if (this.props.record.data.rel_curso) {
+                    const cursoId = Array.isArray(this.props.record.data.rel_curso) 
+                        ? this.props.record.data.rel_curso[0] 
+                        : this.props.record.data.rel_curso;
+                    
+                    if (cursoId && cursoId !== this.state.cursoSeleccionado) {
+                        this.state.cursoSeleccionado = cursoId;
+                        this.loadAsignaturas();
+                    }
+                }
+            },
+            () => [this.props.record.data.rel_curso]
+        );
     }
 
-    getCursoSelected() {
-        return this.$(this.combo_cursos).find('option:selected').val();
-    }
+    /**
+     * Carga la lista de cursos del alumno
+     */
+    async loadCursos() {
+        const resId = this.props.record.resId;
+        if (!resId) {
+            return;
+        }
 
-    async getAsignaturas() {
-        const self = this;
-        const idalumno = self.state.resId;
-        const idcurso = self.getCursoSelected();
-        const r = await self.orm.call('leulit.alumno', 'xmlrpc_asignaturas', [idalumno, idcurso, 'teorica']);
-        if (r) {
-            self.printTeoricas(r['teoricas']);
-            self.printPracticas(r['practicas']);
+        try {
+            const result = await this.orm.call('leulit.alumno', 'xmlrpc_cursos', [resId]);
+            this.state.cursos = result || [];
+            
+            // Si hay un rel_curso en el record, usarlo como seleccionado
+            if (this.props.record.data.rel_curso) {
+                const cursoId = Array.isArray(this.props.record.data.rel_curso) 
+                    ? this.props.record.data.rel_curso[0] 
+                    : this.props.record.data.rel_curso;
+                this.state.cursoSeleccionado = cursoId;
+            } else if (this.state.cursos.length > 0) {
+                this.state.cursoSeleccionado = this.state.cursos[0].id;
+            }
+            
+            if (this.state.cursoSeleccionado) {
+                await this.loadAsignaturas();
+            }
+        } catch (error) {
+            console.error('Error loading cursos:', error);
         }
     }
 
-    printTeoricas(asignaturas) {
-        const self = this;
-        let row = '';
-        $(self.tabla_teoricas + ' tbody').empty();
-        for (const key in asignaturas) {
-            const item = asignaturas[key];
-            const customcss = (item['duracion'] > item['total_real']) ? "redbackg" : "";
-            row += '<tr class="' + customcss + '">';
-            row += '<td class="' + customcss + '">' + item['id'] + '</td>';
-            row += '<td class="' + customcss + '">' + item['name'] + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + item['strduracion'] + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + item['str_total_real'] + '</td>';
-            row += '</tr>';
+    /**
+     * Configura los event listeners
+     */
+    setupEventListeners() {
+        if (this.selectorCurso.el) {
+            this.selectorCurso.el.addEventListener('change', () => {
+                this.onCursoChange();
+            });
         }
-        $(self.tabla_teoricas + ' tbody').append(row);
     }
 
-    printPracticas(sesiones) {
-        const self = this;
-        $(self.tabla_practicas + ' tbody').empty();
-        let row = '';
-        const totales_colum = {
-            'duracion': 0.0,
-            'total_doblemando': 0.0,
-            'total_pic': 0.0,
-            'total_spic': 0.0,
-            'total_otros': 0.0,
-            'total': 0.0
+    /**
+     * Maneja el cambio de curso seleccionado
+     */
+    async onCursoChange() {
+        if (this.selectorCurso.el) {
+            this.state.cursoSeleccionado = parseInt(this.selectorCurso.el.value);
+            await this.loadAsignaturas();
+        }
+    }
+
+    /**
+     * Carga las asignaturas del curso seleccionado
+     */
+    async loadAsignaturas() {
+        const resId = this.props.record.resId;
+        const idCurso = this.state.cursoSeleccionado;
+        
+        if (!resId || !idCurso) {
+            return;
+        }
+
+        try {
+            const result = await this.orm.call(
+                'leulit.alumno', 
+                'xmlrpc_asignaturas', 
+                [resId, idCurso, 'teorica']
+            );
+            
+            if (result) {
+                this.renderTeoricas(result.teoricas || []);
+                this.renderPracticas(result.practicas || []);
+            }
+        } catch (error) {
+            console.error('Error loading asignaturas:', error);
+        }
+    }
+
+    /**
+     * Renderiza la tabla de asignaturas teóricas
+     * @param {Array} asignaturas - Lista de asignaturas teóricas
+     */
+    renderTeoricas(asignaturas) {
+        if (!this.tablaTeoricasBody.el) {
+            return;
+        }
+
+        let html = '';
+        for (const item of asignaturas) {
+            const customCss = (item.duracion > item.total_real) ? "redbackg" : "";
+            html += `
+                <tr class="${customCss}">
+                    <td class="${customCss}">${item.id}</td>
+                    <td class="${customCss}">${item.name}</td>
+                    <td class="${customCss} halign-center">${item.strduracion}</td>
+                    <td class="${customCss} halign-center">${item.str_total_real}</td>
+                </tr>
+            `;
+        }
+        
+        this.tablaTeoricasBody.el.innerHTML = html;
+    }
+
+    /**
+     * Renderiza la tabla de sesiones prácticas
+     * @param {Array} sesiones - Lista de sesiones prácticas
+     */
+    renderPracticas(sesiones) {
+        if (!this.tablaPracticasBody.el) {
+            return;
+        }
+
+        let html = '';
+        const totales = {
+            duracion: 0.0,
+            total_doblemando: 0.0,
+            total_pic: 0.0,
+            total_spic: 0.0,
+            total_otros: 0.0,
+            total: 0.0
         };
-        for (const key in sesiones) {
-            let total_row = 0.0;
-            const item = sesiones[key];
-            total_row = item['total_spic'] + item['total_doblemando'] + item['total_pic'] + item['total_otros'];
-            const customcss = (item['duracion'] > total_row) ? "redbackg" : "";
-            totales_colum['duracion'] += item['duracion'];
-            totales_colum['total_doblemando'] += item['total_doblemando'];
-            totales_colum['total_pic'] += item['total_pic'];
-            totales_colum['total_spic'] += item['total_spic'];
-            row += '<tr class="' + customcss + '">';
-            row += '<td class="' + customcss + '">' + item['name'] + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + (item['duracion'] > 0 ? decimalHourToStr(item['duracion']) : '') + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + (item['total_doblemando'] > 0 ? decimalHourToStr(item['total_doblemando']) : '') + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + (item['total_pic'] > 0 ? decimalHourToStr(item['total_pic']) : '') + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + (item['total_spic'] > 0 ? decimalHourToStr(item['total_spic']) : '') + '</td>';
-            row += '<td class="' + customcss + ' halign-center">' + (item['total_otros'] > 0 ? decimalHourToStr(item['total_otros']) : '') + '</td>';
-            totales_colum['total'] += total_row;
-            row += '<td class="' + customcss + ' halign-center">' + (total_row > 0 ? decimalHourToStr(total_row) : '') + '</td>';
-            row += '</tr>';
+
+        for (const item of sesiones) {
+            const totalRow = item.total_spic + item.total_doblemando + 
+                           item.total_pic + item.total_otros;
+            const customCss = (item.duracion > totalRow) ? "redbackg" : "";
+
+            // Acumular totales
+            totales.duracion += item.duracion;
+            totales.total_doblemando += item.total_doblemando;
+            totales.total_pic += item.total_pic;
+            totales.total_spic += item.total_spic;
+            totales.total_otros += item.total_otros;
+            totales.total += totalRow;
+
+            html += `
+                <tr class="${customCss}">
+                    <td class="${customCss}">${item.name}</td>
+                    <td class="${customCss} halign-center">
+                        ${item.duracion > 0 ? decimalHourToStr(item.duracion) : ''}
+                    </td>
+                    <td class="${customCss} halign-center">
+                        ${item.total_doblemando > 0 ? decimalHourToStr(item.total_doblemando) : ''}
+                    </td>
+                    <td class="${customCss} halign-center">
+                        ${item.total_pic > 0 ? decimalHourToStr(item.total_pic) : ''}
+                    </td>
+                    <td class="${customCss} halign-center">
+                        ${item.total_spic > 0 ? decimalHourToStr(item.total_spic) : ''}
+                    </td>
+                    <td class="${customCss} halign-center">
+                        ${item.total_otros > 0 ? decimalHourToStr(item.total_otros) : ''}
+                    </td>
+                    <td class="${customCss} halign-center">
+                        ${totalRow > 0 ? decimalHourToStr(totalRow) : ''}
+                    </td>
+                </tr>
+            `;
         }
-        row += "<td>Totales</td>";
-        row += '<td class="halign-center">' + (totales_colum['duracion'] > 0 ? decimalHourToStr(totales_colum['duracion']) : '') + '</td>';
-        row += '<td class="halign-center">' + (totales_colum['total_doblemando'] > 0 ? decimalHourToStr(totales_colum['total_doblemando']) : '') + '</td>';
-        row += '<td class="halign-center">' + (totales_colum['total_pic'] > 0 ? decimalHourToStr(totales_colum['total_pic']) : '') + '</td>';
-        row += '<td class="halign-center">' + (totales_colum['total_spic'] > 0 ? decimalHourToStr(totales_colum['total_spic']) : '') + '</td>';
-        row += '<td class="halign-center">' + (totales_colum['total_otros'] > 0 ? decimalHourToStr(totales_colum['total_otros']) : '') + '</td>';
-        row += '<td class="halign-center">' + decimalHourToStr(totales_colum['total']) + '</td>';
-        $(self.tabla_practicas + ' tbody').append(row);
+
+        // Fila de totales
+        html += `
+            <tr class="font-weight-bold">
+                <td>Totales</td>
+                <td class="halign-center">
+                    ${totales.duracion > 0 ? decimalHourToStr(totales.duracion) : ''}
+                </td>
+                <td class="halign-center">
+                    ${totales.total_doblemando > 0 ? decimalHourToStr(totales.total_doblemando) : ''}
+                </td>
+                <td class="halign-center">
+                    ${totales.total_pic > 0 ? decimalHourToStr(totales.total_pic) : ''}
+                </td>
+                <td class="halign-center">
+                    ${totales.total_spic > 0 ? decimalHourToStr(totales.total_spic) : ''}
+                </td>
+                <td class="halign-center">
+                    ${totales.total_otros > 0 ? decimalHourToStr(totales.total_otros) : ''}
+                </td>
+                <td class="halign-center">
+                    ${decimalHourToStr(totales.total)}
+                </td>
+            </tr>
+        `;
+
+        this.tablaPracticasBody.el.innerHTML = html;
     }
 }
 
 export const TablaResumenAsignaturasVueloView = {
     ...formView,
-    type: "tabla_resumen_asignaturas_vuelo",
-    Controller: TablaResumenAsignaturasVueloController,
     Renderer: TablaResumenAsignaturasVueloRenderer,
 };
 

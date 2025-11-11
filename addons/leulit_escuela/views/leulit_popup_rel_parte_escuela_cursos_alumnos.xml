@@ -21,7 +21,7 @@
                         <tr>
                             <td>
                                 <h4>Silabus</h4>
-                                <field name="silabus" domain="[('curso_id','=',rel_curso),('tipo','=','practica')]"  readonly="((not rel_curso))"  context="{'tree_view_ref': 'leulit_escuela.leulit_20211109_1218_tree'}">
+                                <field name="silabus" domain="[('curso_id','=',rel_curso),('tipo','=','practica')]"  readonly="not rel_curso"  context="{'tree_view_ref': 'leulit_escuela.leulit_20211109_1218_tree'}">
                                     <tree>
                                         <field name="id"/>
                                         <field name="asignatura_id"/>
@@ -30,7 +30,7 @@
                                     </tree>
                                 </field>  
                             </td>
-                            <td>
+                            <!-- <td>
                                 <table>
                                     <tbody>
                                         <tr>
@@ -40,7 +40,7 @@
                                         </tr>
                                     </tbody>
                                 </table>  
-                            </td>
+                            </td> -->
                         </tr>                                                       
                     </table>
                     <group>

@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <t t-name="escuela_tabla_resumen_asignaturas">
-        <t t-if="tipo == 'teoricas'">
-            <t t-call="escuela_tabla_resumen_asignaturas_teoricas" />
-        </t>
-        <t t-if="tipo == 'practicas'">
-            <t t-call="escuela_tabla_resumen_asignaturas_practicas" />
-        </t>
+    <!-- Template principal que se inyecta en el form -->
+    <t t-name="leulit_escuela.TablaResumenAsignaturas" owl="1">
+        <div class="o_tabla_resumen_asignaturas">
+            <!-- Selector de curso -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="selector_curso_teoricas" class="form-label"><b>Cursos:</b></label>
+                    <select 
+                        t-ref="selectorCurso" 
+                        id="selector_curso_teoricas" 
+                        class="form-select">
+                        <t t-foreach="state.cursos" t-as="curso" t-key="curso.id">
+                            <option 
+                                t-att-value="curso.id" 
+                                t-att-selected="curso.id === state.cursoSeleccionado ? 'selected' : undefined">
+                                <t t-esc="curso.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contenedor tablas -->
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <t t-call="leulit_escuela.TablaAsignaturasTeorica"/>
+                </div>
+                <div class="col-12">
+                    <t t-call="leulit_escuela.TablaAsignaturasPractica"/>
+                </div>
+            </div>
+        </div>
     </t>
 
-    <t t-name="escuela_tabla_resumen_asignaturas_teoricas">
+    <!-- Tabla de asignaturas teóricas -->
+    <t t-name="leulit_escuela.TablaAsignaturasTeorica" owl="1">
         <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
             <thead>
                 <tr>
@@ -25,12 +51,13 @@
                     <th>Tiempo clase</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody t-ref="tablaTeoricasBody">
             </tbody>
         </table>
     </t>
 
-    <t t-name="escuela_tabla_resumen_asignaturas_practicas">
+    <!-- Tabla de sesiones prácticas -->
+    <t t-name="leulit_escuela.TablaAsignaturasPractica" owl="1">
         <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
             <thead>
                 <tr>
@@ -48,7 +75,7 @@
                     <th>Totales</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody t-ref="tablaPracticasBody">
             </tbody>
         </table>
     </t>

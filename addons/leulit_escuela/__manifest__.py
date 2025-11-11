@@ -49,6 +49,7 @@
     "demo": [],
     "assets": {
         "web.assets_backend": [
+            "leulit_escuela/static/src/css/leulit_tabla_resumen_asignaturas.css",
             "leulit_escuela/static/src/js/leulit_tabla_resumen_asignaturas.js",
             "leulit_escuela/static/src/js/leulit_tabla_resumen_asignaturas_vuelo.js",
             "leulit_escuela/static/src/xml/leulit_tabla_resumen_asignaturas.xml",
