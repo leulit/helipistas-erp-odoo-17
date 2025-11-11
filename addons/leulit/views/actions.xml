@@ -8,8 +8,8 @@
         </record>
 
         <record model="ir.actions.act_url" id="leulit_20230224_1041_action">
-            <field name="name">Open sites documentación</field>
-            <field name="url">https://sites.google.com/helipistas.com/documebtacinhelipistas</field>
+            <field name="name">Open documentación</field>
+            <field name="url">https://drive.google.com/drive/u/0/shared-drives</field>
             <field name="target">new</field>
         </record>
 
