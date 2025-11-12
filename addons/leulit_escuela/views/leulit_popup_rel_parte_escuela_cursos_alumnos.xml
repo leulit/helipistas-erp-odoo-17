@@ -7,7 +7,7 @@
             <field name="model">leulit.popup_rel_parte_escuela_cursos_alumnos</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="descripcion" js_class="tabla_resumen_asignaturas_vuelo">
+                <form string="descripcion">
                     <group>
                         <field name="vuelo_id" readonly="1"/>
                         <field name="profesor_id" readonly="1"/>
