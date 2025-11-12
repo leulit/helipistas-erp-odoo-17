@@ -2,7 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { onMounted, onWillStart, useEffect } from "@odoo/owl";
+import { Component, useState, onWillStart } from "@odoo/owl";
 
 function decimalHourToStr(value) {
     let pattern = "%02d:%02d";
@@ -22,23 +22,22 @@ export class TablaResumenAsignaturas extends Component {
 
     setup() {
         this.rpc = useService("rpc");
+        this.orm = useService("orm");
         this.state = useState({
             cursos: [],
             cursoId: null,
-            teoricas: [],
-            practicas: [],
+            teoricas: [],   // [{id,name,strduracion,str_total_real,duracion,total_real}]
+            practicas: [],  // [{name,duracion,total_doblemando,total_pic,total_spic,total_otros}]
             alumnoId: null,
         });
 
-        onMounted(async () => {
-            const alumnoId = this.env.model.root?.resId || this.env.model.root?.data?.id;
-            if (!alumnoId) return;
-            this.state.alumnoId = alumnoId;
+        onWillStart(async () => {
+            // resId del registro actual en la vista
+            this.state.alumnoId = this.env.model.root.data.id;
             await this._loadCursos();
             await this._loadAsignaturas();
         });
     }
-
 
     async _loadCursos() {
         const res = await this.rpc("/web/dataset/call_kw/leulit.alumno/xmlrpc_cursos", {
