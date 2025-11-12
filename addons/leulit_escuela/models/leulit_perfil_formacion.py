@@ -74,15 +74,17 @@ class leulit_perfil_formacion(models.Model):
     @api.depends('is_template','cursos')
     def _get_cursos_in_red(self):
         for item in self:
-            cursos = []
             if not item.is_template:
-                ids = self.env['leulit.perfil_formacion_curso'].search([('id','in',item.cursos.ids),('semaforo_dy','=','red'),('finalizado','=',False)])
-                if len(ids) > 0:
-                    cursos.append(ids)
-            if len(cursos) > 0:
-                item.cursos_in_red = cursos
+                # Buscar cursos en rojo
+                ids = self.env['leulit.perfil_formacion_curso'].search([
+                    ('id','in',item.cursos.ids),
+                    ('semaforo_dy','=','red'),
+                    ('finalizado','=',False)
+                ])
+                # Asignar directamente el recordset, NO una lista con el recordset dentro
+                item.cursos_in_red = ids
             else:
-                item.cursos_in_red = None
+                item.cursos_in_red = False
 
 
     def replicar_cursos(self):
