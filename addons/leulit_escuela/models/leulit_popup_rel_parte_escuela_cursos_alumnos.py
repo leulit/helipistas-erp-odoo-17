@@ -47,6 +47,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
             alumnos_ids = self.rel_alumnos.ids
 
         if not alumnos_ids:
+            _logger.error("No hay alumnos, mostrando todos los cursos activos")
             # Si no hay alumnos, mostrar todos los cursos activos
             return {
                 'domain': {
@@ -72,6 +73,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
 
         # Si hay alumnos empleados o inactivos, mostrar todos los cursos
         if alumno_employee:
+            _logger.error("Alumno empleado, mostrando todos los cursos activos")
             return {
                 'domain': {
                     'rel_curso': [('estado', '=', 'activo')]
@@ -84,7 +86,8 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
             ('fecha_finalizacion', '=', False)
         ])
         cursos_ids = rel_alumno_curso.mapped('curso_id').ids
-
+        _logger.error("Estado activo y cursos asociados a los alumnos:")
+        _logger.error("--> cursos_ids = %r",cursos_ids)
         return {
             'domain': {
                 'rel_curso': [('id', 'in', cursos_ids), ('estado', '=', 'activo')]
