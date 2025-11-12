@@ -145,6 +145,13 @@ class leulit_reunion(models.Model):
         for item in self:
             item.task_count = len(item.task_ids)
     
+    @api.onchange('reunion_template_id')
+    def onchange_reunion_template_id(self):
+        for item in self:
+            if item.reunion_template_id:
+                item.asunto = item.reunion_template_id.name
+                item.descripcion = item.reunion_template_id.descripcion
+    
 
     asunto = fields.Char('Asunto',required=True)
     company_id = fields.Many2one(comodel_name='res.company', string='Compañía', required=True, default=lambda self: self.env.company)
@@ -175,6 +182,7 @@ class leulit_reunion(models.Model):
     pendiente = fields.Boolean(compute='_pendiente',string='',store=False)
     task_ids = fields.One2many('project.task', 'reunion_id', string='Tasks')
     task_count = fields.Integer(compute=_compute_task_count, string='Task Count')
+    reunion_template_id = fields.Many2one('leulit.reunion_template', 'Plantilla reunión')
 
 
 class WizardReunionCreateTask(models.TransientModel):

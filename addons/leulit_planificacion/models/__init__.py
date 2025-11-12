@@ -11,6 +11,7 @@ from . import leulit_event_resource_by_day
 from . import mail_activity
 from . import project_task
 from . import leulit_reunion
+from . import leulit_reunion_template
 from . import leulit_tipo_meeting
 from . import leulit_reunion_asistente
 from . import leulit_calendar_event_automatizaciones

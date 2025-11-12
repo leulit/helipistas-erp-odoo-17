@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20251112_1126_tree" model="ir.ui.view">
+            <field name="name">leulit_20251112_1126_tree</field>
+            <field name="model">leulit.reunion_template</field>
+            <field name="arch" type="xml">
+                <tree string="Plantilla de reunión">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    
+        <record id="leulit_20251112_1126_form" model="ir.ui.view">
+            <field name="name">leulit_20251112_1126_form</field>
+            <field name="model">leulit.reunion_template</field>
+            <field name="arch" type="xml">
+                <form string="Plantilla de reunión">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20251112_1126_action" model="ir.actions.act_window">
+            <field name="name">Plantillas de reuniones</field>
+            <field name="res_model">leulit.reunion_template</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crea y gestiona plantillas para reuniones frecuentes.
+                </p>
+            </field>
+        </record>
+    
+    </data>
+</odoo>

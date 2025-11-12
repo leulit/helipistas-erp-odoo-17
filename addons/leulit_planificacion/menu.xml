@@ -98,6 +98,14 @@
             sequence="20"
             groups="RPlanificacion_manager"
         />
+        <menuitem 
+            id="leulit_20251112_1126_menuitem"
+            name="Plantilla de Reuniones"
+            parent="leulit_20200827_1515_menuitem"
+            action="leulit_20251112_1126_action"
+            sequence="30"
+            groups="RPlanificacion_manager"
+        />
 
 
         <menuitem 

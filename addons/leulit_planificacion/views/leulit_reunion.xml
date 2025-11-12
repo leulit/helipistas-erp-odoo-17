@@ -25,6 +25,7 @@
                         <group col="1">
                             <group col="2">
                                 <field name="end_meeting" readonly="1"/>
+                                <field name="reunion_template_id"/>
                                 <field name="asunto"/>
                                 <field name="tipo_meeting" widget="many2many_tags" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                             </group>

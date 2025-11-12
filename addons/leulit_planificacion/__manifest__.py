@@ -25,6 +25,7 @@
         "views/leulit_print_calendar_wizard.xml",
         "views/leulit_recurso_disponibilidad.xml",
         "views/leulit_reunion.xml",
+        "views/leulit_reunion_template.xml",
         "views/leulit_event_resource_by_day.xml",
         "views/mail_activity.xml",
         "views/project_task.xml",
