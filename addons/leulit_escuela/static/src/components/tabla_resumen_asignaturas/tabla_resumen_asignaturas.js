@@ -43,7 +43,7 @@ export class TablaResumenAsignaturas extends Component {
         const res = await this.rpc("/web/dataset/call_kw/leulit.alumno/xmlrpc_cursos", {
             model: "leulit.alumno",
             method: "xmlrpc_cursos",
-            args: [],
+            args: [[this.state.alumnoId]],
             kwargs: {},
         });
         this.state.cursos = res || [];
