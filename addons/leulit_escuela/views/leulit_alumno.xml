@@ -154,32 +154,7 @@
             <field name="arch" type="xml">
                 <form string="leulit" js_class="tabla_resumen_asignaturas">
                     <sheet>
-                        <group>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th><b>Cursos:</b></th>
-                                        <th>
-                                            <select id="selector_curso_teoricas"></select>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="2">
-                                            <notebook colspan="2">
-                                                <page string="Teóricas">                                        
-                                                    <div id="container_tabla_asignaturas_teoricas"/>
-                                                </page>
-                                                <page string="Prácticas">
-                                                    <div id="container_tabla_asignaturas_practicas"/>
-                                                </page>
-                                            </notebook>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>                                                           
-                        </group>
+                        <widget name="leulit_tabla_resumen_asignaturas"/>
                     </sheet>
                     <footer>
                         <button special="cancel" string="Cerrar"/>

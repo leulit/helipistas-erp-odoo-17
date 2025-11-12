@@ -1,0 +1,13 @@
+.minimalistBlack th,
+.minimalistBlack td {
+    text-align: left;
+}
+.halign-center {
+    text-align: center;
+}
+.redbackg {
+    background-color: #ffe6e6;
+}
+.o_nb_tab {
+    margin-top: 8px;
+}

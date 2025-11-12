@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="leulit.TablaResumenAsignaturas">
+        <div class="o_leulit_tr_asignaturas">
+            <table>
+                <thead>
+                    <tr>
+                        <th><b>Cursos:</b></th>
+                        <th>
+                            <select t-att-value="state.cursoId" t-on-change="onCursoChange">
+                                <t t-foreach="state.cursos" t-as="c" t-key="c.id">
+                                    <option t-att-value="c.id" t-esc="c.name"/>
+                                </t>
+                            </select>
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+
+            <div class="o_notebook_like">
+                <div class="o_nb_tab">
+                    <h4>Asignaturas teóricas</h4>
+                    <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Asignaturas</th>
+                                <th>Tiempo prev.</th>
+                                <th>Tiempo clase</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.teoricas" t-as="it" t-key="it.id">
+                                <tr t-att-class="rowTeoricasClass(it)">
+                                    <td t-esc="it.id"/>
+                                    <td t-esc="it.name"/>
+                                    <td class="halign-center" t-esc="it.strduracion"/>
+                                    <td class="halign-center" t-esc="it.str_total_real"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="o_nb_tab">
+                    <h4>Sesiones prácticas</h4>
+                    <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Sesiones</th>
+                                <th>Tiempo prev.</th>
+                                <th>Doble mando</th>
+                                <th>Pilot in command</th>
+                                <th>SPIC</th>
+                                <th>Otros</th>
+                                <th>Totales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.practicas" t-as="it" t-key="it.name">
+                                <tr t-att-class="rowPracticasClass(it)">
+                                    <td t-esc="it.name"/>
+                                    <td class="halign-center" t-esc="fmtHour(it.duracion)"/>
+                                    <td class="halign-center" t-esc="fmtHour(it.total_doblemando)"/>
+                                    <td class="halign-center" t-esc="fmtHour(it.total_pic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(it.total_spic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(it.total_otros)"/>
+                                    <td class="halign-center">
+                                        <t t-set="total" t-value="(it.total_spic || 0) + (it.total_doblemando || 0) + (it.total_pic || 0) + (it.total_otros || 0)"/>
+                                        <t t-esc="fmtHour(total)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td>Totales</td>
+                                <t t-set="T" t-value="totalesPracticas()"/>
+                                <td class="halign-center" t-esc="fmtHour(T.duracion)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_doblemando)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_pic)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_spic)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_otros)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total)"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
