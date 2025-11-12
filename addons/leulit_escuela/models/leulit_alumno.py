@@ -195,6 +195,7 @@ class leulit_alumno(models.Model):
 
     def xmlrpc_cursos(self):
         cursos = []
+        _logger.error('############# xmlrpc_cursos  -->  self.id %r',self.id)
         for item in self:
             for curso in self.env['leulit.rel_alumno_curso'].browse(item.rel_alumno_curso_ids.ids):
                 cursos.append( {'id' : curso.curso_id.id, 'name': curso.curso_id.name} )
