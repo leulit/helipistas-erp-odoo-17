@@ -39,12 +39,14 @@ class leulit_popup_replicar_cursos_pf(models.TransientModel):
                         # si no entra en el if el contador no suma.
                         if curso_pf.pf_curso_tmpl.id == curso_tmpl.id:
                             curso_pf.write(curso_vals)
-                            cont =+1
-                    # si no hay ningun curso que coincida entre el perfil de formacion y el template, lo crea a pelo
+                            cont += 1
+                    # si no hay ningun curso que coincida entre el perfil de formacion y el template, lo crea directamente
                     if cont == 0:
-                        pf.write({'cursos' : [(0 ,0, curso_vals)]})
+                        # Crear el curso directamente sin usar write() para evitar reemplazar los existentes
+                        pf_curso_creado = self.env['leulit.perfil_formacion_curso'].create(curso_vals)
                         # Busca si hay cursos realizados del alumno y lo realizamos con el ultimo regitro.
-                        pf_curso_creado = self.env['leulit.perfil_formacion_curso'].search([('pf_curso_tmpl','=',curso_tmpl.id),('perfil_formacion','=',pf.id)])
+                        # pf_curso_creado ya está disponible, no hace falta buscarlo
+                        # Buscar otros cursos del mismo alumno para copiar el historial
                         another_pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso','=',curso_escuela),('perfil_formacion','!=',pf.id),('alumno','=',pf.alumno.id)])
                         for a_pf_curso in another_pf_cursos:
                             last_done = self.env['leulit.perfil_formacion_curso_last_done'].search([('pf_curso','=',a_pf_curso.id),('is_last','=',True)])
