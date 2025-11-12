@@ -32,11 +32,10 @@ class leulit_popup_replicar_acciones_pf(models.Model):
                     for accion_pf in pf.acciones:
                         if accion_pf.pf_curso_tmpl.id == accion_tmpl.id:
                             accion_pf.write(accion_vals)
-                            cont=+1
+                            cont += 1  # Corregido: era =+ en lugar de +=
                     if cont == 0:
-                        acciones=[]
-                        acciones.append((0,0, accion_vals))
-                        accion.write({'acciones' : acciones})
+                        # Crear la acción directamente sin usar write()
+                        self.env['leulit.perfil_formacion_accion'].create(accion_vals)
         return True
 
     perfil_formacion_tmpl = fields.Many2one(comodel_name='leulit.perfil_formacion', string='Perfil Formación')

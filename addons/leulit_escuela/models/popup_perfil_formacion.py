@@ -10,19 +10,20 @@ class leulit_popup_perfil_formacion(models.TransientModel):
         nombre = ''
         for item in self:
             nombre = item.master_id.name + " - [ " + item.alumno.name + " ] "
+            
+            # Primero crear el perfil de formación SIN cursos ni acciones
             perfil_form_vals = {
                 'name': nombre,
                 'perfil_tmpl': item.master_id.id,
                 'is_template': False,
                 'alumno': item.alumno.id,
-                'inactivo': False
+                'inactivo': False,
             }
             perfil_form = self.env['leulit.perfil_formacion'].create(perfil_form_vals)
-            cursos = []
-            acciones = []
-            acciones_new = []
-            curso = False
+            
+            # Ahora crear los cursos referenciando el perfil ya creado
             for item2 in item.master_id.cursos:
+                curso = False
                 if item2.curso:
                     curso = item2.curso.id
                 curso_vals = {
@@ -31,21 +32,21 @@ class leulit_popup_perfil_formacion(models.TransientModel):
                     'notas': item2.notas,
                     'periodicidad_dy': item2.periodicidad_dy,
                     'marge_dy': item2.marge_dy,
-                    'perfil_formacion': perfil_form,
+                    'perfil_formacion': perfil_form.id,
                     'is_template': False,
                     'pf_curso_tmpl': item2.id,
                 }
-                cursos.append((0, 0, curso_vals))
-            perfil_form.write({'cursos': cursos})
+                self.env['leulit.perfil_formacion_curso'].create(curso_vals)
+            
+            # Crear las acciones referenciando el perfil ya creado
             for item2 in item.master_id.acciones_new:
                 accion_new_vals = {
                     'accion': item2.accion.id,
                     'periodicidad_dy': item2.periodicidad_dy,
                     'margen_dy': item2.margen_dy,
-                    'perfil_formacion': perfil_form,
+                    'perfil_formacion': perfil_form.id,
                 }
-                acciones_new.append((0, 0, accion_new_vals))
-            perfil_form.write({'acciones_new': acciones_new})
+                self.env['leulit.perfil_formacion_accion'].create(accion_new_vals)
 
     piloto = fields.Many2one(comodel_name='leulit.piloto', string='Piloto')
     usuario = fields.Many2one(comodel_name='res.users', string='Usuario')

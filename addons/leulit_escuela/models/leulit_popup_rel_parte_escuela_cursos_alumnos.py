@@ -36,116 +36,53 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
             'practicas' : sesiones,
         }
 
-    @api.onchange('rel_alumnos')
-    def _onchange_rel_alumnos(self):
-        """Actualiza el dominio de rel_curso según los alumnos seleccionados."""
-        _logger.error('Onchange rel_alumnos triggered')
-        # Obtener IDs de alumnos desde el contexto o desde el campo
-        if 'default_rel_alumnos' in self.env.context:
-            alumnos_ids = self.env.context['default_rel_alumnos']
-        else:
-            alumnos_ids = self.rel_alumnos.ids
-
-        if not alumnos_ids:
-            _logger.error("No hay alumnos, mostrando todos los cursos activos")
-            # Si no hay alumnos, mostrar todos los cursos activos
-            return {
-                'domain': {
-                    'rel_curso': [('estado', '=', 'activo')]
-                }
-            }
-
-        # Verificar si algún alumno es empleado o está inactivo
-        alumnos = self.env['leulit.alumno'].browse(alumnos_ids)
-        alumno_employee = False
+    @api.onchange('rel_alumnos','rel_curso')
+    def onchange_colores(self):
+        RelCursoAlu  = self.env['leulit.rel_parte_escuela_cursos_alumnos']
+        Silabus      = self.env['leulit.silabus']
+        PFCurso      = self.env['leulit.perfil_formacion_curso']
         
-        for alumno in alumnos:
-            if not alumno.activo:
-                alumno_employee = True
-                break
-            # Buscar usuario asociado al alumno
-            user = self.env['res.users'].search([
-                ('partner_id', '=', alumno.partner_id.id)
-            ], limit=1)
-            if user and user.employee_id:
-                alumno_employee = True
-                break
+        objAllSilabus_ids = []
+        objSilabus = []
 
-        # Si hay alumnos empleados o inactivos, mostrar todos los cursos
-        if alumno_employee:
-            _logger.error("Alumno empleado, mostrando todos los cursos activos")
-            return {
-                'domain': {
-                    'rel_curso': [('estado', '=', 'activo')]
-                }
-            }
-
-        # Obtener cursos activos asociados a los alumnos (sin fecha de finalización)
-        rel_alumno_curso = self.env['leulit.rel_alumno_curso'].search([
-            ('alumno_id', 'in', alumnos_ids),
-            ('fecha_finalizacion', '=', False)
-        ])
-        cursos_ids = rel_alumno_curso.mapped('curso_id').ids
-        _logger.error("Estado activo y cursos asociados a los alumnos:")
-        _logger.error("--> cursos_ids = %r",cursos_ids)
-        return {
-            'domain': {
-                'rel_curso': [('id', 'in', cursos_ids), ('estado', '=', 'activo')]
-            }
-        }
-
-    @api.onchange('rel_curso')
-    def _onchange_rel_curso(self):
-        _logger.error('Onchange rel_curso triggered')
-        """Actualiza el estado de los silabus según el curso y alumnos seleccionados."""
-        if not self.rel_curso:
-            return
-
-        # Obtener IDs de alumnos
         if 'default_rel_alumnos' in self.env.context:
-            alumnos_ids = self.env.context['default_rel_alumnos']
+            alumnos = self.env.context['default_rel_alumnos']
         else:
-            alumnos_ids = self.rel_alumnos.ids
+            alumnos = self.rel_alumnos.ids
 
-        if not alumnos_ids:
-            return
-
-        # Obtener todos los silabus del curso
-        silabus_ids = self.env['leulit.silabus'].search([
-            ('curso_id', '=', self.rel_curso.id)
-        ])
-
-        if not silabus_ids:
-            return
-
-        # Obtener silabus ya realizados por los alumnos en este curso
-        # (que no tienen perfil de formación completo)
-        silabus_realizados = set()
-        
-        for alumno_id in alumnos_ids:
-            # Verificar si el alumno tiene perfil de formación para este curso
-            pf_curso = self.env['leulit.perfil_formacion_curso'].search([
-                ('curso', '=', self.rel_curso.id),
-                ('alumno', '=', alumno_id)
-            ], limit=1)
-            
-            if not pf_curso:
-                # Obtener las relaciones curso-alumno existentes
-                rel_curso_alu = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([
-                    ('rel_curso', '=', self.rel_curso.id),
-                    ('alumno', '=', alumno_id)
-                ])
-                # Agregar los silabus de estas relaciones
-                silabus_realizados.update(rel_curso_alu.mapped('rel_silabus').ids)
-
-        # Actualizar el estado de los silabus
-        # NOTA: Esto modifica registros persistentes desde un TransientModel
-        # Solo debería usarse si 'silabusDoit' es un campo computed o relacionado
-        for silabus in silabus_ids:
-            if silabus_realizados:
-                silabus.silabusDoit = silabus.id in silabus_realizados
+        if alumnos and self.rel_curso:
+            objAllSilabus_ids = Silabus.search([('curso_id','=',self.rel_curso.id)])
+            for alumno in alumnos:
+                objPFCurso = PFCurso.search([('curso','=',self.rel_curso.id),('alumno','=',alumno)])
+                if not objPFCurso:
+                    objRelCursoAlu = RelCursoAlu.search([('rel_curso','=',self.rel_curso.id),('alumno','=',alumno)])
+                    for relCursoAlu in objRelCursoAlu:
+                        if relCursoAlu.rel_silabus.id not in objSilabus:
+                            objSilabus.append(relCursoAlu.rel_silabus.id)
+            if objSilabus:
+                for rec_silabus in objAllSilabus_ids:
+                    if rec_silabus.id in objSilabus:
+                        rec_silabus.silabusDoit = True
+                    else:
+                        rec_silabus.silabusDoit = False
             else:
-                silabus.silabusDoit = False
+                for rec_silabus in objAllSilabus_ids:
+                    rec_silabus.silabusDoit = False
+
+        alumno_employee = False
+        for alumno in self.env['leulit.alumno'].search([('id','in',alumnos)]):
+            user = self.env['res.users'].search([('partner_id','=',alumno.partner_id.id)])
+            if user.employee_id or alumno.activo == False:
+                alumno_employee = True
+
+
+        cursos_ids = self.env['leulit.curso'].search([]).ids
+        if not self.rel_curso and not alumno_employee:
+            cursos_ids = []
+            for curso in self.env['leulit.curso'].search([]):
+                for obj_rel in self.env['leulit.rel_alumno_curso'].search([('alumno_id','in',alumnos),('curso_id','=',curso.id),('fecha_finalizacion','=',False)]):
+                    cursos_ids.append(obj_rel.curso_id.id)
+        return {'domain':{'rel_curso':[('id','in',cursos_ids),('estado','=','activo')]}}
 
 
 
