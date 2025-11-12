@@ -28,9 +28,6 @@
                 <xpath expr="//field[@name='task_id']" position="attributes">
                     <attribute name="options">{'create': False, 'edit': False, 'delete': False, 'no_open':true}</attribute>
                 </xpath>
-                <xpath expr="//field[@name='date_time_end']" position="attributes">
-                    <attribute name="readonly">1</attribute>
-                </xpath>
             </field>
         </record>
 
