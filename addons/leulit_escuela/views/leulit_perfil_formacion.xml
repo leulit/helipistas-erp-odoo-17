@@ -174,13 +174,13 @@
                                             <tree  delete="false" edit="true" create="false">
                                                 <field name="id" column_invisible="1"/>
                                                 <button name="done_course" string="Realizado" type="object" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
-                                                <button name="print_last_informe_general_cursos_alu_ld" string="Imprimir" type="object"  class="oe_highlight"/>
+                                                <!-- <button name="print_last_informe_general_cursos_alu_ld" string="Imprimir" type="object"  class="oe_highlight"/>
                                                 <field name="descripcion"/>
                                                 <field name="last_done_date"  widget="nalabel" string="Last Done"/>
                                                 <field name="next_done_date"  widget="nalabel" string="Next Done"/>
                                                 <field name="remainder_dy" widget="nalabel"  string="Remaining DY"/>
                                                 <field name="semaforo_dy" widget="semaforo_char" string=""/>
-                                                <button name="end_course" string="Finalizar" type="object"  class="oe_highlight" confirm="¿Estas seguro de finalizar el curso?" groups="leulit.ROperaciones_gestor"/>
+                                                <button name="end_course" string="Finalizar" type="object"  class="oe_highlight" confirm="¿Estas seguro de finalizar el curso?" groups="leulit.ROperaciones_gestor"/> -->
                                             </tree>
                                         </field>
                                     </group>
