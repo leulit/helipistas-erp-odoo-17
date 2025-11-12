@@ -193,7 +193,7 @@ class leulit_alumno(models.Model):
         }
 
 
-    def xmlrpc_cursos(self):        
+    def xmlrpc_cursos(self):
         cursos = []
         for item in self:
             for curso in self.env['leulit.rel_alumno_curso'].browse(item.rel_alumno_curso_ids.ids):
