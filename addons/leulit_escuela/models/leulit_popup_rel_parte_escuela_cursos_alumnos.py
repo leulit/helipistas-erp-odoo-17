@@ -39,6 +39,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
     @api.onchange('rel_alumnos')
     def _onchange_rel_alumnos(self):
         """Actualiza el dominio de rel_curso según los alumnos seleccionados."""
+        _logger.error('Onchange rel_alumnos triggered')
         # Obtener IDs de alumnos desde el contexto o desde el campo
         if 'default_rel_alumnos' in self.env.context:
             alumnos_ids = self.env.context['default_rel_alumnos']
@@ -92,6 +93,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
 
     @api.onchange('rel_curso')
     def _onchange_rel_curso(self):
+        _logger.error('Onchange rel_curso triggered')
         """Actualiza el estado de los silabus según el curso y alumnos seleccionados."""
         if not self.rel_curso:
             return
