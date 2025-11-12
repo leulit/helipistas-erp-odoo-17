@@ -60,5 +60,15 @@
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="1"/>
     </record>
+    
+    <record id="leulit_20251112_0954_access_permission" model="ir.model.access">
+        <field name="name">stock.lot access permission</field>
+        <field name="model_id" ref="model_stock_lot"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 
 </odoo>
