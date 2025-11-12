@@ -47,7 +47,13 @@ class leulitMaintenanceManual(models.Model):
 
     @api.onchange('check')
     def onchange_check(self):
-        self.env['leulit.maintenance_manual_check'].create({
-            'check':self.check,
-            'maintenance_manual_id': self.id
-        })
+        """
+        Añade un registro al histórico cuando cambia la fecha de check.
+        Usa comandos de escritura (0, 0, vals) para crear registros en One2many
+        sin necesidad de que el registro principal tenga ID.
+        """
+        if self.check:
+            # Comando (0, 0, vals) crea un nuevo registro en el One2many
+            self.historic_check = [(0, 0, {
+                'check': self.check,
+            })]
