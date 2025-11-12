@@ -330,16 +330,13 @@ class leulit_vuelo(models.Model):
     def verificar_actividad_aerea(self, fecha, partner):
         o_aa = self.env['leulit.actividad_aerea']
         o_vul = self.env['leulit.vuelo']
-
-        _logger.error('############# verificar_actividad_aerea  -->  fecha %r',fecha)
-        _logger.error('############# verificar_actividad_aerea  -->  partner %r',partner)
         vuls = o_vul.search([('estado','=','cerrado'),('fechavuelo','=',fecha),'|','|','|',('piloto_id','=',partner.getPiloto()),('operador','=',partner.getOperador()),('verificado','=',partner.getPiloto()),('alumno','=',partner.getAlumno())], order="fechavuelo ASC, horasalida ASC")
-        _logger.error('############# verificar_actividad_aerea  -->  vuls %r',vuls)
+        if not partner.getOperador():
+            vuls = o_vul.search([('estado','=','cerrado'),('fechavuelo','=',fecha),'|','|',('piloto_id','=',partner.getPiloto()),('verificado','=',partner.getPiloto()),('alumno','=',partner.getAlumno())], order="fechavuelo ASC, horasalida ASC")
         if vuls:
             items_vul = o_vul.search(['|',('id','in',vuls.ids),('id','=',self.id)])
         else:
             items_vul = o_vul.search([('id','=',self.id)])
-        _logger.error('############# verificar_actividad_aerea  -->  vuls %r',vuls)
         max_duracion = 0.0
         tiempo_desc_parcial = 0.0
         tiempo_amplia = 0.0

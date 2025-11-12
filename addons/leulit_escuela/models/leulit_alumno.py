@@ -509,7 +509,7 @@ class leulit_alumno(models.Model):
             category_actividad = self.env['ir.module.category'].search([('name','=','LEULIT - Gestión actividad')])
             category_escuela = self.env['ir.module.category'].search([('name','=','Rol Escuela')])
             category_planificacion = self.env['ir.module.category'].search([('name','=','Rol Planificación')])
-            category_usuario = self.env['ir.module.category'].search([('name','=','Tipos de Usuario')])
+            category_usuario = self.env['ir.module.category'].search([('name','=','Tipos de usuario')])
             group_base = self.env['res.groups'].search([('category_id','=',category_base.id),('name','=','Base')])
             group_escuela = self.env['res.groups'].search([('category_id','=',category_escuela.id),('name','=','Alumno')])
             group_operaciones = self.env['res.groups'].search([('category_id','=',category_operaciones.id),('name','=','Alumno')])
