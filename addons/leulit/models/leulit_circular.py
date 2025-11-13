@@ -101,27 +101,64 @@ class leulit_circular(models.Model):
     def _is_mine(self):
         for item in self:
             item.is_mine = False
+            # Verificar si soy el autor
             if item.autor_id and item.autor_id.id == self.env.uid:
                 item.is_mine = True
-            elif item.historial_ids and len(item.historial_ids) > 0:
+            # Si no soy el autor, verificar si estoy en el historial
+            elif item.historial_ids:
                 for historial in item.historial_ids:
                     if historial.user_id and historial.user_id.id == self.env.uid:
                         item.is_mine = True
+                        break  # Salir del bucle en cuanto lo encuentre
 
 
     def _search_is_mine(self, operator, value):
-        ids = []
-        for item in self.search([]):
-            if item.autor_id.id == self.env.uid:
-                ids.append(item.id)
-            else:
-                for historial_circular in item.historial_ids:
-                    if historial_circular.user_id and historial_circular.user_id.id == self.env.uid:
-                        ids.append(item.id)
+        """
+        Búsqueda optimizada para el campo is_mine.
+        Usa consultas SQL en lugar de cargar todos los registros.
+        """
+        # Construir la consulta para circulares donde soy autor
+        query_autor = """
+            SELECT id FROM leulit_circular 
+            WHERE autor_id = %s
+        """
         
-        if ids:
-            return [('id','in',ids)]
-        return  [('id','=','0')]
+        # Construir la consulta para circulares donde estoy en el historial
+        query_historial = """
+            SELECT DISTINCT lc.id 
+            FROM leulit_circular lc
+            INNER JOIN leulit_historial_circular lhc ON lhc.circular_id = lc.id
+            INNER JOIN res_partner rp ON rp.id = lhc.partner_id
+            INNER JOIN res_users ru ON ru.partner_id = rp.id
+            WHERE ru.id = %s
+        """
+        
+        # Ejecutar las consultas
+        self.env.cr.execute(query_autor, (self.env.uid,))
+        ids_autor = [row[0] for row in self.env.cr.fetchall()]
+        
+        self.env.cr.execute(query_historial, (self.env.uid,))
+        ids_historial = [row[0] for row in self.env.cr.fetchall()]
+        
+        # Combinar ambos conjuntos de IDs (sin duplicados)
+        ids = list(set(ids_autor + ids_historial))
+        
+        # Aplicar el operador
+        if operator == '=' and value:
+            # is_mine = True -> devolver circulares donde estoy
+            return [('id', 'in', ids)] if ids else [('id', '=', False)]
+        elif operator == '=' and not value:
+            # is_mine = False -> devolver circulares donde NO estoy
+            return [('id', 'not in', ids)] if ids else []
+        elif operator == '!=':
+            # Invertir la lógica
+            if value:
+                return [('id', 'not in', ids)] if ids else []
+            else:
+                return [('id', 'in', ids)] if ids else [('id', '=', False)]
+        
+        # Por defecto, no devolver nada
+        return [('id', '=', False)]
 
 
     @api.depends('historial_ids')
@@ -131,6 +168,7 @@ class leulit_circular(models.Model):
             for historial in item.historial_ids:
                 if not historial.recibido or not historial.leido or not historial.entendido:
                     item.pendiente_todos = True
+                    break  # Salir en cuanto encuentre uno pendiente
 
 
     @api.depends('historial_ids')
@@ -138,54 +176,85 @@ class leulit_circular(models.Model):
         for item in self:
             item.pendiente = False
             for historial in item.historial_ids:
-                if historial.user_id.id == self.env.uid:
+                if historial.user_id and historial.user_id.id == self.env.uid:
                     if not historial.recibido or not historial.leido or not historial.entendido:
                         item.pendiente = True
+                    break  # Solo hay un historial por usuario, salir
 
 
     def _search_pendiente(self, operator, value):
-        ids = []
-        for item in self.search([]):
-            for historial in item.historial_ids:
-                if historial.user_id.id == self.env.uid:
-                    if value == True:
-                        if not historial.recibido or not historial.leido or not historial.entendido:
-                            ids.append(item.id)
-                    if value == False:
-                        if historial.recibido and historial.leido and historial.entendido:
-                            ids.append(item.id)
-        if ids:
-            return [('id','in',ids)]
-        return  [('id','=','0')]
+        """
+        Búsqueda optimizada para circulares pendientes del usuario actual.
+        """
+        # Consulta SQL optimizada
+        if value:
+            # pendiente = True -> buscar circulares donde el usuario tiene tareas pendientes
+            query = """
+                SELECT DISTINCT lc.id 
+                FROM leulit_circular lc
+                INNER JOIN leulit_historial_circular lhc ON lhc.circular_id = lc.id
+                INNER JOIN res_partner rp ON rp.id = lhc.partner_id
+                INNER JOIN res_users ru ON ru.partner_id = rp.id
+                WHERE ru.id = %s
+                AND (lhc.recibido = FALSE OR lhc.leido = FALSE OR lhc.entendido = FALSE)
+            """
+        else:
+            # pendiente = False -> buscar circulares donde el usuario completó todo
+            query = """
+                SELECT DISTINCT lc.id 
+                FROM leulit_circular lc
+                INNER JOIN leulit_historial_circular lhc ON lhc.circular_id = lc.id
+                INNER JOIN res_partner rp ON rp.id = lhc.partner_id
+                INNER JOIN res_users ru ON ru.partner_id = rp.id
+                WHERE ru.id = %s
+                AND lhc.recibido = TRUE 
+                AND lhc.leido = TRUE 
+                AND lhc.entendido = TRUE
+            """
+        
+        self.env.cr.execute(query, (self.env.uid,))
+        ids = [row[0] for row in self.env.cr.fetchall()]
+        
+        # Aplicar operador
+        if operator == '=':
+            return [('id', 'in', ids)] if ids else [('id', '=', False)]
+        elif operator == '!=':
+            return [('id', 'not in', ids)] if ids else []
+        
+        return [('id', '=', False)]
 
 
     @api.depends('fecha_fin')
     def _caducada(self):
         for item in self:
-            diasdiff = 0
             if item.fecha_fin:
-                hoy = datetime.now()
-                diasdiff = utilitylib.cal_days_diff(item.fecha_fin, hoy)
-            item.caducada = diasdiff < 0
+                hoy = datetime.now().date()
+                # Caducada si fecha_fin es anterior a hoy
+                item.caducada = item.fecha_fin < hoy
+            else:
+                item.caducada = False
 
 
     def _search_caducada(self, operator, value):
-        ids = []
-        for item in self.search([]):
-            diasdiff = 0
-            if item.fecha_fin:
-                hoy = datetime.now()
-                diasdiff = utilitylib.cal_days_diff(item.fecha_fin, hoy)
-                if operator == '=' and value == False:
-                    if diasdiff > 0:
-                        ids.append(item.id)
-                if operator == '!=' and value == False:
-                    if diasdiff < 0:
-                        ids.append(item.id)
-
-        if ids:
-            return [('id','in',ids)]
-        return  [('id','=','0')]
+        """
+        Búsqueda optimizada para circulares caducadas.
+        """
+        hoy = datetime.now().date()
+        
+        if operator == '=' and value:
+            # caducada = True -> fecha_fin < hoy
+            return [('fecha_fin', '<', hoy), ('fecha_fin', '!=', False)]
+        elif operator == '=' and not value:
+            # caducada = False -> fecha_fin >= hoy O fecha_fin es NULL
+            return ['|', ('fecha_fin', '>=', hoy), ('fecha_fin', '=', False)]
+        elif operator == '!=' and value:
+            # caducada != True -> fecha_fin >= hoy O fecha_fin es NULL
+            return ['|', ('fecha_fin', '>=', hoy), ('fecha_fin', '=', False)]
+        elif operator == '!=' and not value:
+            # caducada != False -> fecha_fin < hoy
+            return [('fecha_fin', '<', hoy), ('fecha_fin', '!=', False)]
+        
+        return [('id', '=', False)]
         
 
     name = fields.Char("Nombre", required=True)
