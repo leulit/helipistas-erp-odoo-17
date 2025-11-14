@@ -76,7 +76,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
                 alumno_employee = True
 
 
-        cursos_ids = self.env['leulit.curso'].search([]).ids
+        cursos_ids = self.env['leulit.curso'].search([('estado','=','activo')]).ids
         if not self.rel_curso and not alumno_employee:
             cursos_ids = []
             for curso in self.env['leulit.curso'].search([]):
