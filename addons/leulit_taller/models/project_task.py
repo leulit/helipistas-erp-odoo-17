@@ -184,29 +184,17 @@ class ProjectTask(models.Model):
     @api.onchange('item_job_card_id')
     def onchange_item_job_card(self):
         tag_id = self.env['project.tags'].search([('name','=','Tareas de mantenimiento')])
-        _logger.error("ONCHANGE ITEM JOB CARD")
         if self.item_job_card_id:
-            _logger.error("ITEM JOB CARD ID: %s", self.item_job_card_id.id)
             self.maintenance_equipment_id = self.item_job_card_id.equipamiento_id
-            _logger.error("EQUIPAMIENTO ASIGNADO: %s", self.maintenance_equipment_id.id)
             self.name = self.item_job_card_id.descripcion
-            _logger.error("NOMBRE ASIGNADO: %s", self.name)
             self.solucion_defecto = self.item_job_card_id.solucion
-            _logger.error("SOLUCION ASIGNADA: %s", self.solucion_defecto)
             self.production_lot_id = self.item_job_card_id.equipamiento_id.production_lot
-            _logger.error("LOT ASIGNADO: %s", self.production_lot_id.id)
             self.type_maintenance = self.item_job_card_id.type_maintenance
-            _logger.error("TIPO MANTENIMIENTO ASIGNADO: %s", self.type_maintenance)
             self.ata_ids = self.item_job_card_id.ata_ids
-            _logger.error("ATA ASIGNADOS: %s", self.ata_ids.ids)
             self.certificacion_ids = self.item_job_card_id.certificacion_ids
-            _logger.error("CERTIFICACIONES ASIGNADAS: %s", self.certificacion_ids.ids)
             self.tipos_actividad = self.item_job_card_id.tipos_actividad
-            _logger.error("TIPOS ACTIVIDAD ASIGNADOS: %s", self.tipos_actividad.ids)
             self.manuales_ids = self.item_job_card_id.manual_id
-            _logger.error("MANUALES ASIGNADOS: %s", self.manuales_ids.ids)
             self.tag_ids = tag_id
-            _logger.error("TAGS ASIGNADOS: %s", self.tag_ids.ids)
 
 
     @api.onchange('job_card_id')
