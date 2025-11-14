@@ -22,17 +22,15 @@ class MaintenanceEquipment(models.Model):
         return super(MaintenanceEquipment, self).unlink()
 
 
-    def name_get(self):
-        return [(record.id, record.display_name) for record in self]
-
-
     @api.depends('name','serial_no')
     def _get_display_name(self):
         for item in self:
             if item.serial_no and item.name:
                 item.display_name = '%s (%s)' %(item.serial_no, item.name)
-            else:
+            elif item.name:
                 item.display_name = '%s' %(item.name)
+            else:
+                item.display_name = 'Equipment'
 
 
     def get_childs(self):

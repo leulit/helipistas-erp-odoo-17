@@ -10,29 +10,15 @@ _logger = logging.getLogger(__name__)
 
 class LeulitAta(models.Model):
     _name = "leulit.ata"
-    # _rec_name = "complete_name"
-
-
-    @api.depends('ata_number','ata_name')
-    def name_get(self):
-        res = []
-        for item in self:
-            res.append((item.id, '[%s]-%s' % (item.ata_number, item.ata_name)))
-        return res
-
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if args is None:
-            args = []
-        domain = args + ['|',
-            ('ata_number', operator, name),
-            ('ata_name', operator, name)
-        ]
-        records = self.search(domain, limit=limit)
-        return records.name_get()
+    _description = "ATA Chapters"
+    _rec_name = "display_name"
 
     ata_number = fields.Char(string="ATA Number")
     ata_name = fields.Char(string="ATA Chapter name")
     doble_check = fields.Boolean(string='Doble check')
+    display_name = fields.Char(string="Display Name", compute='_compute_display_name', store=True)
 
-    
+    @api.depends('ata_number', 'ata_name')
+    def _compute_display_name(self):
+        for item in self:
+            item.display_name = '[%s]-%s' % (item.ata_number, item.ata_name)

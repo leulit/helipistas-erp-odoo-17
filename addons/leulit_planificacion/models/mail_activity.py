@@ -10,15 +10,17 @@ _logger = logging.getLogger(__name__)
 
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
-    _rec_name = 'res_name'
+    _rec_name = 'display_name'
 
+    display_name = fields.Char(string="Display Name", compute='_compute_display_name', store=True)
 
-    def name_get(self):
-        res = []
+    @api.depends('res_name')
+    def _compute_display_name(self):
+        """
+        Odoo 17: Reemplaza name_get() con _compute_display_name()
+        """
         for record in self:
-            name = record.res_name
-            res.append((record.id, name))
-        return res
+            record.display_name = record.res_name or 'Activity'
 
 
     def open_window_for_model_of_activity(self):

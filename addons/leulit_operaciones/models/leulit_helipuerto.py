@@ -18,24 +18,32 @@ class leulit_helipuerto(models.Model):
     _name             = "leulit.helipuerto"
     _description    = "leulit_helipuerto"
     _inherit        = ['mail.thread']
+    _rec_name = "display_name"
 
     @api.model
     def create(self, vals):
-        if vals['lat'] == 0:
+        if vals.get('lat') == 0:
             raise UserError('Error!! Latitud con valor 0')
-        if vals['long'] == 0:
+        if vals.get('long') == 0:
             raise UserError('Error!! Longitud con valor 0')
-        if vals['elevacion'] == 0:
+        if vals.get('elevacion') == 0:
             raise UserError('Error!! Elevación con valor 0')
         return super(leulit_helipuerto, self).create(vals)  
 
+    display_name = fields.Char(string="Display Name", compute='_compute_display_name', store=True)
 
     @api.depends('name', 'descripcion')
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
+        """
+        Odoo 17: Reemplaza name_get() con _compute_display_name()
+        """
         for item in self:
-            res.append((item.id, '(%s) %s' % (item.name, item.descripcion)))
-        return res
+            if item.name and item.descripcion:
+                item.display_name = '(%s) %s' % (item.name, item.descripcion)
+            elif item.name:
+                item.display_name = item.name
+            else:
+                item.display_name = 'Helipuerto'
     
     def getTipoOperacion(self):
         return utilitylib.leulit_getTipoOperacion()
