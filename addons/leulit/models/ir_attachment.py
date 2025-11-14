@@ -22,7 +22,7 @@ class IrAttachment(models.Model):
             
         # Always require an internal user (aka, employee) to access to a attachment
         if not (self.env.is_admin() or self.env.user._is_internal()):
-            raise AccessError(_("Sorry, you are not allowed to access this document."))
+            raise AccessError(_("Perdon, you are not allowed to access this document."))
             
         # collect the records to check (by model)
         model_ids = defaultdict(set)            # {model_name: set(ids)}
@@ -36,12 +36,12 @@ class IrAttachment(models.Model):
                     # MODIFICACIÓN: Permitir a usuarios RBase acceder a adjuntos huérfanos
                     if not res_id and create_uid != self.env.uid:
                         if not self.env.user.has_group('leulit.RBase'):
-                            raise AccessError(_("Sorry, you are not allowed to access this document."))
+                            raise AccessError(_("Perdon, you are not allowed to access this document."))
                     if res_field:
                         field = self.env[res_model]._fields[res_field]
                         if field.groups:
                             if not self.env.user.user_has_groups(field.groups):
-                                raise AccessError(_("Sorry, you are not allowed to access this document."))
+                                raise AccessError(_("Perdon, you are not allowed to access this document."))
                 if not (res_model and res_id):
                     continue
                 model_ids[res_model].add(res_id)
