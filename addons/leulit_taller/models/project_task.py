@@ -39,7 +39,7 @@ class ProjectTask(models.Model):
                             raise UserError("Para cambiar de estado la tarea a 'Realizada' deberia rellenar antes el campo 'Tipo actividad mecánico' para continuar.")
                         if not self.type_maintenance:
                             raise UserError("Para cambiar de estado la tarea a 'Realizada' deberia rellenar antes el campo 'Tipo' para continuar.")
-                    self.user_id = self.env.user.id
+                    self.user_ids = [(6, 0, [self.env.user.id])]
                     if self.tipo_tarea_taller == 'defecto_encontrado':
                         if self.solucion_defecto == False or self.solucion_defecto == '':
                             raise UserError("Para cambiar de estado la tarea a 'Realizada' deberia rellenar antes el campo 'Solución Defecto' para continuar.")
@@ -81,15 +81,16 @@ class ProjectTask(models.Model):
                                 raise UserError("Para cambiar de estado la tarea a 'Realizada' deberia imputar tiempo manualmente para continuar.")
                         else:
                             if not self.timesheet_ids:
-                                self.env['account.analytic.line'].create({
-                                    'date_time':datetime.now(),
-                                    'employee_id':self.user_id.employee_id.id,
-                                    'name': '['+self.maintenance_request_id.name+']-'+self.name,
-                                    'unit_amount': self.item_job_card_id.tiempo_defecto,
-                                    'project_id': self.project_id.id,
-                                    'task_id': self.id,
-                                    'maintenance_request_id': self.maintenance_request_id.id,
-                                })
+                                for user in self.user_ids:
+                                    self.env['account.analytic.line'].create({
+                                        'date_time':datetime.now(),
+                                        'employee_id':user.employee_id.id,
+                                        'name': '['+self.maintenance_request_id.name+']-'+self.name,
+                                        'unit_amount': self.item_job_card_id.tiempo_defecto,
+                                        'project_id': self.project_id.id,
+                                        'task_id': self.id,
+                                        'maintenance_request_id': self.maintenance_request_id.id,
+                                    })
                         if self.item_job_card_id.oblig_form_one:
                             if self.env['leulit.maintenance_form_one'].search([('task_id','!=',self.id)]):
                                 form_one_today = self.env['leulit.maintenance_form_one'].search([('fecha','=',datetime.now().date())])
@@ -113,7 +114,7 @@ class ProjectTask(models.Model):
                                 if child.stage_id.name not in ['En proceso','Pendiente']:
                                     length += 1
                         if length == len(self.parent_id.child_ids):
-                            self.parent_id.user_id = self.user_id.id
+                            self.parent_id.user_ids = [(6, 0, self.user_ids.ids)]
                             stage_id = self.env['project.task.type'].search([('project_ids','in',[self.project_id.id]),('name','=','Realizada')])
                             self.parent_id.stage_id = stage_id.id
                     for child in self.child_ids:
@@ -221,7 +222,7 @@ class ProjectTask(models.Model):
                     'manuales_ids' : item.manual_id.ids,
                     'tag_ids': tag_id.ids,
                     'company_id' : company.id,
-                    'user_id' : self.env['res.users'].search([('name','=','Albert Petanas')]).id,
+                    'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
                     'maintenance_request_id' : self.maintenance_request_id.id,
                     'tipo_tarea_taller': 'tarea'
                 })
@@ -238,7 +239,7 @@ class ProjectTask(models.Model):
                     'tag_ids': tag_id.ids,
                     'company_id' : company.id,
                     'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
-                    'user_id' : self.env['res.users'].search([('name','=','Albert Petanas')]).id,
+                    'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
                     'maintenance_request_id' : self.maintenance_request_id.id,
                     'tipo_tarea_taller': 'tarea'
                 })
@@ -254,7 +255,7 @@ class ProjectTask(models.Model):
                         'manuales_ids' : item.manual_id.ids,
                         'tag_ids': tag_id.ids,
                         'company_id' : company.id,
-                        'user_id' : self.env['res.users'].search([('name','=','Albert Petanas')]).id,
+                        'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
                         'maintenance_request_id' : self.maintenance_request_id.id,
                         'tipo_tarea_taller': 'tarea'
                     })
