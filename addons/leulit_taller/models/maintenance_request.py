@@ -431,10 +431,10 @@ class MaintenanceRequest(models.Model):
         }
     
     def action_open_tasks(self):
-        action_id = self.env.ref('leulit_taller.leulit_20230313_1500_action').read()[0]
+        action = self.env['ir.actions.actions']._for_xml_id('leulit_taller.leulit_20230313_1500_action')
         if self.task_ids:
-            action_id['domain'] = [('id', 'in', self.task_ids.ids)]
-        return action_id
+            action['domain'] = [('id', 'in', self.task_ids.ids)]
+        return action
 
     def action_create_internal_task(self):
         self.ensure_one()
