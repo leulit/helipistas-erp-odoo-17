@@ -39,7 +39,7 @@
         <field eval="0" name="perm_unlink"/>
         <field eval="0" name="perm_write"/>
         <field eval="0" name="perm_create"/>
-    </record>        
+    </record>
     
     <record id="leulit_20210518_1055_model_access" model="ir.model.access">
         <field name="name">Checklist plantilla</field>
@@ -49,7 +49,7 @@
         <field eval="1" name="perm_unlink"/>
         <field eval="1" name="perm_write"/>
         <field eval="1" name="perm_create"/>
-    </record>        
+    </record>
     
     <record id="leulit_20210518_1056_model_access" model="ir.model.access">
         <field name="name">Checklist plantilla</field>
@@ -79,7 +79,7 @@
         <field eval="1" name="perm_unlink"/>
         <field eval="1" name="perm_write"/>
         <field eval="1" name="perm_create"/>
-    </record>    
+    </record>
 
     <record id="leulit_20210518_1059_model_access" model="ir.model.access">
         <field name="name">Checklist tag</field>
@@ -89,11 +89,21 @@
         <field eval="1" name="perm_unlink"/>
         <field eval="1" name="perm_write"/>
         <field eval="1" name="perm_create"/>
-    </record>      
+    </record>
 
     <record id="leulit_20211026_1023_model_access" model="ir.model.access">
         <field name="name">Leulit - Errores de importación</field>
         <field name="model_id" ref="model_leulit_error_import"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="leulit_20251114_1018_model_access" model="ir.model.access">
+        <field name="name">Attachment RBase</field>
+        <field name="model_id" ref="model_ir_attachment"/>
         <field name="group_id" ref="leulit.RBase"/>
         <field name="perm_read" eval="1"/>
         <field name="perm_create" eval="1"/>
