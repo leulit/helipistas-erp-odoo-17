@@ -205,9 +205,7 @@ class ProjectTask(models.Model):
             if not self.external_aircraft:
                 if not self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
                     raise UserError("El equipamiento de la Job Card no coincide con el equipamiento de la tarea.")
-            self.write({
-                'name' : self.job_card_id.descripcion
-            })
+            self.name = self.job_card_id.descripcion
             for item in self.job_card_id.job_card_item_ids:
                 task_1 = self.with_context(tracking_disable=True).create({
                     'parent_id' : self.id,
@@ -269,16 +267,12 @@ class ProjectTask(models.Model):
     @api.onchange('service_bulletin_id')
     def onchange_service_bulletin(self):
         if self.service_bulletin_id:
-            self.write({
-                'name' : self.service_bulletin_id.subject + ' [SB- '+ self.service_bulletin_id.name + ']',
-            })
+            self.name = self.service_bulletin_id.subject + ' [SB- '+ self.service_bulletin_id.name + ']'
 
     @api.onchange('airworthiness_directive_id')
     def onchange_airworthiness_directive(self):
         if self.airworthiness_directive_id:
-            self.write({
-                'name' : self.airworthiness_directive_id.subject + ' [AD- '+ self.airworthiness_directive_id.full_name + ']',
-            })
+            self.name = self.airworthiness_directive_id.subject + ' [AD- '+ self.airworthiness_directive_id.full_name + ']'
 
     @api.depends('tag_ids')
     def _get_task_maintenance(self):
