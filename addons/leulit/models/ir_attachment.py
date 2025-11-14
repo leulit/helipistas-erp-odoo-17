@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
-from odoo import models, api
+from odoo import models
 from odoo.exceptions import AccessError
 from odoo.tools.translate import _
 
@@ -8,7 +8,6 @@ from odoo.tools.translate import _
 class IrAttachment(models.Model):
     _inherit = 'ir.attachment'
 
-    @api.model
     def check(self, mode, values=None):
         """
         Sobrescribe completamente el método check para permitir a usuarios RBase
