@@ -101,4 +101,42 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
+    <!-- Acceso a ir.attachment para usuarios RBase -->
+    <record id="leulit_20251114_1018_model_access" model="ir.model.access">
+        <field name="name">ir.attachment access for RBase users</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Regla de registro: permitir acceso a adjuntos huérfanos (sin res_model/res_id) -->
+    <record id="leulit_20251114_1130_attachment_orphan_rule" model="ir.rule">
+        <field name="name">RBase: Allow orphan attachments</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="groups" eval="[(4, ref('leulit.RBase'))]"/>
+        <field name="domain_force">[
+            '|',
+                ('res_model', '=', False),
+                ('create_uid', '=', user.id)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Acceso a ir.actions.act_window para usuarios RBase (solo lectura) -->
+    <record id="leulit_20251114_1025_model_access" model="ir.model.access">
+        <field name="name">ir.actions.act_window read access for RBase users</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
 </odoo>
