@@ -112,16 +112,14 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
-    <!-- Regla de registro: permitir acceso a adjuntos huérfanos (sin res_model/res_id) -->
+    <!-- Regla de registro: permitir lectura de adjuntos para usuarios RBase -->
     <record id="leulit_20251114_1130_attachment_orphan_rule" model="ir.rule">
-        <field name="name">RBase: Allow orphan attachments</field>
+        <field name="name">RBase: Allow attachments (read)</field>
         <field name="model_id" ref="base.model_ir_attachment"/>
         <field name="groups" eval="[(4, ref('leulit.RBase'))]"/>
-        <field name="domain_force">[
-            '|',
-                ('res_model', '=', False),
-                ('create_uid', '=', user.id)
-        ]</field>
+        <!-- Con domain_force = [(1, '=', 1)] permitimos lectura de todos los adjuntos
+             para el grupo RBase. Mantener solo lectura aquí para limitar el riesgo. -->
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
