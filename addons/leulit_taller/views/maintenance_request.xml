@@ -124,8 +124,8 @@
                                 <button name="print_tareas_sensibles_seguridad" type="object" class="oe_highlight" string="Imprimir Control de Tareas Sensibles para la Seguridad"  invisible="((archive))" />        
                                 <group><field name="checklist_tss"/></group>
                                 <field name="tareas_sensibles_seguridad_ids">
-                                    <tree editable="false" create="false" delete="false">
-                                        <field name="name" readonly="1"/>
+                                    <tree editable="true" create="false" delete="false">
+                                        <field name="name" />
                                         <field name="no_aplica"/>
                                         <field name="check"/>
                                         <field name="user_check"  options="{'no_create': True, 'create': False, 'edit': False}"/>
