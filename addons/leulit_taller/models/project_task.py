@@ -28,7 +28,7 @@ class ProjectTask(models.Model):
                     else:
                         for child in self._origin.child_ids:
                             stage_id = self.env['project.task.type'].search([('project_ids','in',[self.project_id.id]),('name','=','Pospuesta')])
-                            child.stage_id = stage_id
+                            child.write({'stage_id': stage_id.id})
                 if self.maintenance_request_id and self.stage_id.name == 'Realizada':
                     if not self.child_ids:
                         if not self.ata_ids:
