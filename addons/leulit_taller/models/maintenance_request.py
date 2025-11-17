@@ -94,15 +94,16 @@ class MaintenanceRequest(models.Model):
     @api.onchange('checklist_tss')
     def onchange_checklist_tss(self):
         if self.checklist_tss:
-            if self.tareas_sensibles_seguridad_ids:
-                for item in self.tareas_sensibles_seguridad_ids:
-                    item.unlink()
+            # Limpiar las tareas existentes y crear nuevas basadas en la plantilla
+            commands = [(5, 0, 0)]  # Eliminar todas las existentes
             for item in self.checklist_tss.tareas:
-                item.copy(default={'checklist_id': False,'request_id':self.id})
+                # Obtener los valores del registro a copiar
+                vals = item.copy_data({'checklist_id': False, 'request_id': self.id})[0]
+                commands.append((0, 0, vals))  # Crear nuevo registro
+            self.tareas_sensibles_seguridad_ids = commands
         else:
-            if self.tareas_sensibles_seguridad_ids:
-                for item in self.tareas_sensibles_seguridad_ids:
-                    item.unlink()
+            # Si no hay checklist, limpiar todas las tareas
+            self.tareas_sensibles_seguridad_ids = [(5, 0, 0)]
 
 
     @api.returns('self')
