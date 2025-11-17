@@ -207,7 +207,12 @@ class ProjectTask(models.Model):
                     raise UserError("El equipamiento de la Job Card no coincide con el equipamiento de la tarea.")
             self.name = self.job_card_id.descripcion
             for item in self.job_card_id.job_card_item_ids:
-                task_1 = self.with_context(tracking_disable=True).create({
+                task_1 = self.with_context(
+                    tracking_disable=True,
+                    mail_create_nolog=True,
+                    mail_create_nosubscribe=True,
+                    mail_notrack=True
+                ).create({
                     'parent_id' : self.id,
                     'name' : item.descripcion,
                     'solucion_defecto' : item.solucion,
@@ -229,7 +234,12 @@ class ProjectTask(models.Model):
                 else:
                     task_1.maintenance_equipment_id = self.maintenance_equipment_id
             for section in self.job_card_id.sections_ids:
-                section_task = self.with_context(tracking_disable=True).create({
+                section_task = self.with_context(
+                    tracking_disable=True,
+                    mail_create_nolog=True,
+                    mail_create_nosubscribe=True,
+                    mail_notrack=True
+                ).create({
                     'parent_id' : self.id,
                     'name' : section.descripcion,
                     'tag_ids': tag_id.ids,
@@ -240,7 +250,12 @@ class ProjectTask(models.Model):
                     'tipo_tarea_taller': 'tarea'
                 })
                 for item in section.job_card_item_ids:
-                    task_2 = self.with_context(tracking_disable=True).create({
+                    task_2 = self.with_context(
+                        tracking_disable=True,
+                        mail_create_nolog=True,
+                        mail_create_nosubscribe=True,
+                        mail_notrack=True
+                    ).create({
                         'parent_id' : section_task.id,
                         'name' : item.descripcion,
                         'solucion_defecto' : item.solucion,

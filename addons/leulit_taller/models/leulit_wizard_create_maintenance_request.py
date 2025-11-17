@@ -36,7 +36,12 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
 
             def create_tasks_from_job_card(planned_task, project_task, items, request, tag_id, tsn):
                 for item_jc in items:
-                    sub_tarea = self.env['project.task'].with_context(tracking_disable=True).create({
+                    sub_tarea = self.env['project.task'].with_context(
+                        tracking_disable=True,
+                        mail_create_nolog=True,
+                        mail_create_nosubscribe=True,
+                        mail_notrack=True
+                    ).create({
                         'name' : item_jc.descripcion,
                         'company_id' : company.id,
                         'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
@@ -47,7 +52,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                         'parent_id' : project_task.id,
                         'item_job_card_id' : item_jc.id,
                         'assignment_date' : datetime.now(),
-                        'production_lot_id' : item_jc.equipamiento_id.production_lot.id,
+                        'production_lot_id' : item_jc.equipamiento_id.production_lot.id or False,
                         'tag_ids': tag_id.ids,
                         'type_maintenance': item_jc.type_maintenance,
                         'ata_ids': item_jc.ata_ids.ids,
@@ -78,7 +83,12 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                         })
 
             for task in item.tasks:
-                tarea = self.env['project.task'].with_context(tracking_disable=True).create({
+                tarea = self.env['project.task'].with_context(
+                    tracking_disable=True,
+                    mail_create_nolog=True,
+                    mail_create_nosubscribe=True,
+                    mail_notrack=True
+                ).create({
                     'name' : task.descripcion,
                     'description' : task.tarea_preventiva_id.referencia,
                     'company_id' : company.id,
@@ -89,7 +99,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                     'maintenance_request_id' : request.id,
                     'tipo_tarea_taller' : task.tipo,
                     'assignment_date' : datetime.now(),
-                    'production_lot_id' : task.equipment_id.production_lot.id,
+                    'production_lot_id' : task.equipment_id.production_lot.id or False,
                     'tag_ids': tag_id.ids,
                     'service_bulletin_id': task.service_bulletin_id.id if task.service_bulletin_id else False,
                     'airworthiness_directive_id': task.airworthiness_directive_id.id if task.airworthiness_directive_id else False,
@@ -97,7 +107,12 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                 if task.job_card_id:
                     if task.job_card_id.sections_ids:
                         for section in task.job_card_id.sections_ids:
-                            section_tarea = self.env['project.task'].with_context(tracking_disable=True).create({
+                            section_tarea = self.env['project.task'].with_context(
+                                tracking_disable=True,
+                                mail_create_nolog=True,
+                                mail_create_nosubscribe=True,
+                                mail_notrack=True
+                            ).create({
                                 'name' : section.descripcion,
                                 'company_id' : company.id,
                                 'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
@@ -107,7 +122,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                                 'tipo_tarea_taller' : task.tipo,
                                 'parent_id' : tarea.id,
                                 'assignment_date' : datetime.now(),
-                                'production_lot_id' : task.equipment_id.production_lot.id,
+                                'production_lot_id' : task.equipment_id.production_lot.id or False,
                                 'tag_ids': tag_id.ids,
                             })
                             create_tasks_from_job_card(task, section_tarea, section.job_card_item_ids, request, tag_id, item.rel_maintenance_plan.equipment_id.helicoptero.airtime)
