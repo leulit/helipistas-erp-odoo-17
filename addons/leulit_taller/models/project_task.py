@@ -188,7 +188,7 @@ class ProjectTask(models.Model):
             self.maintenance_equipment_id = self.item_job_card_id.equipamiento_id
             self.name = self.item_job_card_id.descripcion
             self.solucion_defecto = self.item_job_card_id.solucion
-            self.production_lot_id = self.item_job_card_id.equipamiento_id.production_lot
+            self.production_lot_id = self.item_job_card_id.equipamiento_id.production_lot or False
             self.type_maintenance = self.item_job_card_id.type_maintenance
             self.ata_ids = self.item_job_card_id.ata_ids
             self.certificacion_ids = self.item_job_card_id.certificacion_ids
