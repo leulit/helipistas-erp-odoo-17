@@ -37,7 +37,6 @@
             <field name="model_id" ref="model_leulit_wizard_freelance_actividad_aerea"/>
             <field name="subject">Código de Seguridad para Firmar el Certificado Actividad Aerea</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${object.env.user.email}</field>
             <field name="body_html"><![CDATA[
                 <p>Estimado/a ${object.env.user.name},</p>
                 <p>Su código de seguridad para firmar la actividad aérea es: <strong>${object.code_sent}</strong></p>

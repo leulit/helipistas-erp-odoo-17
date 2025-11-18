@@ -17,12 +17,28 @@ class leulitWizardFreelanceActividadAerea(models.TransientModel):
     def send_code_mail(self):
         """Sends the code via email."""
         self.ensure_one()
-        template = self.env.ref('leulit_operaciones.leulit_20250320_1123_template')
+        
+        # Generar el código antes de enviar el email
         self.code_sent = random.randint(100000, 999999)
+        
+        # Verificar que el usuario tenga email
+        if not self.env.user.email:
+            raise UserError(_("Tu usuario no tiene un email configurado. Por favor contacta al administrador."))
+        
+        template = self.env.ref('leulit_operaciones.leulit_20250320_1123_template')
         if template:
-            template.send_mail(self.id, force_send=True)
+            # Enviar el email forzando el destinatario al usuario actual
+            template.send_mail(
+                self.id, 
+                force_send=True,
+                email_values={
+                    'email_to': self.env.user.email,
+                    'recipient_ids': []  # Evitar que use recipient_ids del template
+                }
+            )
         else:
-            raise UserError(_("Email template not found."))
+            raise UserError(_("Email template not found. Por favor contacta al administrador."))
+        
         # Retornar una acción para mantener el popup abierto
         return {
             'type': 'ir.actions.act_window',
