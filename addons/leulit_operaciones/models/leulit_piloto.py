@@ -367,7 +367,8 @@ class leulit_piloto(models.Model):
     def _calc_horas_totales_vuelo(self, ):
         for item in self:
             ids_vuelos0 = self.env['leulit.vuelo'].search([('piloto_id','=',item.id),('estado','=','cerrado')]).ids
-            ids_vuelos1 = self.env['leulit.vuelo'].search([('alumno','=',item.alumno.id),('estado','=','cerrado')]).ids
+            alumno_ids = item.alumno.ids if item.alumno else []
+            ids_vuelos1 = self.env['leulit.vuelo'].search([('alumno','in',alumno_ids),('estado','=','cerrado')]).ids if alumno_ids else []
             ids_vuelos2 = self.env['leulit.vuelo'].search([('verificado','=',item.id),('estado','=','cerrado')]).ids
             tiempo = 0
             ids_vuelos = []
@@ -396,7 +397,14 @@ class leulit_piloto(models.Model):
     ### CALCULO HORAS IFR VUELO
     def _calc_horas_totales_ifr_vuelo(self, ):
         for item in self:
-            for vuelo in self.env['leulit.vuelo'].search([('estado','=','cerrado'),'|',('alumno','=',item.alumno.id),('piloto_id','=',item.id)]):
+            tiempo = 0
+            alumno_ids = item.alumno.ids if item.alumno else []
+            domain = [('estado','=','cerrado')]
+            if alumno_ids:
+                domain = ['|',('alumno','in',alumno_ids),('piloto_id','=',item.id)] + domain
+            else:
+                domain = [('piloto_id','=',item.id)] + domain
+            for vuelo in self.env['leulit.vuelo'].search(domain):
                 if vuelo.ifr:
                     tiempo = tiempo + vuelo.tiemposervicio
             return tiempo
@@ -413,7 +421,13 @@ class leulit_piloto(models.Model):
     def _calc_horas_night_fechas(self, fechainicio, fechafin):
         for item in self:
             tiempo = 0
-            for vuelo in self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('estado','=','cerrado'),('nightlandings','>=',1),'|',('alumno','=',item.alumno.id),('piloto_id','=',item.id)]):
+            alumno_ids = item.alumno.ids if item.alumno else []
+            domain = [('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('estado','=','cerrado'),('nightlandings','>=',1)]
+            if alumno_ids:
+                domain = ['|',('alumno','in',alumno_ids),('piloto_id','=',item.id)] + domain
+            else:
+                domain = [('piloto_id','=',item.id)] + domain
+            for vuelo in self.env['leulit.vuelo'].search(domain):
                 tiempo = tiempo + vuelo.tiemposervicio
             tiempo = tiempo + item.start_hv_night_float
             return tiempo
@@ -422,7 +436,13 @@ class leulit_piloto(models.Model):
     def _calc_horas_ifr_fechas(self, fechainicio, fechafin):
         for item in self:
             tiempo = 0
-            for vuelo in self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('estado','=','cerrado'),'|',('alumno','=',item.alumno.id),('piloto_id','=',item.id)]):
+            alumno_ids = item.alumno.ids if item.alumno else []
+            domain = [('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('estado','=','cerrado')]
+            if alumno_ids:
+                domain = ['|',('alumno','in',alumno_ids),('piloto_id','=',item.id)] + domain
+            else:
+                domain = [('piloto_id','=',item.id)] + domain
+            for vuelo in self.env['leulit.vuelo'].search(domain):
                 if vuelo.ifr:
                     tiempo = tiempo + vuelo.tiemposervicio
             tiempo = tiempo + item.start_hv_ifr_float
@@ -455,9 +475,11 @@ class leulit_piloto(models.Model):
     def _calc_horas_doblemando_fechas(self, fechainicio, fechafin):
         for item in self:
             tiempo = 0
-            for vuelo in self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('alumno','=',item.alumno.id),('estado','=','cerrado')]):
-                if vuelo.alumno and vuelo.alumno.getPartnerId() != vuelo.piloto_id.getPartnerId():
-                    tiempo = tiempo + vuelo.tiemposervicio
+            alumno_ids = item.alumno.ids if item.alumno else []
+            if alumno_ids:
+                for vuelo in self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('alumno','in',alumno_ids),('estado','=','cerrado')]):
+                    if vuelo.alumno and vuelo.alumno.getPartnerId() != vuelo.piloto_id.getPartnerId():
+                        tiempo = tiempo + vuelo.tiemposervicio
             tiempo = tiempo + item.start_hv_dm
             return tiempo
 
@@ -465,7 +487,8 @@ class leulit_piloto(models.Model):
     def _calc_horas_totales_vuelo_fechas(self, fechainicio, fechafin):
         for item in self:
             ids_vuelos0 = self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('piloto_id','=',item.id),('estado','=','cerrado')]).ids
-            ids_vuelos1 = self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('alumno','=',item.alumno.id),('estado','=','cerrado')]).ids
+            alumno_ids = item.alumno.ids if item.alumno else []
+            ids_vuelos1 = self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('alumno','in',alumno_ids),('estado','=','cerrado')]).ids if alumno_ids else []
             ids_vuelos3 = self.env['leulit.vuelo'].search([('fechavuelo','>=',fechainicio),('fechavuelo','<',fechafin),('verificado','=',item.id),('estado','=','cerrado')]).ids
             tiempo = 0
 

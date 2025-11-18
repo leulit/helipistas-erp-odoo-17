@@ -14,19 +14,6 @@
             </field>
         </record>
 
-
-        <record id="leulit_20220127_1634_filter_nueva_vista" model="ir.ui.view">
-            <field name="name">leulit_20220127_1634_filter_nueva_vista</field>
-            <field name="model">leulit.vuelo</field>
-            <field name="inherit_id" ref="leulit_operaciones.leulit_20230906_1505_filter"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='piloto_id']" position="after">
-                    <field name="alumno"/>
-                </xpath>
-            </field>
-        </record>
-
-
         <!-- Vista Nueva (Parte vuelo views branch) -->
         <record id="leulit_20231031_1048_form" model="ir.ui.view">
             <field name="name">leulit_20231031_1048_form</field>
