@@ -74,7 +74,7 @@ class leulit_vuelo_wizard_report(models.TransientModel):
 
 
 
-    def create_log_book_report_action(self):     
+    def create_log_book_report_action(self):
         for item in self:       
             tiempo_pilotomando_inicial = 0
             tiempo_instructor_act_inicial = 0
@@ -86,27 +86,40 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             tiempo_instructor_ato_inicial = 0
             total_pagina = 0
 
-            primer_vuelo_piloto = self.env['leulit.vuelo'].search([
-                ('estado', '=', 'cerrado'), 
-                '|', '|',('piloto_id','=', item.piloto_id.id),('alumno','=', item.piloto_id.alumno.id),
-                ('verificado','=', item.piloto_id.id)
-            ], order='fechavuelo asc',limit=1)
+            # alumno es un One2many (recordset), obtener los IDs
+            alumno_ids = item.piloto_id.alumno.ids if item.piloto_id.alumno else []
             
-
+            # Construir dominio para el primer vuelo
+            primer_vuelo_domain = [('estado', '=', 'cerrado')]
+            if alumno_ids:
+                primer_vuelo_domain = ['|', '|', ('piloto_id', '=', item.piloto_id.id), ('alumno', 'in', alumno_ids), ('verificado', '=', item.piloto_id.id)] + primer_vuelo_domain
+            else:
+                primer_vuelo_domain = ['|', ('piloto_id', '=', item.piloto_id.id), ('verificado', '=', item.piloto_id.id)] + primer_vuelo_domain
+            
+            primer_vuelo_piloto = self.env['leulit.vuelo'].search(primer_vuelo_domain, order='fechavuelo asc', limit=1)
+        
             data = {}
             piloto_id = item.piloto_id.id
-            alumno_id = item.piloto_id.alumno.id
+            # alumno es un One2many (recordset), por lo que puede tener múltiples registros
+            # Obtenemos los IDs de todos los alumnos asociados al piloto
+            alumno_ids = item.piloto_id.alumno.ids if item.piloto_id.alumno else []
             from_date = item.from_date
             to_date = item.to_date
-            vuelos = self.env['leulit.vuelo'].search(
-                [
-                    ('fechavuelo', '>=', from_date), 
-                    ('fechavuelo', '<=', to_date), 
-                    ('estado', '=', 'cerrado'), 
-                    '|', '|',('piloto_id','=', piloto_id),('alumno','=', alumno_id),('verificado','=', piloto_id)], 
-                limit=None, 
-                order='fechasalida asc'
-            )
+            
+            # Construir el dominio de búsqueda
+            domain = [
+                ('fechavuelo', '>=', from_date), 
+                ('fechavuelo', '<=', to_date), 
+                ('estado', '=', 'cerrado'),
+            ]
+            
+            # Añadir condiciones OR para piloto_id, alumno y verificado
+            if alumno_ids:
+                domain = ['|', '|', ('piloto_id', '=', piloto_id), ('alumno', 'in', alumno_ids), ('verificado', '=', piloto_id)] + domain
+            else:
+                domain = ['|', ('piloto_id', '=', piloto_id), ('verificado', '=', piloto_id)] + domain
+            
+            vuelos = self.env['leulit.vuelo'].search(domain, limit=None, order='fechasalida asc')
             
             data['piloto_id'] = piloto_id
             data['from_date'] = from_date
