@@ -99,7 +99,8 @@ class StockPicking(models.Model):
         pdf_list = []
         for lot in self.rel_stock_production_lot:
             data = lot.get_data_report()
-            pdf_list.append(self.env.ref('leulit_almacen.etiqueta_report')._render_qweb_pdf(self, data=data)[0])
+            report = self.env.ref('leulit_almacen.etiqueta_report')
+            pdf_list.append(report._render_qweb_pdf(lot.id, data=data)[0])
 
         self.etiquetas = base64.b64encode(self.merge_pdfs(pdf_list).getvalue())
         self.combined_pdf_filename = "Etiquetas {0}.pdf".format(self.name)
