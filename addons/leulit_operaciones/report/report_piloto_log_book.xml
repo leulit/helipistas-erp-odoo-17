@@ -3,15 +3,6 @@
     <data>
 
 
-        <report string="leulit_report_piloto_log_book"
-            id="leulit_report_piloto_log_book"
-            model="leulit.vuelo"
-            name="leulit_operaciones.leulit_report_piloto_log_informe"
-            report_type="qweb-pdf"
-            paperformat="leulit.paperformat_A4_landscape_without_cabecera"
-            print_report_name="'LOG-BOOK"
-        />
-
         <template id="piloto_log_book_report_css">
             <style>
                 html {
@@ -103,7 +94,7 @@
                 <t t-foreach="paginas" t-as="pagina">                  
                     <table class="fullwidth">
                         <tbody>
-                        <tr>
+                            <tr>
                                 <th style="width:50%;text-align:left;" class="noborde fontsize2">
                                     Log Book
                                 </th>
