@@ -23,7 +23,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="leulit_20201104_0812_action">
-            <field name="name">leulit_20201104_0812_action</field>
+            <field name="name">Imprimir Log-Book</field>
             <field name="res_model">leulit.vuelo_wizard_report</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20201104_0812_form"/>
