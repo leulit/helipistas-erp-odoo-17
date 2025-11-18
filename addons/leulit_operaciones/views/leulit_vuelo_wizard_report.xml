@@ -11,8 +11,8 @@
                 <form string="Pilot Log Book">
                     <group col="4">
                         <field name='piloto_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name="from_date" />
-                        <field name="to_date" />
+                        <field name="from_date" colspan="2"/>
+                        <field name="to_date" colspan="2"/>
                     </group>
                     <footer>
                         <button type="object" name="create_log_book_report"  string="Imprimir" class="oe_highlight"/>
@@ -29,8 +29,6 @@
             <field name="view_id" ref="leulit_20201104_0812_form"/>
             <field name="target">new</field>
         </record>
-
-
 
 
         <record model="ir.ui.view" id='leulit_20201104_0828_form'>
