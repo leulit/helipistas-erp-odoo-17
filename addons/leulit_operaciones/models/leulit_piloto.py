@@ -55,10 +55,15 @@ class leulit_piloto(models.Model):
     def doblemando(self, vuelo):
         for item in self:
             valor = False
+            # alumno es un One2many, obtener el primer registro si existe
             if vuelo.alumno and item.alumno:
-                valor = item.alumno.id == vuelo.alumno.id and vuelo.alumno.id != vuelo.piloto_id.alumno.id
+                item_alumno_id = item.alumno[0].id if item.alumno else False
+                vuelo_alumno_id = vuelo.alumno.id if hasattr(vuelo.alumno, 'id') else (vuelo.alumno[0].id if vuelo.alumno else False)
+                vuelo_piloto_alumno_ids = vuelo.piloto_id.alumno.ids if vuelo.piloto_id.alumno else []
+                
+                if item_alumno_id and vuelo_alumno_id:
+                    valor = item_alumno_id == vuelo_alumno_id and vuelo_alumno_id not in vuelo_piloto_alumno_ids
             return valor
-            ##% if o.alumno.id == context['data']['form']['piloto_id'] and o.alumno.id != o.piloto_id.id:
 
     
     def instructor(self, vuelo):
