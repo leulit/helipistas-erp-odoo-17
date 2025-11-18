@@ -9,10 +9,10 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Pilot Log Book">
-                    <group col="4">
-                        <field name='piloto_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name="from_date" colspan="2"/>
-                        <field name="to_date" colspan="2"/>
+                    <group>
+                        <field name='piloto_id' options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="from_date" />
+                        <field name="to_date" />
                     </group>
                     <footer>
                         <button type="object" name="create_log_book_report"  string="Imprimir" class="oe_highlight"/>
@@ -37,9 +37,9 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Technical Log">
-                    <group col="4" fill="0">
-                        <field name='helicoptero_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name='informe' colspan="4" readonly="1"/>
+                    <group>
+                        <field name="helicoptero_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="informe"/>
                         <field name="from_date" />
                         <field name="to_date" />
                     </group>
@@ -52,7 +52,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="leulit_20201104_0828_action">
-            <field name="name">leulit_20201104_0828_action</field>
+            <field name="name">Imprimir PTVs</field>
             <field name="res_model">leulit.vuelo_wizard_report</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20201104_0828_form"/>
@@ -61,7 +61,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="leulit_20201104_0830_action">
-            <field name="name">leulit_20201104_0830_action</field>
+            <field name="name">Imprimir Registro de Vuelos Aeronave</field>
             <field name="res_model">leulit.vuelo_wizard_report</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20201104_0828_form"/>
@@ -69,7 +69,7 @@
             <field name="context">{'default_informe': 'leulit_registro_vuelosaeronave_report'}</field>
         </record>
         <record model="ir.actions.act_window" id="leulit_20201105_0840_action">
-            <field name="name">leulit_20201105_0840_action</field>
+            <field name="name">Imprimir consumos por vuelo</field>
             <field name="res_model">leulit.vuelo_wizard_report</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20201104_0828_form"/>
@@ -97,7 +97,7 @@
 
 
         <record model="ir.actions.act_window" id="leulit_20211130_1822_action">
-            <field name="name">Helipistas Pilot Log Book</field>
+            <field name="name">Helipistas Piloto Log-Book</field>
             <field name="res_model">leulit.vuelo_wizard_report</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20211130_1822_form"/>
