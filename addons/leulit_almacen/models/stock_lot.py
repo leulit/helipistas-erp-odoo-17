@@ -149,6 +149,15 @@ class StockLot(models.Model):
 
     def print_etiqueta_report(self):
         data = self.get_data_report()
+        # Asegura que el campo de imagen QR tenga el prefijo correcto
+        if data.get('qr'):
+            img_data = data['qr']
+            if isinstance(img_data, bytes):
+                img_data = img_data.decode('utf-8')
+            if not img_data.startswith('data:image'):
+                data['qr'] = f"data:image/png;base64,{img_data}"
+            else:
+                data['qr'] = img_data
         return self.env.ref('leulit_almacen.etiqueta_report').report_action(self, data=data)
 
 
