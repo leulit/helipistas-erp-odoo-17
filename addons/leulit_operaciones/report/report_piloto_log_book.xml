@@ -92,7 +92,7 @@
                 <t t-set="data_report_header_spacing" t-value="1"/>
                 <t t-set="data_report_dpi" t-value="75"/>         
 				<t t-call="leulit_operaciones.piloto_log_book_report_css"/>
-                <t t-foreach="paginas" t-as="pagina">                  
+                <t t-foreach="paginas" t-as="pagina">
                     <table class="fullwidth">
                         <tbody>
                             <tr>

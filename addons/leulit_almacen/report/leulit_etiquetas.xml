@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-    
+
         <template id="leulit_20221117_1102_informe">
-            <meta charset="utf-8"/>
             <t t-call="web.html_container">
+                <meta charset="utf-8"/>
                 <table class="fullwidth" style="border-collapse:collapse;">
                     <thead>
                         <tr>
