@@ -3,6 +3,7 @@
     <data>
 
         <template id="etiqueta_report_css">
+            <meta charset="utf-8"/>
             <style>
                 table {
                     border-collapse:collapse;
@@ -209,12 +210,13 @@
                             </td>
                             <td style="vertical-align:top; overflow-y: hidden; border:1px solid transparent;">
                                 <t t-if="qr != ''">
-                                    <img t-att-src="'data:image/png;base64,%s' % qr" style="width:auto;height:25mm;"/>
+                                    <img t-att-src="qr" style="width:auto;height:25mm;"/>   
+                                    <!-- <img t-att-src="'data:image/png;base64,%s' % qr" style="width:auto;height:25mm;"/> -->
                                 </t>
                             </td>
                         </tr>
                     </tbody>
-                </table>                
+                </table>
             </t>
         </template>
 

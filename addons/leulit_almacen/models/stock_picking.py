@@ -99,12 +99,20 @@ class StockPicking(models.Model):
         pdf_list = []
         for lot in self.rel_stock_production_lot:
             data = lot.get_data_report()
+            # Asegura que el campo de imagen QR tenga el prefijo correcto
+            if data.get('qr'):
+                img_data = data['qr']
+                if isinstance(img_data, bytes):
+                    img_data = img_data.decode('utf-8')
+                if not img_data.startswith('data:image'):
+                    data['qr'] = f"data:image/png;base64,{img_data}"
+                else:
+                    data['qr'] = img_data
             report = self.env.ref('leulit_almacen.etiqueta_report')
-            pdf_list.append(self.env['ir.actions.report']._render_qweb_pdf(report,lot, data=data)[0])
+            pdf_list.append(self.env['ir.actions.report']._render_qweb_pdf(report, lot, data=data)[0])
 
         self.etiquetas = base64.b64encode(self.merge_pdfs(pdf_list).getvalue())
         self.combined_pdf_filename = "Etiquetas {0}.pdf".format(self.name)
-        
         return {
             'type': 'ir.actions.act_url',
             'url': "web/content/?model=stock.picking&id=" + str(self.id) + "&filename_field=combined_pdf_filename&field=etiquetas&download=true",
