@@ -4,6 +4,7 @@
 
 
         <template id="piloto_log_book_report_css">
+            <meta charset="utf-8"/>
             <style>
                 html {
                     font-family: sans-serif; /* 1 */
