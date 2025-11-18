@@ -15,6 +15,41 @@ class leulitMaintenanceManual(models.Model):
     _inherits       = {'ir.attachment': 'attachment_id'}
     _rec_name       = "name"
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        """
+        Override create para establecer res_model en el ir.attachment creado.
+        Esto es necesario para que las reglas de seguridad funcionen correctamente.
+        """
+        records = super().create(vals_list)
+        for record in records:
+            if record.attachment_id:
+                record.attachment_id.write({
+                    'res_model': 'leulit.maintenance_manual',
+                    'res_id': record.id,
+                })
+        return records
+
+    @api.model
+    def fix_existing_attachments(self):
+        """
+        Método para corregir attachments existentes que no tienen res_model establecido.
+        Se puede ejecutar manualmente desde el shell de Odoo:
+        env['leulit.maintenance_manual'].fix_existing_attachments()
+        """
+        manuals = self.search([])
+        fixed_count = 0
+        for manual in manuals:
+            if manual.attachment_id:
+                if not manual.attachment_id.res_model or not manual.attachment_id.res_id:
+                    manual.attachment_id.write({
+                        'res_model': 'leulit.maintenance_manual',
+                        'res_id': manual.id,
+                    })
+                    fixed_count += 1
+        _logger.info(f"Fixed {fixed_count} maintenance manual attachments")
+        return fixed_count
+
 
     def modificar_manual(self):
         for item in self:
