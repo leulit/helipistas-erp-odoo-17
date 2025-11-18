@@ -47,6 +47,10 @@ class leulitMaintenanceManual(models.Model):
                         'res_id': manual.id,
                     })
                     fixed_count += 1
+        
+        # Hacer commit explícito de los cambios
+        self.env.cr.commit()
+        
         _logger.info(f"Fixed {fixed_count} maintenance manual attachments")
         return fixed_count
 
