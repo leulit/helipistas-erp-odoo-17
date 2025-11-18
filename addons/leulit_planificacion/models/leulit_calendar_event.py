@@ -349,6 +349,22 @@ class leulit_calendar_event(models.Model):
             if active_id not in partners.ids:
                 partners |= self.env['res.partner'].browse(active_id)
         return partners
+    
+
+    @api.depends('partner_ids')
+    @api.depends_context('uid')
+    def _compute_user_can_edit(self):
+        for event in self:
+            editor_candidates = set(event.partner_ids.user_ids + event.user_id)
+            if event._origin:
+                editor_candidates |= set(event._origin.partner_ids.user_ids)
+            # Administradores y usuarios del grupo de planificación pueden editar eventos no privados
+            if (
+                self.env.user.has_group('base.group_system') or
+                self.env.user.has_group('leulit_planificacion.RPlanificacion_manager')
+            ) and event.privacy != 'private':
+                editor_candidates.add(self.env.user)
+            event.user_can_edit = self.env.user in editor_candidates
 
 
     partner_ids = fields.Many2many('res.partner', 'calendar_event_res_partner_rel', string='Attendees', default=_default_partners, domain="[('user_ids', '!=', False)]")
@@ -380,11 +396,3 @@ class leulit_calendar_event(models.Model):
     ## Audit Log
     historic_lines = fields.One2many(compute=_get_historic_lines, comodel_name='auditlog.log', string='Lineas historico', readonly=True)
 
-
-    # @api.model
-    # def fields_get(self, fields=None, attributes=None):
-    #     hide = ['cancelado_date','start_date','stop_date','tipo']
-    #     res = super(leulit_calendar_event, self).fields_get()
-    #     for field in hide:
-    #         res[field]['searchable'] = False
-    #     return res
