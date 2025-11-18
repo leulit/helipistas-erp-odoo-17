@@ -38,13 +38,13 @@
             <field name="subject">Código de Seguridad para Firmar el Certificado Actividad Aerea</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="body_html">
-                <t t-name="leulit_operaciones.leulit_20250320_1123_template_body">
-                    <p>Estimado/a <t t-esc="object.env.user.name"/>,</p>
-                    <p>Su código de seguridad para firmar la actividad aérea es: <strong><t t-esc="object.code_sent"/></strong></p>
-                    <p>Por favor, ingrese este código en el formulario para completar el proceso.</p>
-                    <p>Gracias,</p>
-                    <p>El equipo de Helipistas</p>
-                </t>
+<t t-name="leulit_operaciones.leulit_20250320_1123_template_body">
+<p>Estimado/a <t t-esc="object.env.user.name"/>,</p>
+<p>Su código de seguridad para firmar la actividad aérea es: <strong><t t-esc="object.code_sent"/></strong></p>
+<p>Por favor, ingrese este código en el formulario para completar el proceso.</p>
+<p>Gracias,</p>
+<p>El equipo de Helipistas</p>
+</t>
             </field>
         </record>
 
