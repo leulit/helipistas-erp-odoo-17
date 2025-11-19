@@ -33,7 +33,7 @@ export class TablaResumenAsignaturas extends Component {
 
         onWillStart(async () => {
             // resId del registro actual en la vista
-            this.state.alumnoId = this.env.model.root.data.id;
+            this.state.alumnoId = this.props.record.resId;
             await this._loadCursos();
             await this._loadAsignaturas();
         });
