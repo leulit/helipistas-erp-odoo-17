@@ -27,15 +27,25 @@ export class TablaResumenAsignaturasPracticas extends Component {
     setup() {
         this.rpc = useService("rpc");
         this.orm = useService("orm");
+        // Extraer el ID real del alumno desde el campo rel_alumnos (relacional)
+        const alumnoId = this.props.record.rel_alumnos?.records?.[0]?.res_id || null;
         this.state = useState({
             practicas: [],  // [{name,duracion,total_doblemando,total_pic,total_spic,total_otros}]
-            cursoId: this.props.record.rel_curso, // El curso viene del formulario
-            alumnoId: this.props.record.rel_alumnos, // El alumno viene del formulario
+            cursoId: this.props.record.data.rel_curso, // El curso viene del formulario
+            alumnoId: alumnoId, // El alumno viene del formulario (ID real)
         });
 
         onWillStart(async () => {
             await this._loadAsignaturasPracticas();
         });
+    }
+
+    async onWillUpdateProps(nextProps) {
+        const nextCursoId = nextProps.record.data.rel_curso;
+        if (nextCursoId !== this.state.cursoId) {
+            this.state.cursoId = nextCursoId;
+            await this._loadAsignaturasPracticas();
+        }
     }
 
     async _loadAsignaturasPracticas() {
