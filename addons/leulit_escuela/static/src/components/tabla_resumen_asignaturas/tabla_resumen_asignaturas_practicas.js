@@ -38,6 +38,18 @@ export class TablaResumenAsignaturasPracticas extends Component {
         onWillStart(async () => {
             await this._loadAsignaturasPracticas();
         });
+
+        // useEffect para escuchar cambios en el campo rel_curso
+        useEffect(
+            () => {
+                const newCursoId = this.props.record.data.rel_curso;
+                if (newCursoId !== this.state.cursoId) {
+                    this.state.cursoId = newCursoId;
+                    this._loadAsignaturasPracticas();
+                }
+            },
+            () => [this.props.record.data.rel_curso]
+        );
     }
 
     async onWillUpdateProps(nextProps) {
