@@ -28,7 +28,7 @@ export class TablaResumenAsignaturasPracticas extends Component {
         this.rpc = useService("rpc");
         this.orm = useService("orm");
         // Extraer el ID real del alumno desde el campo rel_alumnos (relacional)
-        const alumnoId = this.props.record.data.rel_alumnos?.records?.[0]?.res_id || null;
+        const alumnoId = this.props.record.data.rel_alumnos?.records[0]?.resId || null;
         this.state = useState({
             practicas: [],  // [{name,duracion,total_doblemando,total_pic,total_spic,total_otros}]
             cursoId: this.props.record.data.rel_curso, // El curso viene del formulario
