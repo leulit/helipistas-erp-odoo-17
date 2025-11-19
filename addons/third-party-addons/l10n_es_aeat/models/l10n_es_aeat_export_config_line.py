@@ -47,8 +47,8 @@ class AeatModelExportConfigLine(models.Model):
     apply_sign = fields.Boolean(
         compute="_compute_apply_sign", readonly=False, store=True
     )
-    positive_sign = fields.Char(string="Positive sign character",  default="0")
-    negative_sign = fields.Char(string="Negative sign character",  default="N")
+    positive_sign = fields.Char(string="Positive sign character", size=1, default="0")
+    negative_sign = fields.Char(string="Negative sign character", size=1, default="N")
     size = fields.Integer(string="Field size")
     alignment = fields.Selection(
         selection=[("left", "Left"), ("right", "Right")],
@@ -56,8 +56,8 @@ class AeatModelExportConfigLine(models.Model):
         readonly=False,
         store=True,
     )
-    bool_no = fields.Char(string="Value for no",  default=" ")
-    bool_yes = fields.Char(string="Value for yes",  default="X")
+    bool_no = fields.Char(string="Value for no", size=1, default=" ")
+    bool_yes = fields.Char(string="Value for yes", size=1, default="X")
     decimal_size = fields.Integer(
         string="Number of char for decimals",
         compute="_compute_decimal_size",

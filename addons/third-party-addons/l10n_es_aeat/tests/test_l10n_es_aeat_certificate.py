@@ -68,7 +68,7 @@ class TestL10nEsAeatCertificateBase(common.TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.certificate_password = b"794613"
-        private_key = generate_private_key(public_exponent=65537, key_48)
+        private_key = generate_private_key(public_exponent=65537, key_size=2048)
         public_key = private_key.public_key()
         builder = x509.CertificateBuilder()
         cls.certificate_name = "Test Certificate"

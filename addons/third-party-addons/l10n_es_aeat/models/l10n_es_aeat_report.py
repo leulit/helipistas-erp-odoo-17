@@ -90,38 +90,38 @@ class L10nEsAeatReport(models.AbstractModel):
     )
     company_vat = fields.Char(
         string="VAT number",
-        
+        size=9,
         required=True,
     )
     number = fields.Char(
         string="Model number",
-        
+        size=3,
         required=True,
         readonly=True,
         default=_default_number,
     )
     previous_number = fields.Char(
         string="Previous declaration number",
-        
+        size=13,
     )
     contact_name = fields.Char(
         string="Full Name",
-        
+        size=40,
         help="Must have name and surname.",
         required=True,
         readonly=True,
     )
     contact_phone = fields.Char(
         string="Phone",
-        
+        size=9,
         required=True,
     )
     contact_email = fields.Char(
-        
+        size=50,
     )
     representative_vat = fields.Char(
         string="L.R. VAT number",
-        
+        size=9,
         help="Legal Representative VAT number.",
         compute="_compute_representative_vat",
         store=True,
@@ -154,7 +154,7 @@ class L10nEsAeatReport(models.AbstractModel):
         readonly=True,
         tracking=True,
     )
-    name = fields.Char(string="Report identifier",  copy=False)
+    name = fields.Char(string="Report identifier", size=13, copy=False)
     export_config_id = fields.Many2one(
         comodel_name="aeat.model.export.config",
         string="Export config",
