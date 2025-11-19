@@ -35,9 +35,6 @@ export class TablaResumenAsignaturas extends Component {
             alumnoId: null,
             activeTab: 'teoricas',
         });
-    setActiveTab(tab) {
-        this.state.activeTab = tab;
-    }
 
         onWillStart(async () => {
             // resId del registro actual en la vista
@@ -45,6 +42,10 @@ export class TablaResumenAsignaturas extends Component {
             await this._loadCursos();
             await this._loadAsignaturas();
         });
+    }
+
+    setActiveTab(tab) {
+        this.state.activeTab = tab;
     }
 
     async _loadCursos() {
