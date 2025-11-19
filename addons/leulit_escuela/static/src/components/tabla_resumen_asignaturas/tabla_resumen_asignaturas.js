@@ -3,19 +3,22 @@
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart } from "@odoo/owl";
-import { sprintf } from "@web/core/utils/strings";
 
 function decimalHourToStr(value) {
-    let pattern = "%02d:%02d";
+    let negative = false;
+    if (typeof value !== "number" || isNaN(value)) {
+        return "";
+    }
     if (value < 0) {
         value = Math.abs(value);
-        pattern = "-" + pattern;
+        negative = true;
     }
     const hour = Math.floor(value);
     let min = Math.round((value % 1) * 60);
     const h = min === 60 ? hour + 1 : hour;
     const m = min === 60 ? 0 : min;
-    return sprintf(pattern, h, m);
+    const str = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    return negative ? `-${str}` : str;
 }
 
 export class TablaResumenAsignaturas extends Component {
