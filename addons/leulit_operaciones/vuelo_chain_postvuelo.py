@@ -153,7 +153,7 @@ class ComprobacionOverlapPartesEscuelaVueloHandler(vuelo.AbstractHandler):
             else:
                 objpiloto = vuelo.piloto_id
 
-            profesor = self.env['leulit.profesor'].search([('partner_id', '=', objpiloto.getPartnerId())])
+            profesor = request.env['leulit.profesor'].search([('partner_id', '=', objpiloto.getPartnerId())])
             #  Verificar que no exista un parte de escuela donde se solape el profesor.
             if profesor:
                 _logger.error("Comprobando partes de escuela para el profesor %s" % (profesor.id))
