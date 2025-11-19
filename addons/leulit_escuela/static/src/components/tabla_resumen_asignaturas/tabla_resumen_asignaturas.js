@@ -87,10 +87,12 @@ export class TablaResumenAsignaturas extends Component {
 
     // helpers de plantilla
     rowTeoricasClass(t) {
-        if (t.total_real < t.duracion) {
-            return "redbackg";
-        } else if (t.total_real >= t.duracion) {
-            return "greenbackg";
+        if (t.name === 'Total') {
+            if (t.total_real < t.duracion) {
+                return "redbackg";
+            } else if (t.total_real >= t.duracion) {
+                return "greenbackg";
+            }
         }
         return "";
     }
