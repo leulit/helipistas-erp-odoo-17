@@ -260,7 +260,7 @@ class leulit_alumno(models.Model):
     def xmlrpc_asignaturas_horas(self, idalumno, idasignatura, idcurso, tipo):
         sql = '''
             SELECT
-            coalesce(sum("leulit_rel_parte_escuela_cursos_alumnos".tiempo),0) as cantidad
+            COALESCE(ROUND(sum("leulit_rel_parte_escuela_cursos_alumnos".tiempo)::numeric, 2), 0) as cantidad
             FROM
             "leulit_rel_parte_escuela_cursos_alumnos"
             JOIN "leulit_silabus"
