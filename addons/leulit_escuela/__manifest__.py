@@ -52,6 +52,8 @@
             "leulit_escuela/static/src/components/tabla_resumen_asignaturas/tabla_resumen_asignaturas.js",
             "leulit_escuela/static/src/components/tabla_resumen_asignaturas/tabla_resumen_asignaturas.xml",
             "leulit_escuela/static/src/components/tabla_resumen_asignaturas/tabla_resumen_asignaturas.css",
+            "leulit_escuela/static/src/components/tabla_resumen_asignaturas/tabla_resumen_asignaturas_practicas.js",
+            "leulit_escuela/static/src/components/tabla_resumen_asignaturas/tabla_resumen_asignaturas_practicas.xml",
         ],
     },
     "installable": True,

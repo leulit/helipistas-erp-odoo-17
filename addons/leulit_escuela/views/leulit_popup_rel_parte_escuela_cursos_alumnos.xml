@@ -7,7 +7,7 @@
             <field name="model">leulit.popup_rel_parte_escuela_cursos_alumnos</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="descripcion">
+                <form string="descripcion" jsClass="leulit.TablaResumenAsignaturasPracticas">
                     <group>
                         <field name="vuelo_id" readonly="1"/>
                         <field name="profesor_id" readonly="1"/>
@@ -30,18 +30,10 @@
                                     </tree>
                                 </field>  
                             </td>
-                            <!-- <td>
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="2">
-                                                <div id="container_tabla_asignaturas_practicas"/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>  
-                            </td> -->
-                        </tr>                                                       
+                            <td>
+                                <widget name="leulit_tabla_resumen_asignaturas_practicas"/>
+                            </td>
+                        </tr>
                     </table>
                     <group>
                         <field name="comentario" invisible="1"/>

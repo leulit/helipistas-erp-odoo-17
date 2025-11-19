@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="leulit.TablaResumenAsignaturasPracticas">
+        <div class="o_leulit_tr_asignaturas">
+            <div class="o_notebook_like">
+                <div class="o_nb_tab">
+                    <h4>Sesiones prácticas</h4>
+                    <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Sesiones</th>
+                                <th>Tiempo prev.</th>
+                                <th>Doble mando</th>
+                                <th>Pilot in command</th>
+                                <th>SPIC</th>
+                                <th>Otros</th>
+                                <th>Totales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.practicas" t-as="p" t-key="p.name">
+                                <tr t-att-class="rowPracticasClass(p)">
+                                    <td t-esc="p.name"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.duracion)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_doblemando)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_pic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_spic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_otros)"/>
+                                    <td class="halign-center">
+                                        <t t-set="total" t-value="(p.total_spic || 0) + (p.total_doblemando || 0) + (p.total_pic || 0) + (p.total_otros || 0)"/>
+                                        <t t-esc="fmtHour(total)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td>Totales</td>
+                                <t t-set="T" t-value="totalesPracticas()"/>
+                                <td class="halign-center" t-esc="fmtHour(T.duracion)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_doblemando)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_pic)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_spic)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total_otros)"/>
+                                <td class="halign-center" t-esc="fmtHour(T.total)"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
