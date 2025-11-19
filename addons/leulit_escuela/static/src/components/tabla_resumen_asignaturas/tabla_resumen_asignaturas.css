@@ -8,6 +8,24 @@
 .redbackg {
     background-color: #ffe6e6;
 }
+.o_notebook_like {
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+}
 .o_nb_tab {
-    margin-top: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 16px;
+}
+.o_tab_header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+.o_tab_content {
+    padding: 8px 0;
 }
