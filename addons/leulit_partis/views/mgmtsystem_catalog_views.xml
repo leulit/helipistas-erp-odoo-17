@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Amenazas -->
+    <record id="view_mgmtsystem_risk_threat_tree" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.threat.tree</field>
+        <field name="model">mgmtsystem.risk.threat</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="reference"/>
+                <field name="default_probability"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mgmtsystem_risk_threat_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.threat.form</field>
+        <field name="model">mgmtsystem.risk.threat</field>
+        <field name="arch" type="xml">
+            <form string="Amenaza PART-IS (SGSI)">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="reference"/>
+                        <field name="default_probability"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mgmtsystem_risk_threat" model="ir.actions.act_window">
+        <field name="name">Amenazas PART-IS (SGSI)</field>
+        <field name="res_model">mgmtsystem.risk.threat</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Utilice este catálogo para normalizar la valoración de amenazas conforme a PART-IS (SGSI).
+            </p>
+        </field>
+    </record>
+
+    <!-- Vulnerabilidades -->
+    <record id="view_mgmtsystem_risk_vulnerability_tree" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.vulnerability.tree</field>
+        <field name="model">mgmtsystem.risk.vulnerability</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mgmtsystem_risk_vulnerability_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.vulnerability.form</field>
+        <field name="model">mgmtsystem.risk.vulnerability</field>
+        <field name="arch" type="xml">
+            <form string="Vulnerabilidad PART-IS (SGSI)">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="reference"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="mitigation"/>
+                    </group>
+                    <group string="Activos afectados">
+                        <field name="asset_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mgmtsystem_risk_vulnerability" model="ir.actions.act_window">
+        <field name="name">Vulnerabilidades PART-IS (SGSI)</field>
+        <field name="res_model">mgmtsystem.risk.vulnerability</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Mantenga aquí las vulnerabilidades conocidas y relacione los activos afectados.
+            </p>
+        </field>
+    </record>
+
+    <!-- Controles -->
+    <record id="view_mgmtsystem_risk_control_tree" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.control.tree</field>
+        <field name="model">mgmtsystem.risk.control</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="control_type"/>
+                <field name="reference"/>
+                <field name="estimated_cost"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mgmtsystem_risk_control_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.control.form</field>
+        <field name="model">mgmtsystem.risk.control</field>
+        <field name="arch" type="xml">
+            <form string="Control PART-IS (SGSI)">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="control_type"/>
+                        <field name="reference"/>
+                        <field name="estimated_cost"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="objective"/>
+                        <field name="implementation_hint"/>
+                        <field name="effectiveness_hint"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mgmtsystem_risk_control" model="ir.actions.act_window">
+        <field name="name">Controles PART-IS (SGSI)</field>
+        <field name="res_model">mgmtsystem.risk.control</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Defina controles reutilizables para los planes de tratamiento PART-IS (SGSI).
+            </p>
+        </field>
+    </record>
+
+    <!-- Menús -->
+    <menuitem id="menu_leulit_riesgo_root" name="PART-IS (SGSI)" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+    <menuitem id="menu_leulit_riesgo_catalogs" name="Catálogos" parent="menu_leulit_riesgo_root" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+    <menuitem id="menu_leulit_riesgo_threat" name="Amenazas" parent="menu_leulit_riesgo_catalogs" action="action_mgmtsystem_risk_threat" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+    <menuitem id="menu_leulit_riesgo_vulnerability" name="Vulnerabilidades" parent="menu_leulit_riesgo_catalogs" action="action_mgmtsystem_risk_vulnerability" sequence="20" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+    <menuitem id="menu_leulit_riesgo_control" name="Controles" parent="menu_leulit_riesgo_catalogs" action="action_mgmtsystem_risk_control" sequence="30" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+</odoo>
