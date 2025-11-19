@@ -1,31 +1,89 @@
-.minimalistBlack th,
-.minimalistBlack td {
+
+/* Limpieza y corrección de sintaxis, sin duplicados */
+.minimalistBlack {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: inherit;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.minimalistBlack th {
+    background: #f2f2f2;
+    font-weight: bold;
+    padding: 12px 16px;
+    border-bottom: 2px solid #e0e0e0;
+    color: #2c3e50;
     text-align: left;
 }
+
+.minimalistBlack td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+    text-align: left;
+}
+
+.minimalistBlack tr:last-child td {
+    border-bottom: none;
+}
+
+.minimalistBlack tbody tr:hover {
+    background: #f6f8fa;
+}
+
 .halign-center {
     text-align: center;
 }
-.redbackg {
-    background-color: #ffe6e6;
-}
+
 .o_notebook_like {
     background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    padding: 24px;
-    margin-bottom: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 32px 24px 24px 24px;
+    margin-bottom: 32px;
+    border: 1px solid #e0e0e0;
 }
+
 .o_nb_tab {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 16px;
+    padding-bottom: 18px;
 }
+
 .o_tab_header {
     font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 12px;
     color: #2c3e50;
 }
+
 .o_tab_content {
     padding: 8px 0;
+}
+
+/* Button and select styling for Odoo look */
+select {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 12px;
+    background: #fff;
+    font-size: 1em;
+    color: #2c3e50;
+    margin-left: 8px;
+}
+
+button {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 18px;
+    background: #f2f2f2;
+    font-size: 1em;
+    color: #2c3e50;
+    cursor: pointer;
+    margin-top: 16px;
+}
+button:hover {
+    background: #e0e0e0;
 }
