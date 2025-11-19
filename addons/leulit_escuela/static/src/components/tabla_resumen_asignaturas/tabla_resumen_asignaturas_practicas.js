@@ -71,9 +71,11 @@ export class TablaResumenAsignaturasPracticas extends Component {
         }
         return "";
     }
+
     fmtHour(v) {
         return v > 0 ? decimalHourToStr(v) : "";
     }
+
     totalesPracticas() {
         const t = { duracion: 0, total_doblemando: 0, total_pic: 0, total_spic: 0, total_otros: 0 };
         for (const it of this.state.practicas) {
