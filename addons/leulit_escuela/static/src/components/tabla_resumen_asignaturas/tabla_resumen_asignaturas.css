@@ -95,3 +95,28 @@
 .o_tab_content {
     padding: 8px 0;
 }
+
+/* Button and select styling for Odoo look */
+.o_leulit_tr_asignaturas select {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 12px;
+    background: #fff;
+    font-size: 1em;
+    color: #2c3e50;
+    margin-left: 8px;
+}
+
+.o_leulit_tr_asignaturas button {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 18px;
+    background: #f2f2f2;
+    font-size: 1em;
+    color: #2c3e50;
+    cursor: pointer;
+    margin-top: 16px;
+}
+.o_leulit_tr_asignaturas button:hover {
+    background: #e0e0e0;
+}
