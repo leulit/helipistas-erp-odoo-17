@@ -42,7 +42,7 @@ export class TablaResumenAsignaturasPracticas extends Component {
         // useEffect para escuchar cambios en el campo rel_curso
         useEffect(
             () => {
-                const newCursoId = this.props.record.data.rel_curso;
+                const newCursoId = this.props.record.data.rel_curso[0];
                 if (newCursoId !== this.state.cursoId) {
                     this.state.cursoId = newCursoId;
                     this._loadAsignaturasPracticas();
