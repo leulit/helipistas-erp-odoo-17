@@ -15,6 +15,14 @@ _logger = logging.getLogger(__name__)
 class AccountAnalyticLine(models.Model):
     _inherit = "account.analytic.line"
 
+
+    product_uom_id = fields.Many2one(
+        'uom.uom',
+        string='Unit of Measure',
+        domain="[('category_id', '=', product_uom_category_id)]",
+        default=4,
+    )
+
     def get_date_time_int(self):
         if self.date_time:
             return int(self.date_time.astimezone(pytz.timezone("Europe/Madrid")).strftime("%H%M%S"))
@@ -26,3 +34,4 @@ class AccountAnalyticLine(models.Model):
             return int(self.date_time_end.astimezone(pytz.timezone("Europe/Madrid")).strftime("%H%M%S"))
         else:
             return False
+
