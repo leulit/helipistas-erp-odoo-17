@@ -30,6 +30,8 @@
                                     </tree>
                                 </field>  
                             </td>
+                        </tr>
+                        <tr>
                             <td>
                                 <widget name="leulit_tabla_resumen_asignaturas_practicas"/>
                             </td>
