@@ -9,7 +9,7 @@
                         <th><b>Cursos:</b></th>
                         <th>
                             <select t-att-value="state.cursoId" t-on-change="onCursoChange">
-                                <t t-foreach="state.cursos" t-as="c" t-key="c.id">
+                                <t t-foreach="state.cursos" t-as="c" t-index="idx" t-key="idx">
                                     <option t-att-value="c.id" t-esc="c.name"/>
                                 </t>
                             </select>
@@ -31,7 +31,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="state.teoricas" t-as="it" t-key="index">
+                            <t t-foreach="state.teoricas" t-as="it" t-index="idx" t-key="idx">
                                 <tr t-att-class="rowTeoricasClass(it)">
                                     <td t-esc="it.id"/>
                                     <td t-esc="it.name"/>
@@ -58,7 +58,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="state.practicas" t-as="it" t-key="index">
+                            <t t-foreach="state.practicas" t-as="it" t-index="idx" t-key="idx">
                                 <tr t-att-class="rowPracticasClass(it)">
                                     <td t-esc="it.name"/>
                                     <td class="halign-center" t-esc="fmtHour(it.duracion)"/>
