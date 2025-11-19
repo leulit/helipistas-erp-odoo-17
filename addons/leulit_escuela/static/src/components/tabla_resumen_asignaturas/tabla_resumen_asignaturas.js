@@ -33,7 +33,11 @@ export class TablaResumenAsignaturas extends Component {
             teoricas: [],   // [{id,name,strduracion,str_total_real,duracion,total_real}]
             practicas: [],  // [{name,duracion,total_doblemando,total_pic,total_spic,total_otros}]
             alumnoId: null,
+            activeTab: 'teoricas',
         });
+    setActiveTab(tab) {
+        this.state.activeTab = tab;
+    }
 
         onWillStart(async () => {
             // resId del registro actual en la vista

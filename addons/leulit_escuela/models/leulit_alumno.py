@@ -158,7 +158,6 @@ class leulit_alumno(models.Model):
                 item.total_horas_practica_fact = 0
 
 
-
     @api.depends('rel_horas_fact')
     def _get_total_horas_fact(self):
         for item in self:

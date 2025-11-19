@@ -18,72 +18,80 @@
                 </thead>
             </table>
 
-            <div class="o_notebook_like">
-                <div class="o_nb_tab">
-                    <h4>Asignaturas teóricas</h4>
-                    <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Asignaturas</th>
-                                <th>Tiempo prev.</th>
-                                <th>Tiempo clase</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="state.teoricas" t-as="t" t-key="t.id">
-                                <tr t-att-class="rowTeoricasClass(t)">
-                                    <td t-esc="t.id"/>
-                                    <td t-esc="t.name"/>
-                                    <td class="halign-center" t-esc="t.strduracion"/>
-                                    <td class="halign-center" t-esc="t.str_total_real"/>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                </div>
 
-                <div class="o_nb_tab">
-                    <h4>Sesiones prácticas</h4>
-                    <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Sesiones</th>
-                                <th>Tiempo prev.</th>
-                                <th>Doble mando</th>
-                                <th>Pilot in command</th>
-                                <th>SPIC</th>
-                                <th>Otros</th>
-                                <th>Totales</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="state.practicas" t-as="p" t-key="p.name">
-                                <tr t-att-class="rowPracticasClass(p)">
-                                    <td t-esc="p.name"/>
-                                    <td class="halign-center" t-esc="fmtHour(p.duracion)"/>
-                                    <td class="halign-center" t-esc="fmtHour(p.total_doblemando)"/>
-                                    <td class="halign-center" t-esc="fmtHour(p.total_pic)"/>
-                                    <td class="halign-center" t-esc="fmtHour(p.total_spic)"/>
-                                    <td class="halign-center" t-esc="fmtHour(p.total_otros)"/>
-                                    <td class="halign-center">
-                                        <t t-set="total" t-value="(p.total_spic || 0) + (p.total_doblemando || 0) + (p.total_pic || 0) + (p.total_otros || 0)"/>
-                                        <t t-esc="fmtHour(total)"/>
-                                    </td>
+            <div class="o_notebook_like">
+                <div class="o_nb_tabs">
+                    <span t-att-class="'o_nb_tab_item ' + ('active' if state.activeTab == 'teoricas' else '')" t-on-click="() => setActiveTab('teoricas')">Teóricas</span>
+                    <span t-att-class="'o_nb_tab_item ' + ('active' if state.activeTab == 'practicas' else '')" t-on-click="() => setActiveTab('practicas')">Prácticas</span>
+                </div>
+                <div t-if="state.activeTab == 'teoricas'">
+                    <div class="o_nb_tab">
+                        <h4>Asignaturas teóricas</h4>
+                        <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Asignaturas</th>
+                                    <th>Tiempo prev.</th>
+                                    <th>Tiempo clase</th>
                                 </tr>
-                            </t>
-                            <tr>
-                                <td>Totales</td>
-                                <t t-set="T" t-value="totalesPracticas()"/>
-                                <td class="halign-center" t-esc="fmtHour(T.duracion)"/>
-                                <td class="halign-center" t-esc="fmtHour(T.total_doblemando)"/>
-                                <td class="halign-center" t-esc="fmtHour(T.total_pic)"/>
-                                <td class="halign-center" t-esc="fmtHour(T.total_spic)"/>
-                                <td class="halign-center" t-esc="fmtHour(T.total_otros)"/>
-                                <td class="halign-center" t-esc="fmtHour(T.total)"/>
-                            </tr>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.teoricas" t-as="t" t-key="t.id">
+                                    <tr t-att-class="rowTeoricasClass(t)">
+                                        <td t-esc="t.id"/>
+                                        <td t-esc="t.name"/>
+                                        <td class="halign-center" t-esc="t.strduracion"/>
+                                        <td class="halign-center" t-esc="t.str_total_real"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div t-if="state.activeTab == 'practicas'">
+                    <div class="o_nb_tab">
+                        <h4>Sesiones prácticas</h4>
+                        <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Sesiones</th>
+                                    <th>Tiempo prev.</th>
+                                    <th>Doble mando</th>
+                                    <th>Pilot in command</th>
+                                    <th>SPIC</th>
+                                    <th>Otros</th>
+                                    <th>Totales</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.practicas" t-as="p" t-key="p.name">
+                                    <tr t-att-class="rowPracticasClass(p)">
+                                        <td t-esc="p.name"/>
+                                        <td class="halign-center" t-esc="fmtHour(p.duracion)"/>
+                                        <td class="halign-center" t-esc="fmtHour(p.total_doblemando)"/>
+                                        <td class="halign-center" t-esc="fmtHour(p.total_pic)"/>
+                                        <td class="halign-center" t-esc="fmtHour(p.total_spic)"/>
+                                        <td class="halign-center" t-esc="fmtHour(p.total_otros)"/>
+                                        <td class="halign-center">
+                                            <t t-set="total" t-value="(p.total_spic || 0) + (p.total_doblemando || 0) + (p.total_pic || 0) + (p.total_otros || 0)"/>
+                                            <t t-esc="fmtHour(total)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td>Totales</td>
+                                    <t t-set="T" t-value="totalesPracticas()"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.duracion)"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.total_doblemando)"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.total_pic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.total_spic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.total_otros)"/>
+                                    <td class="halign-center" t-esc="fmtHour(T.total)"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
