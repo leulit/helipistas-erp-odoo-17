@@ -2,7 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, useEffect} from "@odoo/owl";
 
 function decimalHourToStr(value) {
     let negative = false;
