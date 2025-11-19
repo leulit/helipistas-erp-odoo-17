@@ -46,12 +46,12 @@ class AccountAnalyticLine(models.Model):
         Editing a timesheet related to a finished request is forbidden.
         """
         request_ids = [request_id] if isinstance(request_id, int) else request_id
-        if any(
-            self.env["maintenance.request"].browse(request_ids).stage_id.mapped("done")
-        ):
-            raise ValidationError(
-                _(
-                    "Cannot save or delete a timesheet for "
-                    "a maintenance request already done"
-                )
-            )
+        # if any(
+        #     self.env["maintenance.request"].browse(request_ids).stage_id.mapped("done")
+        # ):
+        #     raise ValidationError(
+        #         _(
+        #             "Cannot save or delete a timesheet for "
+        #             "a maintenance request already done"
+        #         )
+        #     )
