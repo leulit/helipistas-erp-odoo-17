@@ -45,6 +45,7 @@ export class TablaResumenAsignaturas extends Component {
     }
 
     setActiveTab(tab) {
+        console.log('setActiveTab called', { tab, current: this.state.activeTab, stack: new Error().stack });
         if (this.state.activeTab !== tab) {
             this.state.activeTab = tab;
         }
