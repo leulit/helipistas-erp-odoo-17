@@ -9,7 +9,7 @@
                         <th><b>Cursos:</b></th>
                         <th>
                             <select t-att-value="state.cursoId" t-on-change="onCursoChange">
-                                <t t-foreach="state.cursos" t-as="c" t-index="idx" t-key="idx">
+                                <t t-foreach="state.cursos" t-as="c" t-key="c.id">
                                     <option t-att-value="c.id" t-esc="c.name"/>
                                 </t>
                             </select>
@@ -31,18 +31,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="state.teoricas" t-as="it" t-index="idx" t-key="idx">
-                                <tr t-att-class="rowTeoricasClass(it)">
-                                    <td t-esc="it.id"/>
-                                    <td t-esc="it.name"/>
-                                    <td class="halign-center" t-esc="it.strduracion"/>
-                                    <td class="halign-center" t-esc="it.str_total_real"/>
+                            <t t-foreach="state.teoricas" t-as="t" t-key="t.id">
+                                <tr t-att-class="rowTeoricasClass(t)">
+                                    <td t-esc="t.id"/>
+                                    <td t-esc="t.name"/>
+                                    <td class="halign-center" t-esc="t.strduracion"/>
+                                    <td class="halign-center" t-esc="t.str_total_real"/>
                                 </tr>
                             </t>
                         </tbody>
                     </table>
                 </div>
-
+<!-- 
                 <div class="o_nb_tab">
                     <h4>Sesiones prácticas</h4>
                     <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
@@ -58,16 +58,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="state.practicas" t-as="it" t-index="idx" t-key="idx">
-                                <tr t-att-class="rowPracticasClass(it)">
-                                    <td t-esc="it.name"/>
-                                    <td class="halign-center" t-esc="fmtHour(it.duracion)"/>
-                                    <td class="halign-center" t-esc="fmtHour(it.total_doblemando)"/>
-                                    <td class="halign-center" t-esc="fmtHour(it.total_pic)"/>
-                                    <td class="halign-center" t-esc="fmtHour(it.total_spic)"/>
-                                    <td class="halign-center" t-esc="fmtHour(it.total_otros)"/>
+                            <t t-foreach="state.practicas" t-as="p" t-key="p.name">
+                                <tr t-att-class="rowPracticasClass(p)">
+                                    <td t-esc="p.name"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.duracion)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_doblemando)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_pic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_spic)"/>
+                                    <td class="halign-center" t-esc="fmtHour(p.total_otros)"/>
                                     <td class="halign-center">
-                                        <t t-set="total" t-value="(it.total_spic || 0) + (it.total_doblemando || 0) + (it.total_pic || 0) + (it.total_otros || 0)"/>
+                                        <t t-set="total" t-value="(p.total_spic || 0) + (p.total_doblemando || 0) + (p.total_pic || 0) + (p.total_otros || 0)"/>
                                         <t t-esc="fmtHour(total)"/>
                                     </td>
                                 </tr>
@@ -84,7 +84,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> -->
             </div>
         </div>
     </t>
