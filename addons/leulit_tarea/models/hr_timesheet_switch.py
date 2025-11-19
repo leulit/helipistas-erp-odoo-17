@@ -30,6 +30,7 @@ class HrTimesheetSwitch(models.TransientModel):
             "guardia": record.guardia,
             "unit_amount": record.unit_amount,
             "sale_order": record.sale_order.id,
+            "product_uom_id": 4,
         }
 
     def action_switch(self):
