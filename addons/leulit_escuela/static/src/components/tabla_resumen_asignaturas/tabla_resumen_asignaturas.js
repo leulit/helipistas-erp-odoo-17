@@ -86,12 +86,22 @@ export class TablaResumenAsignaturas extends Component {
     }
 
     // helpers de plantilla
-    rowTeoricasClass(it) {
-        return it.duracion > it.total_real ? "redbackg" : "";
+    rowTeoricasClass(t) {
+        if (t.total_real < t.duracion) {
+            return "redbackg";
+        } else if (t.total_real >= t.duracion) {
+            return "greenbackg";
+        }
+        return "";
     }
     rowPracticasClass(it) {
         const total = (it.total_spic || 0) + (it.total_doblemando || 0) + (it.total_pic || 0) + (it.total_otros || 0);
-        return (it.duracion || 0) > total ? "redbackg" : "";
+        if (total < (it.duracion || 0)) {
+            return "redbackg";
+        } else if (total >= (it.duracion || 0)) {
+            return "greenbackg";
+        }
+        return "";
     }
     fmtHour(v) {
         return v > 0 ? decimalHourToStr(v) : "";

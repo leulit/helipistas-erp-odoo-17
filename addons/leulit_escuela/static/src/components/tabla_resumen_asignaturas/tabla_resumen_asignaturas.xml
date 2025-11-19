@@ -32,7 +32,6 @@
                         <table id="tabla_resumen_teoricas" class="minimalistBlack table table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Asignaturas</th>
                                     <th>Tiempo prev.</th>
                                     <th>Tiempo clase</th>
@@ -41,7 +40,6 @@
                             <tbody>
                                 <t t-foreach="state.teoricas" t-as="t" t-key="t.id">
                                     <tr t-att-class="rowTeoricasClass(t)">
-                                        <td t-esc="t.id"/>
                                         <td t-esc="t.name"/>
                                         <td class="halign-center" t-esc="t.strduracion"/>
                                         <td class="halign-center" t-esc="t.str_total_real"/>

@@ -56,6 +56,16 @@
     background: #f6f8fa;
 }
 
+.redbackg {
+    background: #ffeaea !important;
+    color: #c0392b !important;
+}
+
+.greenbackg {
+    background: #eaffea !important;
+    color: #207d3a !important;
+}
+
 .halign-center {
     text-align: center;
 }
