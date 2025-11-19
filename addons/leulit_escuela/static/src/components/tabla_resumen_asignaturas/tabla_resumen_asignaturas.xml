@@ -79,9 +79,9 @@
                                         </td>
                                     </tr>
                                 </t>
-                                <tr>
+                                <t t-set="T" t-value="totalesPracticas()"/>
+                                <tr t-att-class="rowPracticasClass(T)">
                                     <td>Totales</td>
-                                    <t t-set="T" t-value="totalesPracticas()"/>
                                     <td class="halign-center" t-esc="fmtHour(T.duracion)"/>
                                     <td class="halign-center" t-esc="fmtHour(T.total_doblemando)"/>
                                     <td class="halign-center" t-esc="fmtHour(T.total_pic)"/>
