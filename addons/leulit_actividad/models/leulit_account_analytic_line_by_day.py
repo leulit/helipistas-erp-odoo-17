@@ -26,15 +26,13 @@ class LeulitAccounAnalyticLineByDay(models.Model):
     def _compute_horas_facturables(self):
         for item in self:
             item.horas_facturables =  8.0 if item.horas_imputadas > 8 else item.horas_imputadas
-            if item.ruta:
+            if item.ruta or item.guardia:
                 # temporada alta (Mayo, Junio, Julio, Agosto y septiembre)
                 if 5 <= item.fecha.month <= 9:
                     item.horas_facturables =  11.0 if item.horas_imputadas > 11 else item.horas_imputadas
                 # temporada baja (el resto de meses)
                 else:
                     item.horas_facturables =  8.0 if item.horas_imputadas > 8 else item.horas_imputadas
-            if item.guardia:
-                item.horas_facturables =  11.0 if item.horas_imputadas > 11 else item.horas_imputadas
 
     @api.depends('account_analytic_lines','account_analytic_lines.write_date','write_date')
     def _compute_total_horas_imputadas(self):
