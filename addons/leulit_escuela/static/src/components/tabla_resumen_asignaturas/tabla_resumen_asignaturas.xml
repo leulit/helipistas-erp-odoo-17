@@ -42,7 +42,7 @@
                         </tbody>
                     </table>
                 </div>
-<!-- 
+
                 <div class="o_nb_tab">
                     <h4>Sesiones prácticas</h4>
                     <table id="tabla_resumen_practicas" class="minimalistBlack table table-hover">
@@ -84,7 +84,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div> -->
+                </div>
             </div>
         </div>
     </t>

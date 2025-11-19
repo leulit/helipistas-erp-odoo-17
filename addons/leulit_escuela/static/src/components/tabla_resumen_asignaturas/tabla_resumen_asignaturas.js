@@ -46,7 +46,8 @@ export class TablaResumenAsignaturas extends Component {
             args: [[this.state.alumnoId]],
             kwargs: {},
         });
-        this.state.cursos = res || [];
+        // Convierte a array si el backend devuelve objeto
+        this.state.cursos = Array.isArray(res) ? res : Object.values(res || {});
         this.state.cursoId = this.state.cursos.length ? this.state.cursos[0].id : null;
     }
 
@@ -62,8 +63,9 @@ export class TablaResumenAsignaturas extends Component {
             args: [this.state.alumnoId, this.state.cursoId, "teorica"],
             kwargs: {},
         });
-        this.state.teoricas = r?.teoricas || [];
-        this.state.practicas = r?.practicas || [];
+        // Convierte a array si el backend devuelve objeto
+        this.state.teoricas = Array.isArray(r?.teoricas) ? r.teoricas : Object.values(r?.teoricas || {});
+        this.state.practicas = Array.isArray(r?.practicas) ? r.practicas : Object.values(r?.practicas || {});
     }
 
     onCursoChange(ev) {
