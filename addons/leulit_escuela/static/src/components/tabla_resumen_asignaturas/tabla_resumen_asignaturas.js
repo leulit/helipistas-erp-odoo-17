@@ -45,7 +45,9 @@ export class TablaResumenAsignaturas extends Component {
     }
 
     setActiveTab(tab) {
-        this.state.activeTab = tab;
+        if (this.state.activeTab !== tab) {
+            this.state.activeTab = tab;
+        }
     }
 
     async _loadCursos() {
