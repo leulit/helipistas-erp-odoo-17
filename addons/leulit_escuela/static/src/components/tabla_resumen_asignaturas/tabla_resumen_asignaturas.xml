@@ -21,8 +21,10 @@
 
             <div class="o_notebook_like">
                 <div class="o_nb_tabs">
-                    <span t-att-class="'o_nb_tab_item ' + (state.activeTab == 'teoricas' ? 'active' : '')" t-on-click="setActiveTab('teoricas')">Teóricas</span>
-                    <span t-att-class="'o_nb_tab_item ' + (state.activeTab == 'practicas' ? 'active' : '')" t-on-click="setActiveTab('practicas')">Prácticas</span>
+              <span t-att-class="'o_nb_tab_item ' + (state.activeTab == 'teoricas' ? 'active' : '')"
+                  t-on-click="state.activeTab !== 'teoricas' ? setActiveTab('teoricas') : null">Teóricas</span>
+              <span t-att-class="'o_nb_tab_item ' + (state.activeTab == 'practicas' ? 'active' : '')"
+                  t-on-click="state.activeTab !== 'practicas' ? setActiveTab('practicas') : null">Prácticas</span>
                 </div>
                 <div t-if="state.activeTab == 'teoricas'">
                     <div class="o_nb_tab">
