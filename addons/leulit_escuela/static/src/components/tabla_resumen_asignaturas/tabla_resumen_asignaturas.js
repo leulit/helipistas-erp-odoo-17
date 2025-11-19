@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart } from "@odoo/owl";
+import { sprintf } from "@web/core/utils/strings";
 
 function decimalHourToStr(value) {
     let pattern = "%02d:%02d";
