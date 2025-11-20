@@ -385,11 +385,7 @@ class ProjectTask(models.Model):
         # display all subtasks of current task
         action['domain'] = [('parent_id', '=', self.id)]
 
-        # update context, with all default values as 'quick_create' does not contains all field in its view
-        if self._context.get('default_project_id'):
-            default_project = self.env['project.project'].browse(self.env.context['default_project_id'])
-        else:
-            default_project = self.project_id.subtask_project_id or self.project_id
+        default_project = self.project_id
         ctx = dict(self.env.context)
         ctx = {k: v for k, v in ctx.items() if not k.startswith('search_default_')}
         ctx.update({
