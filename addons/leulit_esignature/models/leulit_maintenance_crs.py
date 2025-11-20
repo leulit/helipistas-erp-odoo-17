@@ -135,7 +135,7 @@ class LeulitMaintenanceCRS(models.Model):
                 'hashcode_interno' : False,
                 'hashcode' : hashcode,
                 'firmado_por' : firmado_por,
-                'logo_ica' : icarus_company.logo_reports if icarus_company.logo_reports else False,
+                'logo_ica' : icarus_company.logo_reports.decode() if icarus_company.logo_reports else False,
                 'num_pages' : len(crslist)
             }
             report = self.env.ref('leulit_taller.leulit_20230707_1128_report')
