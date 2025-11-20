@@ -38,9 +38,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                 for item_jc in items:
                     sub_tarea = self.env['project.task'].with_context(
                         tracking_disable=True,
-                        mail_create_nolog=True,
-                        mail_create_nosubscribe=True,
-                        mail_notrack=True
+                        mail_create_no_notify=True,
                     ).create({
                         'name' : item_jc.descripcion,
                         'company_id' : company.id,
@@ -85,9 +83,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
             for task in item.tasks:
                 tarea = self.env['project.task'].with_context(
                     tracking_disable=True,
-                    mail_create_nolog=True,
-                    mail_create_nosubscribe=True,
-                    mail_notrack=True
+                    mail_create_no_notify=True,
                 ).create({
                     'name' : task.descripcion,
                     'description' : task.tarea_preventiva_id.referencia,
@@ -109,9 +105,7 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                         for section in task.job_card_id.sections_ids:
                             section_tarea = self.env['project.task'].with_context(
                                 tracking_disable=True,
-                                mail_create_nolog=True,
-                                mail_create_nosubscribe=True,
-                                mail_notrack=True
+                                mail_create_no_notify=True,
                             ).create({
                                 'name' : section.descripcion,
                                 'company_id' : company.id,

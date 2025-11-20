@@ -212,9 +212,7 @@ class ProjectTask(models.Model):
             for item in self.job_card_id.job_card_item_ids:
                 task_1 = self.with_context(
                     tracking_disable=True,
-                    mail_create_nolog=True,
-                    mail_create_nosubscribe=True,
-                    mail_notrack=True
+                    mail_create_no_notify=True,
                 ).create({
                     'parent_id' : self.id,
                     'name' : item.descripcion,
@@ -243,9 +241,7 @@ class ProjectTask(models.Model):
             for section in self.job_card_id.sections_ids:
                 section_task = self.with_context(
                     tracking_disable=True,
-                    mail_create_nolog=True,
-                    mail_create_nosubscribe=True,
-                    mail_notrack=True
+                    mail_create_no_notify=True,
                 ).create({
                     'parent_id' : self.id,
                     'name' : section.descripcion,
@@ -258,10 +254,8 @@ class ProjectTask(models.Model):
                 })
                 for item in section.job_card_item_ids:
                     task_2 = self.with_context(
-                        tracking_disable=True,
-                        mail_create_nolog=True,
-                        mail_create_nosubscribe=True,
-                        mail_notrack=True
+                    tracking_disable=True,
+                    mail_create_no_notify=True,
                     ).create({
                         'parent_id' : section_task.id,
                         'name' : item.descripcion,
@@ -293,6 +287,8 @@ class ProjectTask(models.Model):
         res = super().write(vals)
         job_card_id_after = self.job_card_id.id if self.job_card_id else False
         if job_card_id_before != job_card_id_after and job_card_id_after:
+            # Eliminar subtareas existentes antes de crear nuevas
+            self.child_ids.unlink()
             self._create_subtasks_from_job_card()
         return res
     
