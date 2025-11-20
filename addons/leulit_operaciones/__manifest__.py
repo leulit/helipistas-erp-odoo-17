@@ -60,6 +60,7 @@
             'leulit_operaciones/static/src/js/pag_cargada.js',
             'leulit_operaciones/static/src/xml/weight_and_balance.xml',
             'leulit_operaciones/static/src/xml/parte_vuelo_buttons.xml',
+            'leulit_operaciones/static/src/js/one2many_m2o_patch.js',
         ],
     },
     "installable": True,
