@@ -199,13 +199,16 @@ class ProjectTask(models.Model):
 
     @api.onchange('job_card_id')
     def onchange_job_card(self):
-        tag_id = self.env['project.tags'].search([('name','=','Tareas de mantenimiento')])
-        company = self.env['res.company'].search([('name','ilike','Icarus')])
         if self.job_card_id:
             if not self.external_aircraft:
                 if not self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
                     raise UserError("El equipamiento de la Job Card no coincide con el equipamiento de la tarea.")
             self.name = self.job_card_id.descripcion
+
+    def _create_subtasks_from_job_card(self):
+        tag_id = self.env['project.tags'].search([('name','=','Tareas de mantenimiento')])
+        company = self.env['res.company'].search([('name','ilike','Icarus')])
+        if self.job_card_id:
             for item in self.job_card_id.job_card_item_ids:
                 task_1 = self.with_context(
                     tracking_disable=True,
@@ -284,6 +287,14 @@ class ProjectTask(models.Model):
                         task_2.write({
                             'maintenance_equipment_id': self.maintenance_equipment_id.id if self.maintenance_equipment_id else False,
                         })
+
+    def write(self, vals):
+        job_card_id_before = self.job_card_id.id if self.job_card_id else False
+        res = super().write(vals)
+        job_card_id_after = self.job_card_id.id if self.job_card_id else False
+        if job_card_id_before != job_card_id_after and job_card_id_after:
+            self._create_subtasks_from_job_card()
+        return res
 
 
     @api.onchange('service_bulletin_id')
