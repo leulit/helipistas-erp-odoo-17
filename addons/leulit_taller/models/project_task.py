@@ -295,6 +295,12 @@ class ProjectTask(models.Model):
         if job_card_id_before != job_card_id_after and job_card_id_after:
             self._create_subtasks_from_job_card()
         return res
+    
+    def create(self, vals):
+        record = super().create(vals)
+        if vals.get('job_card_id'):
+            record._create_subtasks_from_job_card()
+        return record
 
 
     @api.onchange('service_bulletin_id')
