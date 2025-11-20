@@ -229,10 +229,14 @@ class ProjectTask(models.Model):
                 })
                 if not self.external_aircraft:
                     if self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
-                        task_1.maintenance_equipment_id = item.equipamiento_id.id if self.maintenance_planned_activity_id else False
-                        task_1.production_lot_id = item.equipamiento_id.production_lot.id if self.maintenance_planned_activity_id else False
+                        task_1.write({
+                            'maintenance_equipment_id': item.equipamiento_id.id if self.maintenance_planned_activity_id else False,
+                            'production_lot_id': item.equipamiento_id.production_lot.id if self.maintenance_planned_activity_id else False,
+                        })
                 else:
-                    task_1.maintenance_equipment_id = self.maintenance_equipment_id
+                    task_1.write({
+                        'maintenance_equipment_id': self.maintenance_equipment_id.id if self.maintenance_equipment_id else False,
+                    })
             for section in self.job_card_id.sections_ids:
                 section_task = self.with_context(
                     tracking_disable=True,
@@ -272,10 +276,14 @@ class ProjectTask(models.Model):
                     })
                     if not self.external_aircraft:
                         if self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
-                            task_2.maintenance_equipment_id = item.equipamiento_id.id if self.maintenance_planned_activity_id else False
-                            task_2.production_lot_id = item.equipamiento_id.production_lot.id if self.maintenance_planned_activity_id else False
+                            task_2.write({
+                                'maintenance_equipment_id': item.equipamiento_id.id if self.maintenance_planned_activity_id else False,
+                                'production_lot_id': item.equipamiento_id.production_lot.id if self.maintenance_planned_activity_id else False,
+                            })
                     else:
-                        task_2.maintenance_equipment_id = self.maintenance_equipment_id
+                        task_2.write({
+                            'maintenance_equipment_id': self.maintenance_equipment_id.id if self.maintenance_equipment_id else False,
+                        })
 
 
     @api.onchange('service_bulletin_id')
