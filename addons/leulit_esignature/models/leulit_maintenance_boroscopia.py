@@ -30,7 +30,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
     
 
     def set_estado_borrador(self):
-        super(LeulitMaintenanceCRS, self).set_estado_borrador()
+        super(LeulitMaintenanceBoroscopia, self).set_estado_borrador()
         docs = self.env['leulit_signaturedoc'].search([('modelo','=','leulit.maintenance_boroscopia'),('idmodelo','=',self.id)])
         docs.unlink()
 
@@ -132,13 +132,15 @@ class LeulitMaintenanceBoroscopia(models.Model):
                 'hashcode_interno' : False,
                 'hashcode' : hashcode,
                 'firmado_por' : firmado_por,
-                'logo_ica' : icarus_company.logo_reports if icarus_company.logo_reports else False,
+                'logo_ica' : icarus_company.logo_reports.decode() if icarus_company.logo_reports else False,
                 'num_pages' : len(boroscopialist)
             }
-            pdf = self.env.ref('leulit_taller.leulit_20240214_0956_report')._render_qweb_pdf([],data=data)[0]
-            report = base64.encodestring(pdf)
+            report = self.env.ref('leulit_taller.leulit_20240214_0956_report')
+            pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]
+            report = base64.b64encode(pdf)
             datos.update({'report': report})
             return datos
+            
 
     def firmar_boroscopias(self, fecha):
         _logger.error("################### firmar_boroscopias ")

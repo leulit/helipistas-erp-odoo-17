@@ -129,14 +129,15 @@ class LeulitMaintenanceFormOne(models.Model):
             data = {
                 'formonelist' : formonelist,
                 'watermark' : company_145.watermark.decode() if company_145.watermark else False,
-                'logo' : company_145.logo_reports if company_145.logo_reports else False,
+                'logo' : company_145.logo_reports.decode() if company_145.logo_reports else False,
                 'num_pages' : len(formonelist),
                 'hashcode_interno' : False,
                 'hashcode' : hashcode,
                 'firmado_por' : firmado_por,
             }
-            pdf = self.env.ref('leulit_taller.leulit_20230706_1118_report')._render_qweb_pdf([],data=data)[0]
-            report = base64.encodestring(pdf)
+            report = self.env.ref('leulit_taller.leulit_20230706_1118_report')
+            pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]
+            report = base64.b64encode(pdf)
             datos.update({'report': report})
             return datos
 
