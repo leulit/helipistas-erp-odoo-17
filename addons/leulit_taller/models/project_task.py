@@ -217,6 +217,7 @@ class ProjectTask(models.Model):
                     'parent_id' : self.id,
                     'name' : item.descripcion,
                     'solucion_defecto' : item.solucion,
+                    'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
                     'type_maintenance' : item.type_maintenance,
                     'ata_ids' : [(6, 0, item.ata_ids.ids)],
                     'certificacion_ids' : [(6, 0, item.certificacion_ids.ids)],
@@ -245,9 +246,9 @@ class ProjectTask(models.Model):
                 ).create({
                     'parent_id' : self.id,
                     'name' : section.descripcion,
+                    'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
                     'tag_ids': [(6, 0, tag_id.ids)],
                     'company_id' : company.id,
-                    'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
                     'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                     'maintenance_request_id' : self.maintenance_request_id.id,
                     'tipo_tarea_taller': 'tarea'
@@ -260,6 +261,7 @@ class ProjectTask(models.Model):
                         'parent_id' : section_task.id,
                         'name' : item.descripcion,
                         'solucion_defecto' : item.solucion,
+                        'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
                         'type_maintenance' : item.type_maintenance,
                         'ata_ids' : [(6, 0, item.ata_ids.ids)],
                         'certificacion_ids' : [(6, 0, item.certificacion_ids.ids)],
