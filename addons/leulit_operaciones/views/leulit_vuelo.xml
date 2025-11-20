@@ -196,7 +196,7 @@
                                 <div class="card p-2 d-none d-sm-block" style="width: 50%">
                                     <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
                                         <tree string="Tipos de vuelo" editable="bottom">
-                                            <field name="vuelo_tipo_id" string="Tipo Vuelo"/>
+                                            <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
                                     </field>
                                 </div>
@@ -204,7 +204,7 @@
                                 <div class="card p-2 d-block d-sm-none" style="width: 100%">
                                     <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
                                         <tree string="Tipos de vuelo" editable="bottom">
-                                            <field name="vuelo_tipo_id" string="Tipo Vuelo"/>
+                                            <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
                                     </field>
                                 </div>
@@ -955,7 +955,7 @@
                             <div class="card p-2" style="width: 60%">
                                 <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
                                     <tree string="Tipos de vuelo" editable="bottom">
-                                        <field name="vuelo_tipo_id" string="Tipo Vuelo"/>
+                                        <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                     </tree>
                                 </field>
                             </div>
