@@ -138,8 +138,9 @@ class LeulitMaintenanceCRS(models.Model):
                 'logo_ica' : icarus_company.logo_reports if icarus_company.logo_reports else False,
                 'num_pages' : len(crslist)
             }
-            pdf = self.env.ref('leulit_taller.leulit_20230707_1128_report')._render_qweb_pdf([],data=data)[0]
-            report = base64.encodestring(pdf)
+            report = self.env.ref('leulit_taller.leulit_20230707_1128_report')
+            pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]
+            report = base64.b64encode(pdf)
             datos.update({'report': report})
             return datos
 
