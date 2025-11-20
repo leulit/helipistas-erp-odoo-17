@@ -217,13 +217,13 @@ class ProjectTask(models.Model):
                     'name' : item.descripcion,
                     'solucion_defecto' : item.solucion,
                     'type_maintenance' : item.type_maintenance,
-                    'ata_ids' : item.ata_ids.ids,
-                    'certificacion_ids' : item.certificacion_ids.ids,
-                    'tipos_actividad' : item.tipos_actividad.ids,
-                    'manuales_ids' : item.manual_id.ids,
-                    'tag_ids': tag_id.ids,
+                    'ata_ids' : [(6, 0, item.ata_ids.ids)],
+                    'certificacion_ids' : [(6, 0, item.certificacion_ids.ids)],
+                    'tipos_actividad' : [(6, 0, item.tipos_actividad.ids)],
+                    'manuales_ids' : [(6, 0, item.manual_id.ids)],
+                    'tag_ids': [(6, 0, tag_id.ids)],
                     'company_id' : company.id,
-                    'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
+                    'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                     'maintenance_request_id' : self.maintenance_request_id.id,
                     'tipo_tarea_taller': 'tarea'
                 })
@@ -242,10 +242,10 @@ class ProjectTask(models.Model):
                 ).create({
                     'parent_id' : self.id,
                     'name' : section.descripcion,
-                    'tag_ids': tag_id.ids,
+                    'tag_ids': [(6, 0, tag_id.ids)],
                     'company_id' : company.id,
                     'project_id' : int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project')),
-                    'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
+                    'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                     'maintenance_request_id' : self.maintenance_request_id.id,
                     'tipo_tarea_taller': 'tarea'
                 })
@@ -260,13 +260,13 @@ class ProjectTask(models.Model):
                         'name' : item.descripcion,
                         'solucion_defecto' : item.solucion,
                         'type_maintenance' : item.type_maintenance,
-                        'ata_ids' : item.ata_ids.ids,
-                        'certificacion_ids' : item.certificacion_ids.ids,
-                        'tipos_actividad' : item.tipos_actividad.ids,
-                        'manuales_ids' : item.manual_id.ids,
-                        'tag_ids': tag_id.ids,
+                        'ata_ids' : [(6, 0, item.ata_ids.ids)],
+                        'certificacion_ids' : [(6, 0, item.certificacion_ids.ids)],
+                        'tipos_actividad' : [(6, 0, item.tipos_actividad.ids)],
+                        'manuales_ids' : [(6, 0, item.manual_id.ids)],
+                        'tag_ids': [(6, 0, tag_id.ids)],
                         'company_id' : company.id,
-                        'user_ids' : self.env['res.users'].search([('name','=','Albert Petanas')]).ids,
+                        'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                         'maintenance_request_id' : self.maintenance_request_id.id,
                         'tipo_tarea_taller': 'tarea'
                     })
@@ -276,7 +276,6 @@ class ProjectTask(models.Model):
                             task_2.production_lot_id = item.equipamiento_id.production_lot.id if self.maintenance_planned_activity_id else False
                     else:
                         task_2.maintenance_equipment_id = self.maintenance_equipment_id
-
 
 
     @api.onchange('service_bulletin_id')
