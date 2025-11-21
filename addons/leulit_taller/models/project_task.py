@@ -88,7 +88,7 @@ class ProjectTask(models.Model):
                                         'name': '['+self.maintenance_request_id.name+']-'+self.name,
                                         'unit_amount': self.item_job_card_id.tiempo_defecto,
                                         'project_id': self.project_id.id,
-                                        'task_id': self.id,
+                                        'task_id': self._origin.id,
                                         'maintenance_request_id': self.maintenance_request_id.id,
                                     })
                         if self.item_job_card_id.oblig_form_one:
