@@ -116,7 +116,7 @@ class ProjectTask(models.Model):
                         if length == len(self.parent_id.child_ids):
                             self.parent_id.user_ids = [(6, 0, self.user_ids.ids)]
                             stage_id = self.env['project.task.type'].search([('project_ids','in',[self.project_id.id]),('name','=','Realizada')])
-                            self.parent_id.stage_id = stage_id
+                            self.parent_id.write({'stage_id': stage_id.id})
                     for child in self.child_ids:
                         if child.stage_id.name not in ['Realizada','N/A']:
                             raise UserError("Esta tarea tiene subtareas sin realizar.")
