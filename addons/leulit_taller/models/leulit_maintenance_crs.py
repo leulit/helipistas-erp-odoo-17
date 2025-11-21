@@ -173,7 +173,7 @@ class LeulitMaintenanceCRS(models.Model):
                 'fecha': item.fecha,
                 'firma': item.certificador.firma,
                 'sello': item.certificador.sello,
-                }
+            }
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             crslist.append(crs)

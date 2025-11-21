@@ -1168,18 +1168,17 @@ class MaintenanceRequest(models.Model):
 
             # Combinar PDFs y guardar
             try:
-                combined_pdf = self.merge_pdfs(pdf_list)
-                self.expediente_mantenimiento = base64.b64encode(combined_pdf.getvalue())
+                self.expediente_mantenimiento = base64.b64encode(self.merge_pdfs(pdf_list).getvalue())
                 self.combined_pdf_filename = f"Expediente de Mantenimiento {self.name}.pdf"
                 
                 self.env.cr.commit()
-
+    
                 return {
                     'type': 'ir.actions.act_url',
-                    'url': f"web/content/?model=maintenance.request&id={self.id}"
-                        f"&filename_field=combined_pdf_filename&field=expediente_mantenimiento&download=true",
+                    'url': "web/content/?model=maintenance.request&id=" + str(self.id) + "&filename_field=combined_pdf_filename&field=expediente_mantenimiento&download=true",
                     'target': 'self'
                 }
+
             except Exception as e:
                 _logger.exception("Error al combinar PDFs")
                 raise UserError(f"Error al generar el expediente completo: {str(e)}")

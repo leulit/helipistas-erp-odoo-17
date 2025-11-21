@@ -147,7 +147,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
                 'firma': item.mecanico.firma,
                 'sello': item.mecanico.sello,
                 'herramientas': herramientas,
-                }
+            }
             docref = datetime.now().strftime("%Y%m%d")
             hashcode_interno = utilitylib.getHashOfData(docref)
             boroscopialist.append(boroscopia)
@@ -156,7 +156,7 @@ class LeulitMaintenanceBoroscopia(models.Model):
             'hashcode_interno' : hashcode_interno,
             'hashcode' : False,
             'firmado_por' : False,
-            'logo_ica' : icarus_company.logo_reports if icarus_company.logo_reports else False,
+            'logo_ica' : icarus_company.logo_reports.decode() if icarus_company.logo_reports else False,
             'num_pages' : len(boroscopialist)
         }
         return data
