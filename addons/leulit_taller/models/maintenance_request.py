@@ -1057,7 +1057,7 @@ class MaintenanceRequest(models.Model):
                         'dpi': '300',
                         '--header-spacing': '5',
                     }
-                    pdf = report.with_context(pdf_options=pdf_options)._render_qweb_pdf(self, data=local_data)[0]
+                    pdf = self.env['ir.actions.report'].with_context(pdf_options=pdf_options)._render_qweb_pdf(report, self, data=local_data)[0]
                     return pdf
                 except Exception as e:
                     _logger.error(f"Error generando {report_name}: {str(e)}")
