@@ -106,6 +106,14 @@
             sequence="30"
             groups="RPlanificacion_manager"
         />
+        <menuitem 
+            id="leulit_20251121_1446_menuitem"
+            name="Tipos de Reunión"
+            parent="leulit_20200827_1515_menuitem"
+            action="leulit_20251121_1446_action"
+            sequence="40"
+            groups="RPlanificacion_manager"
+        />
 
 
         <menuitem 
