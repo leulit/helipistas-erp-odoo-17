@@ -148,8 +148,9 @@
                 </t>
                 <t t-call="leulit_taller.log_cards_inspection_report_css"/>
                 <div class="row">
-                    <t t-if="all_tareas and all_tareas|length > 0">
-                        <t t-foreach="all_tareas" t-as="tarea">
+                    <t t-set="tareas" t-value="all_tareas or []"/>
+                    <t t-if="tareas and (tareas|length > 0)">
+                        <t t-foreach="tareas" t-as="tarea">
                             <table class="fullwidth">
                                 <tr>
                                     <td class="centertext tdcolored" style="width: 70%;">Tarea</td>
