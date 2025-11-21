@@ -123,7 +123,7 @@
                 <t t-set="data_report_margin_top" t-value="30"/>
                 <div class="page">
                     <t t-call="leulit_taller.tareas_sensibles_seguridad_report_css"/>
-                    <t t-call="leulit_taller.tareas_sensibles_seguridad_report_header" />
+                    <t t-call="leulit_taller.tareas_sensibles_seguridad_report_header"/>
                     <div class="row">
                         <table class="fullwidth" style="margin-bottom:50px;">
                             <tr>

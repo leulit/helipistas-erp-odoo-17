@@ -535,7 +535,6 @@ class MaintenanceRequest(models.Model):
     def print_tareas_sensibles_seguridad(self):
         if self.checklist_tss:
             data = self._get_data_to_print_tareas_sensibles_seguridad()
-            _logger.error('DATA REPORT TSS: %s', data)
             return self.env.ref('leulit_taller.leulit_20230927_1958_report').report_action(self, data=data)
         else:
             raise UserError('Debe seleccionar almenos la plantilla de Tareas Sensibles para la Seguridad.')
@@ -651,7 +650,8 @@ class MaintenanceRequest(models.Model):
         self.env.companies = self.env['res.company'].search([('name','in',['Icarus Manteniment S.L.','Helipistas S.L.'])])
         items = self.env['stock.move.line'].search([('maintenance_request_id','=',self.id),('is_instalacion','=',True),('state','=','done')])
         data = self._get_data_to_print_material(items)
-        pdf = self.env.ref('leulit_taller.leulit_20230118_1037_report')._render_qweb_pdf(self, data=data)[0]
+        report = self.env.ref('leulit_taller.leulit_20230118_1037_report')
+        pdf = self.env['ir.actions.report']._render_qweb_pdf(report, self, data=data)[0]
         self.encoded_pdf = base64.b64encode(pdf)
         self.filename = "{0}.pdf".format('Material Utilizado'+self.name)
 
