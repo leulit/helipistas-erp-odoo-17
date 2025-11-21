@@ -196,10 +196,10 @@ class ComprobacionParteEscuelaHandler(vuelo.AbstractHandler):
                         raise UserError ('VUELO SPIC: El piloto y el verificado deben ser diferentes.')
                 if sil.rel_silabus.doblemando:
                     doblemando = True
-                    if not vuelo.piloto_id or not vuelo.alumno or vuelo.operador or not vuelo.piloto_supervisor_id or vuelo.verificado:
-                        raise UserError ('VUELO DOBLE MANDO: En el parte de vuelo debe tener un piloto(Alumno), un Alumno(Alumno) y un piloto supervisor(Instructor).')
-                    if vuelo.piloto_id.id != vuelo.alumno.piloto_id.id:
-                        raise UserError ('VUELO DOBLE MANDO: El piloto y el alumno deben ser el mismo.')
+                    if not vuelo.piloto_id or not vuelo.alumno or vuelo.operador or vuelo.piloto_supervisor_id or vuelo.verificado:
+                        raise UserError ('VUELO DOBLE MANDO: En el parte de vuelo debe tener un piloto(Instructor) y un Alumno(Alumno).')
+                    if vuelo.piloto_id.id == vuelo.alumno.piloto_id.id:
+                        raise UserError ('VUELO DOBLE MANDO: El piloto y el alumno deben ser diferentes.')
 
         return super().handle(request)
 
