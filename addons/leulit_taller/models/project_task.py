@@ -112,7 +112,7 @@ class ProjectTask(models.Model):
                         _logger.error("Hijos %r", self.parent_id.child_ids)
                         length = 1
                         for child in self.parent_id.child_ids:
-                            if child.id != self.id:
+                            if child.id != self._origin.id:
                                 if child.stage_id.name not in ['En proceso','Pendiente']:
                                     length += 1
                         _logger.error("Len Hijos %r", len(self.parent_id.child_ids))
