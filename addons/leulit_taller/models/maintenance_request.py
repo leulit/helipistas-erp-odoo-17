@@ -535,6 +535,7 @@ class MaintenanceRequest(models.Model):
     def print_tareas_sensibles_seguridad(self):
         if self.checklist_tss:
             data = self._get_data_to_print_tareas_sensibles_seguridad()
+            _logger.error('DATA REPORT TSS: %s', data)
             return self.env.ref('leulit_taller.leulit_20230927_1958_report').report_action(self, data=data)
         else:
             raise UserError('Debe seleccionar almenos la plantilla de Tareas Sensibles para la Seguridad.')
@@ -848,10 +849,10 @@ class MaintenanceRequest(models.Model):
 
         data={
             'plan_mantenimiento':self.maintenance_plan_id.name if self.maintenance_plan_id else self.referencia_programa_mantenimiento,
-            'logo_hlp':self.company_id.logo_reports if self.company_id.name == 'Helipistas S.L.' else False,
-            'logo_ica':self.company_id.logo_reports if self.company_id.name == 'Icarus Manteniment S.L.' else False,
+            'logo_hlp':self.company_id.logo_reports.decode() if self.company_id.name == 'Helipistas S.L.' else False,
+            'logo_ica':self.company_id.logo_reports.decode() if self.company_id.name == 'Icarus Manteniment S.L.' else False,
             'name':self.name,
-            'logo_p145':company_p145.logo_reports if company_p145.logo_reports else False,
+            'logo_p145':company_p145.logo_reports.decode() if company_p145.logo_reports else False,
             'name_user':self.create_uid.name,
             'fecha_emision':self.request_date,
             'fecha_aceptacion':self.fecha_aceptacion.date() if self.fecha_aceptacion else False,
