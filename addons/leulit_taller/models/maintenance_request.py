@@ -1037,38 +1037,28 @@ class MaintenanceRequest(models.Model):
             # Modificar la función principal para usar estas nuevas funciones
             def generate_pdf_safely(report_ref, report_name, data_dict, is_continuation=False, chunk_index=None, total_chunks=None):
                 try:
-                    with api.Environment.manage():
-                        with self.pool.cursor() as new_cr:
-                            new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-                            report = new_env.ref(report_ref)
-                            
-                            local_data = dict(data_dict)
-                            if is_continuation:
-                                local_data.update({
-                                    'is_continuation': True,
-                                    'chunk_index': chunk_index,
-                                    'total_chunks': total_chunks,
-                                    'current_page': chunk_index + 1,
-                                    'total_pages': total_chunks
-                                })
-                            
-                            pdf_options = {
-                                'margin-top': '25mm',
-                                'margin-bottom': '20mm',
-                                'margin-left': '15mm',
-                                'margin-right': '15mm',
-                                'encoding': 'utf-8',
-                                'page-size': 'A4',
-                                'dpi': '300',
-                                '--header-spacing': '5',
-                            }
-                            
-                            pdf = report.with_context(
-                                force_report_rendering=True,
-                                pdf_options=pdf_options
-                            )._render_qweb_pdf(self.with_env(new_env), data=local_data)[0]
-                            
-                            return pdf
+                    report = self.env.ref(report_ref)
+                    local_data = dict(data_dict)
+                    if is_continuation:
+                        local_data.update({
+                            'is_continuation': True,
+                            'chunk_index': chunk_index,
+                            'total_chunks': total_chunks,
+                            'current_page': chunk_index + 1,
+                            'total_pages': total_chunks
+                        })
+                    pdf_options = {
+                        'margin-top': '25mm',
+                        'margin-bottom': '20mm',
+                        'margin-left': '15mm',
+                        'margin-right': '15mm',
+                        'encoding': 'utf-8',
+                        'page-size': 'A4',
+                        'dpi': '300',
+                        '--header-spacing': '5',
+                    }
+                    pdf = report.with_context(pdf_options=pdf_options)._render_qweb_pdf(self, data=local_data)[0]
+                    return pdf
                 except Exception as e:
                     _logger.error(f"Error generando {report_name}: {str(e)}")
                     return None
