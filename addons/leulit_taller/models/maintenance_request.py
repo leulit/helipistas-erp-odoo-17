@@ -885,6 +885,7 @@ class MaintenanceRequest(models.Model):
             }
         return data
     
+
     def _get_data_to_print_log_cards_inspections(self):
         tareas = []
         for task in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False),('tipo_tarea_taller','!=','defecto_encontrado')], order="id asc"):
@@ -901,13 +902,13 @@ class MaintenanceRequest(models.Model):
                 'name' : task.name,
                 'realizado_por' : task.user_ids.name if task.stage_id.name not in ['Pendiente','En proceso'] else '',
                 'supervisado_por' : task.supervisado_por.name if task.stage_id.name not in ['Pendiente','En proceso'] and task.supervisado_por else '',
-                'subtareas' : subtareas if len(subtareas) != 0 else False
+                'subtareas' : subtareas
             }
             tareas.append(tarea)
         data = {
             'n_exp' : 'EM'+self.name,
             'n_orden_trabajo' : self.name,
-            'all_tareas' : tareas if len(tareas) != 0 else False
+            'all_tareas' : tareas
         }
         return data
     

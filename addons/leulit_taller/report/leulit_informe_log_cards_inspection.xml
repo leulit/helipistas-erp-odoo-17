@@ -148,7 +148,7 @@
                 </t>
                 <t t-call="leulit_taller.log_cards_inspection_report_css"/>
                 <div class="row">
-                    <t t-if="all_tareas">
+                    <t t-if="all_tareas and all_tareas|length > 0">
                         <t t-foreach="all_tareas" t-as="tarea">
                             <table class="fullwidth">
                                 <tr>
@@ -165,7 +165,7 @@
                                     <td class="centertext"><span t-raw="tarea['realizado_por']"/></td>
                                     <td class="centertext"><span t-raw="tarea['supervisado_por']"/></td>
                                 </tr>
-                                <t t-if="tarea['subtareas']">
+                                <t t-if="tarea['subtareas'] and tarea['subtareas']|length > 0">
                                     <tr>
                                         <td class="tdcolored">Sub-Tareas</td>
                                         <td class="tdcolored" colspan="2"><span>Realizado por:</span></td>
