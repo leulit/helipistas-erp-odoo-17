@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from odoo import models, fields, api, tools, exceptions, registry, _
+from odoo import models, fields, api, tools, exceptions, registry, _, sql_db
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
 import logging
 from datetime import datetime, date, timedelta
@@ -87,8 +87,8 @@ class LeulitItemExperienciaMecanico(models.Model):
         return {}
 
     def run_upd_datos_actividad(self, fecha_origen, fecha_fin):
-        # Crear un nuevo cursor y entorno para el hilo
-        new_cr = self.env.cr.db.cursor()
+        # Crear un nuevo cursor y entorno para el hilo (Odoo 15+)
+        new_cr = sql_db.db_connect(self.env.cr.dbname).cursor()
         try:
             env = api.Environment(new_cr, self.env.uid, self.env.context)
             project_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
