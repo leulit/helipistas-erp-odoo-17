@@ -6,11 +6,7 @@
             <field name="model">leulit.tipo_meeting</field>
             <field name="arch" type="xml">
                 <tree string="Tipos de Reunión">
-                    <sheet>
-                        <group>
-                            <field name="name"/>
-                        </group>
-                    </sheet>
+                    <field name="name"/>
                 </tree>
             </field>
         </record>
