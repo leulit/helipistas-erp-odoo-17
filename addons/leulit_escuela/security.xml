@@ -346,5 +346,23 @@
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="1"/>
     </record>
+    <record id="leulit_20251124_1105_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación accion Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_accion"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_20251124_1106_access_permission" model="ir.model.access">
+        <field name="name">Perfil de formación accion last done Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_perfil_formacion_accion_last_done"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 
 </odoo>
