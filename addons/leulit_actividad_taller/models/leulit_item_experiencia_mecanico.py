@@ -119,19 +119,30 @@ class LeulitItemExperienciaMecanico(models.Model):
                         certifications_with_model = False
                         helicoptero = False
                         if maint_request.equipment_id:
+                            _logger.error("run_upd_datos_actividad maint_request.equipment_id %r", maint_request.equipment_id)
                             if maint_request.equipment_id.helicoptero:
+                                _logger.error("run_upd_datos_actividad maint_request.equipment_id.helicoptero %r", maint_request.equipment_id.helicoptero)
                                 helicoptero = maint_request.equipment_id.helicoptero
                             else:
+                                _logger.error("run_upd_datos_actividad maint_request.equipment_id.helicoptero not")
                                 if maint_request.equipment_id.first_parent:
                                     helicoptero = maint_request.equipment_id.first_parent.helicoptero
 
+                            _logger.error("run_upd_datos_actividad category_heli_equipment_id %r", category_heli_equipment_id)
+                            _logger.error("run_upd_datos_actividad maint_request.equipment_id.category_id.id %r", maint_request.equipment_id.category_id)
                             if maint_request.equipment_id.category_id.id == category_heli_equipment_id.id:
+                                _logger.error("run_upd_datos_actividad tienen la misma categoria")
                                 ac_type = helicoptero.fabricante.capitalize()
                                 ac_comp = maint_request.equipment_id.name
                             else:
+                                _logger.error("run_upd_datos_actividad tienen diferente categoria")
                                 ac_type = maint_request.equipment_id.production_lot.product_id.default_code
                                 ac_comp = maint_request.equipment_id.production_lot.sn
+
+                            _logger.error("run_upd_datos_actividad ac_type %r", ac_type)
+                            _logger.error("run_upd_datos_actividad ac_comp %r", ac_comp)
                         else:
+                            _logger.error("run_upd_datos_actividad No tiene equipment???")
                             if maint_request.lot_id:
                                 ubi_destino = env['stock.location'].search([('name','=','Equipamiento')])
                                 ubi_origen = env['stock.location'].search([('name','=','Material Pendiente Decisión')])
@@ -141,6 +152,8 @@ class LeulitItemExperienciaMecanico(models.Model):
                                         helicoptero = last_uninstall.equipment.helicoptero
                                 ac_type = maint_request.lot_id.product_id.default_code
                                 ac_comp = maint_request.lot_id.production_lot.sn
+                        _logger.error("run_upd_datos_actividad ac_type %r", ac_type)
+                        _logger.error("run_upd_datos_actividad ac_comp %r", ac_comp)
 
                         if helicoptero and hasattr(helicoptero, 'fabricante'):
                             if helicoptero.fabricante == 'guimbal':
