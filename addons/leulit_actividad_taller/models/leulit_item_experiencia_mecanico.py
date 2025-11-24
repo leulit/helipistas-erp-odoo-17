@@ -87,12 +87,12 @@ class LeulitItemExperienciaMecanico(models.Model):
         return {}
 
     def run_upd_datos_actividad(self, fecha_origen, fecha_fin):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
-            context = dict(self._context)
-            project_id = int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
-            category_heli_equipment_id = self.env['maintenance.equipment.category'].search([('name','=','Helicóptero')])
+        # Crear un nuevo cursor y entorno para el hilo
+        new_cr = self.env.cr.db.cursor()
+        try:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            project_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
+            category_heli_equipment_id = env['maintenance.equipment.category'].search([('name','=','Helicóptero')])
 
             domains = [
                 [('project_id','=',project_id),('task_id','!=',False),('maintenance_request_id','!=',False),('date_time','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))],
@@ -102,17 +102,17 @@ class LeulitItemExperienciaMecanico(models.Model):
                     [('project_id','=',project_id),('task_id','!=',False),('maintenance_request_id','!=',False),('date_time','>=',fecha_origen),('date_time','<=',fecha_fin)]
                 ]
             for domain in domains:
-                for aal in self.env['account.analytic.line'].search(domain, order="date_time ASC"):
-                    mecanico = self.env['leulit.mecanico'].search([('user_id','=',aal.user_id.id)])
+                for aal in env['account.analytic.line'].search(domain, order="date_time ASC"):
+                    mecanico = env['leulit.mecanico'].search([('user_id','=',aal.user_id.id)])
                     mecanico_supervisor = False
                     if aal.task_id.parent_id.supervisado_por:
                         mecanico_supervisor = aal.task_id.parent_id.supervisado_por
-                        actividades = self.env['leulit.tipo_actividad_mecanico'].search([('id','in',aal.task_id.tipos_actividad.ids)])
-                        actividades_supervisor = self.env['leulit.tipo_actividad_mecanico'].search([('nombre','in',['Supervise','CRS'])])
+                        actividades = env['leulit.tipo_actividad_mecanico'].search([('id','in',aal.task_id.tipos_actividad.ids)])
+                        actividades_supervisor = env['leulit.tipo_actividad_mecanico'].search([('nombre','in',['Supervise','CRS'])])
                         tipos_actividad_supervisor = actividades + actividades_supervisor
                     maint_request = aal.maintenance_request_id
                     if mecanico:
-                        item_experiencia = self.env['leulit.item_experiencia_mecanico'].search([('mecanico_id','=',mecanico.id),('account_analytic_line_id','=',aal.id)])
+                        item_experiencia = env['leulit.item_experiencia_mecanico'].search([('mecanico_id','=',mecanico.id),('account_analytic_line_id','=',aal.id)])
                         ac_type = ''
                         ac_comp = ''
                         certifications_ids = []
@@ -133,31 +133,31 @@ class LeulitItemExperienciaMecanico(models.Model):
                                 ac_comp = maint_request.equipment_id.production_lot.sn
                         else:
                             if maint_request.lot_id:
-                                ubi_destino = self.env['stock.location'].search([('name','=','Equipamiento')])
-                                ubi_origen = self.env['stock.location'].search([('name','=','Material Pendiente Decisión')])
-                                last_uninstall = self.env['stock.move.line'].search([('lot_id','=',maint_request.lot_id.id),('location_dest_id','=',ubi_destino.id), ('location_id','=',ubi_origen.id)],order="date ASC", limit=1)
+                                ubi_destino = env['stock.location'].search([('name','=','Equipamiento')])
+                                ubi_origen = env['stock.location'].search([('name','=','Material Pendiente Decisión')])
+                                last_uninstall = env['stock.move.line'].search([('lot_id','=',maint_request.lot_id.id),('location_dest_id','=',ubi_destino.id), ('location_id','=',ubi_origen.id)],order="date ASC", limit=1)
                                 if last_uninstall.maintenance_request_id:
                                     if last_uninstall.equipment:
                                         helicoptero = last_uninstall.equipment.helicoptero
                                 ac_type = maint_request.lot_id.product_id.default_code
                                 ac_comp = maint_request.lot_id.production_lot.sn
 
-                        
-                        if helicoptero.fabricante == 'guimbal':
-                            certifications_with_model = self.env['leulit.certificacion_aeronave'].search([('aeronave','=','cabri_g2'),('id','in',mecanico.certificaciones_ids.ids)])
-                        if helicoptero.fabricante == 'robinson':
-                            certifications_with_model = self.env['leulit.certificacion_aeronave'].search([('aeronave','=','r22_r44'),('id','in',mecanico.certificaciones_ids.ids)])
-                        if helicoptero.fabricante == 'eurocopter':
-                            certifications_with_model = self.env['leulit.certificacion_aeronave'].search([('aeronave','=','ec_120'),('id','in',mecanico.certificaciones_ids.ids)])
+                        if helicoptero and hasattr(helicoptero, 'fabricante'):
+                            if helicoptero.fabricante == 'guimbal':
+                                certifications_with_model = env['leulit.certificacion_aeronave'].search([('aeronave','=','cabri_g2'),('id','in',mecanico.certificaciones_ids.ids)])
+                            if helicoptero.fabricante == 'robinson':
+                                certifications_with_model = env['leulit.certificacion_aeronave'].search([('aeronave','=','r22_r44'),('id','in',mecanico.certificaciones_ids.ids)])
+                            if helicoptero.fabricante == 'eurocopter':
+                                certifications_with_model = env['leulit.certificacion_aeronave'].search([('aeronave','=','ec_120'),('id','in',mecanico.certificaciones_ids.ids)])
                         if certifications_with_model:
                             for certification in certifications_with_model:
                                 if certification.certificacion_id.id in aal.task_id.certificacion_ids.ids:
                                     certifications_ids.append(certification.certificacion_id.id)
                         if not certifications_ids:
-                            certifications_ids = self.env['leulit.certificacion'].search([('name','=','B1')]).ids
+                            certifications_ids = env['leulit.certificacion'].search([('name','=','B1')]).ids
 
                         if not item_experiencia:
-                            self.env['leulit.item_experiencia_mecanico'].create({
+                            env['leulit.item_experiencia_mecanico'].create({
                                 'mecanico_id': mecanico.id,
                                 'date': aal.date_time,
                                 'location': maint_request.location,
@@ -190,12 +190,12 @@ class LeulitItemExperienciaMecanico(models.Model):
                                 'account_analytic_line_id': aal.id,
                                 'remarks': aal.task_id.description,
                             })
-                        
+
                         if mecanico_supervisor:
-                            item_experiencia_supervisor = self.env['leulit.item_experiencia_mecanico'].search([('mecanico_id','=',mecanico_supervisor.id),('account_analytic_line_id','=',aal.id)])
-                            
+                            item_experiencia_supervisor = env['leulit.item_experiencia_mecanico'].search([('mecanico_id','=',mecanico_supervisor.id),('account_analytic_line_id','=',aal.id)])
+
                             if not item_experiencia_supervisor:
-                                self.env['leulit.item_experiencia_mecanico'].create({
+                                env['leulit.item_experiencia_mecanico'].create({
                                     'mecanico_id': mecanico_supervisor.id,
                                     'date': aal.date_time,
                                     'location': maint_request.location,
@@ -212,7 +212,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                                     'remarks': aal.task_id.description,
                                 })
                             else:
-                                item_experiencia.write({
+                                item_experiencia_supervisor.write({
                                     'mecanico_id': mecanico_supervisor.id,
                                     'date': aal.date_time,
                                     'location': maint_request.location,
@@ -229,7 +229,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                                     'remarks': aal.task_id.description,
                                 })
 
-
             new_cr.commit()
+        finally:
             new_cr.close()
-            _logger.error("run_upd_datos_actividad fin")
+        _logger.error("run_upd_datos_actividad fin")
