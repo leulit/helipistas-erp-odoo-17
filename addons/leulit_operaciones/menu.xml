@@ -12,7 +12,7 @@
             name="Todos los partes de vuelo"
             parent="leulit_20201023_1053_menuitem"
             action="leulit_20230906_1505_action"
-            groups="leulit.ROperaciones_responsable,leulit.RComercial_base"
+            groups="leulit.ROperaciones_responsable"
             sequence="10"
         />
         <menuitem 
