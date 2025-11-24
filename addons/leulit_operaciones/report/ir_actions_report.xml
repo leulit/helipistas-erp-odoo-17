@@ -37,7 +37,7 @@
     </record>
 
     <record id="leulit_report_piloto_log_book" model="ir.actions.report">
-        <field name="name">LoogBook Piloto</field>
+        <field name="name">LogBook Piloto</field>
         <field name="model">leulit.vuelo</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">leulit_operaciones.leulit_report_piloto_log_informe</field>

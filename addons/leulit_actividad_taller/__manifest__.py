@@ -18,6 +18,8 @@
         "views/project_task.xml",
         "views/leulit_job_card_item.xml",
         "views/leulit_job_card.xml",
+        "report/leulit_20240521_1012_informe.xml",
+        "report/ir_actions_report.xml",
         "menu.xml"
     ],
     "installable": True,
