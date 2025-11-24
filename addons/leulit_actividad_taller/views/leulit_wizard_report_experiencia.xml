@@ -8,8 +8,8 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Registro Experiencia 6/24 meses">
-                    <group col="4" fill="0">
-                        <field name='mecanico_id' colspan="4" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                    <group>
+                        <field name="mecanico_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
                         <field name="from_date" />
                         <field name="to_date" />
                     </group>
