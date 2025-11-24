@@ -230,7 +230,7 @@
                                 <field name="timesheet_ids" mode="tree,kanban" invisible="not analytic_account_active" context="{'default_project_id': project_id, 'default_name':''}" widget="so_line_one2many">
                                     <tree editable="bottom" string="Timesheet Activities" default_order="date" decoration-muted="readonly_timesheet == True">
                                         <field name="readonly_timesheet" column_invisible="True"/>
-                                        <field name="date" readonly="readonly_timesheet"/>
+                                        <field name="date_time" readonly="readonly_timesheet"/>
                                         <field name="user_id" column_invisible="True"/>
                                         <field name="employee_id" widget="many2one_avatar_employee" context="{'active_test': True}" required="1" readonly="readonly_timesheet"/>
                                         <field name="name" required="0" readonly="readonly_timesheet"/>
@@ -245,7 +245,7 @@
                                     </tree>
                                     <kanban class="o_kanban_mobile">
                                         <field name="readonly_timesheet"/>
-                                        <field name="date"/>
+                                        <field name="date_time"/>
                                         <field name="user_id"/>
                                         <field name="name"/>
                                         <field name="unit_amount" decoration-danger="unit_amount &gt; 24"/>
@@ -281,7 +281,7 @@
                                         <sheet>
                                             <group>
                                                 <field name="readonly_timesheet" invisible="1"/>
-                                                <field name="date" readonly="readonly_timesheet"/>
+                                                <field name="date_time" readonly="readonly_timesheet"/>
                                                 <field name="user_id" invisible="1" readonly="readonly_timesheet"/>
                                                 <field name="employee_id" widget="many2one_avatar_employee" context="{'active_test': True}" required="1" readonly="readonly_timesheet"/>
                                                 <field name="name" required="0" readonly="readonly_timesheet"/>
