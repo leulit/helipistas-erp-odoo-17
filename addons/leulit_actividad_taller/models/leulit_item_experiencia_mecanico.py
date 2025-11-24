@@ -132,6 +132,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                                 _logger.error("run_upd_datos_actividad tienen la misma categoria")
                                 ac_type = helicoptero.fabricante.capitalize()
                                 ac_comp = maint_request.equipment_id.name
+                                _logger.error("run_upd_datos_actividad maint_request.equipment_id.name %r",maint_request.equipment_id.name)
                             else:
                                 _logger.error("run_upd_datos_actividad tienen diferente categoria")
                                 ac_type = maint_request.equipment_id.production_lot.product_id.default_code
