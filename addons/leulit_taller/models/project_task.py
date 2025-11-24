@@ -108,20 +108,14 @@ class ProjectTask(models.Model):
                     #     if not self.doble_check_ata:
                     #         self.second_user_doble_check = self.user_id.id
                     if self.parent_id:
-                        _logger.error("TAREA PADRE")
-                        _logger.error("Hijos %r", self.parent_id.child_ids)
                         length = 1
                         for child in self.parent_id.child_ids:
                             if child.id != self._origin.id:
                                 if child.stage_id.name not in ['En proceso','Pendiente']:
                                     length += 1
-                        _logger.error("Len Hijos %r", len(self.parent_id.child_ids))
-                        _logger.error("Len %r", length)
                         if length == len(self.parent_id.child_ids):
                             self.parent_id.user_ids = [(6, 0, self.user_ids.ids)]
                             stage_id = self.env['project.task.type'].search([('project_ids','in',[self.project_id.id]),('name','=','Realizada')])
-                            _logger.error("Dentro")
-                            _logger.error("stage_id %r", stage_id)
                             self.parent_id.write({'stage_id': stage_id.id})
                     for child in self.child_ids:
                         if child.stage_id.name not in ['Realizada','N/A']:
