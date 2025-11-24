@@ -213,6 +213,7 @@ class ProjectTask(models.Model):
                 task_1 = self.with_context(
                     tracking_disable=True,
                     mail_create_no_notify=True,
+                    mail_auto_subscribe_no_notify=True,
                 ).create({
                     'parent_id' : self.id,
                     'name' : item.descripcion,
@@ -243,6 +244,7 @@ class ProjectTask(models.Model):
                 section_task = self.with_context(
                     tracking_disable=True,
                     mail_create_no_notify=True,
+                    mail_auto_subscribe_no_notify=True,
                 ).create({
                     'parent_id' : self.id,
                     'name' : section.descripcion,
@@ -257,6 +259,7 @@ class ProjectTask(models.Model):
                     task_2 = self.with_context(
                     tracking_disable=True,
                     mail_create_no_notify=True,
+                    mail_auto_subscribe_no_notify=True,
                     ).create({
                         'parent_id' : section_task.id,
                         'name' : item.descripcion,
