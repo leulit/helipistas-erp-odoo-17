@@ -155,6 +155,7 @@
         </record>
 
 
+        <!-- Rol Developer -->
         <record model="ir.module.category" id="it_rol_category">
             <field name="name">Rol IT</field>
             <field name="description">Rol IT</field>
@@ -168,6 +169,24 @@
             <field name="implied_ids" eval="[(4, ref('RolIT_predev'))]"/>
             <field name="category_id" ref="it_rol_category"/>
         </record>
+
+
+        <!-- Rol Comercial -->
+        <record model="ir.module.category" id="comercial_rol_category">
+            <field name="name">Rol Comercial</field>
+            <field name="description">Rol Comercial</field>
+        </record>
+        <record id="RComercial_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="comercial_rol_category"/>
+        </record>
+        <record id="RComercial_responsable" model="res.groups">
+            <field name="name">Responsable</field>
+            <field name="implied_ids" eval="[(4, ref('RComercial_base'))]"/>
+            <field name="category_id" ref="comercial_rol_category"/>
+        </record>
+
+
 
         
     </data>
