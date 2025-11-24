@@ -109,7 +109,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                         actividades = env['leulit.tipo_actividad_mecanico'].search([('id','in',aal.task_id.tipos_actividad.ids)])
                         actividades_supervisor = env['leulit.tipo_actividad_mecanico'].search([('nombre','in',['Supervise','CRS'])])
                         tipos_actividad_supervisor = actividades + actividades_supervisor
-                    maint_request = aal.maintenance_request_id
+                    maint_request = aal.with_context(lang='es_ES').maintenance_request_id
                     if mecanico:
                         item_experiencia = env['leulit.item_experiencia_mecanico'].search([('mecanico_id','=',mecanico.id),('account_analytic_line_id','=',aal.id)])
                         ac_type = ''
@@ -131,8 +131,8 @@ class LeulitItemExperienciaMecanico(models.Model):
                             if maint_request.equipment_id.category_id.id == 1:
                                 _logger.error("run_upd_datos_actividad tienen la misma categoria")
                                 ac_type = helicoptero.fabricante.capitalize()
-                                ac_comp = maint_request.equipment_id.with_context(lang='es_ES').name
-                                _logger.error("run_upd_datos_actividad maint_request.equipment_id.name %r",maint_request.equipment_id.with_context(lang='es_ES').name)
+                                ac_comp = maint_request.equipment_id.name
+                                _logger.error("run_upd_datos_actividad maint_request.equipment_id.name %r",maint_request.equipment_id.name)
                                 _logger.error("run_upd_datos_actividad maint_request.equipment_id %r",maint_request.equipment_id)
                             else:
                                 _logger.error("run_upd_datos_actividad tienen diferente categoria")
