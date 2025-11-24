@@ -3,7 +3,7 @@
     
         <record id="leulit_20251121_1446_tree" model="ir.ui.view">
             <field name="name">leulit_20251121_1446_tree</field>
-            <field name="model">leulit.tipo.meeting</field>
+            <field name="model">leulit.tipo_meeting</field>
             <field name="arch" type="xml">
                 <tree string="Tipos de Reunión">
                     <sheet>
@@ -18,7 +18,7 @@
 
         <record id="leulit_20251121_1446_action" model="ir.actions.act_window">
             <field name="name">Tipos de Reunión</field>
-            <field name="res_model">leulit.tipo.meeting</field>
+            <field name="res_model">leulit.tipo_meeting</field>
             <field name="view_mode">tree</field>
         </record>
 
