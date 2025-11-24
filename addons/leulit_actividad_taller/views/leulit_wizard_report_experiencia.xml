@@ -23,7 +23,7 @@
 
 
         <record model="ir.actions.act_window" id="leulit_20240521_1117_action">
-            <field name="name">leulit_20240521_1117_action</field>
+            <field name="name">Registro Experiencia 6/24 meses</field>
             <field name="res_model">leulit.wizard_report_experiencia</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20240521_1117_form"/>
