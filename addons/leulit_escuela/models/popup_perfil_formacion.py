@@ -46,7 +46,7 @@ class leulit_popup_perfil_formacion(models.TransientModel):
                     'margen_dy': item2.margen_dy,
                     'perfil_formacion': perfil_form.id,
                 }
-                self.env['leulit.perfil_formacion_accion'].create(accion_new_vals)
+                self.env['leulit.pf_accion'].create(accion_new_vals)
 
     piloto = fields.Many2one(comodel_name='leulit.piloto', string='Piloto')
     usuario = fields.Many2one(comodel_name='res.users', string='Usuario')
