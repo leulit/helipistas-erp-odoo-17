@@ -92,7 +92,6 @@ class LeulitItemExperienciaMecanico(models.Model):
         try:
             env = api.Environment(new_cr, self.env.uid, self.env.context)
             project_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
-            category_heli_equipment_id = env['maintenance.equipment.category'].search([('name','=','Helicóptero')])
 
             domains = [
                 [('project_id','=',project_id),('task_id','!=',False),('maintenance_request_id','!=',False),('date_time','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))],
@@ -128,9 +127,8 @@ class LeulitItemExperienciaMecanico(models.Model):
                                 if maint_request.equipment_id.first_parent:
                                     helicoptero = maint_request.equipment_id.first_parent.helicoptero
 
-                            _logger.error("run_upd_datos_actividad category_heli_equipment_id %r", category_heli_equipment_id)
                             _logger.error("run_upd_datos_actividad maint_request.equipment_id.category_id.id %r", maint_request.equipment_id.category_id)
-                            if maint_request.equipment_id.category_id.id == category_heli_equipment_id.id:
+                            if maint_request.equipment_id.category_id.id == 1:
                                 _logger.error("run_upd_datos_actividad tienen la misma categoria")
                                 ac_type = helicoptero.fabricante.capitalize()
                                 ac_comp = maint_request.equipment_id.name
