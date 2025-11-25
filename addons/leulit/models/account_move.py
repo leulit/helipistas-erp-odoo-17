@@ -21,4 +21,3 @@ class account_move(models.Model):
                     break
                     # raise ValidationError(_("Hay factura con fecha de factura posterior a la fecha de la factura actual."))
     
-    expense_sheet_id = fields.Many2one(comodel_name="hr.expense.sheet", string="Hoja de gastos")

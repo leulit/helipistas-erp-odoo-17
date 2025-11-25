@@ -9,7 +9,6 @@ from odoo.exceptions import UserError, ValidationError
 class HrExpenseSheet(models.Model):
     _inherit = "hr.expense.sheet"
 
-
     @api.depends('expense_line_ids.total_amount','account_ids.amount_total')
     def _compute_amount(self):
         for sheet in self:
@@ -37,5 +36,18 @@ class HrExpenseSheet(models.Model):
             'domain': domain,
         }
 
-
-    account_ids = fields.One2many(comodel_name="account.move", inverse_name="expense_sheet_id", string="Facturas")
+    @api.depends('account_move_ids', 'payment_state', 'approval_state')
+    def _compute_state(self):
+        """
+        Evita que la hoja de gastos pase automáticamente a 'post' solo por tener facturas asociadas.
+        Solo pasa a 'post' si está aprobada (approval_state == 'approve').
+        """
+        for sheet in self:
+            if sheet.payment_state != 'not_paid':
+                sheet.state = 'done'
+            elif sheet.account_move_ids and sheet.approval_state == 'approve':
+                sheet.state = 'post'
+            elif sheet.approval_state:
+                sheet.state = sheet.approval_state
+            else:
+                sheet.state = 'draft'

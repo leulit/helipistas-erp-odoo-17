@@ -12,7 +12,7 @@
                 <xpath expr="//page[@name='expenses']" position="after">
                     <page name="facturas" string="Facturas">
                         <button name="create_account_move" string="Crear Factura" class="oe_highlight" type="object"/>
-                        <field name="account_ids" options="{'create': False, 'edit': False, 'delete': False}" context="{'default_move_type':'in_invoice'}">
+                        <field name="account_move_ids" options="{'create': False, 'edit': False, 'delete': False}" context="{'default_move_type':'in_invoice'}">
                             <tree>
                                 <field name="name" decoration-bf="1"/>
                                 <field name="invoice_partner_display_name" string="Proveedor"/>
