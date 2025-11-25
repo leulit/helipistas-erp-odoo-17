@@ -108,6 +108,7 @@ class leulit_parte_escuela(models.Model):
                 "employee_id": employee_id,
                 'modelo' : 'leulit.parte_escuela',
                 'idmodelo' : item.id,
+                'product_uom_id' : 4,
             }
             _logger.error("--->updDataActividadLaboralByEmployeeId---> datos = %r",datos)
             self.create_account_line(datos)
