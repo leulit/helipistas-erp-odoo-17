@@ -2,18 +2,6 @@
 <odoo>
     <data>
 
-        <report
-            id="report_curso_pf"
-            string="Informe curso perfil formación"
-            model="leulit.perfil_formacion_curso_last_done"
-            report_type="qweb-pdf"
-            file="leulit_escuela.leulit_20211115_1345_informe"
-            name="leulit_escuela.leulit_20211115_1345_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />            
-
-
-
         <template id="leulit_20211115_1831_informe">
             <table class="table table-bordered fullwidth">
                 <tr>
@@ -57,6 +45,7 @@
         </template>
 
         <template id="leulit_20211115_1345_informe">
+            <meta charset="utf-8"/>
             <t t-call="web.html_container">
                 <style type="text/css">
                     .page {}

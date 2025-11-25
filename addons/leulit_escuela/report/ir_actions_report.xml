@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- REPORT INFORME CURSO PERFIL FORMACIÓN -->
+    <record id="report_curso_pf" model="ir.actions.report">
+        <field name="name">Informe curso perfil formación</field>
+        <field name="model">leulit.perfil_formacion_curso_last_done</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_escuela.leulit_20211115_1345_informe</field>
+        <field name="report_file">leulit_escuela.leulit_20211115_1345_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Informe curso perfil formación'</field>
+        <field name="binding_model_id" ref="model_leulit_perfil_formacion_curso_last_done"/>
+        <field name="binding_type">report</field>
+    </record>
+    
+</odoo>
