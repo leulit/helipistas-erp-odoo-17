@@ -90,6 +90,7 @@ class ProjectTask(models.Model):
                                         'project_id': self.project_id.id,
                                         'task_id': self._origin.id,
                                         'maintenance_request_id': self.maintenance_request_id.id,
+                                        'product_uom_id': 4,
                                     })
                         if self.item_job_card_id.oblig_form_one:
                             if self.env['leulit.maintenance_form_one'].search([('task_id','!=',self.id)]):

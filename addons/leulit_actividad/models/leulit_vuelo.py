@@ -178,8 +178,9 @@ class ParteVuelo(models.Model):
                 "ref": vuelo.codigo,
                 "partner_id": partner_id,
                 "employee_id": employee_id,
-                'modelo' : 'leulit.vuelo',
-                'idmodelo' : vuelo.id,
+                "modelo" : 'leulit.vuelo',
+                "idmodelo" : vuelo.id,
+                "product_uom_id" : 4,
             }
             self.create_account_line(datos)
         result = self.env['account.analytic.line'].search( [('idmodelo','=',vuelo.id),('modelo','=','leulit.vuelo'),('partner_id','=',partner_id)] )
@@ -222,8 +223,9 @@ class ParteVuelo(models.Model):
             "ref": self.codigo,
             "partner_id": partner_id,
             "employee_id": employee_id,
-            'modelo' : 'leulit.vuelo',
-            'idmodelo' : self.id,
+            "modelo" : "leulit.vuelo",
+            "idmodelo" : self.id,
+            "product_uom_id" : 4,
         }
         self.create_account_line(datos)
 
