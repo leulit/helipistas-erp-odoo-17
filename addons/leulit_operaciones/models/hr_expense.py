@@ -21,19 +21,18 @@ class HrExpense(models.Model):
             if item.piloto_id:
                 item.is_dieta_pernocta = item.product_id.name in ['Dieta con pernocta', 'Dieta sin pernocta', 'Plus de disponibilidad/activación']
 
-    @api.depends('product_id', 'company_id')
-    def _compute_from_product_id_company_id(self):
-        super(HrExpense, self)._compute_from_product_id_company_id()
-        for expense in self.filtered('product_id'):
-            if expense.product_id.name == 'Dieta con pernocta':
-                if expense.piloto_id:
-                    if 5 <= expense.date.month <= 9:
-                        expense.sudo().unit_amount = expense.piloto_id.dieta_ta
+    @api.onchange('product_id', 'date')
+    def _onchange_product_id_date(self):
+        if self.is_dieta_pernocta:
+            if self.product_id.name == 'Dieta con pernocta':
+                if self.piloto_id:
+                    if 5 <= self.date.month <= 9:
+                        self.sudo().unit_amount = self.piloto_id.dieta_ta
                     else:
-                        expense.sudo().unit_amount = expense.piloto_id.dieta_tb
-            if expense.product_id.name == 'Plus de disponibilidad/activación':
-                if expense.piloto_id:
-                    expense.sudo().unit_amount = expense.piloto_id.plus_activacion
+                        self.sudo().unit_amount = self.piloto_id.dieta_tb
+            if self.product_id.name == 'Plus de disponibilidad/activación':
+                if self.piloto_id:
+                    self.sudo().unit_amount = self.piloto_id.plus_activacion
 
 
     piloto_id = fields.Many2one(compute=_get_piloto, comodel_name="leulit.piloto", string="Piloto")
