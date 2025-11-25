@@ -9,10 +9,17 @@ from odoo.exceptions import UserError, ValidationError
 class HrExpenseSheet(models.Model):
     _inherit = "hr.expense.sheet"
 
-    @api.depends('expense_line_ids.total_amount','account_ids.amount_total')
-    def _compute_amount(self):
-        for sheet in self:
-            sheet.total_amount = sum(sheet.expense_line_ids.mapped('total_amount')) + sum(sheet.account_ids.mapped('amount_total'))
+    # @api.depends('expense_line_ids.total_amount','account_ids.amount_total')
+    # def _compute_amount(self):
+    #     for sheet in self:
+    #         sheet.total_amount = sum(sheet.expense_line_ids.mapped('total_amount')) + sum(sheet.account_ids.mapped('amount_total'))
+
+    # @api.depends('expense_line_ids.total_amount', 'expense_line_ids.tax_amount')
+    # def _compute_amount(self):
+    #     for sheet in self:
+    #         sheet.total_amount = sum(sheet.expense_line_ids.mapped('total_amount'))
+    #         sheet.total_tax_amount = sum(sheet.expense_line_ids.mapped('tax_amount'))
+    #         sheet.untaxed_amount = sheet.total_amount - sheet.total_tax_amount
 
     def create_account_move(self):
         self.ensure_one()
