@@ -20,6 +20,12 @@
 				<xpath expr="//label[@for='product_id']" position="replace">
 					<label for="product_id" string="Producto"/>
 				</xpath>
+				<xpath expr="//field[@name='quantity']" position="attributes">
+					<attribute name="readonly">is_dieta_pernocta</attribute>
+				</xpath>
+				<xpath expr="//field[@name='product_uom_id']" position="attributes">
+					<attribute name="readonly">is_dieta_pernocta</attribute>
+				</xpath>
 			</field>
 		</record>
 

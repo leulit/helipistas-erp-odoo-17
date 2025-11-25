@@ -28,11 +28,14 @@ class HrExpense(models.Model):
                 if self.piloto_id:
                     if 5 <= self.date.month <= 9:
                         self.sudo().price_unit = self.piloto_id.dieta_ta
+                        self.sudo().total_amount_currency = self.piloto_id.dieta_ta
                     else:
                         self.sudo().price_unit = self.piloto_id.dieta_tb
+                        self.sudo().total_amount_currency = self.piloto_id.dieta_tb
             if self.product_id.name == 'Plus de disponibilidad/activación':
                 if self.piloto_id:
-                    self.sudo().price_unit = self.piloto_id.plus_activacion
+                    self.sudo().price_unit = self.piloto_id.plus_activacion 
+                    self.sudo().total_amount_currency = self.piloto_id.plus_activacion 
 
 
     piloto_id = fields.Many2one(compute=_get_piloto, comodel_name="leulit.piloto", string="Piloto")
