@@ -17,6 +17,9 @@
 				<xpath expr="//field[@name='price_unit']" position="replace">
 					<field name="price_unit" required="1" widget="monetary" options="{'currency_field': 'currency_id', 'field_digits': True}" readonly="is_dieta_pernocta" force_save="1"/>
 				</xpath>
+				<xpath expr="//label[@for='product_id']" position="replace">
+					<label for="product_id" string="Producto"/>
+				</xpath>
 			</field>
 		</record>
 
