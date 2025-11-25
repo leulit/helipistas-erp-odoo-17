@@ -26,6 +26,15 @@
 				<xpath expr="//field[@name='product_uom_id']" position="attributes">
 					<attribute name="readonly">is_dieta_pernocta</attribute>
 				</xpath>
+				<xpath expr="//field[@name='total_amount_currency']" position="attributes">
+					<attribute name="readonly">is_dieta_pernocta</attribute>
+				</xpath>
+				<xpath expr="//field[@name='currency_id']" position="attributes">
+					<attribute name="readonly">is_dieta_pernocta</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_ids']" position="attributes">
+					<attribute name="readonly">is_dieta_pernocta</attribute>
+				</xpath>
 			</field>
 		</record>
 
