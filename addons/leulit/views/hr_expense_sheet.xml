@@ -43,7 +43,6 @@
         </record>
 
 
-
         <template id="report_expenses_document" inherit_id="hr_expense.report_expense_sheet">
             <xpath expr="//div[hasclass('page')]/table" position="after">
                 <h3>Facturas</h3>
