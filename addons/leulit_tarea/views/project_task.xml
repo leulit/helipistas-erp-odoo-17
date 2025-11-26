@@ -103,6 +103,7 @@
             <field name="res_model">project.task</field>
             <field name="view_mode">tree,kanban,form,calendar</field>
             <field name="domain">[('user_ids', 'in', uid),('project_borrador', '=', False)]</field>
+            <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
 
          <record id="leulit_20250519_1017_action" model="ir.actions.act_window">
@@ -110,6 +111,7 @@
             <field name="res_model">project.task</field>
             <field name="view_mode">tree,kanban,form,calendar</field>
             <field name="domain">[('project_borrador', '=', False)]</field>
+            <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
 
 
