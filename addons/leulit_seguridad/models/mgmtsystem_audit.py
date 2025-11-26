@@ -25,15 +25,16 @@ class MgmtsystemAudit(models.Model):
         if self.procedimiento_id:
             _logger.error('info estoy pasando por aqui ')
             self.line_ids = [(5, 0, 0)]
+            lines = []
             for line in self.procedimiento_id.questions_ids:
-                self.env['mgmtsystem.verification.line'].create({
+                lines.append((0, 0, {
                     'seq': line.sequence,
                     'name': line.name,
                     'question_id': line.id,
                     'notas': line.notas,
-                    'audit_id': self.id,
-                })
+                }))
                 _logger.error('info estoy pasando por aqui 2')
+            self.line_ids = lines
 
     def button_close_informe(self):
         self.ensure_one()
