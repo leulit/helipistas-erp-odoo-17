@@ -19,7 +19,6 @@
         "views/hr_timesheet_views.xml",
         "views/hr_timesheet_switch_view.xml",
         "menu.xml",
-        "data/close_tasks_on_project_done.xml"
     ],
     "demo": [],
     "css": [],
