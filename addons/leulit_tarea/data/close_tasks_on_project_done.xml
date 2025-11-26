@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Acción de servidor: llama al método action_close_all_tasks -->
+    <record id="action_close_all_tasks_on_project" model="ir.actions.server">
+        <field name="name">Cerrar todas las tareas al cerrar proyecto</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="state">code</field>
+        <field name="code">record.action_close_all_tasks()</field>
+        <field name="binding_model_id" ref="project.model_project_project"/>
+        <field name="binding_type">action</field>
+    </record>
+
+    <!-- Acción automatizada: ejecuta la acción de servidor al marcar el proyecto como Hecho -->
+    <record id="automation_close_tasks_on_project_done" model="base.automation">
+        <field name="name">Cerrar tareas al cerrar proyecto</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="state">code</field>
+        <field name="code">record.action_close_all_tasks()</field>
+        <!-- El dominio filtra proyectos cuya etapa se llama 'Finalizado' o 'Hecho' (case-insensitive) -->
+        <field name="filter_domain">['|', ("stage_id.name", "ilike", "finalizado"), ("stage_id.name", "ilike", "hecho")]</field>
+    </record>
+</odoo>
