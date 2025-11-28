@@ -177,8 +177,9 @@ class Anomalia(models.Model):
                 'hashcode' : hashcode,
                 'logo_hlp' : company_helipistas.logo_reports
             }
-            pdf = self.env.ref('leulit_seguridad.leulit_200511_1627_imprimir_anomalia')._render_qweb_pdf([],data=data)[0]
-            report = base64.encodestring(pdf)
+            report = self.env.ref('leulit_seguridad.leulit_200511_1627_imprimir_anomalia')
+            pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]
+            report = base64.b64encode(pdf)
             datos.update({'report': report})
             return datos
         
