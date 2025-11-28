@@ -34,7 +34,6 @@
         "views/res_config_settings.xml",
         "views/res_partner.xml",
         "views/hr_expense_sheet.xml",
-        "views/webclient_templates.xml",
         "views/res_company.xml",
         "views/project_project_views.xml",
         "views/leulit_circular.xml",
