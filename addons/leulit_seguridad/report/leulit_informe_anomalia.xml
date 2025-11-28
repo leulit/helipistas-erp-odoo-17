@@ -2,19 +2,8 @@
 <odoo>
     <data>
 
-        <report
-            id="leulit_200511_1627_imprimir_anomalia"
-            string="Anomalía"
-            model="leulit.anomalia"
-            report_type="qweb-pdf"
-            file="leulit_seguridad.leulit_2022201900_informe"
-            name="leulit_seguridad.leulit_2022201900_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-            print_report_name="(object._get_report_base_filename())"
-        />        
-
-
         <template id="anomalia_report_css">
+            
             <style>
                 .footer {
                     position:absolute;
