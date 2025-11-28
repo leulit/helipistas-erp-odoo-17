@@ -38,23 +38,29 @@ LOC_PER_SITEMAP = 45000
 SITEMAP_CACHE_TIME = datetime.timedelta(hours=12)
 
 
-# class Home(http.Controller):
+class CustomerPortal(CustomerPortal):
 
-#     @http.route('/', type='http', auth="none")
-#     def index(self, s_action=None, db=None, **kw):
-#         query_string = urlencode(request.params)
-#         url = '/web'
-#         if query_string:
-#             url += '?' + query_string
-#         return redirect(url)
+    @http.route(['/verifycsv'], type='http', auth="public", website=True)
+    def portal_verify_csv(self, page=1, date_begin=None, date_end=None, search=None, search_in='content', **kw):
+        values = self._prepare_portal_layout_values()
+        searchbar_inputs = {
+            'content': {'input': 'content', 'label': _('Buscar <span class="nolabel"> (código CSV / CID)</span>')},
+        }
+        domain = [('esignature', '=', 'aaaaaaaaa')]
+        # search
+        if search and search_in:
+            domain = ['|', ('esignature', '=', search), ('hashcode', '=', search)]
+        
+        docs = request.env['leulit_signaturedoc'].search(domain, limit=self._items_per_page)
 
-
-# class Website(Home):
-
-#     @http.route('/', type='http', auth="public", website=True, sitemap=True)
-#     def index(self, **kw):
-#         query_string = urlencode(request.params)
-#         url = '/web'
-#         if query_string:
-#             url += '?' + query_string
-#         return redirect(url)
+        values.update({
+            'date': date_begin,
+            'date_end': date_end,
+            'grouped_docs': docs,
+            'page_name': 'Verificar documentos',
+            'default_url': '/verifycsv',
+            'searchbar_inputs': searchbar_inputs,
+            'search_in': search_in,
+            'search': search,
+        })
+        return request.render("leulit.portal_verifycsv", values)
