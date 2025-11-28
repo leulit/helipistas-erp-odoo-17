@@ -299,6 +299,13 @@ class ProjectTask(models.Model):
         return res
     
     def create(self, vals):
+        # Soporta tanto dict como lista de dicts
+        if isinstance(vals, list):
+            records = super().create(vals)
+            for record, val in zip(records, vals):
+                if val.get('job_card_id'):
+                    record._create_subtasks_from_job_card()
+            return records
         record = super().create(vals)
         if vals.get('job_card_id'):
             record._create_subtasks_from_job_card()
