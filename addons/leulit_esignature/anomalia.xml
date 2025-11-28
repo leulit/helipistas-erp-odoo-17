@@ -23,10 +23,10 @@
                     <field name="check_firmado" invisible="1"/>
                 </xpath>
                 <xpath expr="//button[@name='wizard_cerrar']" position="attributes">
-                    <attribute name="invisible">('estado','in',['closed']),('check_firmado', '=', True)</attribute>
+                    <attribute name="invisible">estado in ['closed'] and check_firmado</attribute>
                 </xpath>
                 <xpath expr="//button[@name='wizard_diferir']" position="attributes">
-                    <attribute name="invisible">('estado','in',['deferred','closed','flightcanceled']),('check_firmado', '=', True)</attribute>
+                    <attribute name="invisible">estado in ['deferred', 'closed', 'flightcanceled'] and check_firmado</attribute>
                 </xpath>
                 <xpath expr="//sheet" position="inside">
                     <notebook colspan="4" >
