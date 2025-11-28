@@ -23,7 +23,8 @@
         "escuela/alumno_reports.xml",
         "views/leulit_maintenance_boroscopia.xml",
         "views/leulit_maintenance_crs.xml",
-        "views/leulit_maintenance_form_one.xml"
+        "views/leulit_maintenance_form_one.xml",
+        "views/webclient_templates.xml",
     ],
     "assets": {
         "web.assets_backend": [

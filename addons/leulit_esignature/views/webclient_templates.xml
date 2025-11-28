@@ -16,9 +16,10 @@
             <ul>
                 <li>Parte técnico de vuelo (PTV) - Posteriores al día 12-Noviembre-2020</li>
                 <li>Plan operacional - Posteriores al día 12-Noviembre-2020</li>
-                <li>Informe general cursos</li>
-                <li>Informe clases teóricas</li>
-                <li>Informe clases prácticas</li>
+                <li>Informe Anomalia</li>
+                <li>Informe CRS</li>
+                <li>Informe Form One</li>
+                <li>Informe Boroscopia</li>
             </ul>
         </div>
     </template>
