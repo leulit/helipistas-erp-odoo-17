@@ -28,9 +28,9 @@
                 <form string="Registro anomalía">
                     <header>
                         <field name="estado" widget="statusbar" class="oe_right"/>
-                        <button name="wizard_pending" type="object" string="En Pendiente"  invisible="((estado not in ['edicion']))"  class="oe_right oe_highlight"/>
-                        <button name="wizard_diferir" type="object" string="Diferir"  invisible="((estado in ['deferred', 'closed', 'flightcanceled']))"  class="oe_right oe_highlight"/>
-                        <button name="wizard_cerrar" type="object" string="Cerrar"  invisible="((estado in ['closed']))"  class="oe_right oe_highlight"/>
+                        <button name="wizard_pending" type="object" string="En Pendiente" invisible="estado != 'edicion'"  class="oe_right oe_highlight"/>
+                        <button name="wizard_diferir" type="object" string="Diferir" invisible="estado in ('deferred', 'closed', 'flightcanceled')"  class="oe_right oe_highlight"/>
+                        <button name="wizard_cerrar" type="object" string="Cerrar" invisible="estado = 'closed'"  class="oe_right oe_highlight"/>
                     </header>
                     <sheet>
                             <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
