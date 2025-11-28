@@ -26,7 +26,7 @@
 
     <template id="verify_docs_searchbar" name="Verify docs Search Bar">
         <t t-if="breadcrumbs_searchbar">
-            <t t-call="leulit.verify_docs_breadcrumbs"/>
+            <t t-call="leulit_esignature.verify_docs_breadcrumbs"/>
         </t>
         <nav t-attf-class="navbar navbar-light navbar-expand-lg border py-0 mb-2 o_portal_navbar {{classes if classes else ''}} {{'mt-3 rounded' if breadcrumbs_searchbar else 'border-top-0' }}">
             <!--  Collapse button -->
@@ -68,7 +68,7 @@
                 
                 <div class="row align-items-center bg-white no-gutters border rounded">
                     <div class="col-10">
-                        <t t-call="leulit.verify_docs_breadcrumbs"></t>
+                        <t t-call="leulit_esignature.verify_docs_breadcrumbs"></t>
                     </div>
                     <div t-if="prev_record or next_record" class="col-2 flex-grow-0 text-center">
                         <t t-call='portal.record_pager'/>
@@ -109,10 +109,10 @@
 
 
     <template id="portal_verifycsv" name="Verficar documentos">
-        <t t-call="leulit.verify_docs_layout">
+        <t t-call="leulit_esignature.verify_docs_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
-            <t t-call="leulit.verify_docs_searchbar">
+            <t t-call="leulit_esignature.verify_docs_searchbar">
                 <t t-set="title">Documentos</t>
             </t>
             <t t-if="not grouped_docs">
