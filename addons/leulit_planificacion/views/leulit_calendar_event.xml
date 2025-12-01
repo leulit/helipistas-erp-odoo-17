@@ -304,90 +304,80 @@
             <field name="view_id" ref="leulit_20200818_1536_form"/>
             <field name="act_window_id" ref="leulit_20220920_1242_action"/>
        </record>
-<!-- 
-        <record id="rule_set_create_calendar_event" model="base.automation">
-            <field name="name">Send Email on Calendar Event Create.</field>
-            <field name="model_id" ref="model_calendar_event"/>
-            <field name="trigger">on_create</field>
-            <field name="state">code</field>
-            <field name="code">record.send_mail('CREACIÓN')</field>
-        </record>
-        
-        <record id="rule_set_update_calendar_event" model="base.automation">
-            <field name="name">Send Email on Calendar Event Update.</field>
-            <field name="model_id" ref="model_calendar_event"/>
-            <field name="trigger">on_write</field>
-            <field name="state">code</field>
-            <field name="code">record.send_mail('ACTUALIZACIÓN')</field>
-        </record>
-        
-        <record id="rule_set_cancel_calendar_event" model="base.automation">
-            <field name="name">Send Email on Calendar Event Cancel.</field>
-            <field name="model_id" ref="model_calendar_event"/>
-            <field name="trigger">on_write</field>
-            <field name="state">code</field>
-            <field name="code">record.send_mail('CANCELADO')</field>
-        </record> -->
 
         <record id="leulit_evento_template" model="mail.template">
             <field name="name">Helipistas event mail template</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${ctx.get('mail_to')}</field>
+            <field name="email_to">{{ ctx.get('mail_to') }}</field>
             <field name="model_id" ref="model_calendar_event" />
             <field name="auto_delete" eval="True" />
-            <field name="subject">${ctx.get('subject')}</field>
+            <field name="subject">{{ ctx.get('subject') }}</field>
             <field name="lang">es_ES</field>
             <field name="body_html" type="html">
                 <div>
+                    <t t-set="tz_name" t-value="'Europe/Madrid'"/>
+                    
                     <p>
                         Esto es una modificación para el siguiente evento :
                     </p>
-                    <table border="0" cellpadding="0" cellspacing="0"><tr>
-                        <td width="130px;">
-                            <div style="border-top-left-radius: 3px; border-top-right-radius: 3px; font-size: 12px; border-collapse: separate; text-align: center; font-weight: bold; color: #ffffff; min-height: 18px; background-color: #875A7B; border: 1px solid #875A7B;">
-                                ${object.get_interval('dayname', tz='Europe/Madrid' if not object.allday else None)}
-                            </div>
-                            <div style="font-size: 48px; min-height: auto; font-weight: bold; text-align: center; color: #5F5F5F; background-color: #F8F8F8; border: 1px solid #875A7B;">
-                                ${object.get_interval('day', tz='Europe/Madrid' if not object.allday else None)}
-                            </div>
-                            <div style='font-size: 12px; text-align: center; font-weight: bold; color: #ffffff; background-color: #875A7B;'>
-                                ${object.get_interval('month', tz='Europe/Madrid' if not object.allday else None)}
-                            </div>
-                            <div style="border-collapse: separate; color: #5F5F5F; text-align: center; font-size: 12px; border-bottom-right-radius: 3px; font-weight: bold; border: 1px solid #875A7B; border-bottom-left-radius: 3px;">
-                                ${not object.allday and object.get_interval('time', tz='Europe/Madrid') or ''}
-                            </div>
-                        </td>
-                        <td width="20px;"/>
-                        <td style="padding-top: 5px;">
-                            <p><strong>Detalles del evento</strong></p>
-                            <ul>
-                                % if object.cancelado:
-                                    <li>Motivo Cancelado: ${object.motivo_cancelacion}</li>
-                                % endif
-                                % if object.location:
-                                    <li>Ubicación: ${object.location}</li>
-                                % endif
-                                % if object.description :
-                                    <li>Descripción: ${object.description}</li>
-                                % endif
-                                % if object.recurrence_id:
-                                    <li>Recurrencia: ${object.recurrence_id.name}</li>
-                                % endif
-                                % if not object.allday and object.duration
-                                    <li>Duración: ${('%dH%02d' % (object.duration,(object.duration*60)%60))}</li>
-                                % endif
-                                <li>Asistentes
+                    <table border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="130px;">
+                                <div style="border-top-left-radius: 3px; border-top-right-radius: 3px; font-size: 12px; border-collapse: separate; text-align: center; font-weight: bold; color: #ffffff; min-height: 18px; background-color: #875A7B; border: 1px solid #875A7B;">
+                                    <t t-out="format_datetime(dt=object.start, tz=tz_name if not object.allday else None, dt_format='EEEE', lang_code='es_ES')"/>
+                                </div>
+                                <div style="font-size: 48px; min-height: auto; font-weight: bold; text-align: center; color: #5F5F5F; background-color: #F8F8F8; border: 1px solid #875A7B;">
+                                    <t t-out="format_datetime(dt=object.start, tz=tz_name if not object.allday else None, dt_format='d', lang_code='es_ES')"/>
+                                </div>
+                                <div style='font-size: 12px; text-align: center; font-weight: bold; color: #ffffff; background-color: #875A7B;'>
+                                    <t t-out="format_datetime(dt=object.start, tz=tz_name if not object.allday else None, dt_format='MMMM y', lang_code='es_ES')"/>
+                                </div>
+                                <div style="border-collapse: separate; color: #5F5F5F; text-align: center; font-size: 12px; border-bottom-right-radius: 3px; font-weight: bold; border: 1px solid #875A7B; border-bottom-left-radius: 3px;">
+                                    <t t-if="not object.allday">
+                                        <t t-out="format_time(time=object.start, tz=tz_name, time_format='medium', lang_code='es_ES')"/>
+                                    </t>
+                                </div>
+                            </td>
+                            <td width="20px;"/>
+                            <td style="padding-top: 5px;">
+                                <p><strong>Detalles del evento</strong></p>
                                 <ul>
-                                % for resource in object.resource_fields:
-                                    <li>
-                                        <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
-                                            <span style="margin-left:5px">${resource.resource.name}</span>
+                                    <li t-if="object.cancelado">
+                                        Motivo Cancelado: <t t-out="object.motivo_cancelacion"/>
                                     </li>
-                                % endfor
-                                </ul></li>
-                            </ul>
-                        </td>
-                    </tr></table>
+                                    
+                                    <li t-if="object.location">
+                                        Ubicación: <t t-out="object.location"/>
+                                    </li>
+                                    
+                                    <li t-if="object.description">
+                                        Descripción: <t t-out="object.description"/>
+                                    </li>
+                                    
+                                    <li t-if="object.recurrence_id">
+                                        Recurrencia: <t t-out="object.recurrence_id.name"/>
+                                    </li>
+                                    
+                                    <li t-if="not object.allday and object.duration">
+                                        Duración: <t t-out="'%dH%02d' % (object.duration, round(object.duration*60)%60)"/>
+                                    </li>
+
+                                    <li>Asistentes
+                                        <ul>
+                                            <t t-foreach="object.resource_fields" t-as="resource">
+                                                <li>
+                                                    <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
+                                                    <span style="margin-left:5px">
+                                                        <t t-out="resource.resource.name"/>
+                                                    </span>
+                                                </li>
+                                            </t>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
                     <br/>
                     <br/>
                     Gracias.
