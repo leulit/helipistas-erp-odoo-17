@@ -380,7 +380,7 @@
                                                 <li>
                                                     <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
                                                     <span style="margin-left:5px">
-                                                        <t t-out="attendee.name"/>
+                                                        <t t-out="attendee.common_name"/>
                                                     </span>
                                                 </li>
                                             </t>
