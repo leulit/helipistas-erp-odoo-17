@@ -33,8 +33,8 @@
                         <field name="mecanico" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))" />
                         <field name="lugar"  readonly="((estado != 'borrador'))" />
                         <field name="fecha"  readonly="((estado != 'borrador'))" />
-                        <field name="inspeccion_motor" readonly="estado != 'borrador'"/>
-                        <field name="inspeccion_estructura" readonly="estado != 'borrador'"/>
+                        <field name="inspeccion_motor"/>
+                        <field name="inspeccion_estructura"/>
                     </group>
                     <separator name="resultado" string="Resultado Inspección"/>
                     <field name="resultado_inspeccion" readonly="((estado != 'borrador'))" />

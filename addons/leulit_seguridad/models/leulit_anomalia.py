@@ -78,6 +78,7 @@ class leulit_anomalia(models.Model):
                 fecha = item.fecha_accion
             referencia ="{0}-ANOMALIA".format(item.id)
             item.write({ 'estado' : 'closed', 'fecha_accion': fecha, 'cerrado_por':self.env.user.partner_id.id, 'date_closed':datetime.now() })
+            item.wizard_send_email()
             
 
     def wizard_send_email(self):
