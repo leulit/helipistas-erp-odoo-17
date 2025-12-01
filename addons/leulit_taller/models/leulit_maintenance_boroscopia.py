@@ -52,6 +52,8 @@ class LeulitMaintenanceBoroscopia(models.Model):
     resultado_inspeccion = fields.Html(string="Resultado de la inspección")
     form_one_ids = fields.One2many(comodel_name="leulit.maintenance_form_one", inverse_name="boroscopia_id", string="Form One")
     flag_form_one = fields.Boolean(compute=_get_flag_form_one, string="Create Form One")
+    inspeccion_motor = fields.Boolean(string="Motor")
+    inspeccion_estructura = fields.Boolean(string="Estructura")
 
 
     def create_form_one_from_boroscopia(self):
