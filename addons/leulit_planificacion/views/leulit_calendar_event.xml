@@ -376,11 +376,11 @@
                                     </li>
                                     <li>Asistentes:
                                         <ul>
-                                            <t t-foreach="object.attendee_ids" t-as="attendee">
+                                            <t t-foreach="object.partner_ids" t-as="partner">
                                                 <li>
                                                     <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
                                                     <span style="margin-left:5px">
-                                                        <t t-out="attendee.common_name"/>
+                                                        <t t-out="partner.name"/>
                                                     </span>
                                                 </li>
                                             </t>
