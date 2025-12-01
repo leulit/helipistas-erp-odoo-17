@@ -174,75 +174,74 @@
 
         <record id="leulit_anomalia_mail_camo_estado" model="mail.template">
             <field name="name">Helipistas mail informa estado anomalía CAMO</field>
-            <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${ctx.get('mail_to')}</field>
             <field name="model_id" ref="model_leulit_anomalia" />
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">{{ ctx.get('mail_to') }}</field>
+            <field name="subject">{{ ctx.get('subject') }}</field>
             <field name="auto_delete" eval="True" />
-            <field name="subject">${ctx.get('subject')}</field>
-            <field name="body_html"><![CDATA[
-                <table>
-                <tr>
-                    <td>
-                        Código:
-                    </td>
-                    <td>
-                        ${object.codigo}
-                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        Estado:
-                    </td>
-                    <td>
-                        ${object.estado}
-                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        Vuelo:
-                    </td>
-                    <td>
-                        ${object.vuelo_id.codigo}
-                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        Máquina:
-                    </td>
-                    <td>
-                        ${object.helicoptero_id.name}
-                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        Discrepancia/anomalía:
-                    </td>
-                    <td>
-                        ${object.discrepancia}<br/>
-                     </td>
-                </tr>
-                % if object.motivodiferir:
-                <tr>
-                    <td>
-                        Acción considerada:
-                    </td>
-                    <td>
-                        ${object.motivodiferir}
-                    </td>
-                </tr>
-                % endif
-                % if object.accion:
-                <tr>
-                    <td>
-                        Acción tomada:
-                    </td>
-                    <td>
-                        ${object.accion}
-                    </td>
-                </tr>
-                % endif
+            <field name="body_html" type="html">
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            Código:
+                        </td>
+                        <td>
+                            <t t-out="object.codigo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Estado:
+                        </td>
+                        <td>
+                            <t t-out="object.estado"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Vuelo:
+                        </td>
+                        <td>
+                            <t t-out="object.vuelo_id.codigo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Máquina:
+                        </td>
+                        <td>
+                            <t t-out="object.helicoptero_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Discrepancia/anomalía:
+                        </td>
+                        <td>
+                            <t t-out="object.discrepancia"/><br/>
+                        </td>
+                    </tr>
+                    <t t-if="object.motivodiferir">
+                        <tr>
+                            <td>
+                                Acción considerada:
+                            </td>
+                            <td>
+                                <t t-out="object.motivodiferir"/>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="object.accion">
+                        <tr>
+                            <td>
+                                Acción tomada:
+                            </td>
+                            <td>
+                                <t t-out="object.accion"/>
+                            </td>
+                        </tr>
+                    </t>
                 </table>
-            ]]>
             </field>
         </record>
 
