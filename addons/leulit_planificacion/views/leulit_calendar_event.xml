@@ -362,13 +362,25 @@
                                         Duración: <t t-out="'%dH%02d' % (object.duration, round(object.duration*60)%60)"/>
                                     </li>
 
-                                    <li>Asistentes
+                                    <li>Recursos:
                                         <ul>
                                             <t t-foreach="object.resource_fields" t-as="resource">
                                                 <li>
                                                     <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
                                                     <span style="margin-left:5px">
                                                         <t t-out="resource.resource.name"/>
+                                                    </span>
+                                                </li>
+                                            </t>
+                                        </ul>
+                                    </li>
+                                    <li>Asistentes:
+                                        <ul>
+                                            <t t-foreach="object.attendee_ids" t-as="attendee">
+                                                <li>
+                                                    <div style="display: inline-block; border-radius: 50%; width: 10px; height: 10px;"> </div>
+                                                    <span style="margin-left:5px">
+                                                        <t t-out="attendee.name"/>
                                                     </span>
                                                 </li>
                                             </t>
