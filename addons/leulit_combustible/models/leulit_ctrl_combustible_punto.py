@@ -37,13 +37,13 @@ class leulitCtrlCombustiblePunto(models.Model):
             if item.gestion_propia:
                 if item.avgas:
                     for ctrl in self.env['leulit.ctrl_combustible'].search(['|',('from_punto', '=', item.id),('to_punto', '=', item.id),('tipo', '=', 'AV-Gas')]):
-                        if ctrl.from_punto == item.id:
+                        if ctrl.from_punto.id == item.id:
                             item.cantidad_ctrl_avgas = -ctrl.cantidad
                         else:
                             item.cantidad_ctrl_avgas = ctrl.cantidad
                 if item.jeta:
                     for ctrl in self.env['leulit.ctrl_combustible'].search(['|',('from_punto', '=', item.id),('to_punto', '=', item.id),('tipo', '=', 'Jeta')]):
-                        if ctrl.from_punto == item.id:
+                        if ctrl.from_punto.id == item.id:
                             item.cantidad_ctrl_jeta = -ctrl.cantidad
                         else:
                             item.cantidad_ctrl_jeta = ctrl.cantidad
