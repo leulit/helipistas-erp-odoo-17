@@ -7,15 +7,13 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="leulit_tarea.view_task_form2_inherited_leulit"/>
             <field name="arch" type="xml">
-                <xpath expr="//header" position="inside">
-                    <button name="create_event_from_task" string="Crear Evento" type="object" class="oe_highlight" groups="leulit_planificacion.RPlanificacion_planner"/>
-                </xpath>
                 <field name="date_deadline" position="after">
                     <field name="maintenance_request_id" invisible="1"/>
                     <field name="reunion_id" options="{'no_create_edit': True,'no_create': True}"  invisible="maintenance_request_id" />
                 </field>
                 <xpath expr="//page[@name='extra_info']" position="after">
                     <page name="planner_info" string="Eventos planificados" groups="leulit_planificacion.RPlanificacion_planner">
+                        <button name="create_event_from_task" string="Crear Evento" type="object" class="oe_highlight" />
                         <field name="event_ids">
                             <tree edit="false" create="false">
                                 <field name="name"/>
