@@ -15,4 +15,5 @@ from . import leulit_reunion_template
 from . import leulit_tipo_meeting
 from . import leulit_reunion_asistente
 from . import leulit_calendar_event_automatizaciones
+from . import leulit_wizard_create_event_from_task
 # from . import res_users

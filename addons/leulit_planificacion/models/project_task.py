@@ -12,3 +12,22 @@ class ProjectTask(models.Model):
     _inherit = ["project.task"]
 
     reunion_id = fields.Many2one("leulit.reunion", "Reunion")
+    event_id = fields.Many2one("calendar.event", "Evento")
+
+    def create_event_from_task(self):
+        # Abre un wizard para crear un evento de calendario a partir de la tarea
+        self.ensure_one()
+        wizard = self.env["leulit.wizard_create_event_from_task"].create(
+            {
+                "task_id": self.id,
+                "start": self.date_deadline or datetime.now(),
+            }
+        )
+        return {
+            "name": "Crear evento de calendario",
+            "type": "ir.actions.act_window",
+            "res_model": "leulit.wizard_create_event_from_task",
+            "view_mode": "form",
+            "res_id": wizard.id,
+            "target": "new",
+        }

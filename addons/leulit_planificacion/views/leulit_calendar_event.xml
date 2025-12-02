@@ -131,6 +131,7 @@
                     <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="tipo_vuelo" />
                     <field name="min_cloud_height"  required="tipo_vuelo" />
                     <field name="no_modificar" invisible="1"/>
+                    <field name="task_id" groups="leulit.RolIT_developer"/>
                 </xpath>
                 <xpath expr="//page[@name='page_invitations']" position="after">
                     <page name="page_leulit_3" string="Documentos" >

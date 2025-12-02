@@ -395,4 +395,19 @@ class leulit_calendar_event(models.Model):
     google_sequence = fields.Integer(string='Sequence for update', default=0)
     ## Audit Log
     historic_lines = fields.One2many(compute=_get_historic_lines, comodel_name='auditlog.log', string='Lineas historico', readonly=True)
+    task_id = fields.Many2one(comodel_name='project.task', string='Tarea')
+
+
+    def open_task(self):
+        self.ensure_one()
+        if not self.task_id:
+            raise UserError('El evento no tiene asociada ninguna tarea.')
+        return {
+            'name': 'Tarea',
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.task',
+            'view_mode': 'form',
+            'res_id': self.task_id.id,
+            'target': 'current',
+        }
 
