@@ -19,22 +19,34 @@
             <field name="subject">Solicitar permisos para el evento: ${object.name}</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>El evento programado es de tipo ${object.type_event.name}.</p>
-                <p>
-                    <strong>Nombre del evento:</strong> ${object.name}<br/>
-                    % if not object.recurrence_id:
-                        <strong>Fecha y hora de inicio:</strong> ${object.start}
-                    % endif
-                    % if object.recurrence_id:
-                        <strong>Primer evento de la serie:</strong> ${object.recurrence_id.dtstart}<br/>
-                        <strong>Último evento de la serie:</strong> ${object.recurrence_id.dtstop}
-                    % endif
-                </p><br/>
-                <p>
-                    <strong>Por favor, proceda a tramitar los permisos correspondientes para este evento.</strong>
-                </p>
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        El evento programado es de tipo <strong><t t-out="object.type_event.name or 'Indefinido'"/></strong>.
+                    </p>
+                    <p>
+                        <strong>Nombre del evento:</strong> <t t-out="object.name"/><br/>
+                    </p>
+                    
+                    <p t-if="not object.recurrence_id">
+                        <strong>Fecha y hora de inicio:</strong>
+                        <t t-out="format_datetime(dt=object.start, tz='Europe/Madrid', dt_format='medium', lang_code='es_ES')"/>
+                    </p>
+
+                    <p t-if="object.recurrence_id">
+                        <strong>Primer evento de la serie:</strong>
+                        <t t-out="format_datetime(dt=object.recurrence_id.dtstart, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/><br/>
+                        
+                        <strong>Último evento de la serie:</strong>
+                        <t t-out="format_datetime(dt=object.recurrence_id.dtstop, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/>
+                    </p>
+                    
+                    <br/>
+                    <p>
+                        <strong>Por favor, proceda a tramitar los permisos correspondientes para este evento.</strong>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>
