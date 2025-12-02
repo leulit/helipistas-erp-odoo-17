@@ -30,37 +30,47 @@ class ParteVuelo(models.Model):
         return {}
 
     def run_upd_datos_actividad(self, fecha_origen, fecha_fin):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
             context = dict(self._context)
 
-            aa_line_ids = self.env['account.analytic.line'].search([('vuelo_no_hlp','=',True),('date_time','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))])
+            aa_line_ids = env['account.analytic.line'].search([
+                ('vuelo_no_hlp', '=', True),
+                ('date_time', '>=', (datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))
+            ])
             if fecha_origen and fecha_fin:
-                aa_line_ids = self.env['account.analytic.line'].search([('vuelo_no_hlp','=',True),('date_time','>=',fecha_origen),('date_time','<=',fecha_fin)])
+                aa_line_ids = env['account.analytic.line'].search([
+                    ('vuelo_no_hlp', '=', True),
+                    ('date_time', '>=', fecha_origen),
+                    ('date_time', '<=', fecha_fin)
+                ])
             for line in aa_line_ids:
                 line.with_context(context).updDataActividadAerea()
 
-            aa_no_introd = self.env['leulit.actividad_aerea_no_introducida'].search([])
+            aa_no_introd = env['leulit.actividad_aerea_no_introducida'].search([])
             if aa_no_introd:
                 for item in aa_no_introd:
-                    for parte in self.search([('estado','=','cerrado'),('fechavuelo','=',item.fecha)], order="horasalida ASC"):
+                    for parte in env['leulit.vuelo'].search([
+                        ('estado', '=', 'cerrado'),
+                        ('fechavuelo', '=', item.fecha)
+                    ], order="horasalida ASC"):
                         parte.with_context(context).updDataActividadAerea()
                     item.unlink()
                     new_cr.commit()
+
             domains = [
-                [('estado','=','cerrado'),('fechavuelo','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))],
+                [('estado', '=', 'cerrado'), ('fechavuelo', '>=', (datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))],
             ]
             if fecha_origen and fecha_fin:
                 domains = [
-                    [('estado','=','cerrado'),('fechavuelo','>=',fecha_origen),('fechavuelo','<=',fecha_fin)]
+                    [('estado', '=', 'cerrado'), ('fechavuelo', '>=', fecha_origen), ('fechavuelo', '<=', fecha_fin)]
                 ]
 
             for domain in domains:
-                for parte in self.search(domain, order="fechavuelo ASC, horasalida ASC"):
+                for parte in env['leulit.vuelo'].search(domain, order="fechavuelo ASC, horasalida ASC"):
                     parte.with_context(context).updDataActividadAerea()
             new_cr.commit()
-            new_cr.close()
             _logger.error("run_upd_datos_actividad fin")
 
 
