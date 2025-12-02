@@ -26,6 +26,6 @@ class WizardCreateEventFromTask(models.TransientModel):
     
 
     task_id = fields.Many2one("project.task", "Tarea", required=True)
-    type_event = fields.Many2one(comodel_name='leulit.tipo_planificacion', string='Tipo', required=True)
-    duration = fields.Float(string='Duración (horas)', required=True, default=1.0)
-    start = fields.Datetime(string='Iniciar', required=True)
+    type_event = fields.Many2one(comodel_name='leulit.tipo_planificacion', string='Tipo')
+    duration = fields.Float(string='Duración (horas)', default=1.0)
+    start = fields.Datetime(string='Iniciar')

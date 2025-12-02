@@ -10,9 +10,9 @@
                 <form string="Crear Evento desde Tarea">
                     <group>
                         <field name="task_id" readonly="1"/>
-                        <field name="type_event"/>
-                        <field name="start"/>
-                        <field name="duration"/>
+                        <field name="type_event" required="1"/>
+                        <field name="start" required="1"/>
+                        <field name="duration" required="1"/>
                     </group>
                     <footer>
                         <button string="Crear Evento" type="object" name="create_event_from_task" class="btn-primary"/>
