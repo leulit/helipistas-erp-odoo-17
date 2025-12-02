@@ -53,7 +53,7 @@ class leulitCtrlCombustiblePunto(models.Model):
         for item in self:
             item.cantidad_ctrl_aceite = 0
             if item.gestion_aceite:
-                for ctrl in self.env['leulit.ctrl_combustible'].search([('to_punto', '=', item.id)]):
+                for ctrl in self.env['leulit.ctrl_combustible'].search([('to_punto', '=', item.id),('tipo', '=', 'Aceite')]):
                     item.cantidad_ctrl_aceite += ctrl.cantidad
 
     @api.depends('gestion_propia','control_totalizador','last_totalizador_avgas','last_totalizador_jeta')
