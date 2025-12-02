@@ -225,33 +225,32 @@ class AccountAnalyticLine(models.Model):
         return {}
 
     def run_upd_datos_actividad(self, fecha_origen, fecha_fin, id_line):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
             context = dict(self._context)
 
             _logger.error('run_upd_datos_actividad start loop')
-            
+
             domains = [
-                [('date_time','>=',datetime.now().strftime("%Y-%m-%d")),('date_time','<=',datetime.now().strftime("%Y-%m-%d"))],
+                [('date_time', '>=', datetime.now().strftime("%Y-%m-%d")), ('date_time', '<=', datetime.now().strftime("%Y-%m-%d"))],
             ]
             if fecha_origen and fecha_fin:
                 if id_line:
                     domains = [
-                        [('date_time','>=',fecha_origen),('date_time','<=',fecha_fin),('id','!=',id_line),('guardia','=',True)]
+                        [('date_time', '>=', fecha_origen), ('date_time', '<=', fecha_fin), ('id', '!=', id_line), ('guardia', '=', True)]
                     ]
                 else:
                     domains = [
-                        [('date_time','>=',fecha_origen),('date_time','<=',fecha_fin),('guardia','=',True)]
+                        [('date_time', '>=', fecha_origen), ('date_time', '<=', fecha_fin), ('guardia', '=', True)]
                     ]
-            _logger.error("---> START UPD DOMAINS %r",domains)
+            _logger.error("---> START UPD DOMAINS %r", domains)
 
             for domain in domains:
-                _logger.error("---> START UPD DOMAIN %r",domain)
-                for parte in self.search(domain, order="date_time ASC"):
+                _logger.error("---> START UPD DOMAIN %r", domain)
+                for parte in env['account.analytic.line'].search(domain, order="date_time ASC"):
                     parte.with_context(context).updDataActividadAerea()
             new_cr.commit()
-            new_cr.close()
             _logger.error("run_upd_datos_actividad fin")
 
 
