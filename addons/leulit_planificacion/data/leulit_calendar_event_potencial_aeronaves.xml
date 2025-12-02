@@ -19,23 +19,34 @@
             <field name="subject">Resumen Potencial Aeronaves</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>A continuación se detalla el potencial de las aeronaves para el próximo mes:</p>
-                % for recurso, datos in ctx.get('email_values', {}).items():
-                    <p><strong>Aeronave:</strong> ${recurso}</p>
-                    <ul>
-                        % for dato in datos:
-                            <li>
-                                % if dato['taller'] != '':
-                                    <strong>${dato['taller']}</strong><br/>
-                                % endif
-                                <strong>Fecha:</strong> ${dato['fecha']}<br/>
-                                <strong>Horas:</strong> ${dato['horas']}<br/>
-                            </li>
-                        % endfor
-                    </ul>
-                % endfor
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>A continuación se detalla el potencial de las aeronaves para el próximo mes:</p>
+                    
+                    <t t-foreach="ctx.get('email_values', {})" t-as="recurso">
+                        <t t-set="datos" t-value="ctx.get('email_values')[recurso]"/>
+                        
+                        <p><strong>Aeronave:</strong> <t t-out="recurso"/></p>
+                        
+                        <ul>
+                            <t t-foreach="datos" t-as="dato">
+                                <li>
+                                    <t t-if="dato.get('taller')">
+                                        <strong><t t-out="dato['taller']"/></strong><br/>
+                                    </t>
+                                    
+                                    <strong>Fecha:</strong> <t t-out="dato.get('fecha')"/><br/>
+                                    <strong>Horas:</strong> <t t-out="dato.get('horas')"/><br/>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                    
+                    <p t-if="not ctx.get('email_values')">
+                        <em>No se han encontrado datos de potencial para mostrar.</em>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>
