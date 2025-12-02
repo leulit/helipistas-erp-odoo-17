@@ -19,30 +19,50 @@
             <field name="subject">Avui caduquen els següents perfils de formació</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">jgarcia@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>A continuació es detallen els cursos i accions que caduquen avui, agrupats per perfil de formació:</p>
-                % for perfil, values in ctx.get('email_values', {}).items():
-                    % if values['cursos'] or values['acciones']:
-                        <p><strong>Perfil:</strong> ${perfil}</p>
-                        % if values['cursos']:
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Cursos:</strong></p>
-                            <ul>
-                                % for curso in values['cursos']:
-                                    <li>${curso}</li>
-                                % endfor
-                            </ul>
-                        % endif
-                        % if values['acciones']:
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Acciones:</strong></p>
-                            <ul>
-                                % for accion in values['acciones']:
-                                    <li>${accion}</li>
-                                % endfor
-                            </ul>
-                        % endif
-                    % endif
-                % endfor
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>A continuació es detallen els cursos i accions que caduquen avui, agrupats per perfil de formació:</p>
+                    
+                    <t t-foreach="ctx.get('email_values', {})" t-as="perfil">
+                        <t t-set="values" t-value="ctx.get('email_values')[perfil]"/>
+                        
+                        <t t-if="values.get('cursos') or values.get('acciones')">
+                            
+                            <div style="margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                                <p style="color: #875A7B; font-size: 14px;">
+                                    <strong>Perfil: <t t-out="perfil"/></strong>
+                                </p>
+                                
+                                <t t-if="values.get('cursos')">
+                                    <div style="padding-left: 20px;">
+                                        <p><strong>Cursos:</strong></p>
+                                        <ul>
+                                            <t t-foreach="values['cursos']" t-as="curso">
+                                                <li><t t-out="curso"/></li>
+                                            </t>
+                                        </ul>
+                                    </div>
+                                </t>
+                                
+                                <t t-if="values.get('acciones')">
+                                    <div style="padding-left: 20px;">
+                                        <p><strong>Acciones:</strong></p>
+                                        <ul>
+                                            <t t-foreach="values['acciones']" t-as="accion">
+                                                <li><t t-out="accion"/></li>
+                                            </t>
+                                        </ul>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </t>
+                    
+                    <p t-if="not ctx.get('email_values')">
+                        <em>No hi ha caducitats per avui.</em>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

@@ -19,28 +19,47 @@
             <field name="subject">Check de perfiles de formación mensual</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>A continuación se detallan los cursos y acciones que caducaran o que estan caducadas por alumno:</p>
-                % for alumno, values in ctx.get('email_values', {}).items():
-                    <p><strong>Alumno:</strong> ${alumno}</p>
-                    % if values['cursos']:
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Cursos:</strong></p>
-                        <ul>
-                            % for curso in values['cursos']:
-                                <li>${curso}</li>
-                            % endfor
-                        </ul>
-                    % endif
-                    % if values['acciones']:
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Acciones:</strong></p>
-                        <ul>
-                            % for accion in values['acciones']:
-                                <li>${accion}</li>
-                            % endfor
-                        </ul>
-                    % endif
-                % endfor
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>A continuación se detallan los cursos y acciones que caducarán o que están caducadas por alumno:</p>
+                    
+                    <t t-foreach="ctx.get('email_values', {})" t-as="alumno">
+                        <t t-set="values" t-value="ctx.get('email_values')[alumno]"/>
+                        
+                        <div style="margin-bottom: 20px; border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
+                            <p style="color: #212529; font-size: 15px;">
+                                <strong>Alumno: <t t-out="alumno"/></strong>
+                            </p>
+                            
+                            <t t-if="values.get('cursos')">
+                                <div style="padding-left: 20px; margin-bottom: 10px;">
+                                    <p style="margin: 5px 0; font-weight: bold; color: #555;">Cursos:</p>
+                                    <ul>
+                                        <t t-foreach="values['cursos']" t-as="curso">
+                                            <li><t t-out="curso"/></li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+                            
+                            <t t-if="values.get('acciones')">
+                                <div style="padding-left: 20px;">
+                                    <p style="margin: 5px 0; font-weight: bold; color: #555;">Acciones:</p>
+                                    <ul>
+                                        <t t-foreach="values['acciones']" t-as="accion">
+                                            <li><t t-out="accion"/></li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    
+                    <p t-if="not ctx.get('email_values')">
+                        <em>No se han detectado caducidades para este mes.</em>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

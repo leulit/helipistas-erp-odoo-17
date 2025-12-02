@@ -18,21 +18,37 @@
             <field name="model_id" ref="base.model_res_users"/>
             <field name="subject">Partes de Escuela sin Verificar</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${ctx.get('mail_to')}</field>
-            <field name="body_html"><![CDATA[
-                <p>A continuación se detallan los partes de escuela que estan cerrados a falta de verificar:</p>
-                % for alumno, partes in ctx.get('email_values', {}).items():
-                    <ul>
-                        % for parte in partes:
-                            <li>
-                                <strong>ID:</strong> ${parte['id']}<br/>
-                                <strong>Contenido:</strong> ${parte['name']}<br/>
-                                <strong>Fecha:</strong> ${parte['fecha']}
-                            </li>
-                        % endfor
-                    </ul>
-                % endfor
-            ]]></field>
+            <field name="email_to">{{ ctx.get('mail_to') }}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>A continuación se detallan los partes de escuela que están cerrados a falta de verificar:</p>
+                    
+                    <t t-foreach="ctx.get('email_values', {})" t-as="alumno">
+                        
+                        <t t-set="partes" t-value="ctx.get('email_values')[alumno]"/>
+                        
+                        <div style="margin-bottom: 15px; border: 1px solid #e0e0e0; padding: 10px; border-radius: 4px;">
+                            <p style="margin-top: 0; background-color: #f0f0f0; padding: 5px; font-weight: bold;">
+                                Alumno: <t t-out="alumno or 'Desconocido'"/>
+                            </p>
+                            
+                            <ul>
+                                <t t-foreach="partes" t-as="parte">
+                                    <li style="margin-bottom: 8px;">
+                                        <strong>ID:</strong> <t t-out="parte.get('id')"/><br/>
+                                        <strong>Contenido:</strong> <t t-out="parte.get('name')"/><br/>
+                                        <strong>Fecha:</strong> <t t-out="parte.get('fecha')"/>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+                    </t>
+                    
+                    <p t-if="not ctx.get('email_values')">
+                        <em>No se han encontrado partes sin verificar.</em>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

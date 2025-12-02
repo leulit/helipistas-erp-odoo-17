@@ -18,21 +18,37 @@
             <field name="model_id" ref="base.model_res_users"/>
             <field name="subject">Partes de Escuela Pendientes</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${ctx.get('mail_to')}</field>
-            <field name="body_html"><![CDATA[
-                <p>A continuación se detallan los partes de escuela que estan en estado pendiente:</p>
-                % for profesor, partes in ctx.get('email_values', {}).items():
-                    <ul>
-                        % for parte in partes:
-                            <li>
-                                <strong>ID:</strong> ${parte['id']}<br/>
-                                <strong>Contenido:</strong> ${parte['name']}<br/>
-                                <strong>Fecha:</strong> ${parte['fecha']}
-                            </li>
-                        % endfor
-                    </ul>
-                % endfor
-            ]]></field>
+            <field name="email_to">{{ ctx.get('mail_to') }}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>A continuación se detallan los partes de escuela que estan en estado pendiente:</p>
+                    
+                    <t t-foreach="ctx.get('email_values', {})" t-as="profesor">
+                        
+                        <t t-set="lista_partes" t-value="ctx.get('email_values')[profesor]"/>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <p style="background-color: #f2f2f2; padding: 5px;">
+                                <strong>Profesor: <t t-out="profesor"/></strong>
+                            </p>
+                            
+                            <ul>
+                                <t t-foreach="lista_partes" t-as="parte">
+                                    <li style="margin-bottom: 10px;">
+                                        <strong>ID:</strong> <t t-out="parte.get('id')"/><br/>
+                                        <strong>Contenido:</strong> <t t-out="parte.get('name')"/><br/>
+                                        <strong>Fecha:</strong> <t t-out="parte.get('fecha')"/>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+                    </t>
+                    
+                    <p t-if="not ctx.get('email_values')">
+                        <em>No hay partes pendientes para reportar.</em>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>
