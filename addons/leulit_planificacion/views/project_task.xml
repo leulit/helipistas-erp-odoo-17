@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside">
                     <field name="event_id" invisible="1"/>
-                    <button name="create_event_from_task" string="Crear Evento" type="object" class="oe_highlight" invisible="event_id" groups="leulit.RolIT_developer"/>
+                    <button name="create_event_from_task" string="Crear Evento" type="object" class="oe_highlight" invisible="event_id" groups="leulit_planificacion.RPlanificacion_planner"/>
                 </xpath>
                 <field name="date_deadline" position="after">
                     <field name="maintenance_request_id" invisible="1"/>
