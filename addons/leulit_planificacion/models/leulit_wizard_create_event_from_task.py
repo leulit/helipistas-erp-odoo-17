@@ -8,11 +8,17 @@ class WizardCreateEventFromTask(models.TransientModel):
     def create_event_from_task(self):
         self.ensure_one()
         task = self.task_id
+        partners = task.user_ids.mapped('partner_id').ids
         event_vals = {
             "name": task.name,
-            "start": task.date_deadline or datetime.now(),
-            "stop": (task.date_deadline + timedelta(hours=1)) if task.date_deadline else (datetime.now() + timedelta(hours=1)),
+            "start": self.start,
+            "stop": self.start + timedelta(hours=self.duration),
+            "duration": self.duration,
+            "type_event": self.type_event.id,
             "description": task.description or "",
+            "partner_ids": [(6, 0, partners)],
+            "user_id": self.env.user.id,
+            "task_id": task.id,
         }
         event = self.env["calendar.event"].create(event_vals)
         task.event_id = event.id
