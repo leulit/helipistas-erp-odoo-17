@@ -16,17 +16,28 @@
         <record id="email_template_close_sale_order_event" model="mail.template">
             <field name="name">Notificación de Cierre de Sale Orders SPO/AOC</field>
             <field name="model_id" ref="model_calendar_event"/>
-            <field name="subject">Cierre de Sale Order: ${object.sale_order_id.full_name}</field>
+            <field name="subject">Cierre de Sale Order: {{ object.sale_order_id.full_name }}</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">info@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>Ayer fue el último día donde hay un evento programado con la Sale Order: <strong>${object.sale_order_id.full_name}</strong>.</p>
-                <p>
-                    <strong>Nombre del evento:</strong> ${object.name}<br/>
-                    <strong>Fecha y hora de inicio:</strong> ${object.start}
-                </p><br/>
-                <p><strong>Por favor, cierre la Sale Order verificando con Operaciones que los vuelos están introducidos en el sistema.</strong></p>
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        Ayer fue el último día donde hay un evento programado con la Sale Order: 
+                        <strong>
+                            <t t-out="object.sale_order_id.full_name or 'Nombre no disponible'"/>
+                        </strong>.
+                    </p>
+                    <p>
+                        <strong>Nombre del evento:</strong> <t t-out="object.name"/><br/>
+                        <strong>Fecha y hora de inicio:</strong> 
+                        <t t-out="format_datetime(dt=object.start, tz='Europe/Madrid', dt_format='medium', lang_code='es_ES')"/>
+                    </p>
+                    <br/>
+                    <p>
+                        <strong>Por favor, cierre la Sale Order verificando con Operaciones que los vuelos están introducidos en el sistema.</strong>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

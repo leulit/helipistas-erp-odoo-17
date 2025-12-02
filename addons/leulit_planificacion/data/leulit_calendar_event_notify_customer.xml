@@ -16,25 +16,36 @@
         <record id="email_template_notify_customer_event" model="mail.template">
             <field name="name">Notificación del cliente y apertura de las inspecciones</field>
             <field name="model_id" ref="model_calendar_event"/>
-            <field name="subject">Notificar al cliente y abrir la inspección para el evento: ${object.name}</field>
+            <field name="subject">Notificar al cliente y abrir la inspección para el evento: {{ object.name }}</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                <p>El evento programado es de tipo ${object.type_event.name}.</p>
-                <p>
-                    <strong>Nombre del evento:</strong> ${object.name}<br/>
-                    % if not object.recurrence_id:
-                        <strong>Fecha y hora de inicio:</strong> ${object.start}
-                    % endif
-                    % if object.recurrence_id:
-                        <strong>Primer evento de la serie:</strong> ${object.recurrence_id.dtstart}<br/>
-                        <strong>Último evento de la serie:</strong> ${object.recurrence_id.dtstop}
-                    % endif
-                </p><br/>
-                <p>
-                    <strong>Por favor, proceda a notificar al cliente y abrir la inspección en el sistema correspondientes para este evento.</strong>
-                </p>
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        El evento programado es de tipo <strong><t t-out="object.type_event.name or 'Sin Tipo'"/></strong>.
+                    </p>
+                    <p>
+                        <strong>Nombre del evento:</strong> <t t-out="object.name"/><br/>
+                        
+                        <t t-if="not object.recurrence_id">
+                            <strong>Fecha y hora de inicio:</strong>
+                            <t t-out="format_datetime(dt=object.start, tz='Europe/Madrid', dt_format='medium', lang_code='es_ES')"/>
+                        </t>
+                        
+                        <t t-if="object.recurrence_id">
+                            <strong>Primer evento de la serie:</strong>
+                            <t t-out="format_datetime(dt=object.recurrence_id.dtstart, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/><br/>
+                            
+                            <strong>Último evento de la serie:</strong>
+                            <t t-out="format_datetime(dt=object.recurrence_id.dtstop, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/>
+                        </t>
+                    </p>
+                    <br/>
+                    <p>
+                        <strong>Por favor, proceda a notificar al cliente y abrir la inspección en el sistema correspondientes para este evento.</strong>
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

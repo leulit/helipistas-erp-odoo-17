@@ -16,22 +16,35 @@
         <record id="email_template_check_equipamientos" model="mail.template">
             <field name="name">Notificación de equipamientos dentro de 3 dias</field>
             <field name="model_id" ref="model_calendar_event"/>
-            <field name="subject">Recordatorio de equipamientos para el evento: ${object.name}</field>
+            <field name="subject">Recordatorio de equipamientos para el evento: {{object.name}}</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">${ctx.get('mail_to')}</field>
-            <field name="body_html"><![CDATA[
-                <p>
-                    <strong>Nombre del evento:</strong> ${object.name}<br/>
-                    <strong>Tipo:</strong> ${object.type_event.name}<br/>
-                    <strong>Fecha y hora de inicio:</strong> ${object.start}<br/><br/>
-                    <strong>Equipamientos:</strong>
-                </p>
-                <ul>
-                    % for equipamiento in object.equipamientos_ids:
-                        <li>${equipamiento.name}</li>
-                    % endfor
-                </ul>
-            ]]></field>
+            <field name="email_to">{{ctx.get('mail_to')}}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        <strong>Nombre del evento:</strong> <t t-out="object.name"/><br/>
+                        
+                        <strong>Tipo:</strong> <t t-out="object.type_event.name or 'N/A'"/><br/>
+                        
+                        <strong>Fecha y hora de inicio:</strong> 
+                        <t t-out="format_datetime(dt=object.start, tz='Europe/Madrid', dt_format='medium', lang_code='es_ES')"/><br/>
+                        <br/>
+                        <strong>Equipamientos:</strong>
+                    </p>
+                    
+                    <ul>
+                        <t t-foreach="object.equipamientos_ids" t-as="equipamiento">
+                            <li>
+                                <t t-out="equipamiento.name"/>
+                            </li>
+                        </t>
+                    </ul>
+                    
+                    <p t-if="not object.equipamientos_ids" style="font-style: italic; color: #888;">
+                        No hay equipamientos asignados.
+                    </p>
+                </div>
+            </field>
         </record>
 
     </data>

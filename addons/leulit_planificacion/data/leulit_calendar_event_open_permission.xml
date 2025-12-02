@@ -16,7 +16,7 @@
         <record id="email_template_open_permission_event" model="mail.template">
             <field name="name">Notificación de Apertura de Permisos para Eventos SPO/AOC</field>
             <field name="model_id" ref="model_calendar_event"/>
-            <field name="subject">Solicitar permisos para el evento: ${object.name}</field>
+            <field name="subject">Solicitar permisos para el evento: {{object.name}}</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
             <field name="body_html" type="html">
