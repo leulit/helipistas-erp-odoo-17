@@ -119,8 +119,8 @@ class LeulitMaintenanceFormOne(models.Model):
                     'part_45': item.part_45,
                     'other_regulation': item.other_regulation,
                     'certificador': item.certificador.name if item.certificador else "",
-                    'firma': item.certificador.firma if item.certificador else False,
-                    'sello': item.certificador.sello,
+                    'firma': item.certificador.firma.decode() if item.certificador else False,
+                    'sello': item.certificador.sello.decode() if item.certificador else False,
                     'fecha': item.fecha.strftime("%d/%m/%Y"),
                     }
                 docref = datetime.now().strftime("%Y%m%d")
