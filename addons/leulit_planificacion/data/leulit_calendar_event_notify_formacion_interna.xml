@@ -19,24 +19,31 @@
             <field name="subject">Recordatorio de Programar Entrenamientos de Compañía y Resumen de lo Programado</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="body_html"><![CDATA[
-                % if ctx.get('values_flag'):
-                    <p>A continuación se detallan los eventos de entrenamientos de compañía programados:</p>
-                    % for evento, datos in ctx.get('email_values', {}).items():
-                        <br/>
-                        <p><strong>${evento}</strong></p>
-                        <p><strong>Fecha:</strong> ${datos['fecha']}</p>
-                        <p><strong>Participantes:</strong> ${datos['participantes']}</p>
-                    % endfor
+            <field name="body_html" type="html">
+                <div>
+                    <t t-if="ctx.get('values_flag')">
+                        <p>A continuación se detallan los eventos de entrenamientos de compañía programados:</p>
+                        
+                        <t t-foreach="ctx.get('email_values', {})" t-as="evento">
+                            <t t-set="datos" t-value="ctx.get('email_values')[evento]"/>
+                            
+                            <div style="margin-top: 15px; margin-bottom: 15px; border-left: 3px solid #875A7B; padding-left: 10px;">
+                                <p style="margin: 0;"><strong><t t-out="evento"/></strong></p>
+                                <p style="margin: 0;"><strong>Fecha:</strong> <t t-out="datos.get('fecha')"/></p>
+                                <p style="margin: 0;"><strong>Participantes:</strong> <t t-out="datos.get('participantes')"/></p>
+                            </div>
+                        </t>
+                    </t>
+                    
+                    <t t-else="">
+                        <p>No hay ningún entrenamiento de compañía programado para el mes que viene.</p>
+                    </t>
+
                     <br/>
                     <br/>
-                    <p>Se recuerda que es necesario programar los entrenamientos de compañía para el mes siguiente.</p>
-                % else:
-                    <p>No hay ningún entrenamiento de compañía programado para el mes que viene.</p>
-                    <br/>
-                    <p>Se recuerda que es necesario programar los entrenamientos de compañía para el mes siguiente.</p>
-                % endif
-            ]]></field>
+                    <p><strong>Se recuerda que es necesario programar los entrenamientos de compañía para el mes siguiente.</strong></p>
+                </div>
+            </field>
         </record>
 
     </data>
