@@ -19,19 +19,31 @@
             <field name="subject">Notificación de Stock Mínimo</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">almacen@icarus-manteniment.com</field>
-            <field name="body_html"><![CDATA[
-                % if ctx.get('values_flag'):
-                    <p>A continuación se detallan los siguientes productos que no llegan a la cantidad minima en stock:</p
-                    % for producto, datos in ctx.get('email_values', {}).items():
-                        <br/>
-                        <p><strong>${producto}</strong></p>
-                        <p><strong>Cantidad en Stock:</strong> ${datos['qty']}</p>
-                        <p><strong>Cantidad Minima:</strong> ${datos['min_qty']}</p>
-                    % endfor
-                % else:
-                    <p>No hay ningun producto que este por debajo de la cantidad minima en el listado de Stock Minimo.</p>
-                % endif
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <t t-if="ctx.get('values_flag')">
+                        <p>A continuación se detallan los siguientes productos que no llegan a la cantidad mínima en stock:</p>
+                        
+                        <t t-foreach="ctx.get('email_values', {})" t-as="producto">
+                            <t t-set="datos" t-value="ctx.get('email_values')[producto]"/>
+                            
+                            <div style="margin-bottom: 15px; border-left: 4px solid #f0ad4e; padding-left: 10px;">
+                                <p style="margin: 0 0 5px 0;">
+                                    <strong><t t-out="producto"/></strong>
+                                </p>
+                                <p style="margin: 0; font-size: 13px;">
+                                    <strong>Cantidad en Stock:</strong> <t t-out="datos.get('qty')"/><br/>
+                                    <strong>Cantidad Mínima:</strong> <t t-out="datos.get('min_qty')"/>
+                                </p>
+                            </div>
+                        </t>
+                    </t>
+                    
+                    <t t-else="">
+                        <p>No hay ningún producto que esté por debajo de la cantidad mínima en el listado de Stock Mínimo.</p>
+                    </t>
+                </div>
+            </field>
         </record>
 
     </data>

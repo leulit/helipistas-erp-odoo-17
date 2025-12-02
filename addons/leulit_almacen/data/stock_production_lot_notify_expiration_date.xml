@@ -19,19 +19,31 @@
             <field name="subject">Notificación de Piezas Caducadas</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">almacen@icarus-manteniment.com</field>
-            <field name="body_html"><![CDATA[
-                % if ctx.get('values_flag'):
-                    <p>A continuación se detallan las siguientes piezas que estan caducadas:</p
-                    % for pieza, datos in ctx.get('email_values', {}).items():
-                        <br/>
-                        <p><strong>${pieza}</strong></p>
-                        <p><strong>Cantidad en Stock:</strong> ${datos['qty']}</p>
-                        <p><strong>Fecha de Caducidad:</strong> ${datos['fecha_caducidad']}</p>
-                    % endfor
-                % else:
-                    <p>No hay ningun pieza caducada.</p>
-                % endif
-            ]]></field>
+            <field name="body_html" type="html">
+                <div>
+                    <t t-if="ctx.get('values_flag')">
+                        <p>A continuación se detallan las siguientes piezas que están caducadas:</p>
+                        
+                        <t t-foreach="ctx.get('email_values', {})" t-as="pieza">
+                            <t t-set="datos" t-value="ctx.get('email_values')[pieza]"/>
+                            
+                            <div style="margin-bottom: 15px; border-left: 4px solid #d9534f; padding-left: 10px;">
+                                <p style="margin: 0 0 5px 0;">
+                                    <strong><t t-out="pieza"/></strong>
+                                </p>
+                                <p style="margin: 0; font-size: 13px;">
+                                    <strong>Cantidad en Stock:</strong> <t t-out="datos.get('qty')"/><br/>
+                                    <strong>Fecha de Caducidad:</strong> <t t-out="datos.get('fecha_caducidad')"/>
+                                </p>
+                            </div>
+                        </t>
+                    </t>
+                    
+                    <t t-else="">
+                        <p>No hay ninguna pieza caducada.</p>
+                    </t>
+                </div>
+            </field>
         </record>
 
     </data>
