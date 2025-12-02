@@ -48,6 +48,14 @@ class leulitCtrlCombustiblePunto(models.Model):
                         else:
                             item.cantidad_ctrl_jeta = ctrl.cantidad
 
+    @api.depends('gestion_aceite')
+    def ctrl_cantidad_aceite(self):
+        for item in self:
+            item.cantidad_ctrl_aceite = 0
+            if item.gestion_aceite:
+                for ctrl in self.env['leulit.ctrl_combustible'].search([('to_punto', '=', item.id)]):
+                    item.cantidad_ctrl_aceite += ctrl.cantidad
+
     @api.depends('gestion_propia','control_totalizador','last_totalizador_avgas','last_totalizador_jeta')
     def ctrl_cantidad_totalizador(self):
         for item in self:
@@ -72,6 +80,8 @@ class leulitCtrlCombustiblePunto(models.Model):
     control_totalizador = fields.Boolean(string="Control Totalizador")
     flag_otro = fields.Boolean(string="Otros")
     gestion_propia = fields.Boolean(string="Gestion Propia")
+    gestion_aceite = fields.Boolean(string="Gestion Aceite")
+    # Campos de aviso de combustible
     aviso_avgas = fields.Float(string="Aviso Avgas", help="Cantidad de combustible que se considera aviso para el punto de combustible")
     aviso_jeta = fields.Float(string="Aviso JetA1", help="Cantidad de combustible que se considera aviso para el punto de combustible")
     # Campos para determinar si el punto tiene avgas y/o jeta
@@ -93,6 +103,8 @@ class leulitCtrlCombustiblePunto(models.Model):
     last_totalizador_jeta = fields.Float(string="Ultimo Totalizador Jet-A1", compute="get_last_totalizador", store=False)
     cantidad_ctrl_jeta = fields.Float(string="Cantidad Jet-A1", compute="ctrl_cantidad", store=False)
     cantidad_ctrl_totalizador_jeta = fields.Float(string="Cantidad Jet-A1", compute="ctrl_cantidad_totalizador", store=False)
+    # Campos calculados para tener la cantidad de aceite actual
+    cantidad_ctrl_aceite = fields.Float(string="Cantidad Aceite", compute="ctrl_cantidad_aceite", store=False)
 
 
     def cron_aviso_combustible(self):

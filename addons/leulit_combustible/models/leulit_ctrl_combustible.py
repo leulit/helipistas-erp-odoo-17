@@ -37,7 +37,7 @@ class leulit_ctrl_combustible(models.Model):
     cantidad = fields.Float('Cantidad')
     totalizador = fields.Float('Totalizador')
     cantidad_ctrl = fields.Float(compute=get_cantidad_ctrl, string='Cantidad ctrl HLP')
-    tipo = fields.Selection([('AV-Gas', 'AV-Gas'),('Jeta', 'Jet A-1')], 'Tipo')
+    tipo = fields.Selection([('AV-Gas', 'AV-Gas'),('Jeta', 'Jet A-1'),('Aceite', 'Aceite')], 'Tipo')
     informado_por = fields.Many2one('res.users', 'Informado por', readonly=True,default=lambda self: self.env.uid)
     
 

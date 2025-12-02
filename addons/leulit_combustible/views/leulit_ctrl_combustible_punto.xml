@@ -25,12 +25,17 @@
                             <field name="sequence"/>
                             <field name="name"/>
                         </group>
-                        <group col="4">
-                            <field name="control_totalizador"/>
-                            <field name="gestion_propia"/>
-                            <field name="avgas"/>
-                            <field name="jeta"/>
-                            <field name="flag_otro" groups="leulit.RolIT_developer"/>
+                        <group col="2">
+                            <group>
+                                <field name="control_totalizador"/>
+                                <field name="avgas"/>
+                                <field name="gestion_aceite"/>
+                            </group>
+                            <group>
+                                <field name="gestion_propia"/>
+                                <field name="jeta"/>
+                                <field name="flag_otro" groups="leulit.RolIT_developer"/>
+                            </group>
                         </group>
                         <group col="2">
                             <group>
@@ -52,6 +57,10 @@
                                 <field name="cantidad_ctrl_jeta"  invisible="((not jeta) or (control_totalizador))" />
                                 <field name="cantidad_ctrl_totalizador_jeta"  invisible="((not jeta) or (not control_totalizador))" />
                                 <field name="aviso_jeta"  invisible="((not jeta))" />
+                            </group>
+                            <group>
+                                <separator string="Aceite"  invisible="not gestion_aceite" />
+                                <field name="cantidad_ctrl_aceite"  invisible="not gestion_aceite" />
                             </group>
                         </group>
                     </sheet>
