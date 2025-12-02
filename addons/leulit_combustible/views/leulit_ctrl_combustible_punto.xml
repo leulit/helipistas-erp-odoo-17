@@ -80,12 +80,19 @@
             <field name="model_id" ref="model_leulit_ctrl_combustible_punto"/>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">ops@helipistas.com</field>
-            <field name="subject">⚠️ Aviso de bajo nivel de combustible en ${object.name}</field>
+            <field name="subject">⚠️ Aviso de bajo nivel de combustible en {{object.name}}</field>
             <field name="body_html" type="html">
-                <p>Se ha detectado un nivel bajo de combustible en <strong>${object.name}</strong>.</p>
-                <p>Detalles:</p>
-                <p>${ctx.get('body')|safe}</p>
-                <br/>
+                <div>
+                    <p>
+                        Se ha detectado un nivel bajo de combustible en <strong><t t-out="object.name"/></strong>.
+                    </p>
+                    <p>Detalles:</p>
+                    
+                    <div>
+                        <t t-out="ctx.get('body')"/>
+                    </div>
+                    <br/>
+                </div>
             </field>
         </record>
 
