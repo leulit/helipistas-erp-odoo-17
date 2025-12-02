@@ -12,7 +12,7 @@ class ProjectTask(models.Model):
     _inherit = ["project.task"]
 
     reunion_id = fields.Many2one("leulit.reunion", "Reunion")
-    event_id = fields.Many2one("calendar.event", "Evento")
+    event_ids = fields.One2many("calendar.event", "task_id", "Eventos")
 
     def create_event_from_task(self):
         # Abre un wizard para crear un evento de calendario a partir de la tarea

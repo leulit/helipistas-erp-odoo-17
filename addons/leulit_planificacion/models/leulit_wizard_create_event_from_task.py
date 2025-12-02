@@ -21,7 +21,7 @@ class WizardCreateEventFromTask(models.TransientModel):
             "task_id": task.id,
         }
         event = self.env["calendar.event"].create(event_vals)
-        task.event_id = event.id
+        task.event_ids = [(4, event.id)]
         return {"type": "ir.actions.act_window_close"}
     
 
