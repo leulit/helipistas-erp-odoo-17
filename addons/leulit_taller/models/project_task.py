@@ -383,11 +383,54 @@ class ProjectTask(models.Model):
 
 
     def comprobar_estado_wo_tareas(self, request):
-        """Comprueba el estado de las tareas de la orden de trabajo"""
-        for item in self.search([('maintenance_request_id','=',request)]):
+        """Comprueba el estado de las tareas de la orden de trabajo
+        
+        Returns:
+            dict: {
+                'valid': bool,
+                'pending_tasks': list of dicts with task info
+            }
+        """
+        pending_tasks = []
+        tareas = self.search([('maintenance_request_id','=',request)])
+        
+        _logger.info('Comprobando estado de %s tareas para WO ID: %s', len(tareas), request)
+        
+        for item in tareas:
             if item.stage_id.name not in ['Realizada','N/A','Pospuesta']:
-                return False
-        return True
+                # Información adicional para ayudar a identificar la tarea
+                asignados = ', '.join(item.user_ids.mapped('name')) if item.user_ids else 'Sin asignar'
+                tipo_tarea = dict(item._fields['tipo_tarea_taller'].selection).get(item.tipo_tarea_taller, 'N/A') if item.tipo_tarea_taller else 'N/A'
+                
+                task_info = {
+                    'id': item.id,
+                    'name': item.name,
+                    'stage': item.stage_id.name,
+                    'parent': item.parent_id.name if item.parent_id else 'N/A',
+                    'parent_id': item.parent_id.id if item.parent_id else None,
+                    'assigned_to': asignados,
+                    'task_type': tipo_tarea,
+                }
+                pending_tasks.append(task_info)
+                _logger.warning(
+                    'Tarea pendiente encontrada - ID: %s, Nombre: "%s", Estado: %s, Asignado a: %s, Tipo: %s, Padre: %s (ID: %s)',
+                    item.id, item.name, item.stage_id.name, asignados, tipo_tarea,
+                    item.parent_id.name if item.parent_id else 'N/A',
+                    item.parent_id.id if item.parent_id else 'N/A'
+                )
+        
+        if pending_tasks:
+            _logger.error(
+                'Total de tareas pendientes para WO %s: %s',
+                request, len(pending_tasks)
+            )
+        else:
+            _logger.info('Todas las tareas de WO %s están completadas', request)
+        
+        return {
+            'valid': len(pending_tasks) == 0,
+            'pending_tasks': pending_tasks
+        }
 
 
     def action_open_subtask(self):

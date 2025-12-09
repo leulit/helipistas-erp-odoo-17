@@ -1,7 +1,246 @@
-AI rules for Odoo 17+
-Eres un experto en el desarrollo de Odoo y Python. Tu objetivo es construir módulos de Odoo escalables, mantenibles y robustos, siguiendo las mejores prácticas modernas y las convenciones del framework de Odoo. Tienes experiencia experta en la creación, prueba y despliegue de módulos de Odoo, comprendiendo profundamente el ORM, la capa de vistas (XML), los controladores web, el framework de UI (OWL) y la arquitectura general de Odoo 17 y superior.
+# AI Coding Agent Instructions - Helipistas ERP Odoo 17
 
-Interaction Guidelines
+## Arquitectura del Proyecto
+
+Este es un **ERP para gestión aeronáutica (helicópteros)** basado en Odoo 17, con módulos especializados para:
+- **Operaciones**: Gestión de vuelos (`leulit_operaciones`), partes de vuelo, combustible
+- **Mantenimiento**: Taller (`leulit_taller`), CAMO (`leulit_camo`), Parte 145 (`leulit_parte_145`)
+- **Formación**: Escuela (`leulit_escuela`), alumnos, cursos, perfiles formativos
+- **Calidad & Seguridad**: SMS, análisis de riesgo, auditorías
+- **Almacén**: Control de inventario, calibraciones, lotes
+- **Actividad**: Timesheet y facturación de horas de vuelo/taller
+
+### Estructura de Módulos (Patrón Leulit)
+```
+addons/
+  leulit/              # MÓDULO BASE - utilitylib compartida, grupos, widgets OWL
+  leulit_*/            # Módulos funcionales (heredan de leulit)
+  third-party-addons/  # Módulos de OCA y terceros
+```
+
+**CRÍTICO**: `leulit` es el módulo fundacional. Todos los módulos `leulit_*` dependen de él.
+
+## Convenciones Específicas del Proyecto
+
+### Biblioteca Compartida `utilitylib.py`
+**Ubicación**: `addons/leulit/utilitylib.py`
+
+Contiene constantes, funciones helper y configuración global:
+```python
+from odoo.addons.leulit import utilitylib
+
+# Roles predefinidos
+ROL_DIRECCION = 'Dirección'
+ROL_PILOTO_EXTERNO = 'Piloto Externo'
+
+# Formatos de fecha/hora
+STD_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+ESP_DATE_FORMAT = "%d-%m-%Y"
+
+# Densidades por modelo de helicóptero
+DENSIDAD_COMBUSTIBLE = {'R44': 0.71, 'EC120B': 0.79, ...}
+```
+
+**Siempre importa utilitylib** en lugar de duplicar constantes:
+```python
+from odoo.addons.leulit import utilitylib
+fecha_str = utilitylib.formatDate(fecha, utilitylib.ESP_DATE_FORMAT)
+```
+
+### Sistema de Grupos y Roles Jerárquicos
+**Ubicación**: `addons/leulit/groups.xml`
+
+Sistema de roles específico del dominio aeronáutico con herencia (`implied_ids`):
+```xml
+RBase → RBase_employee → RBase_hide
+ROperaciones_piloto_externo → ROperaciones_alumno → ROperaciones_operador → ROperaciones_piloto → ROperaciones_responsable
+```
+
+**Patrón de Seguridad**:
+- Define grupos en `groups.xml` (no en `security/`)
+- Usa `security/ir.model.access.csv` para permisos CRUD por grupo
+- Ejemplo: `access_analisis_riesgo_user,model_analisis_riesgo,group_riesgo_user,1,1,1,1`
+
+### Widgets OWL Personalizados
+**Ubicación**: `addons/leulit/static/src/js/widget_semaforo_field.js`
+
+Widgets reutilizables registrados globalmente:
+```javascript
+// Uso en vistas XML
+<field name="estado_caducidad" widget="semaforo_char"/>
+<field name="es_valido" widget="semaforo_bool"/>
+```
+
+Muestra semáforos (verde/amarillo/rojo) para campos char/boolean. Registrados en `__manifest__.py`:
+```python
+'assets': {
+    'web.assets_backend': [
+        'leulit/static/src/js/widget_semaforo_field.js',
+        'leulit/static/src/xml/semaforo_char.xml',
+    ],
+}
+```
+
+### Herencia de Vistas (XPath) - Patrón Dominante
+**NUNCA copies vistas completas**. Siempre usa `inherit_id` + XPath:
+```xml
+<record id="view_partner_form_inherit" model="ir.ui.view">
+    <field name="name">res.partner.form.inherit</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='vat']" position="after">
+            <field name="licencia_piloto"/>
+        </xpath>
+    </field>
+</record>
+```
+
+Ver ejemplos reales en: `addons/leulit_actividad/views/leulit_vuelo.xml`
+
+### Gestión de Adjuntos (ir.attachment)
+**Patrón crítico**: Override del método `check()` en `ir.attachment` para permitir acceso a adjuntos huérfanos (sin `res_model/res_id`) por usuarios `RBase`:
+```python
+# addons/leulit/models/ir_attachment.py
+if not res_id and create_uid != self.env.uid:
+    if not self.env.user.has_group('leulit.RBase'):
+        raise AccessError(_("Perdon, you are not allowed..."))
+```
+
+**Al crear adjuntos programáticamente**, siempre establece `res_model` y `res_id`:
+```python
+attachment_id.write({
+    'res_model': 'leulit.maintenance_manual',
+    'res_id': record.id,
+})
+```
+
+## Flujos de Trabajo Críticos
+
+### Gestión de Vuelos (leulit_operaciones)
+**Modelo principal**: `leulit.vuelo`
+- Estados: `prevuelo → cerrado → cancelado`
+- Validaciones: `checkValidCreateWriteData()` verifica solapamientos de helicóptero/piloto
+- Perfiles dinámicos: `PV_PILOTO`, `PV_ALUMNO`, `PV_INSTRUCTOR`, `PV_VERIFICADO`
+- Chain handlers: `vuelo_chain_postvuelo`, `vuelo_chain_cerrado` para lógica post-procesado
+
+**Patrón de secuencias**:
+```python
+codigo = self.env['ir.sequence'].next_by_code('leulit.vuelo')
+values.update({'codigo': codigo})
+```
+
+### Sistema de E-signature (leulit_esignature)
+**TransientModel Wizard** para firmas digitales con QR + OTP:
+```python
+class EsignatureWizard(models.TransientModel):
+    _name = "leulit_esignaturewizard"
+    
+    def prepareSignature(self, idmodelo, model, descripcion, referencia):
+        otp = self.env['res.users'].get_otp()
+        # Genera QR con pyqrcode
+        qr = pyqrcode.create(qrtext)
+```
+
+Usado en anomalías, vuelos, partes de escuela para firma electrónica.
+
+## Comandos de Desarrollo
+
+### Docker (Desarrollo Local)
+```bash
+# Iniciar entorno
+cd docker && docker-compose up -d
+
+# Ver logs
+docker logs -f helipistas_odoo_17
+
+# Instalar dependencias Python en contenedor
+docker exec -ti helipistas_odoo pip install pypdf pyqrcode pypng pyotp
+
+# Acceso a shell Odoo
+docker exec -ti helipistas_odoo /bin/bash
+```
+
+**Configuración**: `config/odoo.conf`
+- `addons_path = /mnt/extra-addons,/mnt/extra-addons/third-party-addons`
+- Puerto: `8070:8069` (http://localhost:8070)
+- Base de datos: PostgreSQL 15 en contenedor `helipistas_psql_15`
+
+### Actualización de Módulos
+```bash
+# Actualizar módulo específico
+docker exec -ti helipistas_odoo odoo -u leulit_operaciones -d nombre_bd --stop-after-init
+
+# Instalar nuevo módulo
+docker exec -ti helipistas_odoo odoo -i leulit_nuevo_modulo -d nombre_bd --stop-after-init
+```
+
+### Migraciones y Mantenimiento
+**CRÍTICO**: Antes de importar datos, ejecutar SQL del `README.md` para eliminar constraints problemáticos:
+```sql
+ALTER TABLE leulit_perfil_formacion DROP CONSTRAINT IF EXISTS leulit_perfil_formacion_alumno_perfil_unique;
+ALTER TABLE maintenance_plan DROP CONSTRAINT IF EXISTS maintenance_plan_equipment_kind_uniq;
+-- ... (ver README.md completo)
+```
+
+**Post-migración**: Requiere `res_company` con `id=2` para `leulit_almacen`.
+
+## Patrones de Código Específicos
+
+### Computed Fields con @api.depends
+```python
+@api.depends('partesescuela_teorico_ids')
+def _compute_horas_teoricas(self):
+    for rec in self:
+        rec.horas_teoricas = sum(rec.partesescuela_teorico_ids.mapped('horas'))
+```
+
+**Evita `@api.depends()` vacíos** - especifica dependencias reales.
+
+### Threading para Procesos Largos
+Ver `addons/leulit/models/res_partner.py`:
+```python
+def _recalcular_complete_name_thread(self, dbname, uid):
+    with api.Environment.manage():
+        with registry(dbname).cursor() as new_cr:
+            env = api.Environment(new_cr, uid, {})
+            # ... proceso largo ...
+            
+def recalcular_complete_name_async(self):
+    thread = threading.Thread(target=self._recalcular_complete_name_thread, args=(db, uid))
+    thread.start()
+```
+
+### Logging Consistente
+```python
+import logging
+_logger = logging.getLogger(__name__)
+
+_logger.info('Iniciando recálculo de complete_name para %s partners', total)
+_logger.error('Error al calcular complete_name para partner %s: %s', partner.id, str(e))
+```
+
+## Testing & Linting
+
+- **Formato**: Black + isort para Python
+- **Linting**: Pylint (configuración Odoo) + Flake8
+- **Longitud línea**: 120 caracteres
+- **Tests**: `tests/` usando `odoo.tests.common.TransactionCase`
+- Ejecutar: `--test-enable --test-tags=tag_name`
+
+## Referencias Rápidas
+
+- **Módulos funcionales**: 16 módulos `leulit_*` + 1 base
+- **Dependencias clave**: `pypdf`, `pyqrcode`, `pypng`, `pyotp`
+- **Imagen Docker**: `wbms/odoo-17.0`
+- **Formato fechas**: Siempre usar constantes de `utilitylib`
+- **Multicompañía**: Considera `self.env.company` en lógica de negocio
+
+---
+
+## Principios Odoo 17+ (Heredados)
+
+### Interaction Guidelines
 User Persona: Asume que el usuario está familiarizado con los conceptos de programación y Python, pero puede ser nuevo en el framework de Odoo.
 
 Explanations: Al generar código, proporciona explicaciones para las características específicas de Odoo, como el ORM, el entorno (self.env), los dominios, los decoradores @api, la herencia de vistas (XPath), el contexto y el framework OWL.

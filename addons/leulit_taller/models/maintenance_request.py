@@ -184,8 +184,29 @@ class MaintenanceRequest(models.Model):
                         })
 
     def comprobar_estado_wo(self):
-        if not self.env['project.task'].comprobar_estado_wo_tareas(self.id):
-            raise UserError('No puede cerrar esta Orden de Trabajo porque tiene una/s tarea/s pendiente.')
+        resultado = self.env['project.task'].comprobar_estado_wo_tareas(self.id)
+        if not resultado['valid']:
+            mensaje_tareas = []
+            for idx, t in enumerate(resultado['pending_tasks'], 1):
+                info = (
+                    f"{idx}. TAREA ID: {t['id']}\n"
+                    f"   Nombre: {t['name']}\n"
+                    f"   Estado: {t['stage']}\n"
+                    f"   Tipo: {t['task_type']}\n"
+                    f"   Asignado a: {t['assigned_to']}\n"
+                    f"   Tarea padre: {t['parent']}"
+                )
+                if t['parent_id']:
+                    info += f" (ID: {t['parent_id']})"
+                mensaje_tareas.append(info)
+            
+            tareas_pendientes = '\n\n'.join(mensaje_tareas)
+            raise UserError(
+                f"❌ No puede cerrar esta Orden de Trabajo\n\n"
+                f"Tiene {len(resultado['pending_tasks'])} tarea/s pendiente/s que debe/n completarse:\n\n"
+                f"{tareas_pendientes}\n\n"
+                f"💡 Busque la tarea por su ID en el listado de tareas de mantenimiento."
+            )
         self.env['leulit.maintenance_crs'].comprobar_estado_wo_crs(self.id)
         self.env['leulit.maintenance_form_one'].comprobar_estado_wo_form_one(self.id)
         self.env['leulit.maintenance_boroscopia'].comprobar_estado_wo_boroscopia(self.id)
@@ -196,8 +217,29 @@ class MaintenanceRequest(models.Model):
 
 
     def comprobacion_estados_crs(self):
-        if not self.env['project.task'].comprobar_estado_wo_tareas(self.id):
-            raise UserError('No puede crear un CRS porque tiene una/s tarea/s pendiente.')
+        resultado = self.env['project.task'].comprobar_estado_wo_tareas(self.id)
+        if not resultado['valid']:
+            mensaje_tareas = []
+            for idx, t in enumerate(resultado['pending_tasks'], 1):
+                info = (
+                    f"{idx}. TAREA ID: {t['id']}\n"
+                    f"   Nombre: {t['name']}\n"
+                    f"   Estado: {t['stage']}\n"
+                    f"   Tipo: {t['task_type']}\n"
+                    f"   Asignado a: {t['assigned_to']}\n"
+                    f"   Tarea padre: {t['parent']}"
+                )
+                if t['parent_id']:
+                    info += f" (ID: {t['parent_id']})"
+                mensaje_tareas.append(info)
+            
+            tareas_pendientes = '\n\n'.join(mensaje_tareas)
+            raise UserError(
+                f"❌ No puede crear un CRS\n\n"
+                f"Tiene {len(resultado['pending_tasks'])} tarea/s pendiente/s que debe/n completarse:\n\n"
+                f"{tareas_pendientes}\n\n"
+                f"💡 Busque la tarea por su ID en el listado de tareas de mantenimiento."
+            )
         for tss in self.tareas_sensibles_seguridad_ids:
             if not tss.no_aplica:
                 if not tss.check or not tss.d_check:
