@@ -324,7 +324,8 @@ class MaintenanceRequest(models.Model):
         view = self.env.ref('leulit_taller.leulit_20230623_1633_form',raise_if_not_found=False)
         text = ''
         cont = 0
-        for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Realizada'):
+        #for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Realizada'):
+        for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Hecho'):
             if cont == 0:
                 text += '<b>TAREAS</b>'
             text += '<br/>'
