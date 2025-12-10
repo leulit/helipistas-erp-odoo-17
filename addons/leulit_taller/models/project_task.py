@@ -397,7 +397,7 @@ class ProjectTask(models.Model):
         _logger.info('Comprobando estado de %s tareas para WO ID: %s', len(tareas), request)
         
         for item in tareas:
-            if item.stage_id.name not in ['Realizada','N/A','Pospuesta']:
+            if item.stage_id.name not in ['Realizada','N/A','Pospuesta','Hecho']:
                 # Información adicional para ayudar a identificar la tarea
                 asignados = ', '.join(item.user_ids.mapped('name')) if item.user_ids else 'Sin asignar'
                 tipo_tarea = dict(item._fields['tipo_tarea_taller'].selection).get(item.tipo_tarea_taller, 'N/A') if item.tipo_tarea_taller else 'N/A'
