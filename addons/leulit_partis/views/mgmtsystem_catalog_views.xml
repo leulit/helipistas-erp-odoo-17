@@ -144,7 +144,11 @@
     </record>
 
     <!-- Menús -->
-    <menuitem id="menu_leulit_riesgo_root" name="PART-IS (SGSI)" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
+    <menuitem 
+        id="menu_leulit_riesgo_root" 
+        name="SGSI PART-IS" 
+        web_icon="leulit_partis,static/description/icon.png"
+        sequence="50"/>
     <menuitem id="menu_leulit_riesgo_catalogs" name="Catálogos" parent="menu_leulit_riesgo_root" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
     <menuitem id="menu_leulit_riesgo_threat" name="Amenazas" parent="menu_leulit_riesgo_catalogs" action="action_mgmtsystem_risk_threat" sequence="10" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>
     <menuitem id="menu_leulit_riesgo_vulnerability" name="Vulnerabilidades" parent="menu_leulit_riesgo_catalogs" action="action_mgmtsystem_risk_vulnerability" sequence="20" groups="mgmtsystem.group_mgmtsystem_user,leulit.RBase"/>

@@ -76,17 +76,13 @@
         </field>
     </record>
 
-    <menuitem
-        id="menu_leulit_partis_root"
-        name="SGSI PART-IS"
-        web_icon="leulit_partis,static/description/icon.png"
-        sequence="50"
-    />
+    <!-- Eliminar menú raíz duplicado anterior -->
+    <delete model="ir.ui.menu" id="menu_leulit_partis_root" search="[]"/>
 
     <menuitem
         id="menu_leulit_partis_document"
         name="Documentación SGSI"
-        parent="menu_leulit_partis_root"
+        parent="menu_leulit_riesgo_root"
         action="action_document_page_partis"
         sequence="40"
     />
