@@ -22,7 +22,10 @@
         "python": ["dateutil"],
     },
     "data": [
-        # Vistas primero (registran modelos)
+        # Reportes primero (definen acciones que vistas pueden referenciar)
+        "report/risk_treatment_plan_report.xml",
+        "report/risk_treatment_plan_template.xml",
+        # Vistas después (registran modelos y pueden referenciar reportes)
         "views/mgmtsystem_dashboard_views.xml",
         "views/mgmtsystem_asset_views.xml",
         "views/mgmtsystem_risk_views.xml",
@@ -33,8 +36,6 @@
         "views/mgmtsystem_document_views.xml",
         "views/mgmtsystem_audit_views.xml",
         "views/res_config_settings_views.xml",
-        "report/risk_treatment_plan_report.xml",
-        "report/risk_treatment_plan_template.xml",
         # Seguridad después de las vistas
         "security/ir_model_access.xml",
         "security/mgmtsystem_risk_rules.xml",
