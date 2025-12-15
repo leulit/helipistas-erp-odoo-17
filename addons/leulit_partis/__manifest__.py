@@ -16,6 +16,7 @@
         "mgmtsystem_manual",       # Para documentación del SGSI
         "document_page",           # Para manuales, políticas y procedimientos
         "hr",                      # Para departamentos y responsables
+        "auditlog",                # OCA: Auditoría de cambios en registros críticos
     ],
     "external_dependencies": {
         "python": ["dateutil"],
@@ -23,12 +24,21 @@
     "data": [
         "security/ir_model_access.xml",
         "security/mgmtsystem_risk_rules.xml",
+        "data/auditlog_rules.xml",
+        "data/notification_templates.xml",
+        "data/cron_jobs.xml",
         "views/mgmtsystem_dashboard_views.xml",
         "views/mgmtsystem_asset_views.xml",
         "views/mgmtsystem_risk_views.xml",
+        "views/mgmtsystem_risk_reject_wizard_views.xml",
+        "views/mgmtsystem_risk_bulk_wizard_views.xml",
+        "views/mgmtsystem_risk_export_wizard_views.xml",
         "views/mgmtsystem_catalog_views.xml",
         "views/mgmtsystem_document_views.xml",
+        "views/mgmtsystem_audit_views.xml",
         "views/res_config_settings_views.xml",
+        "report/risk_treatment_plan_report.xml",
+        "report/risk_treatment_plan_template.xml",
     ],
     "installable": True,
     "application": True,

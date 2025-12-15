@@ -19,6 +19,14 @@ PILAR_CONTROL_EFFECTIVENESS = [
     ("3", "Óptimo"),
 ]
 
+TREATMENT_PLAN_STATE = [
+    ("draft", "Borrador"),
+    ("pending", "Pendiente de Aprobación"),
+    ("approved", "Aprobado"),
+    ("implemented", "Implementado"),
+    ("rejected", "Rechazado"),
+]
+
 
 class MgmtSystemRisk(models.Model):
     """Extiende mgmtsystem.hazard para análisis de riesgos SGSI según PART-IS/AESA.
@@ -123,6 +131,40 @@ class MgmtSystemRisk(models.Model):
         compute="_compute_pilar_residual_level",
         store=True,
         help=_("Categoría derivada del riesgo residual."),
+    )
+    
+    # Workflow de aprobación
+    treatment_plan_state = fields.Selection(
+        selection=TREATMENT_PLAN_STATE,
+        string="Estado del Plan",
+        default="draft",
+        required=True,
+        tracking=True,
+        help=_("Estado del plan de tratamiento de riesgos según PART-IS IS.D.OR.210."),
+    )
+    treatment_plan_approver_id = fields.Many2one(
+        comodel_name="res.users",
+        string="Aprobador",
+        tracking=True,
+        help=_("Responsable SGSI que aprueba el plan de tratamiento."),
+    )
+    treatment_plan_approval_date = fields.Datetime(
+        string="Fecha de Aprobación",
+        readonly=True,
+        tracking=True,
+    )
+    treatment_plan_implementation_date = fields.Date(
+        string="Fecha de Implementación",
+        tracking=True,
+        help=_("Fecha en que se implementaron los controles."),
+    )
+    treatment_plan_notes = fields.Text(
+        string="Notas de Aprobación",
+        help=_("Comentarios del aprobador o del responsable de implementación."),
+    )
+    treatment_plan_rejection_reason = fields.Text(
+        string="Motivo de Rechazo",
+        help=_("Explicación del rechazo del plan de tratamiento."),
     )
 
     @api.onchange("magerit_asset_id")
@@ -242,3 +284,72 @@ class MgmtSystemRisk(models.Model):
         if score >= thresholds["low"]:
             return "low"
         return "negligible"
+
+    # Métodos del workflow de aprobación
+    def action_submit_for_approval(self):
+        """Envía el plan de tratamiento para aprobación."""
+        for risk in self:
+            if not risk.pilar_treatment_strategy:
+                raise models.ValidationError(
+                    _("Debe definir una estrategia de tratamiento antes de solicitar aprobación.")
+                )
+            if not risk.pilar_control_ids and risk.pilar_treatment_strategy not in ["accept", "avoid"]:
+                raise models.ValidationError(
+                    _("Debe asociar controles al plan de tratamiento (excepto para 'Aceptar' o 'Evitar').")
+                )
+            risk.write({"treatment_plan_state": "pending"})
+        return True
+
+    def action_approve_treatment(self):
+        """Aprueba el plan de tratamiento (solo responsable SGSI o manager)."""
+        self.ensure_one()
+        if not self.env.user.has_group("mgmtsystem.group_mgmtsystem_manager"):
+            raise models.AccessError(
+                _("Solo los responsables SGSI pueden aprobar planes de tratamiento.")
+            )
+        self.write({
+            "treatment_plan_state": "approved",
+            "treatment_plan_approver_id": self.env.user.id,
+            "treatment_plan_approval_date": fields.Datetime.now(),
+        })
+        return True
+
+    def action_reject_treatment(self):
+        """Rechaza el plan de tratamiento."""
+        self.ensure_one()
+        if not self.env.user.has_group("mgmtsystem.group_mgmtsystem_manager"):
+            raise models.AccessError(
+                _("Solo los responsables SGSI pueden rechazar planes de tratamiento.")
+            )
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Rechazar Plan de Tratamiento",
+            "res_model": "mgmtsystem.risk.reject.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_risk_id": self.id},
+        }
+
+    def action_mark_implemented(self):
+        """Marca el plan como implementado."""
+        self.ensure_one()
+        if self.treatment_plan_state != "approved":
+            raise models.ValidationError(
+                _("Solo se pueden marcar como implementados los planes aprobados.")
+            )
+        self.write({
+            "treatment_plan_state": "implemented",
+            "treatment_plan_implementation_date": fields.Date.today(),
+        })
+        return True
+
+    def action_reset_to_draft(self):
+        """Regresa el plan al estado de borrador."""
+        for risk in self:
+            risk.write({
+                "treatment_plan_state": "draft",
+                "treatment_plan_approver_id": False,
+                "treatment_plan_approval_date": False,
+                "treatment_plan_rejection_reason": False,
+            })
+        return True

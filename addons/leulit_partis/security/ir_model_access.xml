@@ -89,4 +89,161 @@
         <field name="perm_create" eval="1"/>
         <field name="perm_unlink" eval="1"/>
     </record>
+
+    <!-- Dashboard -->
+    <record id="access_mgmtsystem_dashboard_user" model="ir.model.access">
+        <field name="name">mgmtsystem.dashboard user</field>
+        <field name="model_id" ref="model_mgmtsystem_dashboard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_mgmtsystem_dashboard_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.dashboard manager</field>
+        <field name="model_id" ref="model_mgmtsystem_dashboard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_dashboard_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.dashboard RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_dashboard"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Wizard de rechazo -->
+    <record id="access_mgmtsystem_risk_reject_wizard_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.reject.wizard user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_reject_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_reject_wizard_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.reject.wizard manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_reject_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Wizard de análisis masivo -->
+    <record id="access_mgmtsystem_risk_bulk_wizard_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.bulk.wizard user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_bulk_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_bulk_wizard_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.bulk.wizard manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_bulk_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Wizard de aplicar controles en lote -->
+    <record id="access_mgmtsystem_risk_bulk_apply_controls_wizard_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.bulk.apply.controls.wizard user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_bulk_apply_controls_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_bulk_apply_controls_wizard_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.bulk.apply.controls.wizard manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_bulk_apply_controls_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Reportes de auditoría -->
+    <record id="access_mgmtsystem_audit_report_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.audit.report manager</field>
+        <field name="model_id" ref="model_mgmtsystem_audit_report"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_audit_report_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.audit.report RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_audit_report"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Wizard de exportación CSV -->
+    <record id="access_mgmtsystem_risk_export_wizard_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.export.wizard user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_export_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_export_wizard_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.export.wizard manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_export_wizard"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Configuración de notificaciones automáticas -->
+    <record id="access_mgmtsystem_notification_cron_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.notification.cron manager</field>
+        <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_notification_cron_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.notification.cron RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 </odoo>

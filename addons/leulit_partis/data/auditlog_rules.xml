@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Configuración de auditoría para Activos de Información (críticos) -->
+        <record id="auditlog_rule_mgmtsystem_hazard_asset" model="auditlog.rule">
+            <field name="name">SGSI PART-IS: Activos de Información</field>
+            <field name="model_id" ref="mgmtsystem_hazard.model_mgmtsystem_hazard"/>
+            <field name="log_read" eval="True"/>
+            <field name="log_create" eval="True"/>
+            <field name="log_write" eval="True"/>
+            <field name="log_unlink" eval="True"/>
+            <field name="state">subscribed</field>
+            <field name="action_id" ref="mgmtsystem_hazard.action_mgmtsystem_hazard"/>
+        </record>
+
+        <!-- Configuración de auditoría para Catálogo de Amenazas -->
+        <record id="auditlog_rule_mgmtsystem_risk_threat" model="auditlog.rule">
+            <field name="name">SGSI PART-IS: Catálogo de Amenazas</field>
+            <field name="model_id" ref="model_mgmtsystem_risk_threat"/>
+            <field name="log_read" eval="False"/>
+            <field name="log_create" eval="True"/>
+            <field name="log_write" eval="True"/>
+            <field name="log_unlink" eval="True"/>
+            <field name="state">subscribed</field>
+        </record>
+
+        <!-- Configuración de auditoría para Catálogo de Vulnerabilidades -->
+        <record id="auditlog_rule_mgmtsystem_risk_vulnerability" model="auditlog.rule">
+            <field name="name">SGSI PART-IS: Catálogo de Vulnerabilidades</field>
+            <field name="model_id" ref="model_mgmtsystem_risk_vulnerability"/>
+            <field name="log_read" eval="False"/>
+            <field name="log_create" eval="True"/>
+            <field name="log_write" eval="True"/>
+            <field name="log_unlink" eval="True"/>
+            <field name="state">subscribed</field>
+        </record>
+
+        <!-- Configuración de auditoría para Catálogo de Controles -->
+        <record id="auditlog_rule_mgmtsystem_risk_control" model="auditlog.rule">
+            <field name="name">SGSI PART-IS: Catálogo de Controles</field>
+            <field name="model_id" ref="model_mgmtsystem_risk_control"/>
+            <field name="log_read" eval="False"/>
+            <field name="log_create" eval="True"/>
+            <field name="log_write" eval="True"/>
+            <field name="log_unlink" eval="True"/>
+            <field name="state">subscribed</field>
+        </record>
+
+        <!-- Configuración de auditoría para Configuración SGSI -->
+        <record id="auditlog_rule_res_config_settings" model="auditlog.rule">
+            <field name="name">SGSI PART-IS: Configuración del Sistema</field>
+            <field name="model_id" ref="base.model_res_config_settings"/>
+            <field name="log_read" eval="False"/>
+            <field name="log_create" eval="False"/>
+            <field name="log_write" eval="True"/>
+            <field name="log_unlink" eval="False"/>
+            <field name="state">subscribed</field>
+        </record>
+
+        <!-- Campos específicos a auditar en Activos/Riesgos -->
+        <record id="auditlog_rule_line_magerit_asset_score" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__magerit_asset_score"/>
+        </record>
+
+        <record id="auditlog_rule_line_magerit_asset_level" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__magerit_asset_level"/>
+        </record>
+
+        <record id="auditlog_rule_line_treatment_plan_state" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__treatment_plan_state"/>
+        </record>
+
+        <record id="auditlog_rule_line_treatment_plan_approver" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__treatment_plan_approver_id"/>
+        </record>
+
+        <record id="auditlog_rule_line_pilar_treatment_strategy" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__pilar_treatment_strategy"/>
+        </record>
+
+        <record id="auditlog_rule_line_pilar_residual_level" model="auditlog.rule.line">
+            <field name="rule_id" ref="auditlog_rule_mgmtsystem_hazard_asset"/>
+            <field name="field_id" ref="field_mgmtsystem_hazard__pilar_residual_level"/>
+        </record>
+    </data>
+</odoo>

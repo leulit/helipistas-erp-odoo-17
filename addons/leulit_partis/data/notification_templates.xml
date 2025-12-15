@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Plantilla de email para riesgos pendientes de aprobación -->
+    <record id="email_template_pending_approval_risks" model="mail.template">
+        <field name="name">Alerta: Riesgos Pendientes de Aprobación</field>
+        <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+        <field name="subject">Alerta SGSI: ${object.risk_count} riesgos pendientes de aprobación</field>
+        <field name="email_from">${(object.env.company.email or 'noreply@example.com')}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background-color: #ff9800; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0;">⚠️ Alerta SGSI - Riesgos Pendientes</h2>
+                </div>
+                
+                <div style="padding: 20px; background-color: #f9f9f9;">
+                    <p>Estimado/a usuario/a,</p>
+                    
+                    <p>Existen <strong>${object.risk_count}</strong> análisis de riesgos pendientes de aprobación 
+                    con más de <strong>${object.days_threshold}</strong> días de antigüedad:</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <thead>
+                            <tr style="background-color: #e0e0e0;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ccc;">Activo</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ccc;">Amenaza</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ccc;">Nivel</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ccc;">Días</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            % for risk in object.risk_list[:10]:
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ccc;">${risk['asset']}</td>
+                                <td style="padding: 8px; border: 1px solid #ccc;">${risk['threat']}</td>
+                                <td style="padding: 8px; text-align: center; border: 1px solid #ccc;">
+                                    <span style="color: ${'red' if risk['level'] >= 4 else ('orange' if risk['level'] == 3 else 'green')}; font-weight: bold;">
+                                        ${risk['level']}
+                                    </span>
+                                </td>
+                                <td style="padding: 8px; text-align: center; border: 1px solid #ccc;">${risk['days_pending']}</td>
+                            </tr>
+                            % endfor
+                        </tbody>
+                    </table>
+                    
+                    % if object.risk_count > 10:
+                    <p><em>Mostrando los primeros 10 registros de ${object.risk_count} totales.</em></p>
+                    % endif
+                    
+                    <p style="margin-top: 20px;">
+                        <strong>Acción requerida:</strong> Por favor, revise y apruebe/rechace estos planes de tratamiento 
+                        accediendo al módulo SGSI PART-IS.
+                    </p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.env['ir.config_parameter'].sudo().get_param('web.base.url')}/web#action=leulit_partis.action_mgmtsystem_risk&amp;menu_id=leulit_partis.menu_mgmtsystem_risk" 
+                           style="background-color: #ff9800; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                            Ver Riesgos Pendientes
+                        </a>
+                    </div>
+                </div>
+                
+                <div style="padding: 15px; background-color: #e0e0e0; text-align: center; font-size: 12px; color: #666;">
+                    <p>Sistema de Gestión de Seguridad de la Información (SGSI) - PART-IS<br/>
+                    Notificación automática - No responder a este correo</p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Plantilla de email para riesgos críticos sin tratamiento -->
+    <record id="email_template_critical_risks" model="mail.template">
+        <field name="name">Alerta: Riesgos Críticos sin Tratamiento</field>
+        <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+        <field name="subject">Alerta SGSI: ${object.risk_count} riesgos críticos requieren atención inmediata</field>
+        <field name="email_from">${(object.env.company.email or 'noreply@example.com')}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background-color: #d32f2f; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0;">🚨 Alerta CRÍTICA SGSI</h2>
+                </div>
+                
+                <div style="padding: 20px; background-color: #f9f9f9;">
+                    <p>Estimado/a usuario/a,</p>
+                    
+                    <p>Se han detectado <strong style="color: #d32f2f;">${object.risk_count}</strong> riesgos de nivel 
+                    <strong>ALTO/CRÍTICO</strong> que no tienen un plan de tratamiento aprobado:</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <thead>
+                            <tr style="background-color: #ffcdd2;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ccc;">Activo</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ccc;">Amenaza</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ccc;">Nivel</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ccc;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            % for risk in object.risk_list[:10]:
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ccc;">${risk['asset']}</td>
+                                <td style="padding: 8px; border: 1px solid #ccc;">${risk['threat']}</td>
+                                <td style="padding: 8px; text-align: center; border: 1px solid #ccc;">
+                                    <span style="color: red; font-weight: bold; font-size: 1.2em;">
+                                        ${risk['level']}
+                                    </span>
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ccc;">${risk['state']}</td>
+                            </tr>
+                            % endfor
+                        </tbody>
+                    </table>
+                    
+                    % if object.risk_count > 10:
+                    <p><em>Mostrando los primeros 10 registros de ${object.risk_count} totales.</em></p>
+                    % endif
+                    
+                    <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; padding: 15px; margin: 20px 0;">
+                        <strong>⚠️ ACCIÓN INMEDIATA REQUERIDA:</strong>
+                        <ul style="margin: 10px 0;">
+                            <li>Estos riesgos representan una amenaza significativa para la seguridad de la información</li>
+                            <li>Se requiere definir e implementar un plan de tratamiento con carácter urgente</li>
+                            <li>Cumplimiento PART-IS y normativa AESA en riesgo</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.env['ir.config_parameter'].sudo().get_param('web.base.url')}/web#action=leulit_partis.action_mgmtsystem_risk&amp;menu_id=leulit_partis.menu_mgmtsystem_risk" 
+                           style="background-color: #d32f2f; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                            Ver Riesgos Críticos
+                        </a>
+                    </div>
+                </div>
+                
+                <div style="padding: 15px; background-color: #e0e0e0; text-align: center; font-size: 12px; color: #666;">
+                    <p>Sistema de Gestión de Seguridad de la Información (SGSI) - PART-IS<br/>
+                    Notificación automática - No responder a este correo</p>
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>

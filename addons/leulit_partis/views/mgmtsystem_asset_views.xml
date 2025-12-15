@@ -43,6 +43,14 @@
         <field name="model">mgmtsystem.hazard</field>
         <field name="inherit_id" ref="mgmtsystem_hazard.view_mgmtsystem_hazard_form"/>
         <field name="arch" type="xml">
+            <!-- Agregar botón de exportación a PDF en el encabezado -->
+            <xpath expr="//header" position="inside">
+                <button name="%(action_report_risk_treatment_plan)d" 
+                        string="Plan de Tratamiento (PDF)" 
+                        type="action" 
+                        class="oe_highlight"/>
+            </xpath>
+            
             <xpath expr="//form/sheet" position="inside">
                 <group string="Valoración PART-IS (SGSI)">
                     <group>

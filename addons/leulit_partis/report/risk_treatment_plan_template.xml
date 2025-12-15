@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_risk_treatment_plan_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Encabezado del documento -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2>PLAN DE TRATAMIENTO DE RIESGOS</h2>
+                                <h4>Activo: <span t-field="o.name"/></h4>
+                                <p t-if="o.asset_code">Código: <strong t-field="o.asset_code"/></p>
+                            </div>
+                        </div>
+
+                        <!-- Información del activo -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4 style="background-color: #e9ecef; padding: 10px;">Información del Activo</h4>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Tipo:</strong></td>
+                                        <td><span t-field="o.asset_type"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ubicación:</strong></td>
+                                        <td><span t-field="o.asset_location"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Responsable:</strong></td>
+                                        <td><span t-field="o.user_id"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Valoración C:</strong></td>
+                                        <td><span t-field="o.asset_value_c"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Valoración I:</strong></td>
+                                        <td><span t-field="o.asset_value_i"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Valoración D:</strong></td>
+                                        <td><span t-field="o.asset_value_d"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nivel del Activo:</strong></td>
+                                        <td><strong><span t-field="o.asset_score"/></strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Análisis de Riesgos y Plan de Tratamiento -->
+                        <t t-set="risks" t-value="o.env['mgmtsystem.risk'].search([('hazard_id', '=', o.id), ('magerit_threat_id', '!=', False)])"/>
+                        <t t-if="risks">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h4 style="background-color: #e9ecef; padding: 10px;">Análisis de Riesgos y Plan de Tratamiento</h4>
+                                </div>
+                            </div>
+
+                            <t t-foreach="risks" t-as="risk">
+                                <div class="row mb-4" style="page-break-inside: avoid;">
+                                    <div class="col-12">
+                                        <!-- Amenaza -->
+                                        <div class="mb-2">
+                                            <h5 style="background-color: #f8f9fa; padding: 8px; border-left: 4px solid #007bff;">
+                                                <i class="fa fa-exclamation-triangle"/> 
+                                                <span t-field="risk.magerit_threat_id.code"/> - 
+                                                <span t-field="risk.magerit_threat_id.name"/>
+                                            </h5>
+                                        </div>
+
+                                        <!-- Vulnerabilidades -->
+                                        <div class="row mb-2">
+                                            <div class="col-12">
+                                                <strong>Vulnerabilidades:</strong>
+                                                <ul>
+                                                    <t t-foreach="risk.vulnerability_ids" t-as="vuln">
+                                                        <li><span t-field="vuln.name"/></li>
+                                                    </t>
+                                                    <t t-if="not risk.vulnerability_ids">
+                                                        <li><em>No especificadas</em></li>
+                                                    </t>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- Evaluación del Riesgo -->
+                                        <div class="row mb-2">
+                                            <div class="col-3">
+                                                <strong>Probabilidad:</strong><br/>
+                                                <span t-field="risk.threat_probability"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <strong>Impacto Potencial:</strong><br/>
+                                                <span t-field="risk.potential_impact"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <strong>Nivel Inherente:</strong><br/>
+                                                <t t-set="inherent_color" t-value="'green' if risk.inherent_level &lt;= 2 else ('orange' if risk.inherent_level == 3 else 'red')"/>
+                                                <span t-field="risk.inherent_level" t-attf-style="color: {{inherent_color}}; font-weight: bold; font-size: 1.2em;"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <strong>Nivel Residual:</strong><br/>
+                                                <t t-set="residual_color" t-value="'green' if risk.residual_level &lt;= 2 else ('orange' if risk.residual_level == 3 else 'red')"/>
+                                                <span t-field="risk.residual_level" t-attf-style="color: {{residual_color}}; font-weight: bold; font-size: 1.2em;"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- Controles Existentes -->
+                                        <div class="row mb-2">
+                                            <div class="col-12">
+                                                <strong>Controles Existentes:</strong>
+                                                <ul>
+                                                    <t t-foreach="risk.existing_control_ids" t-as="ctrl">
+                                                        <li><span t-field="ctrl.name"/></li>
+                                                    </t>
+                                                    <t t-if="not risk.existing_control_ids">
+                                                        <li><em>No especificados</em></li>
+                                                    </t>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- Plan de Tratamiento -->
+                                        <div class="row mb-2" style="background-color: #fff3cd; padding: 10px; border-radius: 5px;">
+                                            <div class="col-12">
+                                                <strong style="font-size: 1.1em;">Plan de Tratamiento</strong>
+                                            </div>
+                                            <div class="col-6 mt-2">
+                                                <strong>Estrategia:</strong>
+                                                <t t-if="risk.strategy == 'mitigate'">
+                                                    <span class="badge badge-primary">Mitigar</span>
+                                                </t>
+                                                <t t-elif="risk.strategy == 'transfer'">
+                                                    <span class="badge badge-info">Transferir</span>
+                                                </t>
+                                                <t t-elif="risk.strategy == 'accept'">
+                                                    <span class="badge badge-warning">Aceptar</span>
+                                                </t>
+                                                <t t-elif="risk.strategy == 'avoid'">
+                                                    <span class="badge badge-danger">Evitar</span>
+                                                </t>
+                                                <t t-else>
+                                                    <span class="badge badge-secondary">No definida</span>
+                                                </t>
+                                            </div>
+                                            <div class="col-6 mt-2">
+                                                <strong>Estado:</strong>
+                                                <t t-if="risk.treatment_plan_state == 'approved'">
+                                                    <span class="badge badge-success">Aprobado</span>
+                                                </t>
+                                                <t t-elif="risk.treatment_plan_state == 'pending'">
+                                                    <span class="badge badge-warning">Pendiente</span>
+                                                </t>
+                                                <t t-elif="risk.treatment_plan_state == 'rejected'">
+                                                    <span class="badge badge-danger">Rechazado</span>
+                                                </t>
+                                                <t t-elif="risk.treatment_plan_state == 'implemented'">
+                                                    <span class="badge badge-info">Implementado</span>
+                                                </t>
+                                                <t t-else>
+                                                    <span class="badge badge-secondary">Borrador</span>
+                                                </t>
+                                            </div>
+                                            <div class="col-6 mt-2" t-if="risk.approver_id">
+                                                <strong>Responsable:</strong>
+                                                <span t-field="risk.approver_id"/>
+                                            </div>
+                                            <div class="col-6 mt-2" t-if="risk.target_date">
+                                                <strong>Fecha Objetivo:</strong>
+                                                <span t-field="risk.target_date"/>
+                                            </div>
+                                            <div class="col-12 mt-2" t-if="risk.proposed_control_ids">
+                                                <strong>Controles Propuestos:</strong>
+                                                <ul>
+                                                    <t t-foreach="risk.proposed_control_ids" t-as="ctrl">
+                                                        <li><span t-field="ctrl.name"/></li>
+                                                    </t>
+                                                </ul>
+                                            </div>
+                                            <div class="col-12 mt-2" t-if="risk.treatment_notes">
+                                                <strong>Notas del Tratamiento:</strong>
+                                                <p><span t-field="risk.treatment_notes"/></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-top: 2px solid #dee2e6;"/>
+                            </t>
+                        </t>
+                        <t t-else>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <p><em>No se han identificado riesgos para este activo.</em></p>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Pie de página -->
+                        <div class="row mt-5">
+                            <div class="col-12 text-center" style="font-size: 0.9em; color: #6c757d;">
+                                <p>
+                                    Documento generado el <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/><br/>
+                                    Sistema de Gestión de Seguridad de la Información (SGSI) - PART-IS
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
