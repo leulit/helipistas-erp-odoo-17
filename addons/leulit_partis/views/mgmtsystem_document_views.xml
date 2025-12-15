@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Vista heredada de document.page (OCA) para documentación SGSI PART-IS -->
+    <!-- Herencia opcional - solo se aplica si document_page está instalado -->
     <record id="view_document_page_form_partis" model="ir.ui.view">
         <field name="name">document.page.form.partis</field>
         <field name="model">document.page</field>
@@ -31,9 +32,9 @@
     <record id="view_document_page_search_partis" model="ir.ui.view">
         <field name="name">document.page.search.partis</field>
         <field name="model">document.page</field>
-        <field name="inherit_id" ref="document_page.view_wiki_search"/>
+        <field name="inherit_id" ref="document_page.view_wiki_filter"/>
         <field name="arch" type="xml">
-            <xpath expr="//search/filter[last()]" position="after">
+            <xpath expr="//search/group[@expand='0']" position="after">
                 <separator/>
                 <filter
                     name="part_is_manual"
