@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista heredada de mgmtsystem.hazard (OCA) para activos SGSI PART-IS -->
+    <record id="view_mgmtsystem_hazard_form_partis" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.form.partis</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard.view_mgmtsystem_hazard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="inside">
+                <group string="Valoración PART-IS (SGSI)">
+                    <group>
+                        <field name="magerit_confidentiality"/>
+                        <field name="magerit_integrity"/>
+                        <field name="magerit_availability"/>
+                    </group>
+                    <group>
+                        <field name="magerit_asset_score" readonly="1"/>
+                        <field name="magerit_asset_level" readonly="1"/>
+                    </group>
+                </group>
+                <group string="Seguimiento PART-IS (SGSI)">
+                    <group>
+                        <field name="pilar_last_review_date"/>
+                        <field name="pilar_review_interval"/>
+                    </group>
+                    <group>
+                        <field name="pilar_next_review_date" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
