@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú raíz del módulo SGSI PART-IS -->
+    <menuitem 
+        id="menu_leulit_riesgo_root" 
+        name="SGSI PART-IS" 
+        web_icon="leulit_partis,static/description/icon.png"
+        sequence="50"/>
+</odoo>

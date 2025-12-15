@@ -151,7 +151,7 @@
                                                 <t t-elif="risk.strategy == 'avoid'">
                                                     <span class="badge badge-danger">Evitar</span>
                                                 </t>
-                                                <t t-else>
+                                                <t t-else="">
                                                     <span class="badge badge-secondary">No definida</span>
                                                 </t>
                                             </div>
@@ -169,7 +169,7 @@
                                                 <t t-elif="risk.treatment_plan_state == 'implemented'">
                                                     <span class="badge badge-info">Implementado</span>
                                                 </t>
-                                                <t t-else>
+                                                <t t-else="">
                                                     <span class="badge badge-secondary">Borrador</span>
                                                 </t>
                                             </div>
@@ -199,7 +199,7 @@
                                 <hr style="border-top: 2px solid #dee2e6;"/>
                             </t>
                         </t>
-                        <t t-else>
+                        <t t-else="">
                             <div class="row">
                                 <div class="col-12 text-center">
                                     <p><em>No se han identificado riesgos para este activo.</em></p>

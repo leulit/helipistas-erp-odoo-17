@@ -22,7 +22,9 @@
         "python": ["dateutil"],
     },
     "data": [
-        # Reportes primero (definen acciones que vistas pueden referenciar)
+        # Menú raíz PRIMERO (necesario para todos los demás menús)
+        "views/menus.xml",
+        # Reportes
         "report/risk_treatment_plan_report.xml",
         "report/risk_treatment_plan_template.xml",
         # Vistas básicas (sin campos personalizados de workflow)

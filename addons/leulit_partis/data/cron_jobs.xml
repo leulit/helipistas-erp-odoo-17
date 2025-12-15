@@ -33,7 +33,7 @@
             <field name="active" eval="True"/>
             <field name="notification_type">pending_approval</field>
             <field name="days_threshold">3</field>
-            <field name="recipient_group_id" ref="leulit_partis.group_mgmtsystem_manager"/>
+            <field name="recipient_group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
         </record>
 
         <!-- Configuración predeterminada: Notificación de riesgos críticos -->
@@ -42,7 +42,7 @@
             <field name="active" eval="True"/>
             <field name="notification_type">critical_risks</field>
             <field name="days_threshold">0</field>
-            <field name="recipient_group_id" ref="leulit_partis.group_mgmtsystem_manager"/>
+            <field name="recipient_group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
         </record>
     </data>
 </odoo>
