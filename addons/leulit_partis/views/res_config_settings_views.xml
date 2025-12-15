@@ -3,48 +3,55 @@
     <record id="res_config_settings_view_form_leulit_riesgo" model="ir.ui.view">
         <field name="name">res.config.settings.form.leulit.riesgo</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.view_res_config_settings"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='settings']" position="inside">
-                <div class="app_settings_block" data-string="PART-IS (SGSI)" data-key="leulit_partis">
-                    <h2>PART-IS (SGSI)</h2>
-                    <div class="row mt16 o_settings_container">
-                        <div class="col-12 col-lg-6">
-                            <h3 class="oe_inline">Umbrales de Activos</h3>
-                            <div class="row mt8">
-                                <div class="col-6">
+            <xpath expr="//form" position="inside">
+                <app data-string="SGSI PART-IS" string="SGSI PART-IS" name="leulit_partis">
+                    <block title="Umbrales de Activos" name="asset_thresholds">
+                        <setting string="Valoración de Activos" help="Configure los umbrales para la valoración de activos según MAGERIT">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="magerit_asset_level_low" class="col-lg-3 o_light_label" string="Nivel Bajo"/>
                                     <field name="magerit_asset_level_low"/>
                                 </div>
-                                <div class="col-6">
+                                <div class="row">
+                                    <label for="magerit_asset_level_medium" class="col-lg-3 o_light_label" string="Nivel Medio"/>
                                     <field name="magerit_asset_level_medium"/>
                                 </div>
-                                <div class="col-6 mt8">
+                                <div class="row">
+                                    <label for="magerit_asset_level_high" class="col-lg-3 o_light_label" string="Nivel Alto"/>
                                     <field name="magerit_asset_level_high"/>
                                 </div>
-                                <div class="col-6 mt8">
+                                <div class="row">
+                                    <label for="magerit_asset_level_critical" class="col-lg-3 o_light_label" string="Nivel Crítico"/>
                                     <field name="magerit_asset_level_critical"/>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                            <h3 class="oe_inline">Umbrales de Riesgo</h3>
-                            <div class="row mt8">
-                                <div class="col-6">
+                        </setting>
+                    </block>
+                    <block title="Umbrales de Riesgo" name="risk_thresholds">
+                        <setting string="Evaluación de Riesgos" help="Configure los umbrales para la evaluación de riesgos según MAGERIT">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="magerit_risk_level_low" class="col-lg-3 o_light_label" string="Riesgo Bajo"/>
                                     <field name="magerit_risk_level_low"/>
                                 </div>
-                                <div class="col-6">
+                                <div class="row">
+                                    <label for="magerit_risk_level_medium" class="col-lg-3 o_light_label" string="Riesgo Medio"/>
                                     <field name="magerit_risk_level_medium"/>
                                 </div>
-                                <div class="col-6 mt8">
+                                <div class="row">
+                                    <label for="magerit_risk_level_high" class="col-lg-3 o_light_label" string="Riesgo Alto"/>
                                     <field name="magerit_risk_level_high"/>
                                 </div>
-                                <div class="col-6 mt8">
+                                <div class="row">
+                                    <label for="magerit_risk_level_critical" class="col-lg-3 o_light_label" string="Riesgo Crítico"/>
                                     <field name="magerit_risk_level_critical"/>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        </setting>
+                    </block>
+                </app>
             </xpath>
         </field>
     </record>
