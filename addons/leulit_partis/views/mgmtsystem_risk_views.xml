@@ -77,14 +77,6 @@
                         groups="mgmtsystem.group_mgmtsystem_user"/>
             </xpath>
             
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="%(action_mgmtsystem_risk_export_wizard)d" 
-                        string="Exportar a CSV" 
-                        type="action" 
-                        icon="fa-file-excel-o"
-                        groups="mgmtsystem.group_mgmtsystem_user"/>
-            </xpath>
-            
             <xpath expr="//form/sheet" position="inside">
                 <group string="Análisis PART-IS (SGSI)">
                     <group>
