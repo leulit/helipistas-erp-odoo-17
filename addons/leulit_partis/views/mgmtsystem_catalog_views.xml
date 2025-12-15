@@ -40,7 +40,6 @@
     <record id="view_mgmtsystem_risk_threat_form" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.threat.form</field>
         <field name="model">mgmtsystem.risk.threat</field>
-        <field name="search_view_id" ref="view_mgmtsystem_risk_threat_search"/>
         <field name="arch" type="xml">
             <form string="Amenaza PART-IS (SGSI)">
                 <sheet>
@@ -145,7 +144,8 @@
             </tree>
         </field>
     </record>
-search" model="ir.ui.view">
+
+    <record id="view_mgmtsystem_risk_control_search" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.control.search</field>
         <field name="model">mgmtsystem.risk.control</field>
         <field name="arch" type="xml">
@@ -166,15 +166,13 @@ search" model="ir.ui.view">
         </field>
     </record>
 
-    <record id="view_mgmtsystem_risk_control_
     <record id="view_mgmtsystem_risk_control_form" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.control.form</field>
         <field name="model">mgmtsystem.risk.control</field>
         <field name="arch" type="xml">
             <form string="Control PART-IS (SGSI)">
                 <sheet>
-                    <search_view_id" ref="view_mgmtsystem_risk_control_search"/>
-        <field name="group>
+                    <group>
                         <field name="name"/>
                         <field name="control_type"/>
                         <field name="reference"/>
