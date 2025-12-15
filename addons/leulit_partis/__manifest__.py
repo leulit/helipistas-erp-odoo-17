@@ -8,6 +8,7 @@
     "website": "https://leulit.com",
     "category": "Operations/Management System",
     "license": "AGPL-3",
+    "images": ["static/description/icon.png"],
     "depends": [
         "mgmtsystem",              # Base OCA para sistemas de gestión
         "mgmtsystem_hazard",       # Usado para modelar activos de información
@@ -30,6 +31,6 @@
         "views/res_config_settings_views.xml",
     ],
     "installable": True,
-    "application": False,
+    "application": True,
     "post_init_hook": "post_init_hook",
 }
