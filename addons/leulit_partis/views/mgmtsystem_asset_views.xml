@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <tree string="Activos de Información">
                 <field name="name"/>
-                <field name="description"/>
                 <field name="magerit_confidentiality"/>
                 <field name="magerit_integrity"/>
                 <field name="magerit_availability"/>
@@ -25,7 +24,6 @@
         <field name="arch" type="xml">
             <search string="Buscar Activos">
                 <field name="name"/>
-                <field name="description"/>
                 <filter name="critical" string="Críticos" domain="[('magerit_asset_level', '=', 'critical')]"/>
                 <filter name="high" string="Alto" domain="[('magerit_asset_level', '=', 'high')]"/>
                 <filter name="medium" string="Medio" domain="[('magerit_asset_level', '=', 'medium')]"/>
