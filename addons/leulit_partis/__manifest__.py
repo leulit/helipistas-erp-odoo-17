@@ -22,6 +22,7 @@
     "data": [
         "security/ir_model_access.xml",
         "security/mgmtsystem_risk_rules.xml",
+        "views/mgmtsystem_dashboard_views.xml",
         "views/mgmtsystem_asset_views.xml",
         "views/mgmtsystem_risk_views.xml",
         "views/mgmtsystem_catalog_views.xml",

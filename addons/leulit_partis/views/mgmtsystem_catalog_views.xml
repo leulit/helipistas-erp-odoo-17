@@ -15,9 +15,32 @@
         </field>
     </record>
 
+    <record id="view_mgmtsystem_risk_threat_search" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.threat.search</field>
+        <field name="model">mgmtsystem.risk.threat</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Amenazas">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="category"/>
+                <filter name="natural" string="Natural" domain="[('category', '=', 'natural')]"/>
+                <filter name="accidental" string="Accidental" domain="[('category', '=', 'accidental')]"/>
+                <filter name="deliberate" string="Deliberada" domain="[('category', '=', 'deliberate')]"/>
+                <filter name="environmental" string="Entorno" domain="[('category', '=', 'environmental')]"/>
+                <separator/>
+                <filter name="active" string="Activas" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactivas" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_category" string="Categoría" context="{'group_by': 'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="view_mgmtsystem_risk_threat_form" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.threat.form</field>
         <field name="model">mgmtsystem.risk.threat</field>
+        <field name="search_view_id" ref="view_mgmtsystem_risk_threat_search"/>
         <field name="arch" type="xml">
             <form string="Amenaza PART-IS (SGSI)">
                 <sheet>
@@ -60,6 +83,20 @@
         </field>
     </record>
 
+    <record id="view_mgmtsystem_risk_vulnerability_search" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.vulnerability.search</field>
+        <field name="model">mgmtsystem.risk.vulnerability</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Vulnerabilidades">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="asset_ids"/>
+                <filter name="active" string="Activas" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactivas" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="view_mgmtsystem_risk_vulnerability_form" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.vulnerability.form</field>
         <field name="model">mgmtsystem.risk.vulnerability</field>
@@ -73,7 +110,8 @@
                     </group>
                     <group>
                         <field name="description"/>
-                        <field name="mitigation"/>
+                     search_view_id" ref="view_mgmtsystem_risk_vulnerability_search"/>
+        <field name="   <field name="mitigation"/>
                     </group>
                     <group string="Activos afectados">
                         <field name="asset_ids" widget="many2many_tags"/>
@@ -108,14 +146,36 @@
             </tree>
         </field>
     </record>
+search" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.control.search</field>
+        <field name="model">mgmtsystem.risk.control</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Controles">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="control_type"/>
+                <filter name="preventive" string="Preventivo" domain="[('control_type', '=', 'preventive')]"/>
+                <filter name="detective" string="Detectivo" domain="[('control_type', '=', 'detective')]"/>
+                <filter name="corrective" string="Correctivo" domain="[('control_type', '=', 'corrective')]"/>
+                <separator/>
+                <filter name="active" string="Activos" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Inactivos" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_type" string="Tipo" context="{'group_by': 'control_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
+    <record id="view_mgmtsystem_risk_control_
     <record id="view_mgmtsystem_risk_control_form" model="ir.ui.view">
         <field name="name">mgmtsystem.risk.control.form</field>
         <field name="model">mgmtsystem.risk.control</field>
         <field name="arch" type="xml">
             <form string="Control PART-IS (SGSI)">
                 <sheet>
-                    <group>
+                    <search_view_id" ref="view_mgmtsystem_risk_control_search"/>
+        <field name="group>
                         <field name="name"/>
                         <field name="control_type"/>
                         <field name="reference"/>

@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Vista Tree para Activos de Información -->
+    <record id="view_mgmtsystem_hazard_tree_partis_asset" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.tree.partis.asset</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <tree string="Activos de Información">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="magerit_confidentiality"/>
+                <field name="magerit_integrity"/>
+                <field name="magerit_availability"/>
+                <field name="magerit_asset_score"/>
+                <field name="magerit_asset_level" decoration-danger="magerit_asset_level == 'critical'" decoration-warning="magerit_asset_level == 'high'"/>
+                <field name="pilar_next_review_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Search para Activos de Información -->
+    <record id="view_mgmtsystem_hazard_search_partis_asset" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.search.partis.asset</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Activos">
+                <field name="name"/>
+                <field name="description"/>
+                <filter name="critical" string="Críticos" domain="[('magerit_asset_level', '=', 'critical')]"/>
+                <filter name="high" string="Alto" domain="[('magerit_asset_level', '=', 'high')]"/>
+                <filter name="medium" string="Medio" domain="[('magerit_asset_level', '=', 'medium')]"/>
+                <filter name="low" string="Bajo" domain="[('magerit_asset_level', '=', 'low')]"/>
+                <separator/>
+                <filter name="review_needed" string="Revisión Pendiente" domain="[('pilar_next_review_date', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_level" string="Nivel de Criticidad" context="{'group_by': 'magerit_asset_level'}"/>
+                </group>
+            </search>
+        </field>domain">[('magerit_threat_id', '=', False)]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_mgmtsystem_hazard_search_partis_asset"/
+    </record>
+
     <!-- Vista heredada de mgmtsystem.hazard (OCA) para activos SGSI PART-IS -->
     <record id="view_mgmtsystem_hazard_form_partis" model="ir.ui.view">
         <field name="name">mgmtsystem.hazard.form.partis</field>
@@ -30,4 +71,36 @@
             </xpath>
         </field>
     </record>
+
+    <!-- Acción para Activos de Información -->
+    <record id="action_mgmtsystem_hazard_asset" model="ir.actions.act_window">
+        <field name="name">Activos de Información</field>
+        <field name="res_model">mgmtsystem.hazard</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo activo de información
+            </p>
+            <p>
+                Los activos de información son los elementos que tienen valor para la organización y deben protegerse:<br/>
+                - Datos y bases de datos<br/>
+                - Aplicaciones y sistemas<br/>
+                - Equipos informáticos<br/>
+                - Servicios de red<br/>
+                - Instalaciones y personal<br/><br/>
+                
+                Para cada activo, valore su confidencialidad, integridad y disponibilidad según MAGERIT.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú para Activos de Información -->
+    <menuitem
+        id="menu_leulit_partis_assets"
+        name="Activos de Información"
+        parent="menu_leulit_riesgo_root"
+        action="action_mgmtsystem_hazard_asset"
+        sequence="20"
+    />
 </odoo>
