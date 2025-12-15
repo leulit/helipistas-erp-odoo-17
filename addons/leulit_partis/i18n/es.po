@@ -1,3 +1,21 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * leulit_partis
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-15 12:00:00+0000\n"
+"PO-Revision-Date: 2025-12-15 12:00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: model_terms:ir.ui.view,arch_db:leulit_partis.view_mgmtsystem_risk_form_magerit
 msgid "Probabilidad Intrínseca PART-IS"
 msgstr "Probabilidad Intrínseca PART-IS"
@@ -118,22 +136,6 @@ msgstr "Probabilidad Intrínseca PART-IS"
 
 #. module: leulit_partis
 #: model:ir.model.fields,help:leulit_partis.field_mgmtsystem_risk__magerit_probability
-msgid "Probabilidad de ocurrencia siguiendo la escala PART-IS (derivada de MAGERIT)."
-msgstr "Probabilidad de ocurrencia siguiendo la escala PART-IS (derivada de MAGERIT)."
-
-#. module: leulit_partis
-#: model:ir.model.fields,field_description:leulit_partis.field_mgmtsystem_risk__magerit_impact
-msgid "Impacto Intrínseco PART-IS"
-msgstr "Impacto Intrínseco PART-IS"
-
-#. module: leulit_partis
-#: model:ir.model.fields,field_description:leulit_partis.field_mgmtsystem_risk__magerit_inherent_score
-msgid "Riesgo Intrínseco PART-IS"
-msgstr "Riesgo Intrínseco PART-IS"
-
-#. module: leulit_partis
-#: model:ir.model.fields,field_description:leulit_partis.field_mgmtsystem_risk__magerit_inherent_level
-msgid "Nivel Intrínseco PART-IS"
 msgstr "Nivel Intrínseco PART-IS"
 
 # Translation of Odoo Server.
