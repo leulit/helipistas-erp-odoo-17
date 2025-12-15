@@ -42,6 +42,8 @@
         "data/auditlog_rules.xml",
         "data/notification_templates.xml",
         "data/cron_jobs.xml",
+        # Permisos para modelos nuevos al final (requieren External IDs ya creados)
+        "security/ir_model_access_new.xml",
     ],
     "installable": True,
     "application": True,
