@@ -76,9 +76,6 @@
         </field>
     </record>
 
-    <!-- Eliminar menú raíz duplicado anterior -->
-    <delete model="ir.ui.menu" id="menu_leulit_partis_root" search="[]"/>
-
     <menuitem
         id="menu_leulit_partis_document"
         name="Documentación SGSI"
