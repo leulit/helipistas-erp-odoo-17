@@ -22,11 +22,7 @@
         "python": ["dateutil"],
     },
     "data": [
-        "security/ir_model_access.xml",
-        "security/mgmtsystem_risk_rules.xml",
-        "data/auditlog_rules.xml",
-        "data/notification_templates.xml",
-        "data/cron_jobs.xml",
+        # Vistas primero (registran modelos)
         "views/mgmtsystem_dashboard_views.xml",
         "views/mgmtsystem_asset_views.xml",
         "views/mgmtsystem_risk_views.xml",
@@ -39,6 +35,13 @@
         "views/res_config_settings_views.xml",
         "report/risk_treatment_plan_report.xml",
         "report/risk_treatment_plan_template.xml",
+        # Seguridad después de las vistas
+        "security/ir_model_access.xml",
+        "security/mgmtsystem_risk_rules.xml",
+        # Datos al final
+        "data/auditlog_rules.xml",
+        "data/notification_templates.xml",
+        "data/cron_jobs.xml",
     ],
     "installable": True,
     "application": True,
