@@ -77,7 +77,6 @@
                         groups="mgmtsystem.group_mgmtsystem_user"/>
             </xpath>
             
-            <!-- Agregar botón de exportación a CSV -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="%(action_mgmtsystem_risk_export_wizard)d" 
                         string="Exportar a CSV" 
