@@ -51,34 +51,12 @@
         </field>
     </record>
 
-    <!-- Vista heredada de mgmtsystem.hazard (OCA) para análisis de riesgos PART-IS -->
-    <record id="view_mgmtsystem_hazard_form_partis_risk" model="ir.ui.view">
-        <field name="name">mgmtsystem.hazard.form.partis.risk</field>
+    <!-- Vista Form Base - Campos de Análisis MAGERIT/PILAR -->
+    <record id="view_mgmtsystem_hazard_form_partis_risk_base" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.form.partis.risk.base</field>
         <field name="model">mgmtsystem.hazard</field>
         <field name="inherit_id" ref="mgmtsystem_hazard.view_mgmtsystem_hazard_form"/>
         <field name="arch" type="xml">
-            <!-- Crear header si no existe y añadir workflow -->
-            <xpath expr="//form" position="inside">
-                <header invisible="not magerit_threat_id">
-                    <field name="treatment_plan_state" widget="statusbar" statusbar_visible="draft,pending,approved,implemented"/>
-                    <button name="action_submit_for_approval" string="Solicitar Aprobación" type="object" 
-                            class="oe_highlight" invisible="treatment_plan_state != 'draft'"
-                            groups="mgmtsystem.group_mgmtsystem_user"/>
-                    <button name="action_approve_treatment" string="Aprobar" type="object" 
-                            class="oe_highlight" invisible="treatment_plan_state != 'pending'"
-                            groups="mgmtsystem.group_mgmtsystem_manager"/>
-                    <button name="action_reject_treatment" string="Rechazar" type="object" 
-                            invisible="treatment_plan_state != 'pending'"
-                            groups="mgmtsystem.group_mgmtsystem_manager"/>
-                    <button name="action_mark_implemented" string="Marcar Implementado" type="object" 
-                            class="oe_highlight" invisible="treatment_plan_state != 'approved'"
-                            groups="mgmtsystem.group_mgmtsystem_user"/>
-                    <button name="action_reset_to_draft" string="Volver a Borrador" type="object" 
-                            invisible="treatment_plan_state not in ['rejected']"
-                            groups="mgmtsystem.group_mgmtsystem_user"/>
-                </header>
-            </xpath>
-            
             <xpath expr="//form/sheet" position="inside">
                 <group string="Análisis PART-IS (SGSI)">
                     <group>
@@ -113,19 +91,6 @@
                             <field name="pilar_residual_score" readonly="1"/>
                             <field name="pilar_residual_level" readonly="1"/>
                         </group>
-                    </group>
-                </group>
-                
-                <!-- Información de aprobación e implementación -->
-                <group string="Información de Aprobación" invisible="not magerit_threat_id or treatment_plan_state == 'draft'">
-                    <group>
-                        <field name="treatment_plan_approver_id" readonly="1"/>
-                        <field name="treatment_plan_approval_date" readonly="1"/>
-                        <field name="treatment_plan_implementation_date" readonly="treatment_plan_state != 'approved'"/>
-                    </group>
-                    <group>
-                        <field name="treatment_plan_notes"/>
-                        <field name="treatment_plan_rejection_reason" invisible="treatment_plan_state != 'rejected'" readonly="1"/>
                     </group>
                 </group>
             </xpath>
