@@ -331,9 +331,9 @@ class MaintenanceRequest(models.Model):
             text += '<br/>'
             if item.tipo_tarea_taller != 'tarea':
                 if item.tipo_tarea_taller == 'defecto_encontrado':
-                    text += '- ' + re.sub(r'<[^>]*?>', '', item.solucion_defecto)
+                    text += '- ' + re.sub(r'<[^>]*?>', '', item.solucion_defecto or '')
                 if item.tipo_tarea_taller == 'service_bulletin' or item.tipo_tarea_taller == 'airworthiness_directive':
-                    text += '- ' + re.sub(r'<[^>]*?>', '', item.name)
+                    text += '- ' + re.sub(r'<[^>]*?>', '', item.name or '')
                 for manual in item.manuales_ids:
                     text += ' ('
                     if manual.name:
