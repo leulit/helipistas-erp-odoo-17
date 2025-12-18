@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 
 _logger = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ class ImpersonateLog(models.Model):
         help='How long the impersonation lasted'
     )
 
+    @api.depends('start_date', 'end_date')
     def _compute_duration(self):
         """Calculate duration of impersonation"""
         for log in self:

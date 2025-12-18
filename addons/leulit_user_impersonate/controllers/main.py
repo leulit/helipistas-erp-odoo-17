@@ -77,7 +77,8 @@ class ImpersonateController(http.Controller):
         ], limit=1)
         
         if log:
-            log.write({'end_date': http.request.env.context.get('tz')})
+            from odoo import fields
+            log.write({'end_date': fields.Datetime.now()})
         
         # Restore original user
         request.session.uid = original_uid
