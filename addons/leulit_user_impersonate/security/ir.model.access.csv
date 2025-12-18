@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_impersonate_log_user,impersonate.log.user,model_impersonate_log,group_impersonate_user,1,1,1,1
 access_impersonate_log_system,impersonate.log.system,model_impersonate_log,base.group_system,1,0,0,0
-access_user_menu_analysis_user,user.menu.analysis.user,model_user_menu_analysis,group_impersonate_user,1,1,1,1
-access_user_menu_analysis_system,user.menu.analysis.system,model_user_menu_analysis,base.group_system,1,0,0,0
+access_user_menu_analysis_user,user.menu.analysis.user,leulit_user_impersonate.model_user_menu_analysis,group_impersonate_user,1,1,1,1
+access_user_menu_analysis_system,user.menu.analysis.system,leulit_user_impersonate.model_user_menu_analysis,base.group_system,1,0,0,0
