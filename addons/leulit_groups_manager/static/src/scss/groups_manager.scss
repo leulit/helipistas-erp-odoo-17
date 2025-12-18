@@ -1,0 +1,226 @@
+/* ============================================
+   Groups Manager - Custom Styles
+   ============================================ */
+
+/* Kanban Groups Card */
+.o_kanban_groups_manager {
+    .oe_kanban_card {
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+    }
+
+    .o_kanban_card_header_title {
+        .o_primary {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            
+            i {
+                color: #007bff;
+            }
+        }
+    }
+
+    .o_kanban_card_footer {
+        border-top: 1px solid #e9ecef;
+        padding-top: 8px;
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+    }
+}
+
+/* Users Kanban with Groups */
+.o_kanban_users_groups {
+    .oe_kanban_global_click {
+        display: flex;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    .o_kanban_image {
+        margin-right: 15px;
+        
+        img {
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+        }
+    }
+
+    .oe_kanban_details {
+        flex: 1;
+    }
+
+    .o_kanban_record_title {
+        font-size: 1.1rem;
+        color: #212529;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .o_kanban_record_subtitle {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .o_kanban_tags_section {
+        margin: 8px 0;
+        
+        .badge {
+            margin-right: 6px;
+            padding: 4px 8px;
+            font-weight: 500;
+        }
+    }
+}
+
+/* Groups by Category Display */
+.groups_by_category {
+    .category_section {
+        margin-bottom: 20px;
+        padding: 12px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #007bff;
+        
+        h5 {
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #007bff;
+            font-size: 1rem;
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+            
+            li {
+                padding: 4px 0;
+                
+                i {
+                    margin-right: 8px;
+                    color: #6c757d;
+                }
+                
+                .badge {
+                    margin-left: 4px;
+                    padding: 3px 8px;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                }
+                
+                .badge-success {
+                    background-color: #28a745;
+                    color: white;
+                }
+                
+                .badge-secondary {
+                    background-color: #6c757d;
+                    color: white;
+                }
+            }
+        }
+    }
+}
+
+/* Groups Matrix View */
+.o_list_view {
+    .o_field_many2many_tags {
+        max-width: none;
+        
+        .badge {
+            margin: 2px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+    }
+}
+
+/* Enhanced Form View for Groups */
+.o_form_view {
+    .o_group[name="visual_config"] {
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+    
+    .o_field_color_picker {
+        .o_color_pill {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+                transform: scale(1.1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+}
+
+/* Stat Buttons */
+.o_stat_info {
+    .o_stat_value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #007bff;
+    }
+    
+    .o_stat_text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Many2many Checkboxes Enhancement */
+.o_field_many2many_checkboxes {
+    .custom-checkbox {
+        margin-bottom: 8px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+            background-color: #f8f9fa;
+        }
+        
+        label {
+            font-weight: 500;
+            cursor: pointer;
+        }
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_kanban_users_groups {
+        .oe_kanban_global_click {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .o_kanban_image {
+            margin: 0 auto 12px;
+        }
+    }
+}

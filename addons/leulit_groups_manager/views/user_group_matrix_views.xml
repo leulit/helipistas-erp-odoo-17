@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- User-Group Matrix View (Pivot-like) -->
+    <record id="view_user_group_matrix" model="ir.ui.view">
+        <field name="name">user.group.matrix</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <tree string="Matriz Usuario × Grupo" create="false" delete="false" editable="bottom">
+                <field name="name" readonly="1"/>
+                <field name="login" readonly="1"/>
+                <field name="groups_count" readonly="1" optional="show"/>
+                <field name="leulit_groups_count" readonly="1" optional="show"/>
+                <field name="groups_id" widget="many2many_tags" 
+                       options="{'color_field': 'color'}"/>
+                <button name="action_open_groups_matrix" type="object" 
+                        string="⚙️" 
+                        class="btn-link"
+                        title="Abrir gestión visual"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action for Matrix View -->
+    <record id="action_user_group_matrix" model="ir.actions.act_window">
+        <field name="name">Matriz Usuario × Grupo</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_user_group_matrix"/>
+        <field name="domain">[('share', '=', False), ('active', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No hay usuarios internos
+            </p>
+            <p>
+                Vista matricial para gestionar grupos de múltiples usuarios simultáneamente.
+                Asigna múltiples grupos a cada usuario de forma rápida.
+            </p>
+        </field>
+    </record>
+
+</odoo>
