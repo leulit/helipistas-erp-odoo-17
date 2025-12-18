@@ -82,13 +82,13 @@ class ImpersonateController(http.Controller):
             from odoo import fields
             log.write({'end_date': fields.Datetime.now()})
         
-        # Get original user data
-        original_user = request.env['res.users'].sudo().browse(original_uid)
+        # Restore original user UID
+        request.session.uid = original_uid
         
-        # Restore original user session
-        request.session.uid = original_uid
-        reRestore original user UID
-        request.session.uid = original_uid
+        # Clear impersonation session data
+        request.session.pop('impersonate_original_uid', None)
+        request.session.pop('impersonate_target_uid', None)
+        
         _logger.info(
             'User %s stopped impersonating user %s',
             original_uid, target_uid

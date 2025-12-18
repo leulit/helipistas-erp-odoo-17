@@ -81,3 +81,26 @@ class ResUsers(models.Model):
             'type': 'ir.actions.client',
             'tag': 'stop_impersonation',
         }
+
+    def action_view_menu_analysis(self):
+        """View complete menu access analysis for this user"""
+        self.ensure_one()
+        
+        # Generate analysis
+        analysis_model = self.env['user.menu.analysis']
+        analysis_model.generate_analysis(self.id)
+        
+        # Return action to show analysis
+        return {
+            'name': _('Menu Analysis: %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'user.menu.analysis',
+            'view_mode': 'tree,form',
+            'domain': [('user_id', '=', self.id)],
+            'context': {
+                'default_user_id': self.id,
+                'search_default_has_access': 1,
+                'search_default_group_by_parent': 1,
+            },
+            'target': 'current',
+        }

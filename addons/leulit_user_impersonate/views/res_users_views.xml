@@ -126,6 +126,12 @@
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="groups_id" widget="many2many_tags" optional="hide"/>
                 <field name="active" invisible="1"/>
+                <button name="action_view_menu_analysis" 
+                        type="object" 
+                        string="Ver Menús" 
+                        class="btn-secondary"
+                        icon="fa-sitemap"
+                        help="View all menus and access permissions for this user"/>
                 <button name="action_impersonate_user" 
                         type="object" 
                         string="Impersonate" 

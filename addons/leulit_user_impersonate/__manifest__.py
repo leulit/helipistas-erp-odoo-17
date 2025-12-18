@@ -33,6 +33,7 @@ Use Cases:
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
+        'views/user_menu_analysis_views.xml',
         'views/res_users_views.xml',
         'views/impersonate_banner.xml',
     ],

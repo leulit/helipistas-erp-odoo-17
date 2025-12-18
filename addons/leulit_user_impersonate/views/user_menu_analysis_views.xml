@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree View for Menu Analysis -->
+    <record id="view_user_menu_analysis_tree" model="ir.ui.view">
+        <field name="name">user.menu.analysis.tree</field>
+        <field name="model">user.menu.analysis</field>
+        <field name="arch" type="xml">
+            <tree string="Menu Access Analysis" create="false" edit="false" delete="false"
+                  decoration-success="has_access" decoration-danger="not has_access">
+                <field name="has_access" widget="boolean_toggle" readonly="1"/>
+                <field name="parent_path"/>
+                <field name="menu_name"/>
+                <field name="action_type" optional="show"/>
+                <field name="model_name" optional="show"/>
+                <field name="view_types" optional="show"/>
+                <field name="model_access_read" widget="boolean" optional="show"/>
+                <field name="model_access_write" widget="boolean" optional="show"/>
+                <field name="model_access_create" widget="boolean" optional="show"/>
+                <field name="model_access_unlink" widget="boolean" optional="show"/>
+                <field name="groups_required" widget="many2many_tags" optional="hide"/>
+                <field name="user_groups_matched" widget="many2many_tags" optional="hide"/>
+                <field name="access_reason" optional="hide"/>
+                <field name="menu_icon" optional="hide"/>
+                <field name="is_active" invisible="1"/>
+                <field name="sequence" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for Menu Analysis -->
+    <record id="view_user_menu_analysis_form" model="ir.ui.view">
+        <field name="name">user.menu.analysis.form</field>
+        <field name="model">user.menu.analysis</field>
+        <field name="arch" type="xml">
+            <form string="Menu Access Details" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_menu_analysis" type="object" 
+                                class="oe_stat_button" icon="fa-refresh"
+                                string="Refresh Analysis"/>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="menu_name"/>
+                        </h1>
+                        <h3>
+                            <field name="parent_path" readonly="1"/>
+                        </h3>
+                    </div>
+                    
+                    <group name="access_status">
+                        <group>
+                            <field name="has_access" widget="boolean"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="menu_icon"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Access Information" name="access_info">
+                            <group>
+                                <field name="access_reason" readonly="1"/>
+                            </group>
+                            <group string="Groups Required">
+                                <field name="groups_required" nolabel="1" widget="many2many_tags"/>
+                            </group>
+                            <group string="User Groups (Matched)" invisible="not has_access">
+                                <field name="user_groups_matched" nolabel="1" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Action &amp; Model" name="action_model">
+                            <group>
+                                <group>
+                                    <field name="action_id" readonly="1"/>
+                                    <field name="action_type" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="model_name" readonly="1"/>
+                                    <field name="view_types" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <group string="Model Permissions" invisible="not model_name">
+                                <group>
+                                    <field name="model_access_read" widget="boolean"/>
+                                    <field name="model_access_write" widget="boolean"/>
+                                </group>
+                                <group>
+                                    <field name="model_access_create" widget="boolean"/>
+                                    <field name="model_access_unlink" widget="boolean"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View for Menu Analysis -->
+    <record id="view_user_menu_analysis_search" model="ir.ui.view">
+        <field name="name">user.menu.analysis.search</field>
+        <field name="model">user.menu.analysis</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="menu_name"/>
+                <field name="parent_path"/>
+                <field name="model_name"/>
+                <field name="groups_required"/>
+                <field name="user_groups_matched"/>
+                
+                <filter name="has_access" string="Has Access" 
+                        domain="[('has_access', '=', True)]"/>
+                <filter name="no_access" string="No Access" 
+                        domain="[('has_access', '=', False)]"/>
+                <separator/>
+                <filter name="with_action" string="With Action" 
+                        domain="[('action_id', '!=', False)]"/>
+                <filter name="with_model" string="With Model" 
+                        domain="[('model_name', '!=', False)]"/>
+                <separator/>
+                <filter name="can_read" string="Can Read" 
+                        domain="[('model_access_read', '=', True)]"/>
+                <filter name="can_write" string="Can Write" 
+                        domain="[('model_access_write', '=', True)]"/>
+                <filter name="can_create" string="Can Create" 
+                        domain="[('model_access_create', '=', True)]"/>
+                <filter name="can_delete" string="Can Delete" 
+                        domain="[('model_access_unlink', '=', True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_by_parent" string="Menu Hierarchy" 
+                            context="{'group_by': 'parent_path'}"/>
+                    <filter name="group_by_access" string="Access Status" 
+                            context="{'group_by': 'has_access'}"/>
+                    <filter name="group_by_model" string="Model" 
+                            context="{'group_by': 'model_name'}"/>
+                    <filter name="group_by_action_type" string="Action Type" 
+                            context="{'group_by': 'action_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>
