@@ -35,12 +35,6 @@
         <field name="arch" type="xml">
             <form string="Menu Access Details" create="false" edit="false" delete="false">
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_view_menu_analysis" type="object" 
-                                class="oe_stat_button" icon="fa-refresh"
-                                string="Refresh Analysis"/>
-                    </div>
-                    
                     <div class="oe_title">
                         <h1>
                             <field name="menu_name"/>
