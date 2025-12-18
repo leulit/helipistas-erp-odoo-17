@@ -78,7 +78,7 @@
                         <page string="Action &amp; Model" name="action_model">
                             <group>
                                 <group>
-                                    <field name="action_id" readonly="1"/>
+                                    <field name="action_reference" readonly="1"/>
                                     <field name="action_type" readonly="1"/>
                                 </group>
                                 <group>

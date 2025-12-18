@@ -70,11 +70,11 @@ class UserMenuAnalysis(models.TransientModel):
         help='Groups that give access to this menu',
     )
     
-    action_id = fields.Many2one(
-        'ir.actions.actions',
+    action_reference = fields.Char(
         string='Action',
-        related='menu_id.action',
+        compute='_compute_action_info',
         store=True,
+        help='Action reference (model,id)',
     )
     
     action_type = fields.Char(
@@ -177,17 +177,21 @@ class UserMenuAnalysis(models.TransientModel):
                     required_names = ', '.join(menu_groups.mapped('name'))
                     record.access_reason = _('Missing required groups: %s') % required_names
 
-    @api.depends('action_id')
+    @api.depends('menu_id', 'menu_id.action')
     def _compute_action_info(self):
         """Get action details: type, model, view types"""
         for record in self:
-            if not record.action_id:
+            action = record.menu_id.action
+            
+            if not action:
+                record.action_reference = ''
                 record.action_type = _('No action')
                 record.model_name = ''
                 record.view_types = ''
                 continue
             
-            action = record.action_id
+            # Store reference as string (e.g., "ir.actions.act_window,123")
+            record.action_reference = f"{action._name},{action.id}"
             record.action_type = action._name
             
             # Try to get model from action
