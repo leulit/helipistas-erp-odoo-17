@@ -36,6 +36,7 @@ Use Cases:
         'views/user_menu_analysis_views.xml',
         'views/res_users_views.xml',
         'views/impersonate_banner.xml',
+        'security/user_menu_analysis_security.xml',
     ],
     'assets': {
         'web.assets_backend': [

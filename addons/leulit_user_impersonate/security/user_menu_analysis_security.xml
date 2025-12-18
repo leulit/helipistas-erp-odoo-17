@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- Access rights for user.menu.analysis model -->
+        <record id="access_user_menu_analysis_user" model="ir.model.access">
+            <field name="name">user.menu.analysis.user</field>
+            <field name="model_id" ref="model_user_menu_analysis"/>
+            <field name="group_id" ref="group_impersonate_user"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="access_user_menu_analysis_system" model="ir.model.access">
+            <field name="name">user.menu.analysis.system</field>
+            <field name="model_id" ref="model_user_menu_analysis"/>
+            <field name="group_id" ref="base.group_system"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
+</odoo>
