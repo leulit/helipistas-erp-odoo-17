@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Enhanced Users Form View with Groups Management -->
-    <record id="view_users_form_groups_enhanced" model="ir.ui.view">
-        <field name="name">res.users.form.groups.enhanced</field>
+    <!-- SOLO AGREGAR (no reemplazar) a vista existente -->
+    <record id="view_users_form_groups_stats" model="ir.ui.view">
+        <field name="name">res.users.form.groups.stats</field>
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
-            <!-- Add stat buttons -->
+            <!-- Agregar stat button -->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" type="object" 
                         name="action_view_group_analysis" 
@@ -19,35 +19,11 @@
                         <span class="o_stat_text">Grupos</span>
                     </div>
                 </button>
-                <button class="oe_stat_button" type="object" 
-                        name="action_view_group_analysis" 
-                        icon="fa-star"
-                        invisible="leulit_groups_count == 0">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value">
-                            <field name="leulit_groups_count" widget="statinfo"/>
-                        </span>
-                        <span class="o_stat_text">Leulit</span>
-                    </div>
-                </button>
-            </xpath>
-            
-            <!-- Enhance groups_id field -->
-            <xpath expr="//field[@name='groups_id']" position="replace">
-                <group string="🔐 Grupos y Permisos">
-                    <field name="groups_id" widget="many2many_tags" 
-                           options="{'color_field': 'color', 'no_quick_create': True}"
-                           placeholder="Selecciona los grupos..."/>
-                    <button name="action_open_groups_matrix" type="object" 
-                            string="Gestión Visual de Grupos" 
-                            class="btn-primary"
-                            icon="fa-th"/>
-                </group>
             </xpath>
         </field>
     </record>
 
-    <!-- Wizard/Dialog for Visual Groups Matrix -->
+    <!-- VISTA NUEVA - Wizard/Dialog for Visual Groups Matrix -->
     <record id="view_users_form_groups_matrix" model="ir.ui.view">
         <field name="name">res.users.form.groups.matrix</field>
         <field name="model">res.users</field>
@@ -101,26 +77,19 @@
         </field>
     </record>
 
-    <!-- Enhanced Users Tree View -->
-    <record id="view_users_tree_groups_enhanced" model="ir.ui.view">
-        <field name="name">res.users.tree.groups.enhanced</field>
+    <!-- SOLO AGREGAR campo a tree existente -->
+    <record id="view_users_tree_groups_count" model="ir.ui.view">
+        <field name="name">res.users.tree.groups.count</field>
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='login']" position="after">
                 <field name="groups_count" string="👥 Grupos" optional="show"/>
-                <field name="leulit_groups_count" string="⭐ Leulit" optional="show"/>
-            </xpath>
-            <xpath expr="//tree" position="inside">
-                <button name="action_open_groups_matrix" type="object" 
-                        string="Gestionar Grupos" 
-                        class="btn-secondary"
-                        icon="fa-shield-alt"/>
             </xpath>
         </field>
     </record>
 
-    <!-- Users Kanban View with Groups Info -->
+    <!-- VISTA NUEVA - Users Kanban with Groups Info -->
     <record id="view_users_kanban_groups" model="ir.ui.view">
         <field name="name">res.users.kanban.groups</field>
         <field name="model">res.users</field>
