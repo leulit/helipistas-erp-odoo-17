@@ -15,7 +15,7 @@ Features:
 * Easy switch back to your original user
 * Security: only authorized users can impersonate
 * Audit trail of impersonation sessions
-* Integrates seamlessly with access_roles module
+* Menu analysis to visualize user permissions
 
 Use Cases:
 ----------
@@ -28,7 +28,6 @@ Use Cases:
     'depends': [
         'base',
         'web',
-        'access_roles',
     ],
     'data': [
         'security/groups.xml',

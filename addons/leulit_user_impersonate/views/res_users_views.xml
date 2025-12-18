@@ -111,7 +111,7 @@
               groups="leulit_user_impersonate.group_impersonate_user"/>
 
     <!-- ========================================= -->
-    <!-- Integration with Access Roles Module     -->
+    <!-- User Impersonation Interface             -->
     <!-- ========================================= -->
 
     <!-- Custom tree view for impersonation list -->
@@ -166,12 +166,12 @@
         </field>
     </record>
 
-    <!-- Menu under Access Role (if module is installed) -->
-    <menuitem id="menu_access_role_impersonate"
-              name="Impersonar"
-              parent="access_roles.access_role_menu"
+    <!-- Menu under Settings → Users & Companies -->
+    <menuitem id="menu_user_impersonate"
+              name="Impersonar Usuario"
+              parent="base.menu_users"
               action="action_users_impersonate"
-              sequence="30"
+              sequence="15"
               groups="leulit_user_impersonate.group_impersonate_user"/>
 
 </odoo>
