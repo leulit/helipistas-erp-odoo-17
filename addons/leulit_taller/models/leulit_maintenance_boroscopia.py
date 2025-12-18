@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceBoroscopia(models.Model):
     _name = "leulit.maintenance_boroscopia"
+    _description = 'Inspección Boroscópica'
     _rec_name = "name"
     _inherit = ['mail.thread']
     _order = "fecha desc"

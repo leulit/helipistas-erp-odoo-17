@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceTaskPreventive(models.Model):
     _name = "leulit.maintenance_task_preventive"
+    _description = 'Tarea de Mantenimiento Preventivo'
     _rec_name = "descripcion"
 
     descripcion = fields.Char(string="Descripción")

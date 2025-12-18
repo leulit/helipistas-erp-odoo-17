@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceDoubleCheck(models.Model):
     _name = "leulit.maintenance_double_check"
+    _description = 'Doble Verificación de Mantenimiento'
 
 
     @api.onchange('first_doble_check')

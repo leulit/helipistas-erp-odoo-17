@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceSecurityInspect(models.Model):
     _name = "leulit.maintenance_security_inspect"
+    _description = 'Inspección de Seguridad de Mantenimiento'
 
 
     @api.onchange('first_inspeccion_seguridad')

@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitAirworthinessDirective(models.Model):
     _name = "leulit.airworthiness_directive"
+    _description = 'Directiva de Aeronavegabilidad (AD)'
     _rec_name = "full_name"
 
     @api.depends('limit_h', 'date_effective', 'aircraft')

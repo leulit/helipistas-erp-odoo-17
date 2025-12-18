@@ -4,6 +4,7 @@ from datetime import datetime, date, time
 
 class LeulitListQuestions(models.Model):
     _name = "leulit.list_questions"
+    _description = 'Lista de Preguntas'
 
 
     @api.onchange('question_id')

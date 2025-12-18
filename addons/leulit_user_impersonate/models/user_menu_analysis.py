@@ -27,7 +27,7 @@ class UserMenuAnalysis(models.TransientModel):
     menu_name = fields.Char(
         string='Menu Name',
         related='menu_id.name',
-        store=True,
+        store=False,  # No almacenar campos traducibles relacionados
     )
     
     parent_path = fields.Char(

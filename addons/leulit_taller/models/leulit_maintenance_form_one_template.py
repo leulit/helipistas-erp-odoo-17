@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceFormOneTemplate(models.Model):
     _name = "leulit.maintenance_form_one_template"
+    _description = 'Plantilla de Formulario EASA Form 1'
 
 
     @api.constrains('remarks')

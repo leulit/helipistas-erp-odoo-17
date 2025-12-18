@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitAuditQuestion(models.Model):
     _name = "leulit.audit_question"
+    _description = 'Pregunta de Auditoría'
 
 
     def unlink(self):

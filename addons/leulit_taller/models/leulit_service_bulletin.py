@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitServiceBulletin(models.Model):
     _name = "leulit.service_bulletin"
+    _description = 'Boletín de Servicio (Service Bulletin)'
 
     @api.depends('limit_h', 'date_effective', 'aircraft')
     def _get_remaining_hours(self):

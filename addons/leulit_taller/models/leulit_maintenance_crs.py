@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceCRS(models.Model):
     _name = "leulit.maintenance_crs"
+    _description = 'CRS - Reporte de Condición y Discrepancia'
     _rec_name = "n_cas"
     _inherit = ['mail.thread']
     _order = "fecha desc"

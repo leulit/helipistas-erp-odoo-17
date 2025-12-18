@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitRelFormOneLot(models.Model):
     _name = "leulit.rel_formone_lot"
+    _description = 'Relación Form One - Lote'
     _rec_name = "pieza_id"
 
 

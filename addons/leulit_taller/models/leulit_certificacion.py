@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitCertificacion(models.Model):
     _name = "leulit.certificacion"
+    _description = 'Certificación de Mantenimiento'
     _rec_name = "name"
 
 

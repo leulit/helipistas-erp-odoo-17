@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitProcedureAuditQuestion(models.Model):
     _name = "leulit.procedure_audit_question"
+    _description = 'Pregunta de Auditoría de Procedimiento'
 
 
     name = fields.Char(string="Nombre")
