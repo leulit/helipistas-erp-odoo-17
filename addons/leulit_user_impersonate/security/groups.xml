@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- Group for users who can impersonate others -->
+        <record id="group_impersonate_user" model="res.groups">
+            <field name="name">User Impersonation</field>
+            <field name="category_id" ref="base.module_category_administration"/>
+            <field name="comment">Users in this group can impersonate other users to see Odoo from their perspective.</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+    </data>
+</odoo>

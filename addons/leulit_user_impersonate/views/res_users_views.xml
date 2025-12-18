@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit res.users form view to add impersonate button -->
+    <record id="view_users_form_impersonate" model="ir.ui.view">
+        <field name="name">res.users.form.impersonate</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <!-- Add button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_impersonate_user" 
+                        type="object" 
+                        string="Impersonate User"
+                        class="oe_highlight"
+                        invisible="not can_impersonate"
+                        icon="fa-user-secret"
+                        help="Login as this user to see Odoo from their perspective"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Impersonate Log Tree View -->
+    <record id="view_impersonate_log_tree" model="ir.ui.view">
+        <field name="name">impersonate.log.tree</field>
+        <field name="model">impersonate.log</field>
+        <field name="arch" type="xml">
+            <tree string="Impersonation Log" create="false" edit="false" delete="false">
+                <field name="start_date"/>
+                <field name="original_user_id"/>
+                <field name="impersonated_user_id"/>
+                <field name="end_date"/>
+                <field name="duration"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Impersonate Log Form View -->
+    <record id="view_impersonate_log_form" model="ir.ui.view">
+        <field name="name">impersonate.log.form</field>
+        <field name="model">impersonate.log</field>
+        <field name="arch" type="xml">
+            <form string="Impersonation Log" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="original_user_id"/>
+                            <field name="impersonated_user_id"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="duration"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Impersonate Log Search View -->
+    <record id="view_impersonate_log_search" model="ir.ui.view">
+        <field name="name">impersonate.log.search</field>
+        <field name="model">impersonate.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="original_user_id"/>
+                <field name="impersonated_user_id"/>
+                <field name="start_date"/>
+                <filter name="active" string="Active Sessions" 
+                        domain="[('end_date', '=', False)]"/>
+                <filter name="today" string="Today" 
+                        domain="[('start_date', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_original_user" string="Original User" 
+                            context="{'group_by': 'original_user_id'}"/>
+                    <filter name="group_impersonated_user" string="Impersonated User" 
+                            context="{'group_by': 'impersonated_user_id'}"/>
+                    <filter name="group_start_date" string="Start Date" 
+                            context="{'group_by': 'start_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Impersonate Log Action -->
+    <record id="action_impersonate_log" model="ir.actions.act_window">
+        <field name="name">Impersonation Log</field>
+        <field name="res_model">impersonate.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No impersonation sessions found
+            </p>
+            <p>
+                This log tracks all user impersonation sessions for auditing purposes.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_impersonate_log"
+              name="Impersonation Log"
+              parent="base.menu_users"
+              action="action_impersonate_log"
+              sequence="100"
+              groups="leulit_user_impersonate.group_impersonate_user"/>
+
+    <!-- ========================================= -->
+    <!-- Integration with Access Roles Module     -->
+    <!-- ========================================= -->
+
+    <!-- Custom tree view for impersonation list -->
+    <record id="view_users_tree_impersonate" model="ir.ui.view">
+        <field name="name">res.users.tree.impersonate</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <tree string="Users to Impersonate" create="false" delete="false">
+                <field name="name"/>
+                <field name="login"/>
+                <field name="email"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="groups_id" widget="many2many_tags" optional="hide"/>
+                <field name="active" invisible="1"/>
+                <button name="action_impersonate_user" 
+                        type="object" 
+                        string="Impersonate" 
+                        class="btn-primary"
+                        icon="fa-user-secret"
+                        help="Click to impersonate this user"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action to list users for impersonation -->
+    <record id="action_users_impersonate" model="ir.actions.act_window">
+        <field name="name">Impersonate Users</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_users_tree_impersonate"/>
+        <field name="domain">[('id', '!=', uid), ('id', '!=', 1), ('active', 'in', [True, False])]</field>
+        <field name="context">{
+            'search_default_active': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No users available for impersonation
+            </p>
+            <p>
+                Select any user from this list to impersonate them and see Odoo from their perspective.
+                This is useful for testing permissions, debugging user issues, and auditing access rights.
+            </p>
+            <p>
+                <strong>Tip:</strong> Click the "Impersonate" button to start, or open the user form for more details.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Access Role (if module is installed) -->
+    <menuitem id="menu_access_role_impersonate"
+              name="Impersonar"
+              parent="access_roles.access_role_menu"
+              action="action_users_impersonate"
+              sequence="30"
+              groups="leulit_user_impersonate.group_impersonate_user"/>
+
+</odoo>
