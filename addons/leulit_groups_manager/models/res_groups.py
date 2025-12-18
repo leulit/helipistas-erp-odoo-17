@@ -48,16 +48,15 @@ class ResGroups(models.Model):
         help='Group belongs to Leulit modules'
     )
 
-    @api.depends('category_id', 'category_id.name')
+    @api.depends('category_id', 'category_id.name', 'name')
     def _compute_group_category(self):
         """Extract category name for grouping"""
         for group in self:
             if group.category_id:
                 group.group_category = group.category_id.name
             else:
-                # Extract from full name (e.g., "Operaciones / Piloto" -> "Operaciones")
-                parts = group.full_name.split(' / ')
-                group.group_category = parts[0] if len(parts) > 1 else 'Sin Categoría'
+                # Extract from name if no category
+                group.group_category = 'Sin Categoría'
 
     @api.depends('users')
     def _compute_users_count(self):
@@ -71,7 +70,7 @@ class ResGroups(models.Model):
         for group in self:
             group.implied_count = len(group.implied_ids)
 
-    @api.depends('name', 'category_id')
+    @api.depends('name', 'category_id', 'category_id.name')
     def _compute_is_leulit_group(self):
         """Identify Leulit custom groups"""
         for group in self:

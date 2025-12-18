@@ -38,7 +38,8 @@ class ResUsers(models.Model):
             leulit_groups = user.groups_id.filtered(lambda g: g.is_leulit_group)
             user.leulit_groups_count = len(leulit_groups)
 
-    @api.depends('groups_id', 'groups_id.category_id')
+    @api.depends('groups_id', 'groups_id.category_id', 'groups_id.group_category', 
+                 'groups_id.is_leulit_group', 'groups_id.icon', 'groups_id.name')
     def _compute_groups_by_category(self):
         """Generate HTML display of groups organized by category"""
         for user in self:

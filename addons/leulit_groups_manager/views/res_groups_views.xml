@@ -82,6 +82,7 @@
             <!-- Add button box -->
             <xpath expr="//form/sheet" position="before">
                 <header>
+                    <field name="implied_count" invisible="1"/>
                     <button name="action_view_users" type="object" 
                             string="Ver Usuarios" 
                             class="btn-primary"
@@ -131,10 +132,6 @@
             <search position="inside">
                 <filter name="leulit_groups" string="Grupos Leulit" 
                         domain="[('is_leulit_group', '=', True)]"/>
-                <filter name="with_users" string="Con Usuarios" 
-                        domain="[('users_count', '&gt;', 0)]"/>
-                <filter name="without_users" string="Sin Usuarios" 
-                        domain="[('users_count', '=', 0)]"/>
                 <separator/>
                 <filter name="group_by_category" string="Por Categoría" 
                         context="{'group_by': 'group_category'}"/>
