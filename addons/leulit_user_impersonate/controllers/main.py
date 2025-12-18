@@ -34,12 +34,14 @@ class ImpersonateController(http.Controller):
         
         # Store original user in session
         original_uid = request.session.uid
+        
+        # Store impersonation data BEFORE changing
         request.session['impersonate_original_uid'] = original_uid
         request.session['impersonate_target_uid'] = user_id
         
-        # Switch to target user
+        # Change the user ID in session - this makes Odoo work as that user
+        # but keeps the session valid
         request.session.uid = user_id
-        request.env = request.env(user=user_id)
         
         _logger.info(
             'User %s started impersonating user %s (uid=%s)',
@@ -80,14 +82,13 @@ class ImpersonateController(http.Controller):
             from odoo import fields
             log.write({'end_date': fields.Datetime.now()})
         
-        # Restore original user
+        # Get original user data
+        original_user = request.env['res.users'].sudo().browse(original_uid)
+        
+        # Restore original user session
         request.session.uid = original_uid
-        request.env = request.env(user=original_uid)
-        
-        # Clear impersonation session data
-        request.session.pop('impersonate_original_uid', None)
-        request.session.pop('impersonate_target_uid', None)
-        
+        reRestore original user UID
+        request.session.uid = original_uid
         _logger.info(
             'User %s stopped impersonating user %s',
             original_uid, target_uid
