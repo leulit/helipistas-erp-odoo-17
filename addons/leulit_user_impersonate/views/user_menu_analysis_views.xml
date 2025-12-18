@@ -116,7 +116,7 @@
                         domain="[('has_access', '=', False)]"/>
                 <separator/>
                 <filter name="with_action" string="With Action" 
-                        domain="[('action_id', '!=', False)]"/>
+                        domain="[('action_reference', '!=', False)]"/>
                 <filter name="with_model" string="With Model" 
                         domain="[('model_name', '!=', False)]"/>
                 <separator/>
