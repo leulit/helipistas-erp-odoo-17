@@ -25,7 +25,7 @@ class AccountAnalyticLine(models.Model):
                     circulares = self.env['leulit.historial_circular'].search([('user_id', '=', item.user_id.id),('circular_id','!=',False)])
                     for circular in circulares:
                         if not circular.recibido or not circular.leido or not circular.entendido:
-                            circular_nombre = circular.circular_id.nombre if circular.circular_id else 'N/A'
+                            circular_nombre = circular.circular_id.name if circular.circular_id else 'N/A'
                             msg = _("No se puede imputar tiempo para %s (ID: %s) sin haber recibido, leído y entendido todas las circulares. Circular pendiente: %s (Recibido: %s, Leído: %s, Entendido: %s)") % (
                                 item.user_id.name, item.user_id.id, circular_nombre, 
                                 circular.recibido, circular.leido, circular.entendido
