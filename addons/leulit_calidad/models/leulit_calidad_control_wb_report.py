@@ -20,7 +20,7 @@ class leulit_calidad_control_wb_report(models.TransientModel):
             ('report_name', '=', 'leulit_calidad.leulit_20220120_1510_informe')
         ], limit=1)
         
-        # Si no existe, crearlo con todas las propiedades
+        # Si no existe, crearlo con todas las propiedades (usando sudo para permisos)
         if not report:
             # Buscar el paperformat A4 apaisado (landscape) sin cabecera
             paperformat = self.env.ref('leulit.paperformat_A4_landscape_without_cabecera', raise_if_not_found=False)
@@ -37,18 +37,8 @@ class leulit_calidad_control_wb_report(models.TransientModel):
             if paperformat:
                 report_vals['paperformat_id'] = paperformat.id
             
-            ''''''
-            report = self.env['ir.actions.report'].create(report_vals)
-            
-            # Crear el External ID para futuras referencias
-            '''
-            self.env['ir.model.data'].create({
-                'name': 'leulit_inf_wb_control_report2',
-                'module': 'leulit_calidad',
-                'model': 'ir.actions.report',
-                'res_id': report.id,
-            })
-            '''
+            # Crear el report con permisos de superusuario (permite a cualquier usuario ejecutarlo)
+            report = self.env['ir.actions.report'].sudo().create(report_vals)
         
         return report.report_action(self, data=data)
 
