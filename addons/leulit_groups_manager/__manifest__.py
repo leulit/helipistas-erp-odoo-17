@@ -49,8 +49,8 @@ Casos de Uso:
         'views/user_group_matrix_views.xml',
         'views/menu_diagnosis_wizard_views.xml',
         'views/menu_list_wizard_views.xml',
-        'views/menu_diagnosis_action.xml',
         'security/wizards_access.xml',
+        'views/menu_diagnosis_action.xml',  # Debe estar antes de menu.xml
         'views/menu.xml',
     ],
     'assets': {
