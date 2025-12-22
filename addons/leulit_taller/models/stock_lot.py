@@ -77,13 +77,13 @@ class StockLot(models.Model):
     ng = fields.Float(string="NG")
     date_last_overhaul = fields.Date(string="Fecha overhaul")
     tsn_inicio = fields.Float(string="TSN Inicio")
-    tsn_actual = fields.Float(compute=_get_tsn, string="TSN")
+    tsn_actual = fields.Float(compute=_get_tsn, string="TSN Actual")
     tso_inicio = fields.Float(string="TSO Inicio")
-    tso_actual = fields.Float(compute=_get_tso, string="TSO")
+    tso_actual = fields.Float(compute=_get_tso, string="TSO Actual")
     ng_inicio = fields.Float(string="NG Inicio")
-    ng_actual = fields.Float(compute=_get_ng, string="NG")
+    ng_actual = fields.Float(compute=_get_ng, string="NG Actual")
     nf_inicio = fields.Float(string="NF Inicio")
-    nf_actual = fields.Float(compute=_get_nf, string="NF")
+    nf_actual = fields.Float(compute=_get_nf, string="NF Actual")
 
 
     def open_trabajos_realizados(self):

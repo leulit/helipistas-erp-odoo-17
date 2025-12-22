@@ -37,9 +37,9 @@ class LeulitMaintenanceDoubleCheck(models.Model):
 
     name = fields.Char(string="Nombre")
     first_doble_check = fields.Boolean(string="Primer Doble check")
-    first_user_doble_check = fields.Many2one(comodel_name="res.users", string="Usuario doble check")
-    first_datetime_doble_check = fields.Datetime(string="Fecha y hora del doble check")
+    first_user_doble_check = fields.Many2one(comodel_name="res.users", string="Usuario 1º doble check")
+    first_datetime_doble_check = fields.Datetime(string="Fecha 1º doble check")
     second_doble_check = fields.Boolean(string="Segundo Doble check")
-    second_user_doble_check = fields.Many2one(comodel_name="res.users", string="Usuario doble check")
-    second_datetime_doble_check = fields.Datetime(string="Fecha y hora del doble check")
+    second_user_doble_check = fields.Many2one(comodel_name="res.users", string="Usuario 2º doble check")
+    second_datetime_doble_check = fields.Datetime(string="Fecha 2º doble check")
     task_id = fields.Many2one(comodel_name="project.task", string="Tarea")

@@ -165,7 +165,7 @@ class leulit_helicoptero(models.Model):
     consumomedio = fields.Float('Consumo medio (l/m)')
     codoperador = fields.Char('Código operador', )
     horasohmotor = fields.Float('Horas OH')
-    fechaohmotor = fields.Date('Fecha OH')
+    fechaohmotor = fields.Date('Fecha OH Motor')
     doitovmotor = fields.Boolean('Realización OH motor',default=False)
     doitov = fields.Boolean('Realización OH',default=False)
     airtimestart = fields.Float('Horas vuelo inicio (hh:mm)', required=True)
