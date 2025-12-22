@@ -9,10 +9,10 @@
             El usuario puede ver:
             - Sus propios leads, oportunidades y presupuestos
             - Los leads, oportunidades y presupuestos de los equipos de ventas a los que pertenece
+            
+            Este grupo NO hereda de ningún otro grupo de ventas para evitar reglas conflictivas.
+            Las reglas de seguridad se definen exclusivamente en crm_security_rules.xml
         </field>
-        
-        <!-- HERENCIA: Hereda del grupo "Solo documentos propios" (NO del que permite ver todos) -->
-        <field name="implied_ids" eval="[(4, ref('sale.group_sale_salesman'))]"/>
     </record>
 
 </odoo>
