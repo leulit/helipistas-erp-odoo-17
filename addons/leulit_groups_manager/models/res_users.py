@@ -110,30 +110,17 @@ class ResUsers(models.Model):
         }
 
     def action_view_accessible_menus(self):
-        """Show all menus accessible to this user"""
+        """Show all menus with color coding (green=accessible, red=not accessible)"""
         self.ensure_one()
         
-        # Get all user's groups (including implied)
-        all_groups = self.groups_id
-        for group in self.groups_id:
-            all_groups |= group.implied_ids
-        
-        # Find all menus accessible to these groups
-        all_menus = self.env['ir.ui.menu'].search([
-            '|',
-            ('groups_id', '=', False),  # Menus without groups (public)
-            ('groups_id', 'in', all_groups.ids)  # Menus with user's groups
-        ])
-        
         return {
-            'name': _('Accessible Menus for %s') % self.name,
+            'name': _('Menu Access List for %s') % self.name,
             'type': 'ir.actions.act_window',
-            'res_model': 'ir.ui.menu',
-            'view_mode': 'tree,form',
-            'domain': [('id', 'in', all_menus.ids)],
+            'res_model': 'menu.list.wizard',
+            'view_mode': 'form',
+            'target': 'new',
             'context': {
-                'user_id': self.id,
-                'search_default_group_by_parent': 1,
+                'default_user_id': self.id,
             },
         }
 

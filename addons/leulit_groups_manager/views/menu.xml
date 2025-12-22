@@ -29,4 +29,12 @@
               action="action_user_group_matrix"
               sequence="30"/>
 
+    <!-- Menú en Configuración > Usuarios y Compañías (mismo nivel que Impersonar Usuario) -->
+    <menuitem id="menu_diagnose_menu_access"
+              name="Diagnosticar Acceso a Menús"
+              parent="base.menu_users"
+              action="action_diagnose_menu_access"
+              sequence="16"
+              groups="base.group_system"/>
+
 </odoo>

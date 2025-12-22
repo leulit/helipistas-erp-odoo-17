@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Menu List Wizard Form View -->
+        <record id="view_menu_list_wizard_form" model="ir.ui.view">
+            <field name="name">menu.list.wizard.form</field>
+            <field name="model">menu.list.wizard</field>
+            <field name="arch" type="xml">
+                <form string="User Menu Access List">
+                    <sheet>
+                        <group>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Menu Access List">
+                                <field name="menu_list_html" nolabel="1" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
