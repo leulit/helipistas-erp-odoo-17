@@ -12,9 +12,7 @@
         <field name="domain_force">[
             '|',
                 ('user_id', '=', user.id),
-            '|',
-                ('user_id', '=', False),
-                ('team_id', 'in', user.sale_team_ids.ids)
+                ('team_id.member_ids.user_id', '=', user.id)
         ]</field>
         <field name="groups" eval="[(4, ref('group_sale_salesman_team'))]"/>
         <field name="perm_read" eval="True"/>
@@ -34,9 +32,7 @@
         <field name="domain_force">[
             '|',
                 ('user_id', '=', user.id),
-            '|',
-                ('user_id', '=', False),
-                ('team_id', 'in', user.sale_team_ids.ids)
+                ('team_id.member_ids.user_id', '=', user.id)
         ]</field>
         <field name="groups" eval="[(4, ref('group_sale_salesman_team'))]"/>
         <field name="perm_read" eval="True"/>
