@@ -108,3 +108,45 @@ class ResUsers(models.Model):
                 'default_color': 3,
             },
         }
+
+    def action_view_accessible_menus(self):
+        """Show all menus accessible to this user"""
+        self.ensure_one()
+        
+        # Get all user's groups (including implied)
+        all_groups = self.groups_id
+        for group in self.groups_id:
+            all_groups |= group.implied_ids
+        
+        # Find all menus accessible to these groups
+        all_menus = self.env['ir.ui.menu'].search([
+            '|',
+            ('groups_id', '=', False),  # Menus without groups (public)
+            ('groups_id', 'in', all_groups.ids)  # Menus with user's groups
+        ])
+        
+        return {
+            'name': _('Accessible Menus for %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'ir.ui.menu',
+            'view_mode': 'tree,form',
+            'domain': [('id', 'in', all_menus.ids)],
+            'context': {
+                'user_id': self.id,
+                'search_default_group_by_parent': 1,
+            },
+        }
+
+    def action_diagnose_menu_access(self):
+        """Open wizard to diagnose why a user cannot see a specific menu"""
+        self.ensure_one()
+        return {
+            'name': _('Diagnose Menu Access for %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'menu.access.diagnosis.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_user_id': self.id,
+            },
+        }

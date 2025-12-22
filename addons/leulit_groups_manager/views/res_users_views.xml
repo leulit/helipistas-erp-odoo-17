@@ -19,6 +19,17 @@
                         <span class="o_stat_text">Grupos</span>
                     </div>
                 </button>
+                <button class="oe_stat_button" type="object" 
+                        name="action_view_accessible_menus" 
+                        icon="fa-list">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Menús</span>
+                    </div>
+                </button>
+                <button class="oe_stat_button" type="object" 
+                        name="action_diagnose_menu_access" 
+                        icon="fa-search"
+                        string="Diagnosticar Menú"/>
             </xpath>
         </field>
     </record>
