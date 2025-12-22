@@ -92,10 +92,6 @@
                             class="btn-secondary"
                             icon="fa-sitemap"
                             invisible="implied_count == 0"/>
-                    <button name="%(action_group_copy_from_group)d" type="action"
-                            string="Copiar a Otro Grupo"
-                            class="btn-info"
-                            icon="fa-copy"/>
                 </header>
             </xpath>
             
