@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ====================================== -->
+    <!-- REGLAS PARA CRM.LEAD (Oportunidades)  -->
+    <!-- ====================================== -->
+    
+    <!-- Regla: Ver leads de mis equipos -->
+    <record id="crm_lead_rule_salesman_team" model="ir.rule">
+        <field name="name">CRM Lead: Usuario ver sus equipos</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[
+            '|',
+                ('user_id', '=', user.id),
+            '|',
+                ('user_id', '=', False),
+                ('team_id', 'in', user.sale_team_ids.ids)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_sale_salesman_team'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- ====================================== -->
+    <!-- REGLAS PARA SALE.ORDER (Presupuestos) -->
+    <!-- ====================================== -->
+    
+    <!-- Regla: Ver pedidos de ventas de mis equipos -->
+    <record id="sale_order_rule_salesman_team" model="ir.rule">
+        <field name="name">Sale Order: Usuario ver sus equipos</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">[
+            '|',
+                ('user_id', '=', user.id),
+            '|',
+                ('user_id', '=', False),
+                ('team_id', 'in', user.sale_team_ids.ids)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_sale_salesman_team'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

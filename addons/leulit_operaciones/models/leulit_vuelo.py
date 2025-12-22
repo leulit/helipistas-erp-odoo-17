@@ -1693,8 +1693,7 @@ class leulit_vuelo(models.Model):
         vuelo.combustibleminimo_kg = utilitylib.convert_litros_to_kg(combustibleminimo, vuelo.helicoptero_tipo)
         vuelo.combustibleminimo_gal = utilitylib.convert_litros_to_gal(combustibleminimo, vuelo.helicoptero_tipo)
         vuelo.fuelsalida = fuelsalida
-        vuelo.fuelsalida_kg = utilitylib.convert_litros_to_kg(fuelsalida, vuelo.helicoptero_tipo)
-        vuelo.fuelsalida_kg = utilitylib.convert_litros_to_kg(fuelsalida, vuelo.helicoptero_tipo)
+        vuelo.fuelsalida_kg = utilitylib.convert_litros_to_kg(fuelsalida, vuelo.helicoptero_tipo)        
         vuelo.fuelsalida_gal = utilitylib.convert_litros_to_gal(fuelsalida, vuelo.helicoptero_tipo)
         vuelo.combustiblelanding = fuellanding
         vuelo.combustiblelanding_kg = utilitylib.convert_litros_to_kg(fuellanding, vuelo.helicoptero_tipo)

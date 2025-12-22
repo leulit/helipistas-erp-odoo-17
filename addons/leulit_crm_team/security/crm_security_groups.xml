@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- NUEVO GRUPO: Usuario puede ver documentos de sus equipos -->
+    <record id="group_sale_salesman_team" model="res.groups">
+        <field name="name">Usuario: Ver documentos de mis equipos</field>
+        <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="comment">
+            El usuario puede ver:
+            - Sus propios leads, oportunidades y presupuestos
+            - Los leads, oportunidades y presupuestos de los equipos de ventas a los que pertenece
+        </field>
+        
+        <!-- HERENCIA: Este grupo hereda de "Solo mostrar documentos propios" -->
+        <field name="implied_ids" eval="[(4, ref('sale.group_sale_salesman'))]"/>
+    </record>
+
+</odoo>
