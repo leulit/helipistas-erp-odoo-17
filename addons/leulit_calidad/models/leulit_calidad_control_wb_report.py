@@ -14,7 +14,7 @@ class leulit_calidad_control_wb_report(models.TransientModel):
     
     def imprimir(self):
         data = self._get_data_to_print_control_wb()
-        return self.env.ref('leulit_inf_wb_control_report2').report_action(self, data=data)
+        return self.env.ref('leulit_calidad.leulit_inf_wb_control_report2').report_action(self, data=data)
 
     def _get_data_to_print_control_wb(self):
         data = {}
