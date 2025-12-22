@@ -29,6 +29,13 @@
               action="action_user_group_matrix"
               sequence="30"/>
 
+    <!-- Submenu: Copy Between Groups -->
+    <menuitem id="menu_group_copy_wizard"
+              name="Copiar entre Grupos"
+              parent="menu_groups_manager_root"
+              action="action_group_copy_wizard"
+              sequence="40"/>
+
     <!-- Menú en Configuración > Usuarios y Compañías (mismo nivel que Impersonar Usuario) -->
     <menuitem id="menu_diagnose_menu_access"
               name="Diagnosticar Acceso a Menús"

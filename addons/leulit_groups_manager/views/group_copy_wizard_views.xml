@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista Form del Wizard de Copia -->
+    <record id="view_group_copy_wizard_form" model="ir.ui.view">
+        <field name="name">leulit.group.copy.wizard.form</field>
+        <field name="model">leulit.group.copy.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Copiar Elementos entre Grupos">
+                <sheet>
+                    <group>
+                        <group string="🎯 Grupos">
+                            <field name="source_group_id" 
+                                   options="{'no_create': True}"
+                                   placeholder="Selecciona el grupo origen..."/>
+                            <field name="target_group_id" 
+                                   options="{'no_create': True}"
+                                   placeholder="Selecciona el grupo destino..."/>
+                        </group>
+                        <group string="📋 Configuración">
+                            <field name="copy_type" widget="radio"/>
+                            <field name="copy_all"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Información estadística -->
+                    <group>
+                        <field name="stats_info" nolabel="1"/>
+                    </group>
+                    
+                    <notebook invisible="copy_all">
+                        <!-- Pestaña Usuarios -->
+                        <page string="👥 Usuarios" invisible="copy_type != 'users'">
+                            <field name="available_user_ids" invisible="1"/>
+                            <field name="user_ids" widget="many2many_tags">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="login"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                            <div class="text-muted">
+                                Selecciona los usuarios específicos a copiar del grupo origen al destino
+                            </div>
+                        </page>
+                        
+                        <!-- Pestaña Menús -->
+                        <page string="📁 Menús" invisible="copy_type != 'menus'">
+                            <field name="available_menu_ids" invisible="1"/>
+                            <field name="menu_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="parent_id"/>
+                                    <field name="sequence"/>
+                                </tree>
+                            </field>
+                            <div class="text-muted">
+                                Selecciona los menús específicos a copiar del grupo origen al destino
+                            </div>
+                        </page>
+                        
+                        <!-- Pestaña Permisos -->
+                        <page string="🔐 Permisos de Acceso" invisible="copy_type != 'access_rights'">
+                            <field name="available_access_ids" invisible="1"/>
+                            <field name="access_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="model_id"/>
+                                    <field name="perm_read"/>
+                                    <field name="perm_write"/>
+                                    <field name="perm_create"/>
+                                    <field name="perm_unlink"/>
+                                </tree>
+                            </field>
+                            <div class="text-muted">
+                                Selecciona los permisos de acceso específicos a copiar (se crearán nuevos registros)
+                            </div>
+                        </page>
+                        
+                        <!-- Pestaña Reglas -->
+                        <page string="📜 Reglas de Registro" invisible="copy_type != 'record_rules'">
+                            <field name="available_rule_ids" invisible="1"/>
+                            <field name="rule_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="model_id"/>
+                                    <field name="active"/>
+                                    <field name="perm_read"/>
+                                    <field name="perm_write"/>
+                                    <field name="perm_create"/>
+                                    <field name="perm_unlink"/>
+                                </tree>
+                            </field>
+                            <div class="text-muted">
+                                Selecciona las reglas de registro específicas a asociar al grupo destino
+                            </div>
+                        </page>
+                    </notebook>
+                    
+                </sheet>
+                <footer>
+                    <button string="✅ Copiar" name="action_copy" type="object" 
+                            class="btn-primary" 
+                            data-hotkey="q"/>
+                    <button string="Cancelar" special="cancel" 
+                            data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Acción del Wizard -->
+    <record id="action_group_copy_wizard" model="ir.actions.act_window">
+        <field name="name">Copiar Elementos entre Grupos</field>
+        <field name="res_model">leulit.group.copy.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{
+            'default_copy_type': 'users',
+            'default_copy_all': True,
+        }</field>
+    </record>
+    
+    <!-- Acción en el menú de grupos -->
+    <record id="action_group_copy_from_group" model="ir.actions.act_window">
+        <field name="name">Copiar a Otro Grupo</field>
+        <field name="res_model">leulit.group.copy.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="base.model_res_groups"/>
+        <field name="binding_view_types">form</field>
+        <field name="context">{
+            'default_source_group_id': active_id,
+        }</field>
+    </record>
+
+</odoo>
