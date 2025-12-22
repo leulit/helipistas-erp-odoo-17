@@ -24,8 +24,8 @@
                     </group>
                     
                     <!-- Información estadística -->
-                    <group>
-                        <field name="stats_info" nolabel="1"/>
+                    <group col="1">
+                        <field name="stats_info" nolabel="1" colspan="1"/>
                     </group>
                     
                     <notebook invisible="copy_all">
