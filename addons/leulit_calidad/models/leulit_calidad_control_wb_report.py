@@ -22,7 +22,7 @@ class leulit_calidad_control_wb_report(models.TransientModel):
         
         # Si no existe, crearlo con todas las propiedades
         if not report:
-            # Buscar el paperformat
+            # Buscar el paperformat A4 apaisado (landscape) sin cabecera
             paperformat = self.env.ref('leulit.paperformat_A4_landscape_without_cabecera', raise_if_not_found=False)
             
             report_vals = {
@@ -33,18 +33,22 @@ class leulit_calidad_control_wb_report(models.TransientModel):
                 'print_report_name': "'Control de Carga y Centrado'",
             }
             
+            # Asignar paperformat A4 landscape si existe
             if paperformat:
                 report_vals['paperformat_id'] = paperformat.id
             
+            ''''''
             report = self.env['ir.actions.report'].create(report_vals)
             
             # Crear el External ID para futuras referencias
+            '''
             self.env['ir.model.data'].create({
                 'name': 'leulit_inf_wb_control_report2',
                 'module': 'leulit_calidad',
                 'model': 'ir.actions.report',
                 'res_id': report.id,
             })
+            '''
         
         return report.report_action(self, data=data)
 
