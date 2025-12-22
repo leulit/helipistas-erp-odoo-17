@@ -21,10 +21,10 @@
                     1. Selecciona un usuario<br/>
                     2. Selecciona el menú que quieres diagnosticar<br/>
                     3. El sistema te mostrará:<br/>
-                    &nbsp;&nbsp;• Si el usuario tiene acceso al menú<br/>
-                    &nbsp;&nbsp;• Grupos requeridos vs grupos del usuario<br/>
-                    &nbsp;&nbsp;• Jerarquía de menús padre con colores (🟢 acceso / 🔴 sin acceso)<br/>
-                    &nbsp;&nbsp;• Solución sugerida si hay problemas
+                    &#160;&#160;• Si el usuario tiene acceso al menú<br/>
+                    &#160;&#160;• Grupos requeridos vs grupos del usuario<br/>
+                    &#160;&#160;• Jerarquía de menús padre con colores (🟢 acceso / 🔴 sin acceso)<br/>
+                    &#160;&#160;• Solución sugerida si hay problemas
                 </p>
             </field>
         </record>
