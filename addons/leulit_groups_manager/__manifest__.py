@@ -44,10 +44,10 @@ Casos de Uso:
     'data': [
         'security/groups.xml',
         'security/ir_model_access.xml',
+        'views/group_copy_wizard_views.xml',  # Debe estar antes de res_groups_views.xml
         'views/res_groups_views.xml',
         'views/res_users_views.xml',
         'views/user_group_matrix_views.xml',
-        'views/group_copy_wizard_views.xml',
         'views/menu_diagnosis_wizard_views.xml',
         'views/menu_list_wizard_views.xml',
         'security/wizards_access.xml',
