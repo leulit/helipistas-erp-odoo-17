@@ -56,7 +56,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr t-foreach="o.account_ids" t-as="line">
+                        <tr t-foreach="o.account_move_ids" t-as="line">
                             <td><span t-field="line.invoice_date"/></td>
                             <td>
                                 <span t-field="line.partner_id.name"/>
