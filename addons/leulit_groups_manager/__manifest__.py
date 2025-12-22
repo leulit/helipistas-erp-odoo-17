@@ -8,26 +8,7 @@
 Groups Manager - Visual Permission Management
 =============================================
 
-Gestión visual y clara de grupos y permisos de usuarios en Odoo.
 
-Características Principales:
-----------------------------
-* 🎯 Interfaz moderna y clara para gestión de grupos
-* 👥 Vista de matriz Usuario × Grupo
-* 🔗 Visualización de jerarquías de grupos (implied groups)
-* 📊 Dashboard de permisos por usuario
-* 🏷️ Organización por categorías/aplicaciones
-* 🎨 Código de colores para identificación rápida
-* ✅ Asignación múltiple de grupos de forma visual
-* 📈 Análisis de cobertura de permisos
-
-Ventajas sobre gestión tradicional:
-------------------------------------
-* Ver todos los grupos de un usuario de un vistazo
-* Identificar rápidamente gaps en permisos
-* Entender relaciones entre grupos
-* Asignar múltiples roles sin complicaciones
-* Auditoría visual de permisos
 
 Casos de Uso:
 -------------
