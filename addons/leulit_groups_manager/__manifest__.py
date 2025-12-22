@@ -43,7 +43,7 @@ Casos de Uso:
     ],
     'data': [
         'security/groups.xml',
-        'security/ir.model.access.csv',
+        'security/ir_model_access.xml',
         'views/res_groups_views.xml',
         'views/res_users_views.xml',
         'views/user_group_matrix_views.xml',

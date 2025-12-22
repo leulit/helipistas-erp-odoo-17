@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_res_groups_manager,access.res.groups.manager,base.model_res_groups,base.group_system,1,1,1,1
-access_res_users_manager,access.res.users.manager,base.model_res_users,base.group_system,1,1,1,1
-access_menu_access_diagnosis_wizard_admin,menu_access_diagnosis_wizard admin,leulit_groups_manager.model_menu_access_diagnosis_wizard,base.group_system,1,1,1,1
