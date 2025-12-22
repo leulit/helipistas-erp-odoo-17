@@ -14,7 +14,39 @@ class leulit_calidad_control_wb_report(models.TransientModel):
     
     def imprimir(self):
         data = self._get_data_to_print_control_wb()
-        return self.env.ref('leulit_calidad.leulit_inf_wb_control_report2').report_action(self, data=data)
+        
+        # Buscar el report por report_name
+        report = self.env['ir.actions.report'].search([
+            ('report_name', '=', 'leulit_calidad.leulit_20220120_1510_informe')
+        ], limit=1)
+        
+        # Si no existe, crearlo con todas las propiedades
+        if not report:
+            # Buscar el paperformat
+            paperformat = self.env.ref('leulit.paperformat_A4_landscape_without_cabecera', raise_if_not_found=False)
+            
+            report_vals = {
+                'name': 'Control de Carga y Centrado',
+                'model': 'leulit.calidad_control_wb_report',
+                'report_type': 'qweb-pdf',
+                'report_name': 'leulit_calidad.leulit_20220120_1510_informe',
+                'print_report_name': "'Control de Carga y Centrado'",
+            }
+            
+            if paperformat:
+                report_vals['paperformat_id'] = paperformat.id
+            
+            report = self.env['ir.actions.report'].create(report_vals)
+            
+            # Crear el External ID para futuras referencias
+            self.env['ir.model.data'].create({
+                'name': 'leulit_inf_wb_control_report2',
+                'module': 'leulit_calidad',
+                'model': 'ir.actions.report',
+                'res_id': report.id,
+            })
+        
+        return report.report_action(self, data=data)
 
     def _get_data_to_print_control_wb(self):
         data = {}

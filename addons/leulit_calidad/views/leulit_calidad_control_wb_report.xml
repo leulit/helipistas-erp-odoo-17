@@ -40,8 +40,8 @@
             model="leulit.calidad_control_wb_report" 
             report_type="qweb-pdf" 
             file="leulit_calidad.leulit_20220120_1510_informe" 
-            name="leulit_calidad.leulit_20220120_1510_informe" 
-            paperformat="leulit.paperformat_A4_landscape_without_cabecera" />
+            name="leulit_calidad.leulit_20220120_1510_informe" />
+
 
 
         <template id="carga_centrado_report_css">
