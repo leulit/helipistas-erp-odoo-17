@@ -35,7 +35,7 @@
         </record>
 
         <report 
-            id="leulit_inf_wb_control_report" 
+            id="leulit_inf_wb_control_report2" 
             string="Control de Carga y Centrado" 
             model="leulit.calidad_control_wb_report" 
             report_type="qweb-pdf" 
