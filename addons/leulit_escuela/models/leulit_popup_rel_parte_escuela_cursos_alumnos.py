@@ -15,6 +15,28 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
     _description    = "leulit_popup_rel_parte_escuela_cursos_alumnos"
 
     @api.model
+    def default_get(self, fields_list):
+        try:
+            _logger.info(
+                "[Escuela] default_get for popup: fields=%s ctx_defaults=%s",
+                fields_list,
+                {k: v for k, v in self.env.context.items() if k.startswith('default_')},
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard default_get inputs")
+
+        defaults = super(leulit_popup_rel_parte_escuela_cursos_alumnos, self).default_get(fields_list)
+        try:
+            _logger.info(
+                "[Escuela] default_get result: rel_alumnos=%s rel_curso=%s profesor_id=%s",
+                defaults.get('rel_alumnos'),
+                defaults.get('rel_curso'),
+                defaults.get('profesor_id'),
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard default_get result")
+        return defaults
+    @api.model
     def create(self, vals):
         # Log de creación del wizard con valores de entrada
         try:
@@ -107,8 +129,20 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
         objAllSilabus_ids = []
         objSilabus = []
 
+        # Normalizar alumnos desde contexto por si viene como comando M2M (6, 0, ids)
         if 'default_rel_alumnos' in self.env.context:
-            alumnos = self.env.context['default_rel_alumnos']
+            alumnos_ctx = self.env.context['default_rel_alumnos']
+            alumnos = []
+            if isinstance(alumnos_ctx, list):
+                if alumnos_ctx and isinstance(alumnos_ctx[0], int):
+                    alumnos = alumnos_ctx
+                else:
+                    for cmd in alumnos_ctx:
+                        if isinstance(cmd, (tuple, list)) and cmd and cmd[0] == 6 and len(cmd) >= 3:
+                            ids = cmd[2] if isinstance(cmd[2], list) else []
+                            alumnos.extend(ids)
+            elif isinstance(alumnos_ctx, int):
+                alumnos = [alumnos_ctx]
         else:
             alumnos = self.rel_alumnos.ids
 

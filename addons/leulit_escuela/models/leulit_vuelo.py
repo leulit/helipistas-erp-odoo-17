@@ -25,10 +25,13 @@ class leulit_vuelo(models.Model):
         for item in self:
             if item.alumno or item.verificado:
                 aluveri = None
-                if item.verificado:
-                    aluveri = item.verificado.partner_id.getAlumno()
+                # Preferir el alumno explícito del vuelo
                 if item.alumno:
-                    aluveri = item.alumno.partner_id.getAlumno()
+                    aluveri = item.alumno.id
+                # Si no hay alumno, intentar mapear desde verificado → alumno por piloto_id
+                elif item.verificado:
+                    alumno_from_verificado = self.env['leulit.alumno'].search([('piloto_id', '=', item.verificado.id)], limit=1)
+                    aluveri = alumno_from_verificado.id if alumno_from_verificado else None
 
                 profesor_id = False
                 if item.piloto_supervisor_id:
@@ -56,7 +59,8 @@ class leulit_vuelo(models.Model):
                 if profesor_id:
                     context['default_profesor_id'] = profesor_id
                 if aluveri:
-                    context['default_rel_alumnos'] = [aluveri]
+                    # Para Many2many, usar comando (6, 0, ids) como default
+                    context['default_rel_alumnos'] = [(6, 0, [aluveri])]
                 if item.parte_escuela_id:
                     context.update({'default_parte_escuela_id' : item.parte_escuela_id.id})
 
