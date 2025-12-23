@@ -14,6 +14,59 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
     _name           = "leulit.popup_rel_parte_escuela_cursos_alumnos"
     _description    = "leulit_popup_rel_parte_escuela_cursos_alumnos"
 
+    @api.model
+    def create(self, vals):
+        # Log de creación del wizard con valores de entrada
+        try:
+            ctx_min = {k: v for k, v in self.env.context.items() if k.startswith('default_') or k in ('lang', 'tz')}
+            _logger.info(
+                "[Escuela] Creating popup wizard by user=%s ctx=%s vals=%s",
+                self.env.user.id,
+                ctx_min,
+                vals,
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard create inputs")
+
+        rec = super(leulit_popup_rel_parte_escuela_cursos_alumnos, self).create(vals)
+
+        try:
+            _logger.info(
+                "[Escuela] Created popup wizard id=%s rel_curso=%s profesor_id=%s rel_alumnos=%s silabus=%s",
+                rec.id,
+                rec.rel_curso.id if rec.rel_curso else None,
+                rec.profesor_id.id if rec.profesor_id else None,
+                rec.rel_alumnos.ids,
+                rec.silabus.ids,
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard create state")
+
+        return rec
+
+    def write(self, vals):
+        try:
+            _logger.info(
+                "[Escuela] Writing popup wizard ids=%s vals=%s",
+                self.ids,
+                vals,
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard write inputs")
+
+        res = super(leulit_popup_rel_parte_escuela_cursos_alumnos, self).write(vals)
+        try:
+            _logger.info(
+                "[Escuela] Post-write state wizard ids=%s rel_curso=%s profesor_id=%s rel_alumnos=%s silabus=%s",
+                self.ids,
+                [r.rel_curso.id if r.rel_curso else None for r in self],
+                [r.profesor_id.id if r.profesor_id else None for r in self],
+                [r.rel_alumnos.ids for r in self],
+                [r.silabus.ids for r in self],
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging wizard post-write state")
+        return res
 
     def xmlrpc_asignaturas(self, idcurso, alumno_id):
         sesiones  = {}
@@ -38,6 +91,15 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
 
     @api.onchange('rel_alumnos','rel_curso')
     def onchange_colores(self):
+        try:
+            _logger.info(
+                "[Escuela] onchange_colores triggered: rel_curso=%s rel_alumnos_ctx=%s rel_alumnos_field=%s",
+                self.rel_curso.id if self.rel_curso else None,
+                self.env.context.get('default_rel_alumnos'),
+                self.rel_alumnos.ids,
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging onchange_colores inputs")
         RelCursoAlu  = self.env['leulit.rel_parte_escuela_cursos_alumnos']
         Silabus      = self.env['leulit.silabus']
         PFCurso      = self.env['leulit.perfil_formacion_curso']
@@ -88,30 +150,51 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
 
     def create_rel_parte_escuela_cursos_alumnos(self):
         for item in self:
-            for isilabus in item.silabus:
-                for alu in item.rel_alumnos:
-                    parte_vals = {
-                        'rel_curso'           : item.rel_curso.id,
-                        'rel_silabus'         : isilabus.id,
-                        'alumno'              : alu.id,
-                        'rel_parte_escuela'   : item.parte_escuela_id.id,
-                    }
-                    self.env['leulit.rel_parte_escuela_cursos_alumnos'].create(parte_vals)
-
-            item.parte_escuela_id.updateTiempos()
+            try:
+                _logger.info(
+                    "[Escuela] create_rel_parte_escuela_cursos_alumnos: parte_escuela_id=%s rel_curso=%s alumnos=%s silabus=%s",
+                    item.parte_escuela_id.id if item.parte_escuela_id else None,
+                    item.rel_curso.id if item.rel_curso else None,
+                    item.rel_alumnos.ids,
+                    item.silabus.ids,
+                )
+                for isilabus in item.silabus:
+                    for alu in item.rel_alumnos:
+                        parte_vals = {
+                            'rel_curso'           : item.rel_curso.id,
+                            'rel_silabus'         : isilabus.id,
+                            'alumno'              : alu.id,
+                            'rel_parte_escuela'   : item.parte_escuela_id.id,
+                        }
+                        self.env['leulit.rel_parte_escuela_cursos_alumnos'].create(parte_vals)
+                item.parte_escuela_id.updateTiempos()
+            except Exception:
+                _logger.exception("[Escuela] Error in create_rel_parte_escuela_cursos_alumnos")
+                raise
 
 
     def create_rel_parte_escuela_cursos_alumnos_vuelo(self):
         for item in self:
-            for isilabus in item.silabus:
-                for alu in item.rel_alumnos:
-                    parte_vals = {
-                        'rel_curso'           : item.rel_curso.id,
-                        'rel_silabus'         : isilabus.id,
-                        'alumno'              : alu.id,
-                        'rel_vuelo'           : item.vuelo_id.id,
-                    }
-                    self.env['leulit.rel_parte_escuela_cursos_alumnos'].create(parte_vals)
+            try:
+                _logger.info(
+                    "[Escuela] create_rel_parte_escuela_cursos_alumnos_vuelo: vuelo_id=%s rel_curso=%s alumnos=%s silabus=%s",
+                    item.vuelo_id.id if item.vuelo_id else None,
+                    item.rel_curso.id if item.rel_curso else None,
+                    item.rel_alumnos.ids,
+                    item.silabus.ids,
+                )
+                for isilabus in item.silabus:
+                    for alu in item.rel_alumnos:
+                        parte_vals = {
+                            'rel_curso'           : item.rel_curso.id,
+                            'rel_silabus'         : isilabus.id,
+                            'alumno'              : alu.id,
+                            'rel_vuelo'           : item.vuelo_id.id,
+                        }
+                        self.env['leulit.rel_parte_escuela_cursos_alumnos'].create(parte_vals)
+            except Exception:
+                _logger.exception("[Escuela] Error in create_rel_parte_escuela_cursos_alumnos_vuelo")
+                raise
 
         return {'type': 'ir.actions.act_window_close'}
 

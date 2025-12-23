@@ -18,6 +18,15 @@ class leulit_profesor(models.Model):
         """Override create to ensure partner always has a name"""
         # Si no hay name en vals y no hay partner_id, evitar la creación
         if 'name' not in vals and 'partner_id' not in vals:
+            try:
+                _logger.error(
+                    "[Escuela] Intento de crear leulit.profesor sin 'name' ni 'partner_id'. user=%s ctx_defaults=%s vals=%s",
+                    self.env.user.id,
+                    {k: v for k, v in self.env.context.items() if k.startswith('default_')},
+                    vals,
+                )
+            except Exception:
+                _logger.exception("[Escuela] Error registrando intento de creación inválida de profesor")
             raise ValidationError(_(
                 'No se puede crear el profesor sin nombre.\n\n'
                 '⚠️ Causa del error:\n'

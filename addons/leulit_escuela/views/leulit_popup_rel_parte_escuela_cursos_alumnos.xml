@@ -10,11 +10,11 @@
                 <form string="descripcion" jsClass="leulit.TablaResumenAsignaturasPracticas">
                     <group>
                         <field name="vuelo_id" readonly="1"/>
-                        <field name="profesor_id" readonly="1"/>
+                        <field name="profesor_id" readonly="1" options="{'no_create': true, 'no_create_edit': true, 'no_open': true}"/>
                         <field name="hora_start" widget="float_time" readonly="1"/>
                         <field name="tiempo" widget="float_time" readonly="1"/>
                         <field name="hora_end" widget="float_time" readonly="1"/>
-                        <field name="rel_alumnos" readonly="1"/>
+                        <field name="rel_alumnos" readonly="1" options="{'no_create': true, 'no_create_edit': true, 'no_open': true}"/>
                         <field name="rel_curso" domain="[('estado','=','activo')]" options="{'no_create': true, 'no_create_edit': true, 'no_open': true}"/>
                     </group>
                     <table>
