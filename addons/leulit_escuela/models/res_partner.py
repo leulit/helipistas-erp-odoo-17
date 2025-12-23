@@ -44,9 +44,23 @@ class res_partner(models.Model):
 
     @api.model
     def getAlumno(self):
-        self.ensure_one()
+        _logger.error(
+            "[res_partner] getAlumno() %s",
+            self
+        )        
+        _logger.error(
+            "[res_partner] getAlumno() searching for partner_id=%s",
+            self.id
+        )
         for item in self.env['leulit.alumno'].search([('partner_id','=',self.id)]):
+            _logger.error(
+                "[res_partner] getAlumno() found %s",
+                item
+            )
             return item.id
+        _logger.error(
+            "[res_partner] getAlumno() not found"
+        )
         return None
         
         

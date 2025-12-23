@@ -100,7 +100,7 @@ class leulit_vuelo(models.Model):
                     )
                     raise UserError(_(msg))
 
-                _logger.info(
+                _logger.error(
                     "[Escuela] wizard_add_parte_escuela computed ids: vuelo=%s alumno=%s verificado=%s profesor_id=%s aluveri=%s",
                     item.id,
                     item.alumno.id if item.alumno else None,
