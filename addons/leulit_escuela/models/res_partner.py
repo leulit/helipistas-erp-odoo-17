@@ -36,31 +36,35 @@ class res_partner(models.Model):
 
     @api.model
     def getProfesor(self):   
-        self.ensure_one()             
-        for item in self.env['leulit.profesor'].search([('partner_id','=',self.id)]):
-            return item.id
+        self.ensure_one()
+        # Buscar incluyendo archivados para detectar el problema
+        profesor = self.env['leulit.profesor'].with_context(active_test=False).search([('partner_id','=',self.id)], limit=1)
+        if profesor:
+            if not profesor.active:
+                raise UserError(_(
+                    "El Profesor está archivado y no puede ser utilizado.\n\n"
+                    "Profesor: %s (ID: %s)\n"
+                    "Partner: %s (ID: %s)\n\n"
+                    "Por favor, reactive el profesor desde su ficha para poder continuar."
+                ) % (profesor.name, profesor.id, self.name, self.id))
+            return profesor.id
         return None
 
 
     @api.model
     def getAlumno(self):
-        _logger.error(
-            "[res_partner] getAlumno() %s",
-            self
-        )        
-        _logger.error(
-            "[res_partner] getAlumno() searching for partner_id=%s",
-            self.id
-        )
-        for item in self.env['leulit.alumno'].search([('partner_id','=',self.id)]):
-            _logger.error(
-                "[res_partner] getAlumno() found %s",
-                item
-            )
-            return item.id
-        _logger.error(
-            "[res_partner] getAlumno() not found"
-        )
+        self.ensure_one()
+        # Buscar incluyendo archivados para detectar el problema
+        alumno = self.env['leulit.alumno'].with_context(active_test=False).search([('partner_id','=',self.id)], limit=1)
+        if alumno:
+            if not alumno.active:
+                raise UserError(_(
+                    "El Alumno está archivado y no puede ser utilizado.\n\n"
+                    "Alumno: %s (ID: %s)\n"
+                    "Partner: %s (ID: %s)\n\n"
+                    "Por favor, reactive el alumno desde su ficha para poder continuar."
+                ) % (alumno.name, alumno.id, self.name, self.id))
+            return alumno.id
         return None
         
         
