@@ -20,6 +20,11 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Alumno">
+                    <header>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </header>
                     <sheet>
                         <field name="alta_all" invisible="1"/>
                         <field name="is_alta" invisible="1"/>
@@ -168,7 +173,8 @@
             <field name="name">leulit_20201028_1410_tree</field>
             <field name="model">leulit.alumno</field>
             <field name="arch" type="xml">
-                <tree string="leulit">
+                <tree string="leulit" decoration-muted="active == False">
+                    <field name="active" optional="show"/>
                     <field name="activo" column_invisible="1"/>
                     <field name="name"/>
                     <field name="email"/>
