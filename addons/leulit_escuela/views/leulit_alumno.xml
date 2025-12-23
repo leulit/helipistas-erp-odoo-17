@@ -173,7 +173,7 @@
             <field name="name">leulit_20201028_1410_tree</field>
             <field name="model">leulit.alumno</field>
             <field name="arch" type="xml">
-                <tree string="leulit" decoration-muted="active == False">
+                <tree string="leulit" decoration-muted="active == False" decoration-success="active == True" decoration-bf="active == True">
                     <field name="active" optional="show"/>
                     <field name="activo" column_invisible="1"/>
                     <field name="name"/>
