@@ -35,7 +35,8 @@ class res_partner(models.Model):
     #     return super(res_partner, self).create(vals)
 
     @api.model
-    def getProfesor(self):                
+    def getProfesor(self):   
+        self.ensure_one()             
         for item in self.env['leulit.profesor'].search([('partner_id','=',self.id)]):
             return item.id
         return None
@@ -43,6 +44,7 @@ class res_partner(models.Model):
 
     @api.model
     def getAlumno(self):
+        self.ensure_one()
         for item in self.env['leulit.alumno'].search([('partner_id','=',self.id)]):
             return item.id
         return None
