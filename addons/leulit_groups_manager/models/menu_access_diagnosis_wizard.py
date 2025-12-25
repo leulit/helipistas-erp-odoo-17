@@ -105,21 +105,6 @@ class MenuAccessDiagnosisWizard(models.TransientModel):
                 html.append(f'<li><strong>{group.full_name}</strong> (ID: {group.id})</li>')
             html.append('</ul>')
         
-        # Get user groups
-        html.append(f'<h5>User\'s Direct Groups ({len(user_groups)}):</h5>')
-        html.append('<ul>')
-        for group in user_groups:
-            html.append(f'<li>{group.full_name}</li>')
-        html.append('</ul>')
-        
-        # Get implied groups
-        if implied_groups:
-            html.append(f'<h5>Implied Groups ({len(implied_groups)}):</h5>')
-            html.append('<ul>')
-            for group in implied_groups:
-                html.append(f'<li>{group.full_name}</li>')
-            html.append('</ul>')
-        
         # Check access
         html.append('<hr/>')
         html.append('<h4>Access Analysis:</h4>')
@@ -174,13 +159,17 @@ class MenuAccessDiagnosisWizard(models.TransientModel):
             html.append('<th style="padding: 8px; border: 1px solid #dee2e6; text-align: left;">Menu</th>')
             html.append('<th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">Access</th>')
             html.append('<th style="padding: 8px; border: 1px solid #dee2e6; text-align: left;">Required Groups</th>')
+            html.append('<th style="padding: 8px; border: 1px solid #dee2e6; text-align: left;">Status</th>')
             html.append('</tr>')
             
             all_parents_accessible = True
+            blocked_parents = []  # Track which parents are blocked
+            
             for parent_menu in parent_chain:
                 has_access = self._check_menu_access(parent_menu, all_user_groups)
                 if not has_access:
                     all_parents_accessible = False
+                    blocked_parents.append(parent_menu)
                 
                 access_icon = '✓' if has_access else '✗'
                 access_color = '#28a745' if has_access else '#dc3545'
@@ -193,19 +182,49 @@ class MenuAccessDiagnosisWizard(models.TransientModel):
                 parent_groups = parent_menu.groups_id
                 if not parent_groups:
                     html.append('<td style="padding: 8px; border: 1px solid #dee2e6;"><em>No groups (accessible to all)</em></td>')
+                    html.append('<td style="padding: 8px; border: 1px solid #dee2e6;"><span style="color: #28a745;">✓ User has access</span></td>')
                 else:
-                    groups_list = ', '.join([g.name for g in parent_groups])
+                    groups_list = '<br/>'.join([f'• {g.full_name}' for g in parent_groups])
                     html.append(f'<td style="padding: 8px; border: 1px solid #dee2e6;">{groups_list}</td>')
+                    
+                    # Status column - show if user has access or which groups are missing
+                    if has_access:
+                        # Find which groups the user has
+                        matching = all_user_groups & parent_groups
+                        matched_names = ', '.join([g.name for g in matching])
+                        html.append(f'<td style="padding: 8px; border: 1px solid #dee2e6;"><span style="color: #28a745;">✓ User has: {matched_names}</span></td>')
+                    else:
+                        # User doesn't have any of the required groups
+                        html.append(f'<td style="padding: 8px; border: 1px solid #dee2e6;"><span style="color: #dc3545;">✗ User is missing ALL required groups</span></td>')
+                
                 html.append('</tr>')
             
             html.append('</table>')
             
-            # Summary
+            # Summary with solution
             if not all_parents_accessible:
                 html.append('<div class="alert alert-danger" style="margin-top: 15px;">')
                 html.append('<i class="fa fa-exclamation-triangle"></i> <strong>PROBLEM FOUND:</strong> ')
                 html.append('User does NOT have access to one or more parent menus. ')
                 html.append('This is why the menu is not visible in the UI, even if the user has access to the menu itself.')
+                html.append('</div>')
+                
+                # Show specific solution for each blocked parent
+                html.append('<div class="alert alert-warning" style="margin-top: 15px;">')
+                html.append('<h5 style="margin-top: 0;"><i class="fa fa-wrench"></i> Solution: Add the following groups to the user</h5>')
+                html.append('<p>To fix this issue, the user needs access to <strong>at least one group</strong> from each blocked parent menu:</p>')
+                
+                for idx, blocked_menu in enumerate(blocked_parents, 1):
+                    html.append(f'<div style="margin-bottom: 15px; padding: 10px; background-color: #fff3cd; border-left: 4px solid #dc3545;">')
+                    html.append(f'<strong>{idx}. {blocked_menu.name}</strong> (Path: {blocked_menu.complete_name})<br/>')
+                    html.append('<span style="margin-left: 20px;">Choose ONE of these groups:</span>')
+                    html.append('<ul style="margin-top: 5px; margin-bottom: 0;">')
+                    for group in blocked_menu.groups_id:
+                        group_link = f'/web#id={group.id}&model=res.groups&view_type=form'
+                        html.append(f'<li><a href="{group_link}" target="_blank" style="font-weight: bold;">{group.full_name}</a> (ID: {group.id})</li>')
+                    html.append('</ul>')
+                    html.append('</div>')
+                
                 html.append('</div>')
             else:
                 html.append('<div class="alert alert-success" style="margin-top: 15px;">')
