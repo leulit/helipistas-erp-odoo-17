@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitItemExperienciaMecanico(models.Model):
     _name = "leulit.item_experiencia_mecanico"
+    _description = 'Registro de Experiencia de Mecánico'
     _order = 'date asc'
 
 

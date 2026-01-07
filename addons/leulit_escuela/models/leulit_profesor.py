@@ -14,6 +14,34 @@ class leulit_profesor(models.Model):
     _inherits = {'res.partner': 'partner_id'}
 
     @api.model
+    def create(self, vals):
+        """Override create to ensure partner always has a name"""
+        # Si no hay name en vals y no hay partner_id, evitar la creación
+        if 'name' not in vals and 'partner_id' not in vals:
+            try:
+                _logger.error(
+                    "[Escuela] Intento de crear leulit.profesor sin 'name' ni 'partner_id'. user=%s ctx_defaults=%s vals=%s",
+                    self.env.user.id,
+                    {k: v for k, v in self.env.context.items() if k.startswith('default_')},
+                    vals,
+                )
+            except Exception:
+                _logger.exception("[Escuela] Error registrando intento de creación inválida de profesor")
+            raise ValidationError(_(
+                'No se puede crear el profesor sin nombre.\n\n'
+                '⚠️ Causa del error:\n'
+                'Se está intentando crear un nuevo profesor pero no se ha proporcionado ningún nombre.\n\n'
+                '✅ Solución:\n'
+                '1. Asegúrese de escribir el nombre completo del profesor antes de guardar\n'
+                '2. Si está usando el formulario, complete el campo "Nombre"\n'
+                '3. Si aparece un desplegable de selección, elija un profesor existente en lugar de crear uno nuevo\n\n'
+                'Si el problema persiste, contacte con el administrador del sistema.'
+            ))
+        
+        # Si hay name pero no partner_id, el _inherits creará el partner automáticamente
+        return super(leulit_profesor, self).create(vals)
+
+    @api.model
     def getPartnerId(self):
         return self.partner_id.id
 

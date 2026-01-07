@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cron: Notificar riesgos pendientes de aprobación (diario) -->
+        <record id="ir_cron_notify_pending_approval_risks" model="ir.cron">
+            <field name="name">SGSI: Notificar Riesgos Pendientes de Aprobación</field>
+            <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_send_pending_approval_notifications()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- Cron: Notificar riesgos críticos sin tratamiento (semanal) -->
+        <record id="ir_cron_notify_critical_risks" model="ir.cron">
+            <field name="name">SGSI: Notificar Riesgos Críticos sin Tratamiento</field>
+            <field name="model_id" ref="model_mgmtsystem_notification_cron"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_send_critical_risks_notifications()</field>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- Configuración predeterminada: Notificación de riesgos pendientes -->
+        <record id="notification_config_pending_approval" model="mgmtsystem.notification.cron">
+            <field name="name">Riesgos Pendientes de Aprobación (3+ días)</field>
+            <field name="active" eval="True"/>
+            <field name="notification_type">pending_approval</field>
+            <field name="days_threshold">3</field>
+            <field name="recipient_group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        </record>
+
+        <!-- Configuración predeterminada: Notificación de riesgos críticos -->
+        <record id="notification_config_critical_risks" model="mgmtsystem.notification.cron">
+            <field name="name">Riesgos Críticos sin Tratamiento Aprobado</field>
+            <field name="active" eval="True"/>
+            <field name="notification_type">critical_risks</field>
+            <field name="days_threshold">0</field>
+            <field name="recipient_group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        </record>
+    </data>
+</odoo>

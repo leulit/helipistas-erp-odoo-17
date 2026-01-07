@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceSecurityInspect(models.Model):
     _name = "leulit.maintenance_security_inspect"
+    _description = 'Inspección de Seguridad de Mantenimiento'
 
 
     @api.onchange('first_inspeccion_seguridad')
@@ -36,9 +37,9 @@ class LeulitMaintenanceSecurityInspect(models.Model):
 
     name = fields.Char(string="Nombre")
     first_inspeccion_seguridad = fields.Boolean(string="Primer Inspección de seguridad")
-    first_user_inspeccion_seguridad = fields.Many2one(comodel_name="res.users", string="Usuario Inspección seguridad")
-    first_datetime_inspeccion_seguridad = fields.Datetime(string="Fecha y hora de la inspección de seguridad")
+    first_user_inspeccion_seguridad = fields.Many2one(comodel_name="res.users", string="Usuario 1º Inspección seguridad")
+    first_datetime_inspeccion_seguridad = fields.Datetime(string="Fecha 1ª inspección de seguridad")
     second_inspeccion_seguridad = fields.Boolean(string="Segundo Inspección de seguridad")
-    second_user_inspeccion_seguridad = fields.Many2one(comodel_name="res.users", string="Usuario Inspección seguridad")
-    second_datetime_inspeccion_seguridad = fields.Datetime(string="Fecha y hora de la inspección de seguridad")
+    second_user_inspeccion_seguridad = fields.Many2one(comodel_name="res.users", string="Usuario 2º Inspección seguridad")
+    second_datetime_inspeccion_seguridad = fields.Datetime(string="Fecha 2ª inspección de seguridad")
     task_id = fields.Many2one(comodel_name="project.task", string="Tarea")

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Definición del reporte PDF -->
+    <record id="action_report_risk_treatment_plan" model="ir.actions.report">
+        <field name="name">Plan de Tratamiento de Riesgos</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_partis.report_risk_treatment_plan_document</field>
+        <field name="report_file">leulit_partis.report_risk_treatment_plan_document</field>
+        <field name="print_report_name">'Plan_Tratamiento_Riesgos_%s' % (object.asset_code or object.name)</field>
+    </record>
+</odoo>

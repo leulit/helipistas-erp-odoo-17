@@ -1,0 +1,104 @@
+/* Impersonation Banner Styles */
+
+.o_impersonate_banner {
+    position: relative;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid #d63447;
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.o_impersonate_content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.o_impersonate_icon {
+    font-size: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.o_impersonate_text {
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+}
+
+.o_impersonate_text strong {
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.o_impersonate_original {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-left: 12px;
+}
+
+.o_impersonate_stop_btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #d63447;
+    border: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.o_impersonate_stop_btn:hover {
+    background-color: white;
+    color: #b02a37;
+    transform: scale(1.05);
+}
+
+.o_impersonate_stop_btn i {
+    margin-right: 4px;
+}
+
+/* Adjust main content when banner is shown */
+.o_impersonate_banner + .o_action_manager {
+    margin-top: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .o_impersonate_content {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .o_impersonate_text {
+        text-align: center;
+    }
+    
+    .o_impersonate_original {
+        display: block;
+        margin-left: 0;
+        margin-top: 4px;
+    }
+}

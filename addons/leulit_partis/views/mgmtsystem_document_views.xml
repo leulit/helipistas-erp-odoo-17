@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista heredada de document.page (OCA) para documentación SGSI PART-IS -->
+    <!-- Herencia opcional - solo se aplica si document_page está instalado -->
+    <record id="view_document_page_form_partis" model="ir.ui.view">
+        <field name="name">document.page.form.partis</field>
+        <field name="model">document.page</field>
+        <field name="inherit_id" ref="document_page.view_wiki_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="SGSI PART-IS">
+                    <group>
+                        <field name="is_part_is_manual"/>
+                        <field name="partis_document_type"/>
+                        <field name="next_pilar_review_date" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="linked_asset_ids" widget="many2many_tags"/>
+                        <field name="linked_risk_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="linked_control_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="control_overview" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_document_page_search_partis" model="ir.ui.view">
+        <field name="name">document.page.search.partis</field>
+        <field name="model">document.page</field>
+        <field name="inherit_id" ref="document_page.view_wiki_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/group[@expand='0']" position="after">
+                <separator/>
+                <filter
+                    name="part_is_manual"
+                    string="Documentos SGSI"
+                    domain="[('is_part_is_manual', '=', True)]"
+                    help="Filtra documentos SGSI PART-IS."
+                />
+                <filter
+                    name="sgsi_manual"
+                    string="Manual SGSI"
+                    domain="[('partis_document_type', '=', 'sgsi_manual')]"
+                />
+                <filter
+                    name="security_policy"
+                    string="Política de Seguridad"
+                    domain="[('partis_document_type', '=', 'security_policy')]"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_document_page_partis" model="ir.actions.act_window">
+        <field name="name">Documentación SGSI</field>
+        <field name="res_model">document.page</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{"search_default_part_is_manual": 1, "default_is_part_is_manual": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear documentación del SGSI
+            </p>
+            <p>
+                Genere y mantenga la documentación necesaria para cumplir con EASA PART-IS y AESA:<br/>
+                - Manual del SGSI<br/>
+                - Política de Seguridad de la Información<br/>
+                - Procedimientos de seguridad<br/>
+                - Registros de análisis de riesgos<br/>
+                - Catálogo de controles implementados
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_leulit_partis_document"
+        name="Documentación SGSI"
+        parent="menu_leulit_riesgo_root"
+        action="action_document_page_partis"
+        sequence="40"
+    />
+</odoo>

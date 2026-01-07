@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitCertificacionAeronave(models.Model):
     _name = "leulit.certificacion_aeronave"
+    _description = 'Certificación de Aeronave'
     _rec_name = "name"
 
     @api.depends('certificacion_id', 'aeronave')

@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_event_resource(models.Model):
     _name       = "leulit.event_resource"
+    _description = 'Recurso de Evento de Planificación'
     _rec_name   = 'resource'
     _order      = "hora_ini asc"
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Action for Diagnose Menu Access -->
+        <record id="action_diagnose_menu_access" model="ir.actions.act_window">
+            <field name="name">Diagnosticar Acceso a Menús</field>
+            <field name="res_model">menu.access.diagnosis.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_empty_folder">
+                    Herramienta de Diagnóstico de Acceso a Menús
+                </p>
+                <p>
+                    Esta herramienta te permite diagnosticar por qué un usuario específico 
+                    no puede ver un menú determinado.
+                </p>
+                <p>
+                    <strong>¿Cómo funciona?</strong><br/>
+                    1. Selecciona un usuario<br/>
+                    2. Selecciona el menú que quieres diagnosticar<br/>
+                    3. El sistema te mostrará:<br/>
+                    &#160;&#160;• Si el usuario tiene acceso al menú<br/>
+                    &#160;&#160;• Grupos requeridos vs grupos del usuario<br/>
+                    &#160;&#160;• Jerarquía de menús padre con colores (🟢 acceso / 🔴 sin acceso)<br/>
+                    &#160;&#160;• Solución sugerida si hay problemas
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

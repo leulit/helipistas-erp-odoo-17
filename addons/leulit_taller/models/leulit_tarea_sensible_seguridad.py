@@ -70,7 +70,7 @@ class TareaSensibleSeguridad(models.Model):
     datetime_check = fields.Datetime(string="Fecha Check")
     d_check = fields.Boolean(string="Doble Check")
     user_d_check = fields.Many2one(comodel_name="res.users", string="Usuario Doble Check")
-    datetime_d_check = fields.Datetime(string="Fecha Check")
+    datetime_d_check = fields.Datetime(string="Fecha Doble Check")
     checklist_id = fields.Many2one(comodel_name="leulit.checklist_tareas_sensibles_seguridad", string="Checklist")
     request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order Id")
     no_aplica = fields.Boolean(string="N/A")

@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_equipamientos_planificacion(models.Model):
     _name = 'leulit.equipamientos_planificacion'
+    _description = 'Equipamiento para Planificación'
     _rec_name = 'name'
 
     name = fields.Char(string="Nombre")

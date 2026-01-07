@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulitReunionTemplate(models.Model):
     _name = "leulit.reunion_template"
+    _description = 'Plantilla de Reunión'
 
     name = fields.Char(string="Nombre", required=True)
     descripcion = fields.Html('Descripción',required=True)

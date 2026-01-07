@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Form del Dashboard con KPIs -->
+    <record id="view_mgmtsystem_dashboard_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.dashboard.form</field>
+        <field name="model">mgmtsystem.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard SGSI PART-IS">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="date"/>
+                    </group>
+                    
+                    <!-- KPIs Principales -->
+                    <group string="Indicadores Clave (KPIs)">
+                        <group string="Activos de Información">
+                            <field name="total_assets" widget="statinfo"/>
+                            <field name="critical_assets" widget="statinfo"/>
+                            <field name="high_assets" widget="statinfo"/>
+                            <field name="assets_review_pending" widget="statinfo"/>
+                        </group>
+                        <group string="Análisis de Riesgos">
+                            <field name="total_risks" widget="statinfo"/>
+                            <field name="critical_inherent_risks" widget="statinfo"/>
+                            <field name="critical_residual_risks" widget="statinfo"/>
+                            <field name="untreated_risks" widget="statinfo"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Gestión de Controles y Cumplimiento">
+                        <group string="Controles">
+                            <field name="total_controls" widget="statinfo"/>
+                            <field name="active_controls" widget="statinfo"/>
+                        </group>
+                        <group string="Cumplimiento SGSI">
+                            <field name="compliance_rate" widget="percentpie"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Kanban del Dashboard (Cards con KPIs) -->
+    <record id="view_mgmtsystem_dashboard_kanban" model="ir.ui.view">
+        <field name="name">mgmtsystem.dashboard.kanban</field>
+        <field name="model">mgmtsystem.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="total_assets"/>
+                <field name="critical_assets"/>
+                <field name="total_risks"/>
+                <field name="untreated_risks"/>
+                <field name="compliance_rate"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary"><field name="name"/></div>
+                                    <div class="o_secondary"><field name="date"/></div>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-6 o_kanban_primary_left">
+                                        <button class="btn btn-primary" type="object" name="action_view_assets">
+                                            <span><t t-esc="record.total_assets.value"/> Activos</span>
+                                        </button>
+                                        <span class="badge badge-pill badge-danger" t-if="record.critical_assets.value > 0">
+                                            <t t-esc="record.critical_assets.value"/> Críticos
+                                        </span>
+                                    </div>
+                                    <div class="col-6 o_kanban_primary_right">
+                                        <button class="btn btn-warning" type="object" name="action_view_risks">
+                                            <span><t t-esc="record.total_risks.value"/> Riesgos</span>
+                                        </button>
+                                        <span class="badge badge-pill badge-danger" t-if="record.untreated_risks.value > 0">
+                                            <t t-esc="record.untreated_risks.value"/> Sin Tratar
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 t-attf-style="width: {{record.compliance_rate.value}}%"
+                                                 t-att-aria-valuenow="record.compliance_rate.value"
+                                                 aria-valuemin="0" aria-valuemax="100">
+                                                <t t-esc="Math.round(record.compliance_rate.value)"/>% Cumplimiento
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Pivot para Activos por Criticidad -->
+    <record id="view_mgmtsystem_hazard_pivot_asset" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.pivot.asset</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Activos PART-IS">
+                <field name="magerit_asset_level" type="row"/>
+                <field name="type_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Graph para Activos por Criticidad -->
+    <record id="view_mgmtsystem_hazard_graph_asset" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.graph.asset</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <graph string="Distribución de Activos" type="pie">
+                <field name="magerit_asset_level"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Pivot para Riesgos -->
+    <record id="view_mgmtsystem_hazard_pivot_risk" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.pivot.risk</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <pivot string="Matriz de Riesgos PART-IS">
+                <field name="magerit_inherent_level" type="row"/>
+                <field name="pilar_treatment_strategy" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Graph para Riesgos (Heatmap) -->
+    <record id="view_mgmtsystem_hazard_graph_risk" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.graph.risk</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="arch" type="xml">
+            <graph string="Distribución de Riesgos" type="bar">
+                <field name="magerit_inherent_level"/>
+                <field name="pilar_residual_level" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Acción Dashboard Principal -->
+    <record id="action_mgmtsystem_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard SGSI PART-IS</field>
+        <field name="res_model">mgmtsystem.dashboard</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Panel de Control SGSI PART-IS
+            </p>
+            <p>
+                Visualice los indicadores clave de su Sistema de Gestión de Seguridad de la Información.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción Análisis de Activos (Pivot/Graph) -->
+    <record id="action_mgmtsystem_asset_analysis" model="ir.actions.act_window">
+        <field name="name">Análisis de Activos</field>
+        <field name="res_model">mgmtsystem.hazard</field>
+        <field name="view_mode">pivot,graph,tree,form</field>
+        <field name="domain">[('magerit_threat_id', '=', False)]</field>
+        <field name="context">{'pivot_measures': ['__count__'], 'graph_measure': '__count__'}</field>
+        <field name="view_id" ref="view_mgmtsystem_hazard_pivot_asset"/>
+    </record>
+
+    <!-- Acción Análisis de Riesgos (Pivot/Graph) -->
+    <record id="action_mgmtsystem_risk_analysis" model="ir.actions.act_window">
+        <field name="name">Análisis de Riesgos</field>
+        <field name="res_model">mgmtsystem.hazard</field>
+        <field name="view_mode">pivot,graph,tree,form</field>
+        <field name="domain">[('magerit_threat_id', '!=', False)]</field>
+        <field name="context">{'pivot_measures': ['__count__'], 'graph_measure': '__count__'}</field>
+        <field name="view_id" ref="view_mgmtsystem_hazard_pivot_risk"/>
+    </record>
+
+    <!-- Menú Dashboard/Panel de Control -->
+    <menuitem
+        id="menu_leulit_partis_dashboard"
+        name="Panel de Control"
+        parent="menu_leulit_riesgo_root"
+        action="action_mgmtsystem_dashboard"
+        sequence="5"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+
+    <!-- Submenú Análisis Visual -->
+    <menuitem
+        id="menu_leulit_partis_analysis"
+        name="Análisis Visual"
+        parent="menu_leulit_partis_dashboard"
+        sequence="10"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_asset_analysis"
+        name="Análisis de Activos"
+        parent="menu_leulit_partis_analysis"
+        action="action_mgmtsystem_asset_analysis"
+        sequence="10"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_risk_analysis"
+        name="Análisis de Riesgos"
+        parent="menu_leulit_partis_analysis"
+        action="action_mgmtsystem_risk_analysis"
+        sequence="20"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+    
+    <!-- Enlace a configuración -->
+    <menuitem
+        id="menu_leulit_partis_configuration"
+        name="Configuración"
+        parent="menu_leulit_riesgo_root"
+        action="base.action_res_config_settings"
+        sequence="100"
+        groups="base.group_system"
+    />
+</odoo>

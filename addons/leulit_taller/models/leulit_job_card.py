@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitJobCard(models.Model):
     _name = "leulit.job_card"
+    _description = 'Tarjeta de Trabajo de Mantenimiento'
     _rec_name = "descripcion"
 
 

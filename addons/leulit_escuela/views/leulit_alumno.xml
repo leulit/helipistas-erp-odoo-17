@@ -20,7 +20,10 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Alumno">
+                    <header>
+                    </header>
                     <sheet>
+                        <widget name="web_ribbon" text="Archivado" bg_color="bg-danger" invisible="active"/>
                         <field name="alta_all" invisible="1"/>
                         <field name="is_alta" invisible="1"/>
                         <field name="active" invisible="1"/>
@@ -168,7 +171,8 @@
             <field name="name">leulit_20201028_1410_tree</field>
             <field name="model">leulit.alumno</field>
             <field name="arch" type="xml">
-                <tree string="leulit">
+                <tree string="leulit" decoration-muted="active == False" decoration-success="active == True" decoration-bf="active == True">
+                    <field name="active" optional="show"/>
                     <field name="activo" column_invisible="1"/>
                     <field name="name"/>
                     <field name="email"/>

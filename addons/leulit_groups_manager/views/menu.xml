@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Menu: Groups & Permissions Manager -->
+    <menuitem id="menu_groups_manager_root"
+              name="Gestión de Permisos"
+              parent="base.menu_users"
+              sequence="5"
+              groups="base.group_system"/>
+
+    <!-- Submenu: Users & Groups Assignment -->
+    <menuitem id="menu_users_groups_management"
+              name="Usuarios y Grupos"
+              parent="menu_groups_manager_root"
+              action="action_users_groups_management"
+              sequence="10"/>
+
+    <!-- Submenu: Groups Catalog -->
+    <menuitem id="menu_groups_catalog"
+              name="Catálogo de Grupos"
+              parent="menu_groups_manager_root"
+              action="action_groups_enhanced"
+              sequence="20"/>
+
+    <!-- Submenu: User-Group Matrix -->
+    <menuitem id="menu_user_group_matrix"
+              name="Matriz Usuario × Grupo"
+              parent="menu_groups_manager_root"
+              action="action_user_group_matrix"
+              sequence="30"/>
+
+    <!-- Menú en Configuración > Usuarios y Compañías (mismo nivel que Impersonar Usuario) -->
+    <menuitem id="menu_diagnose_menu_access"
+              name="Diagnosticar Acceso a Menús"
+              parent="base.menu_users"
+              action="action_diagnose_menu_access"
+              sequence="16"
+              groups="base.group_system"/>
+
+    <!-- Menú en Configuración > Usuarios y Compañías (mismo nivel que Diagnosticar Acceso) -->
+    <menuitem id="menu_group_copy_wizard"
+              name="Copiar entre Grupos"
+              parent="base.menu_users"
+              action="action_group_copy_wizard"
+              sequence="17"
+              groups="base.group_system"/>
+
+</odoo>

@@ -35,16 +35,36 @@ class res_partner(models.Model):
     #     return super(res_partner, self).create(vals)
 
     @api.model
-    def getProfesor(self):                
-        for item in self.env['leulit.profesor'].search([('partner_id','=',self.id)]):
-            return item.id
+    def getProfesor(self):   
+        self.ensure_one()
+        # Buscar incluyendo archivados para detectar el problema
+        profesor = self.env['leulit.profesor'].with_context(active_test=False).search([('partner_id','=',self.id)], limit=1)
+        if profesor:
+            if not profesor.active:
+                raise UserError(_(
+                    "El Profesor está archivado y no puede ser utilizado.\n\n"
+                    "Profesor: %s (ID: %s)\n"
+                    "Partner: %s (ID: %s)\n\n"
+                    "Por favor, reactive el profesor desde su ficha para poder continuar."
+                ) % (profesor.name, profesor.id, self.name, self.id))
+            return profesor.id
         return None
 
 
     @api.model
     def getAlumno(self):
-        for item in self.env['leulit.alumno'].search([('partner_id','=',self.id)]):
-            return item.id
+        self.ensure_one()
+        # Buscar incluyendo archivados para detectar el problema
+        alumno = self.env['leulit.alumno'].with_context(active_test=False).search([('partner_id','=',self.id)], limit=1)
+        if alumno:
+            if not alumno.active:
+                raise UserError(_(
+                    "El Alumno está archivado y no puede ser utilizado.\n\n"
+                    "Alumno: %s (ID: %s)\n"
+                    "Partner: %s (ID: %s)\n\n"
+                    "Por favor, reactive el alumno desde su ficha para poder continuar."
+                ) % (alumno.name, alumno.id, self.name, self.id))
+            return alumno.id
         return None
         
         

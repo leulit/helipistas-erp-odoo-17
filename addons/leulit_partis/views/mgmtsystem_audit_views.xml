@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Form del reporte de auditoría -->
+    <record id="view_mgmtsystem_audit_report_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.audit.report.form</field>
+        <field name="model">mgmtsystem.audit.report</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Auditoría SGSI">
+                <header>
+                    <button name="action_generate_report" string="Generar Reporte" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    
+                    <group string="Parámetros del Reporte">
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="user_ids" widget="many2many_tags"/>
+                            <field name="model_id"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Resumen de Actividad">
+                        <group>
+                            <field name="log_count" widget="statinfo"/>
+                            <field name="read_count" widget="statinfo"/>
+                            <field name="create_count" widget="statinfo"/>
+                        </group>
+                        <group>
+                            <field name="write_count" widget="statinfo"/>
+                            <field name="unlink_count" widget="statinfo"/>
+                            <field name="critical_changes_count" widget="statinfo"/>
+                        </group>
+                    </group>
+                    
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_audit_logs" type="object" 
+                                class="oe_stat_button" icon="fa-list-alt">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="log_count" widget="integer"/>
+                                </span>
+                                <span class="o_stat_text">Registros</span>
+                            </div>
+                        </button>
+                        <button name="action_view_critical_changes" type="object" 
+                                class="oe_stat_button" icon="fa-exclamation-triangle"
+                                invisible="critical_changes_count == 0">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="critical_changes_count" widget="integer"/>
+                                </span>
+                                <span class="o_stat_text">Cambios Críticos</span>
+                            </div>
+                        </button>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree del reporte de auditoría -->
+    <record id="view_mgmtsystem_audit_report_tree" model="ir.ui.view">
+        <field name="name">mgmtsystem.audit.report.tree</field>
+        <field name="model">mgmtsystem.audit.report</field>
+        <field name="arch" type="xml">
+            <tree string="Reportes de Auditoría">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="log_count"/>
+                <field name="critical_changes_count" decoration-danger="critical_changes_count > 0"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Search del reporte de auditoría -->
+    <record id="view_mgmtsystem_audit_report_search" model="ir.ui.view">
+        <field name="name">mgmtsystem.audit.report.search</field>
+        <field name="model">mgmtsystem.audit.report</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reportes">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <filter name="last_month" string="Último Mes" 
+                        domain="[('date_from', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="last_quarter" string="Último Trimestre" 
+                        domain="[('date_from', '&gt;=', (context_today() - relativedelta(months=3)).strftime('%Y-%m-%d'))]"/>
+                <filter name="with_critical" string="Con Cambios Críticos" 
+                        domain="[('critical_changes_count', '&gt;', 0)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción para reportes de auditoría -->
+    <record id="action_mgmtsystem_audit_report" model="ir.actions.act_window">
+        <field name="name">Reportes de Auditoría</field>
+        <field name="res_model">mgmtsystem.audit.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un reporte de auditoría SGSI
+            </p>
+            <p>
+                Los reportes de auditoría consolidan la información de accesos y cambios
+                en información crítica del SGSI para cumplimiento de IS.D.OR.305.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acceso directo a Auditlog de OCA -->
+    <record id="action_auditlog_log_sgsi" model="ir.actions.act_window">
+        <field name="name">Registros de Auditoría SGSI</field>
+        <field name="res_model">auditlog.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('model_id.model', 'in', ['mgmtsystem.hazard', 'mgmtsystem.risk.threat', 'mgmtsystem.risk.vulnerability', 'mgmtsystem.risk.control'])]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <!-- Menú de Auditoría -->
+    <menuitem
+        id="menu_leulit_partis_audit"
+        name="Auditoría"
+        parent="menu_leulit_riesgo_root"
+        sequence="80"
+        groups="mgmtsystem.group_mgmtsystem_manager"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_audit_reports"
+        name="Reportes de Auditoría"
+        parent="menu_leulit_partis_audit"
+        action="action_mgmtsystem_audit_report"
+        sequence="10"
+        groups="mgmtsystem.group_mgmtsystem_manager"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_audit_logs"
+        name="Registros de Auditoría"
+        parent="menu_leulit_partis_audit"
+        action="action_auditlog_log_sgsi"
+        sequence="20"
+        groups="mgmtsystem.group_mgmtsystem_manager"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_audit_rules"
+        name="Configuración de Auditoría"
+        parent="menu_leulit_partis_audit"
+        action="auditlog.action_auditlog_rule_tree"
+        sequence="30"
+        groups="base.group_system"
+    />
+</odoo>

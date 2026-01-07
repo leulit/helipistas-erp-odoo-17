@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_menu_access_diagnosis_wizard_form" model="ir.ui.view">
+        <field name="name">menu.access.diagnosis.wizard.form</field>
+        <field name="model">menu.access.diagnosis.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Menu Access Diagnosis">
+                <sheet>
+                    <group>
+                        <field name="user_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="menu_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Diagnosis Result">
+                            <field name="diagnosis_result" nolabel="1" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

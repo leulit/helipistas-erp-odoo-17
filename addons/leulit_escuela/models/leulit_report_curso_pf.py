@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_report_curso_pf(models.AbstractModel):
     _name = 'leulit.report_curso_pf'
-    _descripcion = 'leulit.report_curso_pf'
+    _description = 'Informe de Curso de Perfil Formativo'
     _auto = False
 
 

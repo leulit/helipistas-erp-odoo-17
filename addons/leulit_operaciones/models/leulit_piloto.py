@@ -292,10 +292,10 @@ class leulit_piloto(models.Model):
     start_hv_date = fields.Date(compute='_start_hv_date', string='Fecha inicio')
     
     #O 28/8/2017: campos date que han pasado a ser float ( los guardamos un tiempo por si necessitamos recuperar datos)
-    start_hv_me = fields.Date(compute='_start_hv_me', string='Horas ME inicio')
-    start_hv_se = fields.Date(compute='_start_hv_se', string='Horas SE inicio')
-    start_hv_night = fields.Date(compute='_start_hv_night', string='Horas nocturnas inicio')
-    start_hv_ifr = fields.Date(compute='_start_hv_ifr', string='Horas IFR inicio')
+    start_hv_me = fields.Date(compute='_start_hv_me', string='Horas ME inicio (date)')
+    start_hv_se = fields.Date(compute='_start_hv_se', string='Horas SE inicio (date)')
+    start_hv_night = fields.Date(compute='_start_hv_night', string='Horas nocturnas inicio (date)')
+    start_hv_ifr = fields.Date(compute='_start_hv_ifr', string='Horas IFR inicio (date)')
     
     start_hv_me_float = fields.Float(compute='_start_hv_me_float', string='Horas ME inicio')
     start_hv_se_float = fields.Float(compute='_start_hv_se_float', string='Horas SE inicio')

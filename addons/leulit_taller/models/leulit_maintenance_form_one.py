@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitMaintenanceFormOne(models.Model):
     _name = "leulit.maintenance_form_one"
+    _description = 'Formulario EASA Form 1'
     _rec_name = "tracking_number"
     _order = "fecha desc"
     _inherit = ['mail.thread']

@@ -4,6 +4,7 @@ from odoo import fields, models
 
 class WizardCreateEventFromTask(models.TransientModel):
     _name = "leulit.wizard_create_event_from_task"
+    _description = 'Asistente para Crear Evento desde Tarea'
 
     def create_event_from_task(self):
         self.ensure_one()

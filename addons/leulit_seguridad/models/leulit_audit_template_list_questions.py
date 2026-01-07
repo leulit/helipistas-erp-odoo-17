@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitAuditTemplateListQuestions(models.Model):
     _name = "leulit.audit_template_list_questions"
+    _description = 'Plantilla de Lista de Preguntas de Auditoría'
 
 
     name = fields.Char(string="Nombre")

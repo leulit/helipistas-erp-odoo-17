@@ -14,7 +14,33 @@ class leulit_calidad_control_wb_report(models.TransientModel):
     
     def imprimir(self):
         data = self._get_data_to_print_control_wb()
-        return self.env.ref('leulit_calidad.leulit_inf_wb_control_report').report_action(self, data=data)
+        
+        # Buscar el report por report_name
+        report = self.env['ir.actions.report'].search([
+            ('report_name', '=', 'leulit_calidad.leulit_20220120_1510_informe')
+        ], limit=1)
+        
+        # Si no existe, crearlo con todas las propiedades (usando sudo para permisos)
+        if not report:
+            # Buscar el paperformat A4 apaisado (landscape) sin cabecera
+            paperformat = self.env.ref('leulit.paperformat_A4_landscape_without_cabecera', raise_if_not_found=False)
+            
+            report_vals = {
+                'name': 'Control de Carga y Centrado',
+                'model': 'leulit.calidad_control_wb_report',
+                'report_type': 'qweb-pdf',
+                'report_name': 'leulit_calidad.leulit_20220120_1510_informe',
+                'print_report_name': "'Control de Carga y Centrado'",
+            }
+            
+            # Asignar paperformat A4 landscape si existe
+            if paperformat:
+                report_vals['paperformat_id'] = paperformat.id
+            
+            # Crear el report con permisos de superusuario (permite a cualquier usuario ejecutarlo)
+            report = self.env['ir.actions.report'].sudo().create(report_vals)
+        
+        return report.report_action(self, data=data)
 
     def _get_data_to_print_control_wb(self):
         data = {}

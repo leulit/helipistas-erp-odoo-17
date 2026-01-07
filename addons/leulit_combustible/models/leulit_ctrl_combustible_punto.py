@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulitCtrlCombustiblePunto(models.Model):
     _name = "leulit.ctrl_combustible_punto"
+    _description = 'Punto de Control de Combustible'
     _order = "sequence"
 
     @api.depends('control_totalizador','gestion_propia')

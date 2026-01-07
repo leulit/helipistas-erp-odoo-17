@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="leulit_user_impersonate.ImpersonationBanner">
+        <div t-if="state.isImpersonating" class="o_impersonate_banner">
+            <div class="o_impersonate_content">
+                <i class="fa fa-user-secret o_impersonate_icon"/>
+                <span class="o_impersonate_text">
+                    <strong>Impersonating:</strong>
+                    <span t-esc="state.impersonatedUser.name"/>
+                    <span class="o_impersonate_original">
+                        (Original user: <t t-esc="state.originalUser.name"/>)
+                    </span>
+                </span>
+                <button class="btn btn-sm btn-warning o_impersonate_stop_btn"
+                        t-on-click="stopImpersonation">
+                    <i class="fa fa-times"/> Stop Impersonation
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Enhanced Groups Tree View -->
+    <record id="view_groups_tree_enhanced" model="ir.ui.view">
+        <field name="name">res.groups.tree.enhanced</field>
+        <field name="model">res.groups</field>
+        <field name="arch" type="xml">
+            <tree string="Groups" decoration-primary="is_leulit_group" decoration-muted="not users_count">
+                <field name="is_leulit_group" invisible="1"/>
+                <field name="color" widget="color_picker" optional="hide"/>
+                <field name="full_name"/>
+                <field name="group_category" optional="show"/>
+                <field name="users_count" string="👥 Users" optional="show"/>
+                <field name="implied_count" string="🔗 Inherited" optional="show"/>
+                <field name="comment" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Enhanced Groups Kanban View -->
+    <record id="view_groups_kanban_enhanced" model="ir.ui.view">
+        <field name="name">res.groups.kanban.enhanced</field>
+        <field name="model">res.groups</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_groups_manager" default_group_by="group_category">
+                <field name="name"/>
+                <field name="full_name"/>
+                <field name="color"/>
+                <field name="icon"/>
+                <field name="users_count"/>
+                <field name="implied_count"/>
+                <field name="is_leulit_group"/>
+                <field name="comment"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <i t-if="record.icon.raw_value" 
+                                           t-attf-class="fa #{record.icon.raw_value} me-2"/>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted" t-if="record.comment.raw_value">
+                                        <small><field name="comment"/></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="object" name="action_view_users" 
+                                                class="btn btn-sm btn-link ps-0">
+                                            <i class="fa fa-users"/> <field name="users_count"/> usuarios
+                                        </button>
+                                    </div>
+                                    <div class="col-6" t-if="record.implied_count.raw_value &gt; 0">
+                                        <button type="object" name="action_view_implied_groups" 
+                                                class="btn btn-sm btn-link ps-0">
+                                            <i class="fa fa-link"/> <field name="implied_count"/> heredados
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_footer" t-if="record.is_leulit_group.raw_value">
+                                <span class="badge bg-primary">Leulit</span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Enhanced Groups Form View -->
+    <record id="view_groups_form_enhanced" model="ir.ui.view">
+        <field name="name">res.groups.form.enhanced</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form"/>
+        <field name="arch" type="xml">
+            <!-- Add button box -->
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <field name="implied_count" invisible="1"/>
+                    <button name="action_view_users" type="object" 
+                            string="Ver Usuarios" 
+                            class="btn-primary"
+                            icon="fa-users"/>
+                    <button name="action_view_implied_groups" type="object" 
+                            string="Ver Grupos Heredados" 
+                            class="btn-secondary"
+                            icon="fa-sitemap"
+                            invisible="implied_count == 0"/>
+                </header>
+            </xpath>
+            
+            <!-- Add visual fields at top -->
+            <xpath expr="//field[@name='name']" position="before">
+                <group name="visual_config" string="Configuración Visual">
+                    <field name="color" widget="color_picker"/>
+                    <field name="icon" placeholder="fa-users"/>
+                    <field name="is_leulit_group" readonly="1"/>
+                </group>
+            </xpath>
+            
+            <!-- Add stats -->
+            <xpath expr="//field[@name='name']" position="after">
+                <group name="stats">
+                    <field name="users_count"/>
+                    <field name="implied_count"/>
+                    <field name="group_category" readonly="1"/>
+                </group>
+            </xpath>
+            
+            <!-- Add description tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="📋 Descripción" name="description">
+                    <field name="description" widget="html" 
+                           placeholder="Describe qué permisos otorga este grupo y cuándo debe usarse..."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Groups Search View Enhanced -->
+    <record id="view_groups_search_enhanced" model="ir.ui.view">
+        <field name="name">res.groups.search.enhanced</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_search"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <filter name="leulit_groups" string="Grupos Leulit" 
+                        domain="[('is_leulit_group', '=', True)]"/>
+                <separator/>
+                <filter name="group_by_category" string="Por Categoría" 
+                        context="{'group_by': 'group_category'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Groups Management -->
+    <record id="action_groups_enhanced" model="ir.actions.act_window">
+        <field name="name">Gestión de Grupos</field>
+        <field name="res_model">res.groups</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_groups_kanban_enhanced"/>
+        <field name="context">{
+            'search_default_leulit_groups': 1,
+            'search_default_group_by_category': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No hay grupos disponibles
+            </p>
+            <p>
+                Los grupos definen los permisos de acceso de los usuarios.
+                Un usuario puede pertenecer a múltiples grupos simultáneamente.
+            </p>
+        </field>
+    </record>
+
+</odoo>

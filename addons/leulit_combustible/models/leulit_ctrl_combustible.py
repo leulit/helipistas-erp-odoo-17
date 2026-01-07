@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_ctrl_combustible(models.Model):
     _name = "leulit.ctrl_combustible"
+    _description = 'Control de Combustible'
     _order = "fecha DESC, hora DESC"
     _inherit = ['mail.thread']
 

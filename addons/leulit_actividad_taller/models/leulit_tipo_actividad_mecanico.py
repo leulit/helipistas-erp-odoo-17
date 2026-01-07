@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitTipoActividadMecanico(models.Model):
     _name = "leulit.tipo_actividad_mecanico"
+    _description = 'Tipo de Actividad de Mecánico'
     _rec_name = "nombre"
 
 

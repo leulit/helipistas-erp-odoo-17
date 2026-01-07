@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_reunion(models.Model):
     _name = "leulit.reunion"
+    _description = 'Reunión'
     _order = "fecha_ini desc"
     _rec_name = "asunto"
 

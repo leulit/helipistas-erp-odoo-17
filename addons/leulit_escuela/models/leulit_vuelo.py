@@ -15,6 +15,11 @@ class leulit_vuelo(models.Model):
 
 
     def wizard_add_parte_escuela(self):
+        _logger.info(
+            "[Escuela] Opening 'Añadir Silabus' wizard for vuelo ids=%s user=%s",
+            self.ids,
+            self.env.user.id,
+        )
         view_ref = self.env['ir.model.data']._xmlid_to_res_model_res_id('leulit_escuela.leulit_20210128_1141_form')
         view_id = view_ref and view_ref[1] or False
         for item in self:
@@ -22,27 +27,110 @@ class leulit_vuelo(models.Model):
                 aluveri = None
                 if item.verificado:
                     aluveri = item.verificado.partner_id.getAlumno()
+                    # Diagnóstico: si verificado existe pero getAlumno() no devuelve nada, levantar excepción con detalles
+                    if not aluveri:
+                        partner = item.verificado.partner_id
+                        alumnos_by_partner = self.env['leulit.alumno'].search([('partner_id', '=', partner.id)])
+                        alumnos_by_piloto = self.env['leulit.alumno'].search([('piloto_id', '=', item.verificado.id)])
+                        alumnos_by_partner_sudo = self.env['leulit.alumno'].sudo().search([('partner_id', '=', partner.id)])
+                        alumnos_by_piloto_sudo = self.env['leulit.alumno'].sudo().search([('piloto_id', '=', item.verificado.id)])
+
+                        msg = (
+                            "No se pudo resolver el Alumno desde 'verificado'.\n\n"
+                            f"Vuelo ID: {item.id}\n"
+                            f"Verificado (leulit.piloto) ID: {item.verificado.id if item.verificado else None} | Nombre: {item.verificado.name if item.verificado else None}\n"
+                            f"Partner de Verificado (res.partner) ID: {partner.id if partner else None} | Nombre: {partner.name if partner else None}\n\n"
+                            "Detalles de búsqueda visibles para el usuario actual:\n"
+                            f"- leulit.alumno por partner_id={partner.id}: {alumnos_by_partner.ids}\n"
+                            f"- leulit.alumno por piloto_id={item.verificado.id}: {alumnos_by_piloto.ids}\n\n"
+                            "Detalles de búsqueda con sudo (sin reglas de registro):\n"
+                            f"- leulit.alumno por partner_id={partner.id}: {alumnos_by_partner_sudo.ids}\n"
+                            f"- leulit.alumno por piloto_id={item.verificado.id}: {alumnos_by_piloto_sudo.ids}\n\n"
+                            f"Usuario actual: id={self.env.user.id} login={self.env.user.login}\n"
+                        )
+                        raise UserError(_(msg))
                 if item.alumno:
                     aluveri = item.alumno.partner_id.getAlumno()
+                    # Diagnóstico: si el alumno del vuelo no se resuelve vía su partner
+                    if not aluveri or aluveri != item.alumno.id:
+                        partner = item.alumno.partner_id
+                        alumno_record = item.alumno
+                        alumnos_by_partner = self.env['leulit.alumno'].search([('partner_id', '=', partner.id)])
+                        alumnos_by_partner_sudo = self.env['leulit.alumno'].sudo().search([('partner_id', '=', partner.id)])
 
-                profesor_id = 0
+                        msg = (
+                            "El Alumno del vuelo no se corresponde con el partner indicado.\n\n"
+                            f"Vuelo ID: {item.id}\n"
+                            f"Alumno en vuelo (leulit.alumno) ID: {alumno_record.id} | Nombre: {alumno_record.name}\n"
+                            f"Partner del alumno (res.partner) ID: {partner.id if partner else None} | Nombre: {partner.name if partner else None}\n"
+                            f"getAlumno(partner) devolvió: {aluveri}\n\n"
+                            "Detalles de búsqueda visibles para el usuario actual:\n"
+                            f"- leulit.alumno por partner_id={partner.id}: {alumnos_by_partner.ids}\n\n"
+                            "Detalles de búsqueda con sudo (sin reglas de registro):\n"
+                            f"- leulit.alumno por partner_id={partner.id}: {alumnos_by_partner_sudo.ids}\n\n"
+                            f"Usuario actual: id={self.env.user.id} login={self.env.user.login}\n"
+                        )
+                        raise UserError(_(msg))
+
+                profesor_id = False
+                source_piloto = None
                 if item.piloto_supervisor_id:
-                    profesor_id = item.piloto_supervisor_id.partner_id.getProfesor()
+                    source_piloto = item.piloto_supervisor_id
+                    profesor_id = source_piloto.partner_id.getProfesor()
                 else:
-                    profesor_id = item.piloto_id.partner_id.getProfesor()
+                    source_piloto = item.piloto_id
+                    profesor_id = source_piloto.partner_id.getProfesor()
+
+                # Diagnóstico: si no se resolvió profesor desde el piloto seleccionado
+                if not profesor_id and source_piloto:
+                    partner_prof = source_piloto.partner_id
+                    profesores_by_partner = self.env['leulit.profesor'].search([('partner_id', '=', partner_prof.id)])
+                    profesores_by_partner_sudo = self.env['leulit.profesor'].sudo().search([('partner_id', '=', partner_prof.id)])
+
+                    msg = (
+                        "No se pudo resolver el Profesor desde el piloto indicado.\n\n"
+                        f"Vuelo ID: {item.id}\n"
+                        f"Piloto origen: ID={source_piloto.id} | Nombre={source_piloto.name}\n"
+                        f"Partner del piloto (res.partner): ID={partner_prof.id if partner_prof else None} | Nombre={partner_prof.name if partner_prof else None}\n\n"
+                        "Detalles de búsqueda visibles para el usuario actual:\n"
+                        f"- leulit.profesor por partner_id={partner_prof.id}: {profesores_by_partner.ids}\n\n"
+                        "Detalles de búsqueda con sudo (sin reglas de registro):\n"
+                        f"- leulit.profesor por partner_id={partner_prof.id}: {profesores_by_partner_sudo.ids}\n\n"
+                        f"Usuario actual: id={self.env.user.id} login={self.env.user.login}\n"
+                    )
+                    raise UserError(_(msg))
+
+                _logger.error(
+                    "[Escuela] wizard_add_parte_escuela computed ids: vuelo=%s alumno=%s verificado=%s profesor_id=%s aluveri=%s",
+                    item.id,
+                    item.alumno.id if item.alumno else None,
+                    item.verificado.id if item.verificado else None,
+                    profesor_id,
+                    aluveri,
+                )
 
                 context = {
-                    'default_vuelo_id'                  : item.id,
-                    'default_profesor_id'               : profesor_id,
-                    'default_fecha'                     : item.fechavuelo,
-                    'default_hora_start'                : item.horasalida,
-                    'default_tiempo'                    : item.tiempoprevisto if item.horallegada <= item.horasalida else item.tiemposervicio,
-                    'default_hora_end'                  : item.horallegadaprevista if item.horallegada <= item.horasalida else item.horallegada,
-                    'default_rel_alumnos'               : [aluveri],
-                    'rel_alumnos'                       : [aluveri],
+                    'default_vuelo_id'   : item.id,
+                    'default_fecha'      : item.fechavuelo,
+                    'default_hora_start' : item.horasalida,
+                    'default_tiempo'     : item.tiempoprevisto if item.horallegada <= item.horasalida else item.tiemposervicio,
+                    'default_hora_end'   : item.horallegadaprevista if item.horallegada <= item.horasalida else item.horallegada,
                 }
+                # Solo incluir por defecto cuando existan IDs válidos
+                if profesor_id:
+                    context['default_profesor_id'] = profesor_id
+                if aluveri:
+                    # Para Many2many, usar comando (6, 0, ids) como default
+                    context['default_rel_alumnos'] = [(6, 0, [aluveri])]
                 if item.parte_escuela_id:
                     context.update({'default_parte_escuela_id' : item.parte_escuela_id.id})
+
+                # Log de contexto saneado para depuración
+                try:
+                    ctx_log = {k: (v if not isinstance(v, (list, tuple)) else v) for k, v in context.items()}
+                    _logger.info("[Escuela] Wizard context prepared: %s", ctx_log)
+                except Exception:
+                    _logger.exception("[Escuela] Error logging wizard context")
 
                 return_options = {
                     'type'           : 'ir.actions.act_window',
@@ -56,6 +144,7 @@ class leulit_vuelo(models.Model):
                     'context'        : context,
                 }
 
+                _logger.info("[Escuela] Returning wizard action for vuelo=%s", item.id)
                 return return_options
             else:
                 raise UserError(_('Debe indicarse el verificado/alumno antes de indicar silabus'))

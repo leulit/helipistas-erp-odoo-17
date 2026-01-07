@@ -28,6 +28,7 @@ class leulit_informes_historial_popup(models.TransientModel):
     
 class report_leulit_escuela_informes_historial_popup_report(models.AbstractModel):
     _name = 'report.leulit_escuela.leulit_20211014_1131_informe'
+    _description = 'Informe de Historial de Escuela'
 
     @api.model
     def _get_report_values(self, docids, data=None):

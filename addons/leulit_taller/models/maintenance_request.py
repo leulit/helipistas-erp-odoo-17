@@ -184,8 +184,29 @@ class MaintenanceRequest(models.Model):
                         })
 
     def comprobar_estado_wo(self):
-        if not self.env['project.task'].comprobar_estado_wo_tareas(self.id):
-            raise UserError('No puede cerrar esta Orden de Trabajo porque tiene una/s tarea/s pendiente.')
+        resultado = self.env['project.task'].comprobar_estado_wo_tareas(self.id)
+        if not resultado['valid']:
+            mensaje_tareas = []
+            for idx, t in enumerate(resultado['pending_tasks'], 1):
+                info = (
+                    f"{idx}. TAREA ID: {t['id']}\n"
+                    f"   Nombre: {t['name']}\n"
+                    f"   Estado: {t['stage']}\n"
+                    f"   Tipo: {t['task_type']}\n"
+                    f"   Asignado a: {t['assigned_to']}\n"
+                    f"   Tarea padre: {t['parent']}"
+                )
+                if t['parent_id']:
+                    info += f" (ID: {t['parent_id']})"
+                mensaje_tareas.append(info)
+            
+            tareas_pendientes = '\n\n'.join(mensaje_tareas)
+            raise UserError(
+                f"❌ No puede cerrar esta Orden de Trabajo\n\n"
+                f"Tiene {len(resultado['pending_tasks'])} tarea/s pendiente/s que debe/n completarse:\n\n"
+                f"{tareas_pendientes}\n\n"
+                f"💡 Busque la tarea por su ID en el listado de tareas de mantenimiento."
+            )
         self.env['leulit.maintenance_crs'].comprobar_estado_wo_crs(self.id)
         self.env['leulit.maintenance_form_one'].comprobar_estado_wo_form_one(self.id)
         self.env['leulit.maintenance_boroscopia'].comprobar_estado_wo_boroscopia(self.id)
@@ -196,8 +217,29 @@ class MaintenanceRequest(models.Model):
 
 
     def comprobacion_estados_crs(self):
-        if not self.env['project.task'].comprobar_estado_wo_tareas(self.id):
-            raise UserError('No puede crear un CRS porque tiene una/s tarea/s pendiente.')
+        resultado = self.env['project.task'].comprobar_estado_wo_tareas(self.id)
+        if not resultado['valid']:
+            mensaje_tareas = []
+            for idx, t in enumerate(resultado['pending_tasks'], 1):
+                info = (
+                    f"{idx}. TAREA ID: {t['id']}\n"
+                    f"   Nombre: {t['name']}\n"
+                    f"   Estado: {t['stage']}\n"
+                    f"   Tipo: {t['task_type']}\n"
+                    f"   Asignado a: {t['assigned_to']}\n"
+                    f"   Tarea padre: {t['parent']}"
+                )
+                if t['parent_id']:
+                    info += f" (ID: {t['parent_id']})"
+                mensaje_tareas.append(info)
+            
+            tareas_pendientes = '\n\n'.join(mensaje_tareas)
+            raise UserError(
+                f"❌ No puede crear un CRS\n\n"
+                f"Tiene {len(resultado['pending_tasks'])} tarea/s pendiente/s que debe/n completarse:\n\n"
+                f"{tareas_pendientes}\n\n"
+                f"💡 Busque la tarea por su ID en el listado de tareas de mantenimiento."
+            )
         for tss in self.tareas_sensibles_seguridad_ids:
             if not tss.no_aplica:
                 if not tss.check or not tss.d_check:
@@ -282,15 +324,18 @@ class MaintenanceRequest(models.Model):
         view = self.env.ref('leulit_taller.leulit_20230623_1633_form',raise_if_not_found=False)
         text = ''
         cont = 0
-        for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Realizada'):
+        #for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Realizada'):
+        for item in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False)], order="id asc").filtered(lambda l: l.stage_id.name == 'Hecho'):
             if cont == 0:
                 text += '<b>TAREAS</b>'
             text += '<br/>'
             if item.tipo_tarea_taller != 'tarea':
                 if item.tipo_tarea_taller == 'defecto_encontrado':
-                    text += '- ' + re.sub(r'<[^>]*?>', '', item.solucion_defecto)
+                    solucion = str(item.solucion_defecto) if item.solucion_defecto else ''
+                    text += '- ' + re.sub(r'<[^>]*?>', '', solucion)
                 if item.tipo_tarea_taller == 'service_bulletin' or item.tipo_tarea_taller == 'airworthiness_directive':
-                    text += '- ' + re.sub(r'<[^>]*?>', '', item.name)
+                    nombre = str(item.name) if item.name else ''
+                    text += '- ' + re.sub(r'<[^>]*?>', '', nombre)
                 for manual in item.manuales_ids:
                     text += ' ('
                     if manual.name:
@@ -310,7 +355,8 @@ class MaintenanceRequest(models.Model):
                     referencia = item.maintenance_planned_activity_id.tarea_preventiva_id.referencia if item.maintenance_planned_activity_id.tarea_preventiva_id.referencia else ''
                     text += '- ' + item.maintenance_planned_activity_id.descripcion + ' (<b>' + referencia + '</b>)'
                 else:
-                    text += '- ' + re.sub(r'<[^>]*?>', '', item.name)
+                    nombre_item = str(item.name) if item.name else ''
+                    text += '- ' + re.sub(r'<[^>]*?>', '', nombre_item)
                     for manual in item.manuales_ids:
                         text += ' ('
                         if manual.name:
@@ -334,7 +380,9 @@ class MaintenanceRequest(models.Model):
                     text += '<br/><br/>'
                 text += '<b>ANOMALIAS</b>'
             text += '<br/>'
-            text += '- ' + item.discrepancia + ' (' + item.codigo + ')'
+            discrepancia = str(item.discrepancia) if item.discrepancia else ''
+            codigo = str(item.codigo) if item.codigo else ''
+            text += '- ' + discrepancia + ' (' + codigo + ')'
             cont += 1
 
         # ##########   SUSTITUCIÓN DE COMPONENTES   ##########
@@ -345,11 +393,25 @@ class MaintenanceRequest(models.Model):
         for move_line in self.componentes_ids.filtered(lambda m: m.reference.startswith('INS')):
             off_move = move_line.move_line_component_contrary_id
             text += '<br/>'
-            text += '<b>- OFF - P/N </b>' + off_move.product_id.default_code + '<b> - S/N </b>' + off_move.lot_id.sn + '<b> - Descripción </b>' + off_move.product_id.name + \
-                    '<b> - TSN </b>' + str(off_move.lot_id.tsn_actual) + '<b> - TSO </b>' + str(off_move.lot_id.tso_actual) + '<b> - Realizado por </b>' + off_move.create_uid.name
+            # OFF component - proteger campos que pueden ser False
+            off_pn = str(off_move.product_id.default_code) if off_move.product_id.default_code else 'N/A'
+            off_sn = str(off_move.lot_id.sn) if off_move.lot_id.sn else 'N/A'
+            off_name = str(off_move.product_id.name) if off_move.product_id.name else 'N/A'
+            off_tsn = str(off_move.lot_id.tsn_actual) if off_move.lot_id.tsn_actual else '0'
+            off_tso = str(off_move.lot_id.tso_actual) if off_move.lot_id.tso_actual else '0'
+            off_user = str(off_move.create_uid.name) if off_move.create_uid.name else 'N/A'
+            text += '<b>- OFF - P/N </b>' + off_pn + '<b> - S/N </b>' + off_sn + '<b> - Descripción </b>' + off_name + \
+                    '<b> - TSN </b>' + off_tsn + '<b> - TSO </b>' + off_tso + '<b> - Realizado por </b>' + off_user
             text += '<br/>'
-            text += '<b>- ON - P/N </b>' + move_line.product_id.default_code + '<b> - S/N </b>' + move_line.lot_id.sn + '<b> - Descripción </b>' + move_line.product_id.name + \
-                    '<b> - TSN </b>' + str(move_line.lot_id.tsn_actual) + '<b> - TSO </b>' + str(move_line.lot_id.tso_actual) + '<b> - Realizado por </b>' + move_line.create_uid.name
+            # ON component - proteger campos que pueden ser False
+            on_pn = str(move_line.product_id.default_code) if move_line.product_id.default_code else 'N/A'
+            on_sn = str(move_line.lot_id.sn) if move_line.lot_id.sn else 'N/A'
+            on_name = str(move_line.product_id.name) if move_line.product_id.name else 'N/A'
+            on_tsn = str(move_line.lot_id.tsn_actual) if move_line.lot_id.tsn_actual else '0'
+            on_tso = str(move_line.lot_id.tso_actual) if move_line.lot_id.tso_actual else '0'
+            on_user = str(move_line.create_uid.name) if move_line.create_uid.name else 'N/A'
+            text += '<b>- ON - P/N </b>' + on_pn + '<b> - S/N </b>' + on_sn + '<b> - Descripción </b>' + on_name + \
+                    '<b> - TSN </b>' + on_tsn + '<b> - TSO </b>' + on_tso + '<b> - Realizado por </b>' + on_user
             text += '<br/>'
 
         mecanico = self.env['leulit.mecanico'].search([('partner_id','=',self.env.user.partner_id.id),('active','=',True),('certificador','=',True)])
@@ -358,13 +420,21 @@ class MaintenanceRequest(models.Model):
         if self.category_id:
             if self.category_id.name == 'Helicóptero':
                 tso = self.equipment_id.helicoptero.tso
+        
+        # Proteger acceso a production_lot que puede no existir
+        tsn_motor = 0
+        tso_motor = 0
+        if motor and hasattr(motor, 'production_lot') and motor.production_lot:
+            tsn_motor = motor.production_lot.tsn_actual if motor.production_lot.tsn_actual else 0
+            tso_motor = motor.production_lot.tso_actual if motor.production_lot.tso_actual else 0
+        
         context = {
             'default_tareas': text,
             'default_request': self.id,
             'default_horas_crs': self.horometro,
             'default_tso_crs': str(tso),
-            'default_tsn_motor': motor.production_lot.tsn_actual if motor else 0,
-            'default_tso_motor': str(motor.production_lot.tso_actual) if motor else 0,
+            'default_tsn_motor': tsn_motor,
+            'default_tso_motor': str(tso_motor),
             'default_certificador': mecanico.id if mecanico else False,
             'default_tipo_crs': 'incompleto',
         }

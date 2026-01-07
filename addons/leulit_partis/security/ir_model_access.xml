@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="access_mgmtsystem_risk_threat_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.threat user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_threat"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_threat_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.threat manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_threat"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_threat_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.threat RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_threat"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_vulnerability_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.vulnerability user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_vulnerability"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_vulnerability_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.vulnerability manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_vulnerability"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_vulnerability_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.vulnerability RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_vulnerability"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_control_user" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.control user</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_control"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_control_manager" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.control manager</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_control"/>
+        <field name="group_id" ref="mgmtsystem.group_mgmtsystem_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="access_mgmtsystem_risk_control_rbase" model="ir.model.access">
+        <field name="name">mgmtsystem.risk.control RBase</field>
+        <field name="model_id" ref="model_mgmtsystem_risk_control"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Los permisos para los modelos nuevos están en ir_model_access_new.xml -->
+    <!-- Se cargan al final para asegurar que los External IDs existan -->
+
+</odoo>

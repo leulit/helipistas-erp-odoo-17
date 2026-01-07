@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class LeulitAirworthinessDirective(models.Model):
     _name = "leulit.airworthiness_directive"
+    _description = 'Directiva de Aeronavegabilidad (AD)'
     _rec_name = "full_name"
 
     @api.depends('limit_h', 'date_effective', 'aircraft')
@@ -62,7 +63,7 @@ class LeulitAirworthinessDirective(models.Model):
     sb_ids = fields.Many2many("leulit.service_bulletin", "leulit_sb_ad_rel", "sbulletin_id", "adirective_id", string="Service Bulletins")
     state = fields.Selection(selection=[('active','Active'),('superseded','Superseded'),('cancel','Cancel')], string="State", default="active")
     limit_h = fields.Float(string="Limit Hours")
-    limit_tsn = fields.Float(compute=_get_limit_tsn, string="Limit Hours")
+    limit_tsn = fields.Float(compute=_get_limit_tsn, string="Limit TSN")
     limit_date = fields.Date(string="Limit Date")
     date_effective = fields.Date(string="Effective date")
     aircraft = fields.Many2one(comodel_name="leulit.helicoptero", string="Aircraft")

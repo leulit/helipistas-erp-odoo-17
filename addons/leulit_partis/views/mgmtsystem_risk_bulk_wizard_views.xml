@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista del wizard de análisis masivo -->
+    <record id="view_mgmtsystem_risk_bulk_wizard_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.bulk.wizard.form</field>
+        <field name="model">mgmtsystem.risk.bulk.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Análisis Masivo de Riesgos">
+                <group>
+                    <group string="Selección de Activos y Amenazas">
+                        <field name="asset_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="threat_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="vulnerability_id"/>
+                        <field name="risk_count" readonly="1"/>
+                    </group>
+                    <group string="Datos Comunes">
+                        <field name="department_id"/>
+                        <field name="responsible_user_id"/>
+                        <field name="analysis_date"/>
+                    </group>
+                </group>
+                <group string="Tratamiento por Defecto (Opcional)">
+                    <group>
+                        <field name="default_strategy"/>
+                        <field name="control_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+                <div class="alert alert-info" role="alert">
+                    Se crearán <strong><field name="risk_count" readonly="1"/></strong> análisis de riesgo
+                    (uno por cada combinación de activo y amenaza seleccionados).
+                </div>
+                <footer>
+                    <button name="action_create_risks" string="Crear Análisis" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para abrir wizard desde activos -->
+    <record id="action_mgmtsystem_risk_bulk_wizard" model="ir.actions.act_window">
+        <field name="name">Análisis Masivo de Riesgos</field>
+        <field name="res_model">mgmtsystem.risk.bulk.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="mgmtsystem_hazard.model_mgmtsystem_hazard"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <!-- Vista del wizard de aplicar controles en lote -->
+    <record id="view_mgmtsystem_risk_bulk_apply_controls_wizard_form" model="ir.ui.view">
+        <field name="name">mgmtsystem.risk.bulk.apply.controls.wizard.form</field>
+        <field name="model">mgmtsystem.risk.bulk.apply.controls.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Aplicar Controles en Lote">
+                <group>
+                    <group>
+                        <field name="risk_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="mode" widget="radio"/>
+                    </group>
+                    <group>
+                        <field name="control_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </group>
+                <group string="Actualización Adicional (Opcional)">
+                    <group>
+                        <field name="strategy"/>
+                        <field name="control_effectiveness"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="mode != 'replace'">
+                    <strong>Atención:</strong> El modo "Reemplazar" eliminará todos los controles existentes
+                    y los sustituirá por los seleccionados.
+                </div>
+                <footer>
+                    <button name="action_apply_controls" string="Aplicar Controles" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para abrir wizard desde riesgos -->
+    <record id="action_mgmtsystem_risk_bulk_apply_controls_wizard" model="ir.actions.act_window">
+        <field name="name">Aplicar Controles en Lote</field>
+        <field name="res_model">mgmtsystem.risk.bulk.apply.controls.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="mgmtsystem_hazard.model_mgmtsystem_hazard"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <!-- Menú para wizards (dentro de Análisis de Riesgos) -->
+    <menuitem
+        id="menu_leulit_partis_bulk_tools"
+        name="Herramientas Masivas"
+        parent="menu_leulit_riesgo_root"
+        sequence="90"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_bulk_risk_analysis"
+        name="Análisis Masivo de Riesgos"
+        parent="menu_leulit_partis_bulk_tools"
+        action="action_mgmtsystem_risk_bulk_wizard"
+        sequence="10"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+
+    <menuitem
+        id="menu_leulit_partis_bulk_apply_controls"
+        name="Aplicar Controles en Lote"
+        parent="menu_leulit_partis_bulk_tools"
+        action="action_mgmtsystem_risk_bulk_apply_controls_wizard"
+        sequence="20"
+        groups="mgmtsystem.group_mgmtsystem_user"
+    />
+</odoo>

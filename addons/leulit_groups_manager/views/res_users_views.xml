@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- SOLO AGREGAR (no reemplazar) a vista existente -->
+    <record id="view_users_form_groups_stats" model="ir.ui.view">
+        <field name="name">res.users.form.groups.stats</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <!-- Agregar stat button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object" 
+                        name="action_view_group_analysis" 
+                        icon="fa-shield">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="groups_count" widget="statinfo"/>
+                        </span>
+                        <span class="o_stat_text">Grupos</span>
+                    </div>
+                </button>
+                <button class="oe_stat_button" type="object" 
+                        name="action_view_accessible_menus" 
+                        icon="fa-list">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Menús</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- VISTA NUEVA - Wizard/Dialog for Visual Groups Matrix -->
+    <record id="view_users_form_groups_matrix" model="ir.ui.view">
+        <field name="name">res.users.form.groups.matrix</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <form string="Gestión Visual de Grupos">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h3 class="text-muted">
+                            <field name="login" readonly="1"/>
+                        </h3>
+                    </div>
+                    
+                    <group>
+                        <field name="groups_count" invisible="1"/>
+                        <field name="leulit_groups_count" invisible="1"/>
+                    </group>
+
+                    <notebook>
+                        <page string="📋 Grupos Asignados" name="assigned_groups">
+                            <field name="groups_by_category" readonly="1"/>
+                        </page>
+                        
+                        <page string="✏️ Seleccionar Grupos" name="select_groups">
+                            <group>
+                                <field name="groups_id" widget="many2many_checkboxes" 
+                                       nolabel="1"/>
+                            </group>
+                        </page>
+
+                        <page string="🏢 Grupos Leulit" name="leulit_groups">
+                            <field name="groups_id" widget="many2many_checkboxes" 
+                                   domain="[('is_leulit_group', '=', True)]"
+                                   nolabel="1"/>
+                        </page>
+
+                        <page string="⚙️ Grupos Técnicos" name="technical_groups">
+                            <field name="groups_id" widget="many2many_checkboxes" 
+                                   domain="[('is_leulit_group', '=', False)]"
+                                   nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Guardar" class="btn-primary" special="save"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- SOLO AGREGAR campo a tree existente -->
+    <record id="view_users_tree_groups_count" model="ir.ui.view">
+        <field name="name">res.users.tree.groups.count</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <field name="groups_count" string="👥 Grupos" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- VISTA NUEVA - Users Kanban with Groups Info -->
+    <record id="view_users_kanban_groups" model="ir.ui.view">
+        <field name="name">res.users.kanban.groups</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_users_groups">
+                <field name="name"/>
+                <field name="login"/>
+                <field name="email"/>
+                <field name="groups_count"/>
+                <field name="leulit_groups_count"/>
+                <field name="image_128"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('res.users', 'image_128', record.id.raw_value)" 
+                                     alt="User" class="o_image_64_cover"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="login"/>
+                                </div>
+                                <div class="o_kanban_tags_section mt-2">
+                                    <span class="badge badge-pill badge-info">
+                                        <i class="fa fa-shield"/> <field name="groups_count"/> grupos
+                                    </span>
+                                    <span class="badge badge-pill badge-success" 
+                                          t-if="record.leulit_groups_count.raw_value &gt; 0">
+                                        <i class="fa fa-star"/> <field name="leulit_groups_count"/> Leulit
+                                    </span>
+                                </div>
+                                <div class="mt-2">
+                                    <button name="action_open_groups_matrix" type="object" 
+                                            class="btn btn-sm btn-primary">
+                                        <i class="fa fa-edit"/> Gestionar Grupos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action for Users with Groups Management -->
+    <record id="action_users_groups_management" model="ir.actions.act_window">
+        <field name="name">Usuarios y Grupos</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_users_kanban_groups"/>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="context">{
+            'search_default_active': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_create">
+                Click para crear un nuevo usuario
+            </p>
+            <p>
+                Gestiona usuarios y sus grupos de permisos de forma visual e intuitiva.
+                Los usuarios pueden tener múltiples grupos simultáneamente.
+            </p>
+        </field>
+    </record>
+
+</odoo>

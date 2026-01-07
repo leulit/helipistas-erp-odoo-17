@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class leulit_resource(models.Model):
     _name = 'leulit.resource'
+    _description = 'Recurso de Planificación'
     _order = 'name asc'
 
 
