@@ -513,8 +513,8 @@ class StockLot(models.Model):
         with db_registry.cursor() as new_cr:
             try:
                 env = api.Environment(new_cr, self.env.uid, self.env.context)
-                StockProductionLot = env['stock.lot']
-                piezas = StockProductionLot.search([('create_date', '>=', '2025-01-01'),('precio', '=', 0)])
+                StockLot = env['stock.lot']
+                piezas = StockLot.search([('create_date', '>=', '2026-01-01'),('precio', '=', 0)])
                 for pieza in piezas:
                     precio = None
                     currency_id = None
