@@ -509,8 +509,8 @@ class StockLot(models.Model):
         return {}
 
     def run_update_prices(self):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
             try:
                 env = api.Environment(new_cr, self.env.uid, self.env.context)
                 StockProductionLot = env['stock.lot']
