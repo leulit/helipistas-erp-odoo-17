@@ -98,7 +98,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                 if tarea.timesheet_ids:
                     for aal in tarea.timesheet_ids:
                         aal.write({'maintenance_request_id': tarea.maintenance_request_id.id, 
-                                   'project_id': project_id.id})
+                                   'project_id': project_id})
             new_cr.commit()
         finally:
             new_cr.close()
