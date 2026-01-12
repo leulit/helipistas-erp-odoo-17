@@ -11,7 +11,7 @@ from . import stock_install
 from . import stock_uninstall
 from . import stock_move_certificate
 from . import stock_move_scrap
-# from . import stock_warehouse_orderpoint
+from . import stock_warehouse_orderpoint
 from . import stock_warehouse_orderpoint_automatizaciones
 from . import stock_quant
 from . import leulit_rel_formone_lot
