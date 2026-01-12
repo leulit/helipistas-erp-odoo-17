@@ -1,0 +1,11 @@
+<odoo>
+
+
+        <record id="leulit_20260112_0833_action" model="ir.actions.act_window">
+            <field name="name">Mis Acciones</field>
+            <field name="res_model">mgmtsystem.action</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[("user_id", "=", uid)]</field>
+        </record>
+
+</odoo>

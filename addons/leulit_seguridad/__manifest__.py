@@ -26,6 +26,7 @@
         "views/leulit_audit_question.xml",
         "views/leulit_procedure_audit_question.xml",
         "views/mgmtsystem_nonconformity.xml",
+        "views/mgmtsystem_action.xml",
         "menu.xml"
     ],
     "demo": [],
