@@ -84,6 +84,7 @@ class ProjectTask(models.Model):
                                 for user in self.user_ids:
                                     self.env['account.analytic.line'].create({
                                         'date_time':datetime.now(),
+                                        'date_time_end':datetime.now() + timedelta(hours=self.item_job_card_id.tiempo_defecto),
                                         'employee_id':user.employee_id.id,
                                         'name': '['+self.maintenance_request_id.name+']-'+self.name,
                                         'unit_amount': self.item_job_card_id.tiempo_defecto,
