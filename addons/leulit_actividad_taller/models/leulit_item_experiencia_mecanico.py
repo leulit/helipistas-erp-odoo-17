@@ -78,6 +78,31 @@ class LeulitItemExperienciaMecanico(models.Model):
             items.append(item)
 
         return items
+    
+
+    def upd_acc_analytic_line_requests(self):
+        _logger.error("upd_acc_analytic_line_requests ")
+        threaded_calculation = threading.Thread(target=self.run_upd_acc_analytic_line_requests, args=([]))
+        _logger.error("upd_acc_analytic_line_requests start thread")
+        threaded_calculation.start()
+        return {}
+    
+
+    def run_upd_acc_analytic_line_requests(self):
+        new_cr = sql_db.db_connect(self.env.cr.dbname).cursor()
+        try:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            project_id = int(env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))
+
+            for tarea in env['project.task'].search([('maintenance_request_id','!=',False)]):
+                if tarea.timesheet_ids:
+                    for aal in tarea.timesheet_ids:
+                        aal.write({'maintenance_request_id': tarea.maintenance_request_id.id, 
+                                   'project_id': project_id.id})
+            new_cr.commit()
+        finally:
+            new_cr.close()
+        _logger.error("upd_acc_analytic_line_requests fin")
 
 
     def upd_datos_actividad(self, fecha_origen, fecha_fin):
@@ -88,7 +113,6 @@ class LeulitItemExperienciaMecanico(models.Model):
         return {}
 
     def run_upd_datos_actividad(self, fecha_origen, fecha_fin):
-        # Crear un nuevo cursor y entorno para el hilo (Odoo 15+)
         new_cr = sql_db.db_connect(self.env.cr.dbname).cursor()
         try:
             env = api.Environment(new_cr, self.env.uid, self.env.context)
