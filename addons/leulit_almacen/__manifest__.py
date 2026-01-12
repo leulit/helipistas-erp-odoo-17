@@ -20,7 +20,7 @@
         "views/stock_picking.xml",
         "views/product_product.xml",
         "views/maintenance_equipment.xml",
-        # "views/stock_warehouse_orderpoint.xml",
+        "views/stock_warehouse_orderpoint.xml",
         "views/leulit_calibracion.xml",
         "views/stock_install.xml",
         "views/stock_uninstall.xml",
