@@ -10,9 +10,6 @@
                 <field name="location_id" position="attributes">
                     <attribute name="optional">hide</attribute>
                 </field>
-                <field name="json_lead_days_popover" position="attributes">
-                    <attribute name="optional">hide</attribute>
-                </field>
                 <field name="route_id" position="attributes">
                     <attribute name="optional">hide</attribute>
                 </field>
