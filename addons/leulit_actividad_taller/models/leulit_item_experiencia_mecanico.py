@@ -83,7 +83,7 @@ class LeulitItemExperienciaMecanico(models.Model):
     def upd_acc_analytic_line_requests(self):
         _logger.error("upd_acc_analytic_line_requests ")
         threaded_calculation = threading.Thread(target=self.run_upd_acc_analytic_line_requests, args=([]))
-        _logger.error("upd_acc_analytic_line_requests start thread")
+        _logger.error("############################################# upd_acc_analytic_line_requests start thread")
         threaded_calculation.start()
         return {}
     
@@ -102,7 +102,7 @@ class LeulitItemExperienciaMecanico(models.Model):
             new_cr.commit()
         finally:
             new_cr.close()
-        _logger.error("upd_acc_analytic_line_requests fin")
+        _logger.error("############################################# upd_acc_analytic_line_requests fin")
 
 
     def upd_datos_actividad(self, fecha_origen, fecha_fin):
