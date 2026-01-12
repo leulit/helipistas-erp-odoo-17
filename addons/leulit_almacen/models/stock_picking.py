@@ -60,7 +60,7 @@ class StockPicking(models.Model):
                 pieza = move_line_hlp.lot_id.copy(default={'name': name_lot,'company_id':2})
                 move_line_hlp.lot_id.lot_hlp_ica = pieza.id
                 pieza.lot_hlp_ica = move_line_hlp.lot_id.id
-                self.env['stock.move.line'].sudo().create({'picking_id':self.id,'owner_id':move_line_hlp.owner_id.id,'move_id':move.id,'product_id':move_line_hlp.product_id.id,'date':move_line_hlp.date,'reference':move_line_hlp.reference,'location_id':location_origen.id,'location_dest_id':location_destino.id,'quantity':move_line_hlp.quantity,'product_uom_qty':move_line_hlp.product_uom_qty,'lot_id':pieza.id, 'company_id':2, 'product_uom_id':move_line_hlp.product_uom_id.id}) 
+                self.env['stock.move.line'].sudo().create({'picking_id':self.id,'owner_id':move_line_hlp.owner_id.id,'move_id':move.id,'product_id':move_line_hlp.product_id.id,'date':move_line_hlp.date,'reference':move_line_hlp.reference,'location_id':location_origen.id,'location_dest_id':location_destino.id,'quantity':move_line_hlp.quantity,'lot_id':pieza.id, 'company_id':2, 'product_uom_id':move_line_hlp.product_uom_id.id}) 
                 move.state = 'done'
                 if pieza.product_id.type == 'product':
                     self.env['stock.quant'].sudo().create({'product_id':pieza.product_id.id,'company_id':1,'owner_id':move_line_hlp.owner_id.id,'location_id':location_origen.id,'lot_id':move_line_hlp.lot_id.id,'quantity':-move_line_hlp.quantity})
