@@ -44,9 +44,9 @@
         />
         <menuitem
             id="leulit_20201130_1020_menuitem"
-            name="Cursos Alumnos"
+            name="Cursos Alumnos Finalizados"
             parent="leulit_20201130_1003_menuitem"
-            action="leulit_20201130_1015_action"
+            action="leulit_20250918_1247_action"
             sequence="3"
         />
         <menuitem

@@ -53,6 +53,15 @@ class leulit_rel_alumno_curso(models.Model):
         if ids:
             return [('id','in',ids)]
         return  [('id','=','0')]
+    
+
+    @api.onchange('finalizado')
+    def onchange_finalizado(self):
+        for item in self:
+            if item.finalizado and not item.fecha_finalizacion:
+                item.fecha_finalizacion = fields.Date.today()
+            if not item.finalizado:
+                item.fecha_finalizacion = False
 
 
     curso_id = fields.Many2one('leulit.curso', 'Curso', required=True, domain=[('estado','=','activo'),('is_curso_pf','=',False)])
@@ -60,6 +69,7 @@ class leulit_rel_alumno_curso(models.Model):
     alumno_name = fields.Char(related='alumno_id.name',string='Nombre')
     fecha_inscripcion = fields.Date("Fecha de inicio", required=True)
     fecha_finalizacion = fields.Date("Fecha de finalización")
+    finalizado = fields.Boolean('Finalizado')
     comentarios = fields.Text('Comentarios')
     cursos_perfil_formacion = fields.Boolean(compute='_get_cursos_perfil_formacion', string='Cursos perfil formación',store=False, search=_search_cursos_perfil_formacion)
 
@@ -69,7 +79,7 @@ class leulit_rel_alumno_curso(models.Model):
         items = self.search([])
         for item in items:
             if item.fecha_inscripcion <= period_end:
-                if item.fecha_finalizacion >= period_start or fecha_finalizacion == False:
+                if item.fecha_finalizacion >= period_start or item.fecha_finalizacion == False:
                     if item.alumno_id.id not in lista:
                         lista.append(item.alumno_id.id)
         return len(lista)

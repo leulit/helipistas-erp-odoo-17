@@ -20,10 +20,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Alumno">
-                    <header>
-                    </header>
                     <sheet>
-                        <widget name="web_ribbon" text="Archivado" bg_color="bg-danger" invisible="active"/>
                         <field name="alta_all" invisible="1"/>
                         <field name="is_alta" invisible="1"/>
                         <field name="active" invisible="1"/>
@@ -94,8 +91,9 @@
                                 <field name="rel_alumno_curso_ids">
                                     <tree string="Cursos" editable="bottom" create="true">
                                         <field name="curso_id" options="{'no_create': True, 'create': False, 'edit': False}" />
-                                        <field name="fecha_inscripcion" string="Inicio"/>
-                                        <field name="fecha_finalizacion" string="Finalización"/>
+                                        <field name="fecha_inscripcion" string="Fecha inicio"/>
+                                        <field name="fecha_finalizacion" string="Fecha fin"/>
+                                        <field name="finalizado" string="Finalizado"/>
                                         <field name="cursos_perfil_formacion" column_invisible="1"/>
                                     </tree>
                                 </field>
@@ -104,7 +102,6 @@
                                 <field name="attachement_ids">
                                     <tree class="attachement_ids">
                                         <field name="name"/>
-                                        <!--TODO <field name="user_id"/> -->
                                         <field name="create_date"/>
                                     </tree>
                                 </field>
@@ -171,8 +168,7 @@
             <field name="name">leulit_20201028_1410_tree</field>
             <field name="model">leulit.alumno</field>
             <field name="arch" type="xml">
-                <tree string="leulit" decoration-muted="active == False" decoration-success="active == True" decoration-bf="active == True">
-                    <field name="active" optional="show"/>
+                <tree string="leulit" decoration-muted="activo == False" decoration-success="activo == True">
                     <field name="activo" column_invisible="1"/>
                     <field name="name"/>
                     <field name="email"/>

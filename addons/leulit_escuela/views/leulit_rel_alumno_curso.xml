@@ -10,8 +10,9 @@
 					<field name="curso_id" string="Curso"/>
                     <field name="alumno_id" string="NIF/DNI"/>
                     <field name="alumno_name" string="Nombre"/>
-                    <field name="fecha_inscripcion"/>
-                    <field name="fecha_finalizacion"/>
+                    <field name="fecha_inscripcion" string="Fecha inicio"/>
+                    <field name="fecha_finalizacion" string="Fecha fin"/>
+                    <field name="finalizado" string="Finalizado" column_invisible="1"/>
 				</tree>
 			</field>
 		</record>
@@ -23,9 +24,10 @@
                 <tree string="Cursos"  editable="bottom"> 
                     <button name="informe_cursos_alu" string="Informe progreso" type="object" class="oe_highlight"/>
                     <field name="curso_id" />
-                    <field name="fecha_inscripcion" string="Inicio"/>
-                    <field name="fecha_finalizacion" string="Finalización"/>
+                    <field name="fecha_inscripcion" string="Fecha inicio"/>
+                    <field name="fecha_finalizacion" string="Fecha fin"/>
                     <field name="cursos_perfil_formacion" column_invisible="1"/>
+                    <field name="finalizado" string="Finalizado" column_invisible="1"/>
                 </tree>
 	        </field>
         </record>
@@ -38,9 +40,10 @@
                     <field name="alumno_id" column_invisible="1"/>
                     <field name="alumno_name" />
                     <field name="curso_id" />
-                    <field name="fecha_inscripcion" string="Inicio"/>
-                    <field name="fecha_finalizacion" string="Finalización"/>
+                    <field name="fecha_inscripcion" string="Fecha inicio"/>
+                    <field name="fecha_finalizacion" string="Fecha fin"/>
                     <field name="cursos_perfil_formacion" column_invisible="1"/>
+                    <field name="finalizado" string="Finalizado" column_invisible="1"/>
                 </tree>
 	        </field>
         </record>
@@ -55,9 +58,10 @@
                         <group col="2">
                             <field name="alumno_id" readonly="1"/>
                             <field name="curso_id" readonly="1"/>
-                            <field name="fecha_inscripcion" string="Inicio" readonly="1"/>
-                            <field name="fecha_finalizacion" string="Finalización" readonly="1"/>
+                            <field name="fecha_inscripcion" string="Fecha inicio" readonly="1"/>
+                            <field name="fecha_finalizacion" string="Fecha fin" readonly="1"/>
                             <field name="cursos_perfil_formacion" invisible="1"/>
+                            <field name="finalizado" string="Finalizado" invisible="1"/>
                         </group>
                     </sheet>
                 </form>
@@ -85,12 +89,13 @@
         </record>
 
 
-        <record id="leulit_20201130_1015_action" model="ir.actions.act_window">
-            <field name="name">Cursos Alumnos</field>
+        <record id="leulit_20250918_1247_action" model="ir.actions.act_window">
+            <field name="name">Cursos Alumnos Finalizados</field>
             <field name="res_model">leulit.rel_alumno_curso</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="leulit_20201130_1015_tree"/>
             <field name="search_view_id" ref="leulit_20230829_1522_filter"/>
+            <field name="domain">[('finalizado','=',True)]</field>
         </record>
 
     </data>
