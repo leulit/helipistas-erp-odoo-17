@@ -52,12 +52,26 @@ class HrTimesheetSwitch(models.TransientModel):
             ('NCO', 'NCO'),
         )
     
-    @api.onchange('unit_amount','date_time')
-    def onchange_unit_amount(self):
-        if self.unit_amount and self.date_time:
+    @api.onchange('unit_amount', 'date_time', 'date_time_end')
+    def _onchange_duration_dates(self):
+        """
+        Sincroniza unit_amount, date_time y date_time_end de forma coherente:
+        - Si cambia unit_amount o date_time, recalcula date_time_end.
+        - Si cambia date_time_end, recalcula unit_amount.
+        """
+        if self.date_time and self.date_time_end:
+            # Si ambos están presentes, recalcula duración
+            delta = self.date_time_end - self.date_time
+            self.unit_amount = delta.total_seconds() / 3600.0 if delta.total_seconds() > 0 else 0.0
+        elif self.date_time and self.unit_amount:
+            # Si hay fecha de inicio y duración, calcula fecha de fin
             self.date_time_end = self.date_time + timedelta(hours=self.unit_amount)
-        else:
+        elif self.date_time:
+            # Si solo hay fecha de inicio, iguala fecha de fin
             self.date_time_end = self.date_time
+        else:
+            self.date_time_end = False
+            self.unit_amount = 0.0
 
     employee_id = fields.Many2one(comodel_name="hr.employee", string="Empleado", default=lambda self: self.env.user.employee_id.id)
     project_id = fields.Many2one('project.project', 'Project', default=_default_project_id)
