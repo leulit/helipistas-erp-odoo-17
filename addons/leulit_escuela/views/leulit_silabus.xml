@@ -31,6 +31,9 @@
                                 <group><field name="vts" colspan="1"/></group>
                             </div>
                             <div>
+                                <group><field name="night" colspan="1"/></group>
+                            </div>
+                            <div>
                                 <group><field name="test"/></group>
                             </div>
                             <div>
