@@ -171,12 +171,9 @@ class leulit_vuelo(models.Model):
                 return helicoptero.modelo.tipo
         return ""
 
-
-
     def fin_act_postvuelo(self):
         for item in self:
             item.write({ 'estado' : 'postvuelo' })
-
 
     def pdf_parte_vuelo_print(self, datos):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -187,7 +184,6 @@ class leulit_vuelo(models.Model):
             pdf, _ = self.env['ir.actions.report'].with_context(base_url=base_url)._render_qweb_pdf(report,None,data={'fechas': [data]})
             return base64.b64encode(pdf)
         
-
     def parte_vuelo_print(self):
         for item in self:
             datos = {
@@ -442,7 +438,6 @@ class leulit_vuelo(models.Model):
                 'fecha' : fecha.strftime('%d-%m-%Y'),
             }
             return data
-        
 
     def pdf_vuelo_print_report(self, datos):
         for item in self:
@@ -539,7 +534,6 @@ class leulit_vuelo(models.Model):
                     return self.env.ref('leulit_operaciones.ficha_vuelo_report_4_0_1').report_action([],data=data)
         except Exception as e:
             raise UserError ('Faltan datos en el parte de vuelo, revisar antes de seguir.')
-    
 
     def get_data_vuelo_print_report(self, datos):
         for item in self:
@@ -870,7 +864,6 @@ class leulit_vuelo(models.Model):
             }
             return data
 
-    
     def checkDescansoPiloto(self, idvuelo, horasalida, fechavuelo, piloto_id, tPrevisto):
         sw = False
         swPrimerVuelo = True

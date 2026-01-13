@@ -53,7 +53,7 @@ class leulit_silabus(models.Model):
 
     name = fields.Char('Descripción', required=True)
     comentario = fields.Html('Comentario')
-    orden = fields.Integer('Orden')        
+    orden = fields.Integer('Orden')
     duracion = fields.Float('Duración (hh:mm)')
     curso_id = fields.Many2one('leulit.curso','Curso')
     rel_alumno_curso_ids = fields.Many2one('leulit.rel_alumno_curso','Rel alumno curso')
@@ -66,6 +66,4 @@ class leulit_silabus(models.Model):
     doblemando = fields.Boolean('VBD/VTD/IBD/NBD')
     test = fields.Boolean('TEST')
     valoracion = fields.Boolean('Valoración')
-
-
-    # cursos = fields.Many2many("leulit.curso", "leulit_curso_silabus_rel", "curso_id", "silabus_id", string="Cursos")
+    night = fields.Boolean('Nocturno')

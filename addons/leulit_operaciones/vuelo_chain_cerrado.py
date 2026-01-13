@@ -240,6 +240,10 @@ class ComprobacionParteEscuelaHandler(vuelo.AbstractHandler):
                         if item.sil_valoracion == True:
                             if not item.valoracion:
                                 raise UserError('Este Parte contiene una valoración en el Silabus que debe tener un valor obligatorio.')
+                        if not vuelo.nightlandings > 0 and item.rel_silabus.night:
+                            raise UserError('Este Parte contiene un Silabus con actividad nocturna que debe tener registrado aterrizajes nocturnos.')
+
+
                     vuelo.parte_escuela_id = parteescuela.id
             else:
                 parteescuela = vuelo.parte_escuela_id
