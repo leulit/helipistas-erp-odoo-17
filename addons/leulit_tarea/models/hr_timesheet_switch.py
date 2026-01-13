@@ -52,42 +52,27 @@ class HrTimesheetSwitch(models.TransientModel):
             ('NCO', 'NCO'),
         )
     
-    @api.onchange('unit_amount', 'date_time', 'date_time_end')
-    def _onchange_duration_dates(self):
+    @api.onchange('unit_amount', 'date_time')
+    def _onchange_date_time_or_duration(self):
         """
-        Sincroniza unit_amount, date_time y date_time_end de forma coherente:
-        - Si cambia unit_amount o date_time, recalcula date_time_end.
-        - Si cambia date_time_end, recalcula unit_amount.
-        Evita sobrescribir la entrada del usuario.
+        Si cambia la fecha de inicio o la duración, recalcula la fecha de fin.
         """
-        # Guardar valores previos para detectar el campo modificado
-        previous = self._origin
-        # Si hay un registro original (edición)
-        if previous:
-            prev_unit = previous.unit_amount
-            prev_start = previous.date_time
-            prev_end = previous.date_time_end
+        if self.date_time and self.unit_amount:
+            self.date_time_end = self.date_time + timedelta(hours=self.unit_amount)
+        elif self.date_time:
+            self.date_time_end = self.date_time
         else:
-            prev_unit = prev_start = prev_end = False
+            self.date_time_end = False
 
-        # Detectar qué campo cambió
-        changed_unit = (self.unit_amount != prev_unit)
-        changed_start = (self.date_time != prev_start)
-        changed_end = (self.date_time_end != prev_end)
-
-        # Si cambia date_time_end, recalcula duración
-        if changed_end and self.date_time and self.date_time_end:
+    @api.onchange('date_time_end')
+    def _onchange_date_time_end(self):
+        """
+        Si cambia la fecha de fin, recalcula la duración.
+        """
+        if self.date_time and self.date_time_end:
             delta = self.date_time_end - self.date_time
             self.unit_amount = delta.total_seconds() / 3600.0 if delta.total_seconds() > 0 else 0.0
-        # Si cambia unit_amount o date_time, recalcula date_time_end
-        elif (changed_unit or changed_start) and self.date_time and self.unit_amount:
-            self.date_time_end = self.date_time + timedelta(hours=self.unit_amount)
-        # Si solo hay fecha de inicio, iguala fecha de fin
-        elif self.date_time and not self.unit_amount:
-            self.date_time_end = self.date_time
-        # Si no hay nada, limpia
-        elif not self.date_time:
-            self.date_time_end = False
+        elif self.date_time:
             self.unit_amount = 0.0
 
     employee_id = fields.Many2one(comodel_name="hr.employee", string="Empleado", default=lambda self: self.env.user.employee_id.id)
