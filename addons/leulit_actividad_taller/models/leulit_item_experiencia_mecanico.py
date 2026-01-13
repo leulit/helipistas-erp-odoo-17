@@ -101,7 +101,7 @@ class LeulitItemExperienciaMecanico(models.Model):
                                    'project_id': project_id,
                                    'date_time':tarea.finish_date,
                                    'date_time_end': tarea.finish_date + timedelta(hours=aal.unit_amount),
-                                   'unit_amount': aal.unit_amount})
+                                   'unit_amount': 0.5})
                         if tarea.item_job_card_id:
                             aal.write({'date_time_end': tarea.finish_date + timedelta(hours=tarea.item_job_card_id.tiempo_defecto),
                                        'unit_amount': tarea.item_job_card_id.tiempo_defecto})
