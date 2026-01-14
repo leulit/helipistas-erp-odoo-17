@@ -47,7 +47,7 @@ class AccountAnalyticLine(models.Model):
                     reuniones = self.env['leulit.reunion_asistente'].search([('user_id', '=', item.user_id.id),('asistencia','=',False)])
                     if len(reuniones) > 0:
                         _logger.error("reuniones %s" % reuniones)
-                        reunion_detalles = ', '.join([r.reunion_id.name for r in reuniones[:3]])
+                        reunion_detalles = ', '.join([r.reunion_id.asunto for r in reuniones[:3]])
                         suffix = '...' if len(reuniones) > 3 else ''
                         msg = _("No se puede imputar tiempo para %s (ID: %s) sin haber marcado la asistencia a todas las reuniones. Reuniones pendientes: %s%s (Total: %s)") % (
                             item.user_id.name, item.user_id.id, reunion_detalles, suffix, len(reuniones)
