@@ -43,7 +43,7 @@
             id="leulit_20220105_1109_menuitem"
             name="Proyectos"
             parent="leulit_20200907_1307_menuitem"
-            action="leulit_20221220_1522_action"
+            action="project.open_view_project_all_group_stage"
             sequence="20"
         />
         <menuitem 
