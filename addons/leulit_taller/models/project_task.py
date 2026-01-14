@@ -349,7 +349,7 @@ class ProjectTask(models.Model):
     type_maintenance = fields.Selection(selection=[('A', 'A'), ('B', 'B'), ('C','C')], string="Tipo")
     ata_ids = fields.Many2many(comodel_name="leulit.ata", relation="leulit_task_ata" , column1="task_id" , column2="ata_id", string="ATAs")
     certificacion_ids = fields.Many2many(comodel_name="leulit.certificacion", relation="leulit_task_certificacion" , column1="task_id" , column2="certificacion_id", string="Certificaciones")
-    job_card_id = fields.Many2one(comodel_name="leulit.job_card", string="Job card")
+    job_card_id = fields.Many2one(comodel_name="leulit.job_card", string="Job card", domain="[('equipamiento_id','=',maintenance_equipment_id)]")
     item_job_card_id = fields.Many2one(comodel_name="leulit.job_card_item", string="Item de job card")
     doble_check_intern = fields.Boolean(string="Doble check / Inspección de seguridad")
     doble_check_jb = fields.Boolean(related="item_job_card_id.doble_check", string="DC JB")
