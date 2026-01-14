@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Secuencia para código de consultas meteorológicas -->
+        <record id="seq_leulit_meteo_consulta" model="ir.sequence">
+            <field name="name">Consulta Meteorológica</field>
+            <field name="code">leulit.meteo.consulta</field>
+            <field name="prefix">METEO-</field>
+            <field name="padding">5</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">standard</field>
+        </record>
+        
+        <!-- Secuencia para código de reportes METAR -->
+        <record id="seq_leulit_meteo_metar" model="ir.sequence">
+            <field name="name">Reporte METAR</field>
+            <field name="code">leulit.meteo.metar</field>
+            <field name="prefix">METAR-</field>
+            <field name="padding">5</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="implementation">standard</field>
+        </record>
+        
+    </data>
+</odoo>

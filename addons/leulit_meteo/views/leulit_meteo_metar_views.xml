@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista Tree (Lista) METAR -->
+    <record id="view_leulit_meteo_metar_tree" model="ir.ui.view">
+        <field name="name">leulit.meteo.metar.tree</field>
+        <field name="model">leulit.meteo.metar</field>
+        <field name="arch" type="xml">
+            <tree string="Reportes METAR" 
+                  decoration-success="flight_category == 'VFR' and estado_datos == 'actual'" 
+                  decoration-warning="flight_category == 'MVFR' or estado_datos == 'reciente'" 
+                  decoration-danger="flight_category in ('IFR', 'LIFR') or estado_datos == 'antiguo'"
+                  decoration-muted="not observation_time">
+                <field name="codigo"/>
+                <field name="icao_code"/>
+                <field name="observation_time"/>
+                <field name="edad_datos_minutos" optional="show"/>
+                <field name="estado_datos" widget="badge" 
+                       decoration-success="estado_datos == 'actual'"
+                       decoration-warning="estado_datos == 'reciente'"
+                       decoration-danger="estado_datos == 'antiguo'"/>
+                <field name="temperatura"/>
+                <field name="wind_speed"/>
+                <field name="wind_direction"/>
+                <field name="visibility"/>
+                <field name="flight_category" widget="badge"/>
+                <field name="qnh"/>
+                <field name="user_id"/>
+                <field name="datos_desactualizados" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Vista Form METAR -->
+    <record id="view_leulit_meteo_metar_form" model="ir.ui.view">
+        <field name="button name="actualizar_si_antiguo" 
+                            string="Actualizar Si Antiguo" 
+                            type="object" 
+                            class="btn-secondary"
+                            icon="fa-refresh"
+                            attrs="{'invisible': [('datos_desactualizados', '=', False)]}"/>
+                    <field name="flight_category" widget="statusbar" statusbar_visible="VFR,MVFR,IFR,LIFR"/>
+                </header>
+                
+                <!-- Banner de advertencia para datos antiguos -->
+                <div class="alert alert-warning" role="alert" style="margin-bottom: 0px;" 
+                     attrs="{'invisible': ['|', ('observation_time', '=', False), ('edad_datos_minutos', '&lt;', 60)]}">
+                    <i class="fa fa-exclamation-triangle"/> 
+                    <strong>Datos Desactualizados:</strong> 
+                    Este METAR tiene <field name="edad_datos_minutos" readonly="1"/> minutos de antigüedad.
+                    Haga clic en "Obtener METAR" para actualizar con los datos más recientes.
+                </div>
+                
+                <!-- Banner informativo para datos recientes -->
+                <div class="alert alert-info" role="alert" style="margin-bottom: 0px;" 
+                     attrs="{'invisible': ['|', ('observation_time', '=', False), ('edad_datos_minutos', '&gt;=', 60)]}">
+                    <i class="fa fa-info-circle"/> 
+                    <strong>Datos Recientes:</strong> 
+                    Observación realizada hace <field name="edad_datos_minutos" readonly="1"/> minutos
+                    (<field name="observation_time" readonly="1" widget="relative"/>).
+                </div>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_obtener_metar" icon="fa-clock-o">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="edad_datos_minutos"/> min
+                                </span>
+                                <span class="o_stat_text">Edad Datos</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-signal" 
+                                attrs="{'invisible': [('estado_datos', '=', False)]}">
+                            <field name="estado_datos" widget="badge" 
+                                   decoration-success="estado_datos == 'actual'"
+                                   decoration-warning="estado_datos == 'reciente'"
+                                   decoration-danger="estado_datos == 'antiguo'"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icao_code" placeholder="ej: LECU" required="1"/>
+                        </h1>
+                        <h3>
+                            <field name="codigo" readonly="1"/>
+                        </h3>
+                    </div>
+                    
+                    <group>
+                        <group name="ubicacion" string="Aeródromo">
+                            <field name="latitud"/>
+                            <field name="longitud"/>
+                            <field name="elevation"/>
+                            <field name="flight_category_desc"/>
+                        </group>
+                        <group name="tiempos" string="Tiempos">
+                            <field name="observation_time" widget="datetime"/>
+                            <field name="report_time"/>
+                            <field name="fecha_consulta"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    
+                    <field name="datos_desactualizados" invisible="1"/ <field name="longitud"/>
+                            <field name="elevation"/>
+                            <field name="flight_category_desc"/>
+                        </group>
+                        <group name="tiempos" string="Tiempos">
+                            <field name="observation_time"/>
+                            <field name="report_time"/>
+                            <field name="fecha_consulta"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="METAR Completo" name="raw">
+                            <group>
+                                <field name="raw_metar" widget="text" nolabel="1" placeholder="El METAR completo aparecerá aquí..."/>
+                            </group>
+                        </page>
+                        
+                        <page string="Datos Decodificados" name="decoded">
+                            <group>
+                                <group name="temperatura" string="Temperatura">
+                                    <field name="temperatura" widget="float"/>
+                                    <field name="dewpoint" widget="float"/>
+                                </group>
+                                <group name="presion" string="Presión">
+                                    <field name="qnh" widget="float"/>
+                                    <field name="altimeter" widget="float"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group name="viento" string="Viento">
+                                    <field name="wind_direction"/>
+                                    <field name="wind_speed" widget="float"/>
+                 separator/>
+                <filter string="Datos Actuales" name="filter_actual" 
+                        domain="[('estado_datos', '=', 'actual')]"/>
+                <filter string="Datos Recientes" name="filter_reciente" 
+                        domain="[('estado_datos', '=', 'reciente')]"/>
+                <filter string="Datos Antiguos" name="filter_antiguo" 
+                        domain="[('estado_datos', '=', 'antiguo')]"/>
+                
+                <separator/>
+                <                   <field name="wind_gust" widget="float"/>
+                                </group>
+                                <group name="visibilidad" string="Visibilidad">
+                                    <field name="visibility" widget="float"/>
+                                    <field name="weather"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="clouds" widget="ace" options="{'mode': 'json'}" string="Capas de Nubes"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Relaciones" name="relaciones">
+                            <group>
+                                <field name="vuelo_id"/>
+                            </group>
+                        </page>Estado de Datos" name="group_estado" context="{'group_by': 'estado_datos'}"/>
+                    <filter string="
+                        
+                        <page string="Notas" name="notas">
+                            <field name="notas" placeholder="Notas adicionales sobre el reporte METAR..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Vista Search METAR -->
+    <record id="view_leulit_meteo_metar_search" model="ir.ui.view">
+        <field name="name">leulit.meteo.metar.search</field>
+        <field name="model">leulit.meteo.metar</field>
+        <field name="arch" type="xml">
+            <search string="Buscar METAR">
+                <field name="codigo"/>
+                <field name="icao_code"/>
+                <field name="user_id"/>
+                <field name="observation_time"/>
+                
+                <filter string="VFR" name="filter_vfr" 
+                        domain="[('flight_category', '=', 'VFR')]"/>
+                <field name="edad_datos_minutos"/>
+                <field name="estado_datos"/>
+                <field name="datos_desactualizados"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="icao_code"/>
+                                        <span t-if="record.datos_desactualizados.raw_value" class="badge badge-warning ml-2">
+                                            <i class="fa fa-clock-o"/> Antiguo
+                                        </span>
+                                    </strong>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="observation_time" widget="datetime"/>
+                                        <br/>
+                                        <small t-if="record.edad_datos_minutos.raw_value">
+                                            Hace <t t-esc="record.edad_datos_minutos.raw_value"/> minutos
+                                        </small>
+                                    </span>
+                                </div>
+                                <span t-attf-class="badge badge-pill badge-#{record.flight_category.raw_value == 'VFR' ? 'success' : record.flight_category.raw_value == 'MVFR' ? 'warning' : 'danger'}">
+                                    <field name="flight_category"/>
+                                </span>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>🌡️ <field name="temperatura"/>°C</div>
+                                <div>💨 <field name="wind_speed"/> kt @ <field name="wind_direction"/>°</div>
+                                <div t-if="record.qnh.raw_value">🔽 <field name="qnh"/> hPa</div>
+                                <div t-if="record.estado_datos.raw_value" class="mt-2">
+                                    <span t-attf-class="badge badge-#{record.estado_datos.raw_value == 'actual' ? 'success' : record.estado_datos.raw_value == 'reciente' ? 'warning' : 'danger'}">
+                                        <field name="estado_datos"/>
+                                    </span>
+                                "/>
+                
+                <group expand="0" string="Agrupar por">
+                    <filter string="Aeródromo (OACI)" name="group_icao" context="{'group_by': 'icao_code'}"/>
+                    <filter string="Categoría de Vuelo" name="group_category" context="{'group_by': 'flight_category'}"/>
+                    <filter string="Usuario" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Fecha Observación" name="group_observation" context="{'group_by': 'observation_time'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Vista Kanban METAR -->
+    <record id="view_leulit_meteo_metar_kanban" model="ir.ui.view">
+        <field name="name">leulit.meteo.metar.kanban</field>
+        <field name="model">leulit.meteo.metar</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="icao_code"/>
+                <field name="observation_time"/>
+                <field name="temperatura"/>
+                <field name="wind_speed"/>
+                <field name="flight_category"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="icao_code"/>
+                                    </strong>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="observation_time" widget="datetime"/>
+                                    </span>
+                                </div>
+                                <span t-attf-class="badge badge-pill badge-#{record.flight_category.raw_value == 'VFR' ? 'success' : record.flight_category.raw_value == 'MVFR' ? 'warning' : 'danger'}">
+                                    <field name="flight_category"/>
+                                </span>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>🌡️ <field name="temperatura"/>°C</div>
+                                <div>💨 <field name="wind_speed"/> kt @ <field name="wind_direction"/>°</div>
+                                <div t-if="record.qnh.raw_value">🔽 <field name="qnh"/> hPa</div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    <!-- Acción de Ventana METAR -->
+    <record id="action_leulit_meteo_metar" model="ir.actions.act_window">
+        <field name="name">Reportes METAR</field>
+        <field name="res_model">leulit.meteo.metar</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'search_default_filter_my_metar': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo reporte METAR
+            </p>
+            <p>
+                Obtenga reportes meteorológicos aeronáuticos (METAR) de aeródromos.
+                Introduzca el código OACI de 4 letras (ej: LECU, LEBL) y haga clic en "Obtener METAR".
+            </p>
+        </field>
+    </record>
+    
+</odoo>
