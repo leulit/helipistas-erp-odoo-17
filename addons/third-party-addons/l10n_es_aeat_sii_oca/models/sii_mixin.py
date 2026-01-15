@@ -170,8 +170,8 @@ class SiiMixin(models.AbstractModel):
 
     def _filter_sii_unlink_not_possible(self):
         """Filter records that we do not allow to be deleted, all those
-        that are not in not_sent sii status."""
-        return self.filtered(lambda rec: rec.aeat_state != "not_sent")
+        that are not in not_sent sii status or False."""
+        return self.filtered(lambda rec: rec.aeat_state not in ["not_sent", False])
 
     @api.ondelete(at_uninstall=False)
     def _unlink_except_sii(self):
@@ -254,14 +254,28 @@ class SiiMixin(models.AbstractModel):
             return False
         return True
 
-    def send_sii(self):
-        documents = self.filtered(
+    def _sii_filter_to_send(self):
+        """Helper method to filter documents to send to SII."""
+        return self.filtered(
             lambda document: (
                 document.sii_enabled
                 and document.state in self._get_valid_document_states()
-                and document.aeat_state not in ["sent", "cancelled"]
+                and (
+                    (document.aeat_state != "sent" and not document.sii_needs_cancel)
+                    or (
+                        document.aeat_state != "cancelled" and document.sii_needs_cancel
+                    )
+                )
             )
         )
+
+    def send_sii_now(self):
+        documents = self._sii_filter_to_send()
+        if documents:
+            documents._process_sii_send(send_date=fields.Datetime.now())
+
+    def send_sii(self):
+        documents = self._sii_filter_to_send()
         if not documents._cancel_send_to_sii():
             raise UserError(
                 _(
@@ -270,25 +284,25 @@ class SiiMixin(models.AbstractModel):
                 )
             )
         if documents:
-            documents.with_context(bypass_sii_send=True)._process_sii_send()
-            sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
-            self.env["ir.cron.trigger"].sudo().create(
-                {"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()}
-            )
+            documents._process_sii_send()
 
-    def _process_sii_send(self):
+    def _process_sii_send(self, send_date=None):
         """Process document sending to the SII. Adds general checks from
         configuration parameters and document availability for SII."""
-        for record in self:
-            company = record.company_id
-            sii_sending_time = company._get_sii_sending_time()
-            record.sii_send_date = sii_sending_time
+        if send_date:
+            self.sii_send_date = send_date
+        else:
+            for record in self:
+                record.sii_send_date = record.company_id._get_sii_sending_time()
         # Create trigger if any company needs to send doc to SII now
         # so the sending to SII cron is executed as soon as possible
-        if self.company_id.filtered(
-            lambda company: company.send_mode == "auto"
-            or (company.send_mode == "delayed" and company.delay_time == 0.0)
-        ) and not self.env.context.get("bypass_sii_send", False):
+        if (
+            self.company_id.filtered(
+                lambda company: company.send_mode == "auto"
+                or (company.send_mode == "delayed" and company.delay_time == 0.0)
+            )
+            or send_date
+        ):
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
             self.env["ir.cron.trigger"].sudo().create(
                 {"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()}
@@ -350,6 +364,9 @@ class SiiMixin(models.AbstractModel):
             if (
                 (gen_type != 3 or country_code == "ES")
                 and not partner.vat
+                and not (
+                    partner.aeat_identification_type and partner.aeat_identification
+                )
                 and not is_simplified_invoice
             ):
                 raise UserError(_("The partner has not a VAT configured."))

@@ -265,7 +265,7 @@ class L10nEsAeatMod296ReportLine(models.Model):
         ],
         string="Code",
     )
-    codigo_emisor = fields.Char(string="Emisor code", )
+    codigo_emisor = fields.Char(string="Emisor code", size=12)
     pago = fields.Selection(
         selection=[("1", "As transmitter"), ("2", "As mediator")], string="Payment"
     )
@@ -280,17 +280,17 @@ class L10nEsAeatMod296ReportLine(models.Model):
         comodel_name="res.partner.bank", string="Code Account Values"
     )
     pendiente = fields.Boolean(string="Pending")
-    domicilio = fields.Char(string="Domicile", )
-    complemento_domicilio = fields.Char(string="Domicile Complement", )
-    poblacion = fields.Char(string="Population/City", )
+    domicilio = fields.Char(string="Domicile", size=50)
+    complemento_domicilio = fields.Char(string="Domicile Complement", size=40)
+    poblacion = fields.Char(string="Population/City", size=30)
     provincia = fields.Many2one(
         comodel_name="res.country.state", string="Province/Region/State"
     )
-    zip = fields.Char(string="Postal Code", )
+    zip = fields.Char(string="Postal Code", size=10)
     pais = fields.Many2one(comodel_name="res.country", string="Country")
-    nif_pais_residencia = fields.Char(string="Nif in the country of residence", )
+    nif_pais_residencia = fields.Char(string="Nif in the country of residence", size=20)
     fecha_nacimiento = fields.Date(string="Date of birth")
-    ciudad_nacimiento = fields.Char(string="Birth city", )
+    ciudad_nacimiento = fields.Char(string="Birth city", size=35)
     pais_nacimiento = fields.Many2one(
         comodel_name="res.country", string="Country of birth"
     )

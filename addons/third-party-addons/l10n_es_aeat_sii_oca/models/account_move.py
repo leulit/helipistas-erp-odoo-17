@@ -643,6 +643,7 @@ class AccountMove(models.Model):
             inv_vals = {
                 "aeat_send_failed": True,
                 "aeat_send_error": False,
+                "sii_send_date": False,
             }
             try:
                 inv_dict = invoice._get_cancel_sii_invoice_dict()
@@ -680,6 +681,7 @@ class AccountMove(models.Model):
                     {
                         "aeat_send_failed": True,
                         "aeat_send_error": repr(fault)[:60],
+                        "sii_send_date": False,
                         "sii_return": repr(fault),
                     }
                 )
@@ -806,7 +808,7 @@ class AccountMove(models.Model):
         "move_type",
         "fiscal_position_id",
         "fiscal_position_id.aeat_active",
-        "invoice_date",
+        "date",
         "invoice_line_ids",
     )
     def _compute_sii_enabled(self):
@@ -836,8 +838,8 @@ class AccountMove(models.Model):
                     )
                     and (
                         not invoice.company_id.sii_start_date
-                        or not invoice.invoice_date
-                        or invoice.invoice_date >= invoice.company_id.sii_start_date
+                        or not invoice.date
+                        or invoice.date >= invoice.company_id.sii_start_date
                     )
                 )
             else:
@@ -851,12 +853,25 @@ class AccountMove(models.Model):
         condition_2 = [("fiscal_position_id.aeat_active", operator, value)]
         search_ko = (operator == "=" and not value) or (operator == "!=" and value)
         exp_condition = OR if search_ko else AND
+        condition_3 = []
         if not search_ko:
+            for company in self.env.companies.filtered("sii_enabled"):
+                if company.sii_start_date:
+                    condition_3.append(
+                        [
+                            ("company_id", "=", company.id),
+                            ("date", ">=", company.sii_start_date),
+                        ]
+                    )
+                else:
+                    condition_3.append([("company_id", "=", company.id)])
+            if condition_3:
+                condition_3 = OR(condition_3)
             condition_2 = OR([condition_2, [("fiscal_position_id", "=", False)]])
         return AND(
             [
                 [("move_type", "in", invoice_types)],
-                exp_condition([domain, exp_condition([condition_1, condition_2])]),
+                exp_condition([domain, condition_1, condition_2, condition_3]),
             ]
         )
 
@@ -917,11 +932,29 @@ class AccountMove(models.Model):
                 ("sii_send_date", "<=", fields.Datetime.now()),
             ]
         )
-        if documents:
-            batch = self._get_sii_batch()
-            documents = all_documents[:batch]
-            remaining_documents = all_documents - documents
-            documents.confirm_one_document()
+        if not documents:
+            return remaining_documents
+        batch = self._get_sii_batch()
+        documents = all_documents[:batch]
+        remaining_documents = all_documents - documents
+        for doc in documents:
+            try:
+                with self.env.cr.savepoint():
+                    doc.confirm_one_document()
+                    doc.sii_send_date = False
+            except Exception as fault:
+                new_cr = Registry(self.env.cr.dbname).cursor()
+                env = api.Environment(new_cr, self.env.uid, self.env.context)
+                doc_vals = {
+                    "aeat_send_failed": True,
+                    "aeat_send_error": repr(fault)[:60],
+                    "sii_send_date": False,
+                    "sii_return": repr(fault),
+                }
+                invoice = env["account.move"].browse(doc.id)
+                invoice.write(doc_vals)
+                new_cr.commit()
+                new_cr.close()
         return remaining_documents
 
     @api.model

@@ -18,10 +18,10 @@ class ResPartner(models.Model):
         string="Hide Facturae discount",
         help="The unit price will be recalculated applying the discount",
     )
-    organo_gestor = fields.Char()
-    unidad_tramitadora = fields.Char()
-    oficina_contable = fields.Char()
-    organo_proponente = fields.Char("Órgano proponente", )
+    organo_gestor = fields.Char(size=10)
+    unidad_tramitadora = fields.Char(size=10)
+    oficina_contable = fields.Char(size=10)
+    organo_proponente = fields.Char("Órgano proponente", size=10)
     attach_invoice_as_annex = fields.Boolean()
 
     def get_facturae_residence(self):

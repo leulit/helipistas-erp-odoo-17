@@ -50,7 +50,7 @@ class L10nEsAeatMod390Report(models.Model):
         "presentar la declaración anual de operaciones con terceras "
         "personas (modelo 347).",
     )
-    main_activity = fields.Char(string="Actividad principal", )
+    main_activity = fields.Char(string="Actividad principal", size=40)
     main_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código actividad principal (antiguo)",
@@ -68,9 +68,9 @@ class L10nEsAeatMod390Report(models.Model):
     )
     main_activity_iae = fields.Char(
         string="Epígrafe I.A.E. actividad principal",
-        
+        size=4,
     )
-    other_first_activity = fields.Char(string="1ª actividad", )
+    other_first_activity = fields.Char(string="1ª actividad", size=40)
     other_first_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código 1ª actividad (antiguo)",
@@ -89,9 +89,9 @@ class L10nEsAeatMod390Report(models.Model):
     )
     other_first_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 1ª actividad",
-        
+        size=4,
     )
-    other_second_activity = fields.Char(string="2ª actividad", )
+    other_second_activity = fields.Char(string="2ª actividad", size=40)
     other_second_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código 2ª actividad (antiguo)",
@@ -109,9 +109,9 @@ class L10nEsAeatMod390Report(models.Model):
     )
     other_second_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 2ª actividad",
-        
+        size=4,
     )
-    other_third_activity = fields.Char(string="3ª actividad", )
+    other_third_activity = fields.Char(string="3ª actividad", size=40)
     other_third_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código 3ª actividad (antiguo)",
@@ -129,9 +129,9 @@ class L10nEsAeatMod390Report(models.Model):
     )
     other_third_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 3ª actividad",
-        
+        size=4,
     )
-    other_fourth_activity = fields.Char(string="4ª actividad", )
+    other_fourth_activity = fields.Char(string="4ª actividad", size=40)
     other_fourth_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código 4ª actividad (antiguo)",
@@ -149,9 +149,9 @@ class L10nEsAeatMod390Report(models.Model):
     )
     other_fourth_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 4ª actividad",
-        
+        size=4,
     )
-    other_fifth_activity = fields.Char(string="5ª actividad", )
+    other_fifth_activity = fields.Char(string="5ª actividad", size=40)
     other_fifth_activity_code = fields.Selection(
         selection=ACTIVITY_CODE_SELECTION,
         string="Código 5ª actividad (antiguo)",
@@ -169,58 +169,58 @@ class L10nEsAeatMod390Report(models.Model):
     )
     other_fifth_activity_iae = fields.Char(
         string="Epígrafe I.A.E. 5ª actividad",
-        
+        size=4,
     )
     # 4. Representantes
     first_representative_name = fields.Char(
         string="Nombre del primer representante",
-        
+        size=80,
         help=REPRESENTATIVE_HELP,
     )
     first_representative_vat = fields.Char(
         string="NIF del primer representante",
-        
+        size=9,
     )
     first_representative_date = fields.Date(
         string="Fecha poder del primer representante",
     )
     first_representative_notary = fields.Char(
         string="Notaría del primer representante",
-        
+        size=12,
         help=NOTARY_CODE_HELP,
     )
     second_representative_name = fields.Char(
         string="Nombre del segundo representante",
-        
+        size=80,
         help=REPRESENTATIVE_HELP,
     )
     second_representative_vat = fields.Char(
         string="NIF del segundo representante",
-        
+        size=9,
     )
     second_representative_date = fields.Date(
         string="Fecha poder del segundo representante",
     )
     second_representative_notary = fields.Char(
         string="Notaría del segundo representante",
-        
+        size=12,
         help=NOTARY_CODE_HELP,
     )
     third_representative_name = fields.Char(
         string="Nombre del tercer representante",
-        
+        size=80,
         help=REPRESENTATIVE_HELP,
     )
     third_representative_vat = fields.Char(
         string="NIF del tercer representante",
-        
+        size=9,
     )
     third_representative_date = fields.Date(
         string="Fecha poder del tercer representante",
     )
     third_representative_notary = fields.Char(
         string="Notaría del tercer representante",
-        
+        size=12,
         help=NOTARY_CODE_HELP,
     )
     # 5. Régimen general
@@ -765,6 +765,45 @@ class L10nEsAeatMod390Report(models.Model):
         # remaining_cuota_compensar, usamos la suma de las casillas [78]
         return min(total_cuota_compensar, remaining_cuota_compensar)
 
+    @api.model
+    def _calculate_casilla_662(self, reports_303):
+        """Calculates the casilla 662"""
+        # Cuotas aplicadas este año
+        applied_this_year = sum(
+            reports_303.filtered_domain(
+                [("period_type", "not in", ("1T", "01"))]
+            ).mapped("cuota_compensar")
+        )
+        # Compensaciones de este año
+        compensation_this_year = abs(
+            sum(
+                reports_303.filtered_domain(
+                    [("period_type", "not in", ("4T", "12")), ("result_type", "=", "C")]
+                ).mapped("resultado_liquidacion")
+            )
+        )
+        # Compensaciones de años anteriores
+        compensation_previous_years = reports_303.filtered_domain(
+            [("period_type", "in", ("1T", "01"))]
+        )[:1].potential_cuota_compensar
+
+        # Si lo aplicado este año es menor que compensaciones de años anteriores
+        # significa que no se ha aplicado todo de años anteriores, por lo que
+        # no hay que tenerlo en cuenta para la 662.
+        if applied_this_year < compensation_previous_years:
+            compensation_previous_years = 0
+            # Si la diferencia entre compensaciones del año anterior y lo aplicado
+            # este año es mayor a las compensaciones del año, significa que el total
+            # de lo compensado este año no se ha aplicado porque todavía queda por
+            # aplicar de años anteriores.
+            if compensation_previous_years - applied_this_year > compensation_this_year:
+                applied_this_year = 0
+        # La casilla 662 será la diferencia entre las compensaciones de este año y lo
+        # aplicado este año que no provenga de años anteriores
+        return max(
+            compensation_this_year - applied_this_year - compensation_previous_years, 0
+        )
+
     def calculate(self):
         res = super().calculate()
         for mod390 in self:
@@ -793,19 +832,16 @@ class L10nEsAeatMod390Report(models.Model):
             report_303_last_period = reports_303_this_year.filtered(
                 lambda r: r.period_type in {"4T", "12"}
             )
+            casilla_662 = self._calculate_casilla_662(reports_303_this_year)
             if report_303_last_period:
                 if report_303_last_period[0].result_type == "C":
                     # Si salió a compensar, casilla 97 = casilla 71 del último periodo
                     # del año si fue a compensar
                     casilla_97 = abs(report_303_last_period.resultado_liquidacion)
-                else:
-                    # casilla 662 = casilla 87 del último periodo del año si no se
-                    # incluyo en la casilla 97
-                    casilla_662 = report_303_last_period.remaining_cuota_compensar
-                    if report_303_last_period[0].result_type in {"D", "V", "X"}:
-                        # Si salió a devolver, casilla 98 = casilla 71 del último
-                        #  periodo del año si fue a devolver
-                        casilla_98 = abs(report_303_last_period.resultado_liquidacion)
+                elif report_303_last_period[0].result_type in {"D", "V", "X"}:
+                    # Si salió a devolver, casilla 98 = casilla 71 del último periodo
+                    # del año si fue a devolver
+                    casilla_98 = abs(report_303_last_period.resultado_liquidacion)
             mod390.update(
                 {
                     "casilla_85": casilla_85,
