@@ -25,6 +25,10 @@ class MiantenancePlannedactivity(models.Model):
             if item.right_h:
                 item.descripcion = "{0} RH".format(item.descripcion)
 
+    def _search_descripcion(self, operator, value):
+        tareas = self.env['leulit.maintenance_task_preventive'].search([('descripcion', operator, value)])
+        return [('tarea_preventiva_id', 'in', tareas.ids)]
+
     @api.depends('maintenance_plan_id','horas_next_due','fecha_next_due')
     def _get_remaining(self):
         for item in self:
@@ -37,7 +41,6 @@ class MiantenancePlannedactivity(models.Model):
                 if item.fecha_next_due:
 
                     item.days_remaining = (item.fecha_next_due - datetime.now().date()).days
-
             
     @api.depends('horas_last_done','int_h','fecha_last_done','float_interval','tag_interval')
     def _get_next_due(self):
@@ -52,7 +55,6 @@ class MiantenancePlannedactivity(models.Model):
                 if item.tag_interval == 'Y':
                     item.fecha_next_due = item.fecha_last_done + timedelta(days=item.float_interval*365)
 
-
     @api.depends('float_interval','tag_interval','char_interval')
     def _get_interval(self):
         for item in self:
@@ -61,7 +63,6 @@ class MiantenancePlannedactivity(models.Model):
                 item.interval = "{0} {1}".format(int(item.float_interval),item.tag_interval)
             if item.char_interval:
                 item.interval = item.char_interval
-
 
     @api.depends('horas_remaining','aviso_horas','alarma_horas')
     def _get_semaforo_horas(self):
@@ -74,7 +75,6 @@ class MiantenancePlannedactivity(models.Model):
                 if item.horas_remaining < item.alarma_horas:
                     item.semaforo_horas = 'red'
                 
-
     @api.depends('days_remaining','aviso_dias','alarma_dias')
     def _get_semaforo_dias(self):
         for item in self:
@@ -138,8 +138,7 @@ class MiantenancePlannedactivity(models.Model):
     left_h = fields.Boolean(string='LH')
     right_h = fields.Boolean(string='RH')
     comentario_descripcion = fields.Char(string='Añadido a la descripción')
-    descripcion = fields.Char(compute=_get_name, string='Descripción')
-
+    descripcion = fields.Char(compute=_get_name, string='Descripción', search='_search_descripcion')
 
     def open_planned_activity(self):
         self.ensure_one()
@@ -154,7 +153,6 @@ class MiantenancePlannedactivity(models.Model):
             'res_id': self.id,
             'target': 'current',
         }
-    
 
     def action_generar_job_card(self):
         job_card = self.env['leulit.job_card'].create({
