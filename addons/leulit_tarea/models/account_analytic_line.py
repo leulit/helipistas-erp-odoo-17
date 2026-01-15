@@ -37,7 +37,7 @@ class AccountAnalyticLine(models.Model):
                     partes_escuela = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('verificado', '=', False),('estado','=','cerrado'),('alumno','=',alumno.id),('fecha','<=',date_now)])
                     for parte_escuela in partes_escuela:
                         _logger.error("parte_escuela %s" % parte_escuela.rel_parte_escuela.id)
-                        codigo = parte_escuela.rel_parte_escuela.codigo if parte_escuela.rel_parte_escuela else 'N/A'
+                        codigo = parte_escuela.rel_parte_escuela.id if parte_escuela.rel_parte_escuela else 'N/A'
                         task_name = item.task_id.name if item.task_id else 'N/A'
                         msg = _("No se puede imputar tiempo para %s (ID: %s) sin haber verificado los parte de escuela. Parte escuela pendiente: %s (Fecha: %s) - Imputa en: %s") % (
                             item.user_id.name, item.user_id.id, codigo, parte_escuela.fecha, task_name
