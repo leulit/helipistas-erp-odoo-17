@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_leulit_meteo_consulta_base,access_leulit_meteo_consulta_base,model_leulit_meteo_consulta,leulit.RBase,1,1,1,0
+access_leulit_meteo_consulta_employee,access_leulit_meteo_consulta_employee,model_leulit_meteo_consulta,leulit.RBase_employee,1,1,1,1
+access_leulit_meteo_metar_base,access_leulit_meteo_metar_base,model_leulit_meteo_metar,leulit.RBase,1,1,1,0
+access_leulit_meteo_metar_employee,access_leulit_meteo_metar_employee,model_leulit_meteo_metar,leulit.RBase_employee,1,1,1,1

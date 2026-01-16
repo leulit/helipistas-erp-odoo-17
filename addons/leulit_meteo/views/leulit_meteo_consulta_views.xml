@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista Tree (Lista) -->
+    <record id="view_leulit_meteo_consulta_tree" model="ir.ui.view">
+        <field name="name">leulit.meteo.consulta.tree</field>
+        <field name="model">leulit.meteo.consulta</field>
+        <field name="arch" type="xml">
+            <tree string="Consultas Meteorológicas">
+                <field name="codigo"/>
+                <field name="ubicacion"/>
+                <field name="fecha_consulta"/>
+                <field name="tipo_consulta"/>
+                <field name="temperatura"/>
+                <field name="descripcion_clima"/>
+                <field name="velocidad_viento"/>
+                <field name="humedad"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Vista Form -->
+    <record id="view_leulit_meteo_consulta_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.consulta.form</field>
+        <field name="model">leulit.meteo.consulta</field>
+        <field name="arch" type="xml">
+            <form string="Consulta Meteorológica">
+                <header>
+                    <button name="action_consultar_clima_actual" 
+                            string="Consultar Clima Actual" 
+                            type="object" 
+                            class="oe_highlight"
+                            icon="fa-cloud-download"/>
+                    <button name="action_consultar_pronostico" 
+                            string="Obtener Pronóstico" 
+                            type="object" 
+                            class="oe_highlight"
+                            icon="fa-calendar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="codigo" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="ubicacion" string="Ubicación">
+                            <field name="ubicacion"/>
+                            <field name="latitud"/>
+                            <field name="longitud"/>
+                            <field name="fecha_consulta"/>
+                            <field name="tipo_consulta"/>
+                        </group>
+                        <group name="metadata" string="Información">
+                            <field name="user_id"/>
+                            <field name="vuelo_id" attrs="{'invisible': [('vuelo_id', '=', False)]}"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Datos Actuales" name="actual" attrs="{'invisible': [('tipo_consulta', '=', 'pronostico')]}">
+                            <group>
+                                <group name="temperatura" string="Temperatura">
+                                    <field name="temperatura" widget="float"/>
+                                    <field name="sensacion_termica" widget="float"/>
+                                    <field name="humedad" widget="float"/>
+                                </group>
+                                <group name="condiciones" string="Condiciones">
+                                    <field name="descripcion_clima"/>
+                                    <field name="codigo_clima"/>
+                                    <field name="cobertura_nubes" widget="float"/>
+                                    <field name="precipitacion" widget="float"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group name="viento" string="Viento">
+                                    <field name="velocidad_viento" widget="float"/>
+                                    <field name="direccion_viento" widget="float"/>
+                                    <field name="rachas_viento" widget="float"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Pronóstico" name="pronostico" attrs="{'invisible': [('tipo_consulta', '=', 'actual')]}">
+                            <group>
+                                <field name="datos_pronostico" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Notas" name="notas">
+                            <field name="notas" placeholder="Notas adicionales sobre la consulta meteorológica..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Vista Search -->
+    <record id="view_leulit_meteo_consulta_search" model="ir.ui.view">
+        <field name="name">leulit.meteo.consulta.search</field>
+        <field name="model">leulit.meteo.consulta</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Consultas Meteorológicas">
+                <field name="codigo"/>
+                <field name="ubicacion"/>
+                <field name="user_id"/>
+                <field name="fecha_consulta"/>
+                
+                <filter string="Clima Actual" name="filter_actual" 
+                        domain="[('tipo_consulta', '=', 'actual')]"/>
+                <filter string="Pronóstico" name="filter_pronostico" 
+                        domain="[('tipo_consulta', '=', 'pronostico')]"/>
+                
+                <separator/>
+                <filter string="Hoy" name="filter_today" 
+                        domain="[('fecha_consulta', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), 
+                                 ('fecha_consulta', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+                <filter string="Esta Semana" name="filter_this_week" 
+                        domain="[('fecha_consulta', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('fecha_consulta', '&lt;=', (context_today() + datetime.timedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                
+                <separator/>
+                <filter string="Mis Consultas" name="filter_my_consultas" 
+                        domain="[('user_id', '=', uid)]"/>
+                
+                <separator/>
+                <filter string="Archivado" name="inactive" domain="[('active', '=', False)]"/>
+                
+                <group expand="0" string="Agrupar por">
+                    <filter string="Ubicación" name="group_ubicacion" context="{'group_by': 'ubicacion'}"/>
+                    <filter string="Tipo" name="group_tipo" context="{'group_by': 'tipo_consulta'}"/>
+                    <filter string="Usuario" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Fecha" name="group_fecha" context="{'group_by': 'fecha_consulta'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Acción de Ventana -->
+    <record id="action_leulit_meteo_consulta" model="ir.actions.act_window">
+        <field name="name">Consultas Meteorológicas</field>
+        <field name="res_model">leulit.meteo.consulta</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_my_consultas': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear una nueva consulta meteorológica
+            </p>
+            <p>
+                Registre consultas meteorológicas para diferentes ubicaciones.
+                Puede obtener datos en tiempo real desde Open-Meteo API.
+            </p>
+        </field>
+    </record>
+    
+</odoo>
