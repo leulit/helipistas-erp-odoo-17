@@ -40,11 +40,19 @@
             groups="leulit_tarea.RT_administrador"
         />
         <menuitem 
+            id="leulit_20260116_1030_menuitem"
+            name="Actividades tareas"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20260116_1030_action"
+            sequence="20"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
             id="leulit_20220105_1109_menuitem"
             name="Proyectos"
             parent="leulit_20200907_1307_menuitem"
             action="project.open_view_project_all_group_stage"
-            sequence="20"
+            sequence="25"
         />
         <menuitem 
             id="leulit_20230323_1107_menuitem"
