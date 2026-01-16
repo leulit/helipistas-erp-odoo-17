@@ -130,18 +130,17 @@
             <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
 
-        <!-- Tablero de Planificación de Actividades (mail.activity) -->
+        <!-- Control de Actividades (mail.activity) -->
         <record id="leulit_20260116_1030_action" model="ir.actions.act_window">
-            <field name="name">Tablero de Planificación de Actividades</field>
+            <field name="name">Control de Actividades</field>
             <field name="res_model">mail.activity</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('res_model', '=', 'project.task')]</field>
             <field name="context">{'group_by': ['date_deadline:day', 'user_id']}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    No hay actividades programadas para tareas.
+                    No hay actividades programadas.
                 </p><p>
-                    Las actividades programadas para tareas aparecerán aquí, agrupadas por fecha límite y responsable.
+                    Las actividades programadas aparecerán aquí, agrupadas por fecha límite y responsable.
                 </p>
             </field>
         </record>

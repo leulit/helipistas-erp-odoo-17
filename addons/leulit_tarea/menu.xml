@@ -41,7 +41,7 @@
         />
         <menuitem 
             id="leulit_20260116_1030_menuitem"
-            name="Actividades tareas"
+            name="Control actividades"
             parent="leulit_20200907_1307_menuitem"
             action="leulit_20260116_1030_action"
             sequence="20"
