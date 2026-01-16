@@ -45,8 +45,8 @@
         </template>
 
         <template id="leulit_20211115_1345_informe">
-            <meta charset="utf-8"/>
             <t t-call="web.html_container">
+                <meta charset="utf-8"/>
                 <style type="text/css">
                     .page {}
                     .fullwidth {
