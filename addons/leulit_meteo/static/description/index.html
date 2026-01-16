@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leulit Meteorología</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-card h3 {
+            margin-top: 0;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            color: #0c5460;
+        }
+        .screenshot {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>☁️ Leulit Meteorología</h1>
+        <p>Integración con Open-Meteo API para datos meteorológicos en tiempo real</p>
+        <div style="margin-top: 20px;">
+            <span class="badge badge-info">v17.0.1.0.0</span>
+            <span class="badge badge-success">Odoo 17</span>
+            <span class="badge badge-warning">LGPL-3</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Descripción</h2>
+        <p>
+            <strong>Leulit Meteorología</strong> es un módulo de integración con las APIs de 
+            <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> y 
+            <a href="https://aviationweather.gov/" target="_blank">Aviation Weather</a>
+            que permite consultar información meteorológica en tiempo real para diferentes ubicaciones geográficas 
+            y obtener reportes METAR aeronáuticos oficiales. 
+            Ideal para operaciones aeronáuticas, logística, planificación de eventos y cualquier actividad que dependa de las condiciones climáticas.
+        </p>
+        <div class="alert alert-info">
+            <strong>🎯 Doble Fuente de Datos:</strong>
+            <ul style="margin: 10px 0 0 20px;">
+                <li><strong>Open-Meteo API:</strong> Servicio meteorológico gratuito para datos globales por coordenadas GPS</li>
+                <li><strong>Aviation Weather API:</strong> Reportes METAR/TAF oficiales para aeródromos por código OACI</li>
+            </ul>
+        </div>
+        <div class="alert alert-info" style="background: #fff3cd; border-left: 4px solid #ffc107; color: #856404;">
+            <strong>⚠️ IMPORTANTE - Datos Históricos:</strong> Los METAR son reportes puntuales en el tiempo. 
+            La vista muestra el estado del momento de la consulta, no datos en tiempo real. 
+            Para o
+            <div class="feature-card">
+                <div class="feature-icon">✈️</div>
+                <h3>Reportes METAR</h3>
+                <p>Obtén reportes meteorológicos aeronáuticos oficiales con datos decodificados automáticamente.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛩️</div>
+                <h3>Categorías de Vuelo</h3>
+                <p>Clasificación automática VFR/MVFR/IFR/LIFR según condiciones meteorológicas.</p>
+            </div>btener el METAR actual, abra el registro y haga clic en "Obtener METAR" nuevamente.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>✨ Características Principales</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌡️</div>
+                <h3>Clima Actual</h3>
+                <p>Consulta temperatura, sensación térmica, humedad relativa y precipitación en tiempo real.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💨</div>
+                <h3>Datos de Viento</h3>
+                <p>Velocidad, dirección y rachas de viento fundamentales para operaciones aeronáuticas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Pronósticos</h3>
+                <p>Obtén pronósticos meteorológicos de hasta 16 días con datos diarios agregados.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Múltiples Ubicaciones</h3>
+                <p>Registra y consulta diferentes ubicaciones con coordenadas GPS precisas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Integración</h3>
+                <p>Vincula consultas meteorológicas con vuelos, operaciones y otros registros.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Histórico</h3>
+                <p>Mantén un registro completo de todas las consultas realizadas con trazabilidad.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Instalación</h2>
+        <h3>1. Instalar Dependencias Python</h3>
+        <p>El módulo requiere la librería <code>requests</code> para realizar las llamadas a la API:</p>
+        <pre><code># Desde el host
+pip install requests
+
+# En Docker (Helipistas)
+docker exec -ti helipistas_odoo pip install requests</code></pre>
+
+        <h3>2. Instalar Módulo en Odoo</h3>
+        <p>Opción A - Desde la interfaz:</p>
+        <ol>
+            <li>Ir a <strong>Aplicaciones</strong></li>
+            <li>Actualizar lista de aplicaciones</li>
+            <li>Buscar "Leulit Meteorología"</li>
+            <li>Hacer clic en <strong>Instalar</strong></li>
+        </ol>
+        <p>Opción B - Desde terminal:</p> (Open-Meteo)</h3>
+        <ol>
+            <li>Navegar a <strong>Meteorología → Consultas Clima</strong></li>
+            <li>Hacer clic en <strong>Crear</strong></li>
+            <li>Rellenar los datos:
+                <ul>
+                    <li><strong>Ubicación:</strong> Nombre descriptivo (ej: "Madrid - Cuatro Vientos")</li>
+                    <li><strong>Latitud:</strong> Coordenada en grados decimales (ej: 40.3717)</li>
+                    <li><strong>Longitud:</strong> Coordenada en grados decimales (ej: -3.7856)</li>
+                </ul>
+            </li>
+            <li>Hacer clic en <strong>Consultar Clima Actual</strong> o <strong>Obtener Pronóstico</strong></li>
+            <li>Los datos se actualizan automáticamente desde la API</li>
+        </ol>
+
+        <h3>Obtener un Reporte METAR (Aviation Weather)</h3>
+        <ol>
+            <li>Navegar a <strong>Meteorología → Reportes METAR</strong></li>
+            <li>Hacer clic en <strong>Crear</strong></li>
+            <li>Introducir <strong>Código OACI</strong> de 4 letras (ej: LECU, LEBL, LEMD)</li>
+            <li>Hacer clic en <strong>Obtener METAR</strong></li>
+            <li>Ver reporte completo en texto y datos decodificados</li>
+        </ol>
+
+        <div class="alert alert-info" style="background: #fff3cd; border-left: 4px solid #ffc107; color: #856404;">
+            <strong>⚠️ Actualizar Datos METAR:</strong><br>
+            Los METAR son reportes históricos. Para obtener datos actuales:
+            <ol style="margin: 10px 0 0 20px;">
+                <li>Abrir el registro METAR existente</li>
+                <li>Hacer clic en "Obtener METAR" nuevamente</li>
+                <li>Los datos se actualizarán con el reporte más reciente</li>
+                <li>El campo "Hora de Observación" indica cuándo se realizó la observación meteorológica</li>
+                <li>El campo "Fecha Consulta" indica cuándo se consultó desde Odoo</li>
+            </ol>
+        </div<li>Hacer clic en <strong>Crear</strong></li>
+            <li>Rellenar los datos:
+                <ul>
+                    <li><strong>Ubicación:</strong> Nombre descriptivo (ej: "Madrid - Cuatro Vientos")</li>
+                    <li><strong>Latitud:</strong> Coordenada en grados decimales (ej: 40.3717)</li>
+                    <li><strong>Longitud:</strong> Coordenada en grados decimales (ej: -3.7856)</li>
+                </ul>
+            </li>
+            <li>Hacer clic en <strong>Consultar Clima Actual</strong> o <strong>Obtener Pronóstico</strong></li>
+            <li>Los datos se actualizan automáticamente desde la API</li>
+        </ol>
+
+        <h3>Campos Meteorológicos Disponibles</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Descripción</th>
+                        <th>Unidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Temperatura</td>
+                        <td>Temperatura del aire a 2 metros</td>
+                        <td>°C</td>
+                    </tr>
+                    <tr>
+                        <td>Sensación Térmica</td>
+                        <td>Temperatura aparente considerando viento</td>
+                        <td>°C</td>
+                    </tr>
+                    <tr>
+                        <td>Humedad Relativa</td>
+                        <td>Porcentaje de humedad en el aire</td>
+                        <td>%</td>
+                    </tr>
+                    <tr>
+                        <td>Precipitación</td>
+                        <td>Precipitación acumulada</td>
+                        <td>mm</td>
+                    </tr>
+                    <tr>
+                        <td>Cobertura de Nubes</td>
+                        <td>Porcentaje de cielo cubierto</td>
+                        <td>%</td>
+                    </tr>
+                    <tr>
+                        <td>Velocidad Viento</td>
+                        <td>Velocidad del viento a 10 metros</td>
+                        <td>km/h</td>
+                    </tr>
+                    <tr>
+                        <td>Dirección Viento</td>
+                        <td>Dirección de procedencia del viento</td>
+                        <td>grados (°)</td>
+                    </tr>
+                    <tr>
+                        <td>Rachas de Viento</td>
+                        <td>Rachas máximas de viento</td>
+                        <td>km/h</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🌍 Ubicaciones de Ejemplo</h2>
+        <h3>Aeródromos Españoles</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ubicación</th>
+                        <th>Código OACI</th>
+                        <th>Latitud</th>
+                        <th>Longitud</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Madrid - Cuatro Vientos</td>
+                        <td>LECU</td>
+                        <td>40.3717</td>
+                        <td>-3.7856</td>
+                    </tr>
+                    <tr>
+                        <td>Sabadell</td>
+                        <td>LELL</td>
+                        <td>41.5209</td>
+                        <td>2.1050</td>
+                    </tr>
+                    <tr>
+                        <td>Granada - Armilla</td>
+                        <td>LEGA</td>
+                        <td>37.1331</td>
+                        <td>-3.6356</td>
+                    </tr>
+                    <tr>
+                        <td>Valencia</td>
+                        <td>LEVC</td>
+                        <td>39.4893</td>
+                        <td>-0.4816</td>
+                    </tr>
+                    <tr>
+                        <td>Sevilla</td>
+                        <td>LEZL</td>
+                        <td>37.4180</td>
+                        <td>-5.8931</td>
+                    </tr>
+                    <tr>
+                        <td>Barcelona - El Prat</td>
+                        <td>LEBL</td>
+                        <td>41.2974</td>
+                        <td>2.0833</td>
+                    </tr>
+                    <tr>
+                        <td>Málaga</td>
+                        <td>LEMG</td>
+                        <td>36.6749</td>
+                        <td>-4.4991</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Integración con Otros Módulos</h2>
+        <p>Puedes integrar las consultas meteorológicas desde cualquier módulo de Odoo:</p>
+
+        <h3>Consultar Clima Programáticamente</h3>
+        <pre><code># Desde cualquier modelo
+meteo_obj = self.env['leulit.meteo.consulta']
+
+# Método 1: Crear y consultar
+datos = meteo_obj.consultar_clima_ubicacion(
+    ubicacion='Madrid LECU',
+    latitud=40.3717,
+    longitud=-3.7856
+)
+
+if datos:
+    temperatura = datos['temperatura']
+    viento = datos['viento']
+    descripcion = datos['descripcion']
+    consulta_id = datos['consulta_id']
+
+# Método 2: Consultar directamente la API
+from odoo.addons.leulit_meteo.models.leulit_meteo_service import OpenMeteoService
+
+api_data = OpenMeteoService.get_current_weather(40.3717, -3.7856)
+if api_data:
+    current = api_data['current']
+    temp = current['temperature_2m']
+    wind = current['wind_speed_10m']</code></pre>
+
+        <h3>Vincular con Vuelos (leulit_operaciones)</h3>
+        <pre><code># En el modelo leulit.vuelo, añadir campo
+meteo_consulta_id = fields.Many2one(
+    'leulit.meteo.consulta',
+    string='Consulta Meteorológica'
+)
+
+# Al crear/confirmar vuelo
+def action_consultar_meteo(self):
+    meteo_obj = self.env['leulit.meteo.consulta']
+    consulta = meteo_obj.create({
+        'ubicacion': f'{self.aerodromo_salida_id.name}',
+        'latitud': self.aerodromo_salida_id.latitud,
+        'longitud': self.aerodromo_salida_id.longitud,
+        'vuelo_id': self.id,
+    })
+    consulta.action_consultar_clima_actual()
+    self.meteo_consulta_id = consulta.id</code></pre>
+
+        <h3>Añadir Campo de Temperatura en Parte de Vuelo</h3>
+        <pre><code># Heredar modelo
+class LeulitVuelo(models.Model):
+    _inherit = 'leulit.vuelo'
+    
+    temperatura_salida = fields.Float(
+        string='Temperatura Salida (°C)',
+        compute='_compute_meteo_salida',
+        store=True
+    )
+    
+    @api.depends('meteo_consulta_id.temperatura')
+    def _compute_meteo_salida(self):
+        for rec in self:
+            rec.temperatura_salida = rec.meteo_consulta_id.temperatura or 0.0</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>🌤️ Códigos de Condiciones Meteorológicas (WMO)</h2>
+        <p>El módulo traduce automáticamente los códigos WMO a descripciones en español:</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>0</td>
+                        <td>Despejado</td>
+                        <td>61-65</td>
+                        <td>Lluvia (ligera/moderada/intensa)</td>
+                    </tr>
+                    <tr>
+                        <td>1-3</td>
+                        <td>Despejado/Parcialmente nublado/Nublado</td>
+                        <td>71-75</td>
+                        <td>Nevada (ligera/moderada/intensa)</td>
+                    </tr>
+                    <tr>
+                        <td>45-48</td>
+                        <td>Niebla</td>
+                        <td>80-82</td>
+                        <td>Chubascos</td>
+                    </tr>
+                    <tr>
+                        <td>51-57</td>
+                        <td>Llovizna</td>
+                        <td>95-99</td>
+                        <td>Tormenta</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>⚙️ Configuración Técnica</h2>
+        
+        <h3>Dependencias</h3>
+        <ul>
+            <li><strong>Módulos Odoo:</strong> <code>leulit</code>, <code>mail</code></li>
+            <li><strong>Python:</strong> <code>requests</code></li>
+            <li><strong>API Externa:</strong> Open-Meteo API (sin autenticación)</li>
+        </ul>
+
+        <h3>Modelos</h3>
+        <ul>
+            <li><code>leulit.meteo.consulta</code> - Registro de consultas meteorológicas</li>
+        </ul>
+
+        <h3>Servicios</h3>
+        <ul>
+            <li><code>OpenMeteoService</code> - Cliente para API de Open-Meteo</li>
+        </ul>
+
+        <h3>Permisos de Seguridad</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Lectura</th>
+                        <th>Escritura</th>
+                        <th>Creación</th>
+                        <th>Eliminación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RBase</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>RBase_employee</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Configuración de API</h3>
+        <div class="alert alert-info">
+            <strong>ℹ️ Sin configuración necesaria:</strong> Open-Meteo no requiere API key ni registro. 
+            El módulo funciona inmediatamente después de la instalación.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Solución de Problemas</h2>
+        
+        <h3>Error: No se pudo obtener información meteorológica</h3>
+        <ul>
+            <li>Verificar conexión a internet desde el servidor Odoo</li>
+            <li>Comprobar que las coordenadas sean válidas (-90 a 90 latitud, -180 a 180 longitud)</li>
+            <li>Revisar los logs de Odoo para más detalles del error</li>
+        </ul>
+
+        <h3>Error: ModuleNotFoundError: No module named 'requests'</h3>
+        <p>Instalar la dependencia Python:</p>
+        <pre><code>docker exec -ti helipistas_odoo pip install requests
+docker-compose restart</code></pre>
+
+        <h3>Timeout en Consultas</h3>
+        <p>Las consultas tienen un timeout de 10 segundos. Si experimenta timeouts frecuentes:</p>
+        <ul>
+            <li>Verificar velocidad de conexión a internet</li>
+            <li>Considerar aumentar el timeout en <code>leulit_meteo_service.py</code></li>
+            <li>Implementar caché para reducir consultas repetidas</li>
+        </ul>
+
+        <h3>Logs y Debugging</h3>
+        <pre><code># Ver logs del contenedor
+docker logs -f helipistas_odoo
+
+# Activar modo debug en Odoo
+# Añadir en odoo.conf:
+log_level = debug</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>📈 Mejoras Futuras</h2>
+        <ul>
+            <li>🔄 Sistema de caché para reducir llamadas a la API</li>
+            <li>📊 Widgets visuales (gráficos de temperatura, rosa de vientos)</li>
+            <li>⏰ Consultas automáticas programadas</li>
+            <li>📧 Alertas meteorológicas por email</li>
+            <li>🌐 Integración con METAR/TAF para aeródromos</li>
+            <li>📱 Vista móvil optimizada</li>
+            <li>🗺️ Mapa interactivo con ubicaciones</li>
+            <li>📉 Histórico y análisis de tendencias</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🤝 Soporte y Contribuciones</h2>
+        <p>
+            Este módulo es mantenido por <strong>Leulit</strong> como parte del ERP Helipistas para gestión aeronáutica.
+        </p>
+        <p>
+            Para reportar bugs, solicitar funcionalidades o contribuir al desarrollo, contacta con el equipo de desarrollo.
+        </p>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://www.leulit.com" class="btn" target="_blank">🌐 Visitar Leulit</a>
+            <a href="https://open-meteo.com/en/docs" class="btn" target="_blank">📚 Open-Meteo Docs</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Leulit Meteorología</strong> v17.0.1.0.0</p>
+        <p>© 2026 Leulit | Licencia LGPL-3</p>
+        <p>Compatible con Odoo 17.0</p>
+    </div>
+</body>
+</html>

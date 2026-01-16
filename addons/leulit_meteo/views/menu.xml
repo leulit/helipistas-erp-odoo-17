@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Menú Principal -->
+    <menuitem id="menu_leulit_meteo_root"
+              name="Meteorología"
+              sequence="60"
+              web_icon="leulit_meteo,static/description/icon.png"
+              groups="leulit.RBase"/>
+    
+    <!-- Submenú Consultas Clima -->
+    <menuitem id="menu_leulit_meteo_consultas"
+              name="Consultas Clima"
+              parent="menu_leulit_meteo_root"
+              action="action_leulit_meteo_consulta"
+              sequence="10"/>
+    
+    <!-- Submenú METAR -->
+    <menuitem id="menu_leulit_meteo_metar"
+              name="Reportes METAR"
+              parent="menu_leulit_meteo_root"
+              action="action_leulit_meteo_metar"
+              sequence="20"/>
+    
+</odoo>
