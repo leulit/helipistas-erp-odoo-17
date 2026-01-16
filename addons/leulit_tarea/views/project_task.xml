@@ -68,7 +68,7 @@
                     <separator/>
                     <filter name="sin_actividades" 
                             string="Sin Actividades" 
-                            domain="[('activity_ids', '=', False), ('stage_id.is_closed', '=', False)]"
+                            domain="[('activity_ids', '=', False)]"
                             help="Tareas abiertas sin ninguna actividad programada (tareas huérfanas)"/>
                 </xpath>
             </field>
