@@ -1,4 +1,7 @@
-<template id="wo_report_css">
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="wo_report_css">
             <meta charset="utf-8"/>
             <style>
                 html {
@@ -464,3 +467,5 @@
                 </div> 
             </t>
         </template>
+    </data>
+</odoo>
