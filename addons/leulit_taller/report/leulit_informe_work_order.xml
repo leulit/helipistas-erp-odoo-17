@@ -9,12 +9,15 @@
                     -ms-text-size-adjust: 100%;
                     -webkit-text-size-adjust: 100%;
                 }
+                body {
+                    font-size: 12px;
+                }
                 .fullwidth {
                     width: 100%;
                     border-collapse: collapse;
                 }
                 .noborde {
-                    border: 0px none;
+                    border: 0px none !important;
                 }
                 .theadtitle {
                     font-weight: bold;
@@ -28,6 +31,7 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
+                /* Ajuste de colores de fondo para celdas */
                 .tdcolored {
                     background-color: rgba(0,0,0,0.40);
                     color: #ffffff;
@@ -36,22 +40,38 @@
                     background-color: rgba(0,0,0,1);
                     color: #ffffff;
                 }
-                .centertext {text-align:center;}
-                .heightrow {height: 50px;}
-                thead { display: table-header-group }
-                tfoot { display: table-header-group }
-                tr { page-break-inside: avoid }
+                .centertext { text-align:center; }
+                .heightrow { height: 50px; }
+                
+                /* Configuración estricta para impresión */
+                thead { display: table-header-group; }
+                tfoot { display: table-header-group; }
+                tr { page-break-inside: avoid; }
+                
+                /* Bordes de tabla definidos para evitar líneas dobles o faltantes */
                 th, tbody td, tfoot td {
                     border: 1px solid #B0B0B0;
-                    padding: 3px;
-                    text-align:left;
-                    font-size:12px;
-                    font-weight:normal;
+                    padding: 4px;
+                    text-align: left;
+                    font-size: 3.5687mm; 
+                    font-weight: normal;
                     vertical-align: middle;
                 }
-                /* Asegurar que header y footer se comporten bien */
-                .header { margin-bottom: 0px; width: 100%; }
+                
+                /* CABECERA: Fondo blanco para evitar que se mezcle con el texto si el margen varía */
+                .header { 
+                    margin-bottom: 0px; 
+                    width: 100%; 
+                    background-color: white; 
+                    z-index: 1000;
+                }
                 .footer { width: 100%; }
+                
+                /* Clase para el contenedor principal sin marca de agua */
+                .article {
+                    width: 100%;
+                    background-color: transparent;
+                }
             </style>
         </template>
 
