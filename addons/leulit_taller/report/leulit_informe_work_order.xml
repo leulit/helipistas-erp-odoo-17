@@ -7,48 +7,60 @@
                 html, body {
                     margin: 0 !important;
                     padding: 0 !important;
+                    height: auto !important;
                     font-family: sans-serif;
-                    font-size: 12px;
-                    width: 100% !important;
+                    font-size: 11px; /* Fuente ligeramente más pequeña para que quepa todo */
+                    color: black;
                 }
                 .fullwidth {
                     width: 100% !important;
                     border-collapse: collapse;
                 }
                 .noborde {
-                    border: 0px none !important;
+                    border: none !important;
                 }
-                /* Forzamos alineación de cabecera y pie */
-                .header-content {
-                    width: 100% !important;
+                /* La cabecera tendrá fondo blanco para tapar cualquier texto que intente subir */
+                .header-container {
+                    width: 100%;
+                    background-color: white;
                     border-bottom: 2px solid black;
-                    margin-bottom: 0px;
-                }
-                .footer-content {
-                    width: 100% !important;
-                    border-top: 1px solid black;
-                    padding-top: 5px;
+                    padding-bottom: 5px;
                 }
                 /* Tablas de datos */
                 th, td {
-                    border: 1px solid #B0B0B0;
-                    padding: 4px;
+                    border: 1px solid #aaa;
+                    padding: 3px 5px;
                     vertical-align: middle;
                     text-align: left;
+                    line-height: 1.2;
                 }
                 .centertext { text-align:center; }
+                .righttext { text-align:right; }
+                
+                /* Colores */
                 .tdcolored {
-                    background-color: rgba(0,0,0,0.40);
-                    color: #ffffff;
+                    background-color: #ddd; /* Gris claro para impresión limpia */
+                    font-weight: bold;
+                    color: black;
                 }
                 .tdcoloredmain {
                     background-color: black;
                     color: white;
+                    font-weight: bold;
+                    text-transform: uppercase;
                 }
-                /* Evitar cortes de página en filas */
-                tr { page-break-inside: avoid; 
-                width: 100%;}
+                
+                /* Evitar cortes feos */
+                tr { page-break-inside: avoid; }
                 thead { display: table-header-group; }
+                
+                /* Footer discreto */
+                .footer-text {
+                    font-size: 10px;
+                    text-align: right;
+                    border-top: 1px solid black;
+                    padding-top: 2px;
+                }
             </style>
         </template>
 
@@ -57,28 +69,22 @@
                 <t t-call="leulit_taller.wo_report_css"/>
 
                 <div class="header">
-                    <div class="header-content">
+                    <div class="header-container">
                         <t t-if="logo_hlp">
                             <table class="fullwidth">
                                 <tr>
-                                    <td class="noborde centertext" style="width:33%;">
-                                        <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="height:50px; width:auto;"/>
-                                        <br/><span>ES.CAMO.005</span>
+                                    <td class="noborde centertext" style="width:30%;">
+                                        <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="max-height:45px; width:auto;"/>
+                                        <div style="font-size:10px; margin-top:2px;">ES.CAMO.005</div>
                                     </td>
-                                    <td class="noborde centertext" style="width:34%; font-size:20px;">
-                                        <b>WORK ORDER</b>
+                                    <td class="noborde centertext" style="width:40%;">
+                                        <div style="font-size:18px; font-weight:bold;">WORK ORDER</div>
+                                        <div style="font-size:14px;"><span t-esc="name"/></div>
                                     </td>
-                                    <td class="noborde centertext" style="width:33%;">
-                                        <span>Formato 6</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="noborde centertext" style="font-size:16px;">
-                                        <span t-esc="name"/>
-                                    </td>
-                                    <td class="noborde"></td>
-                                    <td class="noborde centertext">
-                                        <span>Ed.4 Rev: 2</span><br/><span>28/09/2022</span>
+                                    <td class="noborde centertext" style="width:30%; font-size:10px;">
+                                        <div>Formato 6</div>
+                                        <div>Ed.4 Rev: 2</div>
+                                        <div>28/09/2022</div>
                                     </td>
                                 </tr>
                             </table>
@@ -86,26 +92,18 @@
                         <t t-if="logo_ica">
                             <table class="fullwidth">
                                 <tr>
-                                    <td class="noborde centertext" style="width:30%;" rowspan="3">
-                                        <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="height:35px; width:auto;"/>
-                                        <br/><span>ES. 145.173</span>
+                                    <td class="noborde centertext" style="width:25%;" rowspan="2">
+                                        <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="max-height:35px; width:auto;"/>
+                                        <div style="font-size:10px;">ES. 145.173</div>
                                     </td>
-                                    <td class="noborde centertext" style="width:40%; font-size:20px;" rowspan="2">
-                                        <b>WORK ORDER</b>
+                                    <td class="noborde centertext" style="width:50%; font-size:18px;">
+                                        <b>WORK ORDER</b> <span t-esc="name"/>
                                     </td>
-                                    <td class="noborde" style="width:15%;">Referencia:</td>
-                                    <td class="noborde" style="width:15%;">M.O.E. 2.13</td>
-                                </tr>
-                                <tr>
-                                    <td class="noborde">Formato:</td>
-                                    <td class="noborde">2.0</td>
-                                </tr>
-                                <tr>
-                                    <td class="noborde centertext" style="font-size:18px;">
-                                        <span t-esc="name"/>
+                                    <td class="noborde righttext" style="width:25%; font-size:10px;">
+                                        Ref: M.O.E. 2.13<br/>
+                                        Formato: 2.0<br/>
+                                        Rev. 3-2023
                                     </td>
-                                    <td class="noborde">Revisión:</td>
-                                    <td class="noborde">Rev. 3-2023</td>
                                 </tr>
                             </table>
                         </t>
@@ -113,21 +111,25 @@
                 </div>
 
                 <div class="page">
-                    <table class="fullwidth" style="margin-top: 10px;">
+                    <table class="fullwidth" style="margin-top: 5px;">
                         <tr>
                             <td rowspan="2" colspan="2" style="width:25%">
                                 <b>Firma: </b><span t-esc="name_user"/>
                             </td>
-                            <th class="centertext tdcolored" style="width:20%">Fecha Emisión</th>
-                            <th class="centertext tdcolored" style="width:20%">Fecha Aceptación</th>
-                            <td rowspan="2" class="noborde" style="width:35%; border:1px solid #B0B0B0 !important;">
-                                <div style="display:inline-block; width:70%;">
-                                    <b>Firma:</b> ES. 145.173<br/>
-                                    <span t-esc="responsable_mant"/>
-                                </div>
-                                <div style="display:inline-block; width:25%; vertical-align:top;">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="height:25px; width:auto;"/>
-                                </div>
+                            <td class="tdcolored centertext" style="width:15%">Emisión</td>
+                            <td class="tdcolored centertext" style="width:15%">Aceptación</td>
+                            <td rowspan="2" class="noborde" style="width:45%; border:1px solid #aaa !important;">
+                                <table class="fullwidth noborde">
+                                    <tr class="noborde">
+                                        <td class="noborde">
+                                            <b>Firma:</b> ES. 145.173<br/>
+                                            <span t-esc="responsable_mant"/>
+                                        </td>
+                                        <td class="noborde righttext">
+                                            <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="max-height:25px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -136,8 +138,8 @@
                         </tr>
                         <tr>
                             <td class="tdcolored centertext">Matricula:</td>
-                            <td><span t-esc="matricula"/></td>
-                            <td colspan="2" class="tdcolored centertext">Propietario/Operador:</td>
+                            <td><b><span t-esc="matricula"/></b></td>
+                            <td colspan="2" class="tdcolored centertext">Propietario:</td>
                             <td colspan="2"><span t-esc="propietario_operador"/></td>
                         </tr>
                     </table>
@@ -150,9 +152,9 @@
                             <td class="tdcolored centertext" style="width:20%">Aeronave</td>
                             <td class="tdcolored centertext" style="width:20%">Motor</td>
                             <td class="noborde" style="width:5%"></td>
-                            <td rowspan="3" class="centertext" style="width:45%; border:1px solid #B0B0B0; padding:10px;">
-                                <b>Referencia Programa Mantenimiento:</b><br/><br/>
-                                <span t-esc="plan_mantenimiento"/>
+                            <td rowspan="3" class="centertext" style="border:1px solid #aaa; padding:5px;">
+                                <div style="font-size:10px;">Referencia Programa Mantenimiento:</div>
+                                <div style="font-weight:bold; margin-top:5px;"><span t-esc="plan_mantenimiento"/></div>
                             </td>
                         </tr>
                         <tr>
@@ -206,15 +208,15 @@
                     <table class="fullwidth">
                         <thead>
                             <tr>
-                                <td colspan="5" class="tdcoloredmain centertext" style="font-weight:bold;">TRABAJOS A REALIZAR</td>
+                                <td colspan="5" class="tdcoloredmain centertext">TRABAJOS A REALIZAR</td>
                             </tr>
                             <tr>
                                 <td colspan="5" class="tdcolored centertext">Revisiones Programadas</td>
                             </tr>
                             <tr>
                                 <td class="centertext" style="width:5%">Ítem</td>
-                                <td style="width:55%">Descripción</td>
-                                <td class="centertext" style="width:15%">Referencia</td>
+                                <td style="width:50%">Descripción</td>
+                                <td class="centertext" style="width:20%">Referencia</td>
                                 <td class="centertext" style="width:12%">Realizado</td>
                                 <td class="centertext" style="width:13%">Supervisado</td>
                             </tr>
@@ -223,8 +225,8 @@
                             <t t-set="cont" t-value="1"/>
                             <t t-foreach="trabajos_realizar" t-as="trabajo_tag">
                                 <tr>
-                                    <td class="centertext"><b><span t-esc="cont"/></b></td>
-                                    <td colspan="4" style="background-color:#eee;">
+                                    <td class="centertext tdcolored"><b><span t-esc="cont"/></b></td>
+                                    <td colspan="4" style="background-color:#f5f5f5; font-weight:bold;">
                                         <t t-if="trabajo_tag not in ['Others','']">Rev. <span t-esc="trabajo_tag"/>h</t>
                                         <t t-else=""><span t-esc="trabajo_tag"/></t>
                                     </td>
@@ -233,12 +235,12 @@
                                     <tr>
                                         <td class="centertext"><span t-esc="tarea[0]"/></td>
                                         <td><span t-esc="tarea[1]"/></td>
-                                        <td class="centertext"><span t-esc="tarea[2]"/></td>
-                                        <td>
+                                        <td class="centertext" style="font-size:10px;"><span t-esc="tarea[2]"/></td>
+                                        <td class="centertext">
                                             <t t-if="tarea[5]"><b>N/A</b> </t>
                                             <span t-esc="tarea[3]"/>
                                         </td>
-                                        <td>
+                                        <td class="centertext">
                                             <t t-if="tarea[5]"><b>N/A</b> </t>
                                             <span t-esc="tarea[4]"/>
                                         </td>
@@ -253,15 +255,13 @@
                     
                     <table class="fullwidth">
                         <tr><td class="tdcolored centertext">Observaciones / Notas</td></tr>
-                        <tr><td style="height:80px; vertical-align:top;"><span t-esc="observaciones"/></td></tr>
+                        <tr><td style="height:60px; vertical-align:top;"><span t-esc="observaciones"/></td></tr>
                     </table>
                 </div>
 
                 <div class="footer">
-                    <div class="footer-content">
-                        <div style="text-align:right;">
-                            Página <span class="page"/> de <span class="topage"/>
-                        </div>
+                    <div class="footer-text">
+                        Página <span class="page"/> de <span class="topage"/>
                     </div>
                 </div>
             </t>
