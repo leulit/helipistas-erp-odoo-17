@@ -1,100 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <template id="wo_report_css">
             <meta charset="utf-8"/>
             <style>
-                /* RESET TOTAL PARA HEADER Y BODY */
+                /* Reset general para que mande el Formato de Papel */
                 html, body {
                     margin: 0 !important;
                     padding: 0 !important;
                     width: 100% !important;
                     font-family: sans-serif;
-                    font-size: 11px;
+                    font-size: 12px;
                     color: black;
                 }
                 
-                /* SOLUCIÓN ANCHO HEADER: Elimina cualquier margen fantasma */
+                /* Clases de estructura */
                 .header {
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    width: 100% !important;
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                .footer {
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                .page {
+                    width: 100%;
+                    /* Eliminamos height fijo y background image si ya no se usa */
+                    background-color: transparent; 
                 }
 
+                /* Tablas y Bordes */
                 .fullwidth {
-                    width: 100% !important;
+                    width: 100%;
                     border-collapse: collapse;
                 }
                 .noborde {
-                    border: none !important;
+                    border: 0px none !important;
                 }
                 
-                /* CABECERA ESTABLE */
-                .header-table {
-                    width: 100% !important;
-                    background-color: white; 
-                    border-bottom: 2px solid black;
-                    /* Un pequeño margen negativo horizontal a veces ayuda a clavar el ancho */
-                    margin-left: 0px; 
-                    margin-right: 0px;
-                }
-
-                /* SOLUCIÓN SALTO DE PÁGINA (PAGE BREAK) */
-                /* Aplicamos 'avoid' a todo nivel posible para evitar cortes en medio de una fila */
-                table {
-                    page-break-inside: auto; /* La tabla puede cortarse... */
-                }
-                tr { 
-                    page-break-inside: avoid !important; /* ...pero las filas NO */
-                    page-break-after: auto;
-                }
-                td, th {
-                    page-break-inside: avoid !important; /* Las celdas tampoco */
-                }
-                
-                /* Estilos de Celdas */
-                th, td {
-                    border: 1px solid #aaa;
-                    padding: 4px;
+                /* Gestión de Saltos de Página (CRÍTICO) */
+                thead { display: table-header-group; } 
+                tfoot { display: table-row-group; }
+                tr { page-break-inside: avoid !important; }
+                th, td { 
+                    page-break-inside: avoid !important;
+                    border: 1px solid #B0B0B0;
+                    padding: 3px;
                     vertical-align: middle;
                     text-align: left;
-                    line-height: 1.2;
                 }
-                .centertext { text-align:center; }
-                .righttext { text-align:right; }
-                
+
+                /* Estilos Visuales (Tus colores originales) */
                 .tdcolored {
-                    background-color: #e9e9e9;
-                    font-weight: bold;
-                    color: black;
-                    /* Importante para impresión: fuerza la impresión del fondo */
-                    -webkit-print-color-adjust: exact; 
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                    -webkit-print-color-adjust: exact; /* Fuerza impresión de color */
                     print-color-adjust: exact;
                 }
                 .tdcoloredmain {
-                    background-color: black;
-                    color: white;
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
                     font-weight: bold;
                     text-transform: uppercase;
                     -webkit-print-color-adjust: exact;
                     print-color-adjust: exact;
                 }
-                
-                /* Configuración de cabecera de tabla */
-                thead { 
-                    display: table-header-group; /* Repite la cabecera en cada página */
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 3.5687mm !important;
+                    text-transform: uppercase;
                 }
-                tfoot { 
-                    display: table-row-group; 
+                .literal, .fieldvalue {
+                    font-size: 3.5687mm;
                 }
+                .fieldvalue { font-weight: normal; }
+                .centertext { text-align:center; }
+                .heightrow { height: 50px; }
 
-                /* Footer */
+                /* Footer simple */
                 .footer-text {
-                    font-size: 10px;
-                    text-align: right;
-                    border-top: 1px solid black;
-                    padding-top: 4px;
                     width: 100%;
+                    border-top: 1px solid black;
+                    text-align: right;
+                    font-size: 10px;
+                    padding-top: 5px;
                 }
             </style>
         </template>
@@ -105,133 +97,137 @@
 
                 <div class="header">
                     <t t-if="logo_hlp">
-                        <table class="fullwidth header-table">
+                        <table class="fullwidth" style="border-bottom: 2px solid black; background: white;">
                             <tr>
-                                <td class="noborde centertext" style="width:30%; padding-bottom:5px;">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="max-height:45px; width:auto; display:block; margin:0 auto;"/>
-                                    <div style="font-size:10px; margin-top:2px;">ES.CAMO.005</div>
+                                <td class="noborde centertext" style="width:33%;" rowspan="2">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto; max-height:45px;"/><br/>
+                                    <span style="font-size:10px;">ES.CAMO.005</span>    
                                 </td>
-                                <td class="noborde centertext" style="width:40%; padding-bottom:5px;">
-                                    <div style="font-size:18px; font-weight:bold;">WORK ORDER</div>
-                                    <div style="font-size:14px;"><span t-esc="name"/></div>
+                                <td class="noborde centertext" style="width:33%; font-size:20px;">
+                                    <b>WORK ORDER</b>
                                 </td>
-                                <td class="noborde centertext" style="width:30%; font-size:10px; padding-bottom:5px;">
-                                    <div>Formato 6</div>
-                                    <div>Ed.4 Rev: 2</div>
-                                    <div>28/09/2022</div>
+                                <td class="noborde centertext" style="width:33%; font-size:12px;">
+                                    <span>Formato 6</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborde centertext" style="font-size:18px;">
+                                    <span t-esc="name"/>
+                                </td>
+                                <td class="noborde centertext" style="font-size:12px;">
+                                    <span>Ed.4 Rev: 2</span><br/>
+                                    <span>28/09/2022</span>
                                 </td>
                             </tr>
                         </table>
                     </t>
                     <t t-if="logo_ica">
-                        <table class="fullwidth header-table">
+                        <table class="fullwidth" style="border-bottom: 2px solid black; background: white;">
                             <tr>
-                                <td class="noborde centertext" style="width:25%; padding-bottom:5px;" rowspan="2">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="max-height:35px; width:auto; display:block; margin:0 auto;"/>
-                                    <div style="font-size:10px;">ES. 145.173</div>
+                                <td class="noborde centertext" style="width:33%;" rowspan="3">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto; max-height:30px;"/><br/>
+                                    <span style="font-size:10px;">ES. 145.173</span>
                                 </td>
-                                <td class="noborde centertext" style="width:50%; font-size:18px; padding-bottom:5px;">
-                                    <b>WORK ORDER</b> <span t-esc="name"/>
+                                <td class="noborde centertext" style="width:33%; font-size:20px;" rowspan="2">
+                                    <b>WORK ORDER</b>
                                 </td>
-                                <td class="noborde righttext" style="width:25%; font-size:10px; padding-bottom:5px;">
-                                    Ref: M.O.E. 2.13<br/>
-                                    Formato: 2.0<br/>
-                                    Rev. 3-2023
+                                <td class="noborde centertext" style="width:17%; font-size:12px;">Referencia:</td>
+                                <td class="noborde centertext" style="width:16%; font-size:12px;">M.O.E. 2.13</td>
+                            </tr>
+                            <tr>
+                                <td class="noborde centertext" style="font-size:12px;">Formato:</td>
+                                <td class="noborde centertext" style="font-size:12px;">2.0</td>
+                            </tr>
+                            <tr>
+                                <td class="noborde centertext" style="font-size:18px;">
+                                    <span t-esc="name"/>
                                 </td>
+                                <td class="noborde centertext" style="font-size:12px;">Revisión:</td>
+                                <td class="noborde centertext" style="font-size:12px;">Rev. 3-2023</td>
                             </tr>
                         </table>
                     </t>
                 </div>
 
                 <div class="page">
-                    <table class="fullwidth" style="margin-top: 5px;">
+                    <table class="fullwidth">
                         <tr>
-                            <td rowspan="2" colspan="2" style="width:25%">
-                                <b>Firma: </b><span t-esc="name_user"/>
+                            <td rowspan="2" colspan="2" style="width:22%">
+                                <span style="vertical-align: text-top;"><b>Firma: </b><span t-esc="name_user"/></span>
                             </td>
-                            <td class="tdcolored centertext" style="width:15%">Emisión</td>
-                            <td class="tdcolored centertext" style="width:15%">Aceptación</td>
-                            <td rowspan="2" class="noborde" style="width:45%; border:1px solid #aaa !important;">
-                                <table class="fullwidth noborde">
-                                    <tr class="noborde">
-                                        <td class="noborde">
-                                            <b>Firma:</b> ES. 145.173<br/>
-                                            <span t-esc="responsable_mant"/>
-                                        </td>
-                                        <td class="noborde righttext">
-                                            <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="max-height:25px;"/>
-                                        </td>
-                                    </tr>
-                                </table>
+                            <th class="centertext tdcolored literal" style="width:18%">Fecha Emisión</th>
+                            <th class="centertext tdcolored literal" style="width:18%">Fecha Aceptación</th>
+                            <td rowspan="2" style="border-right: none;">
+                                <b>Firma:</b>
+                                <span>ES. 145.173</span><br/>
+                                <span t-esc="responsable_mant"/>
+                            </td>
+                            <td rowspan="2" style="border-left: none; text-align:right;">
+                                <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="width:auto; height:25px;"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="centertext"><span t-esc="fecha_emision"/></td>
-                            <td class="centertext"><span t-esc="fecha_aceptacion"/></td>
+                            <td class="fieldvalue centertext"><span t-esc="fecha_emision"/></td>
+                            <td class="fieldvalue centertext"><span t-esc="fecha_aceptacion"/></td>
                         </tr>
                         <tr>
-                            <td class="tdcolored centertext">Matricula:</td>
-                            <td><b><span t-esc="matricula"/></b></td>
-                            <td colspan="2" class="tdcolored centertext">Propietario:</td>
-                            <td colspan="2"><span t-esc="propietario_operador"/></td>
+                            <td class="centertext tdcolored literal">Matricula:</td>
+                            <td class="fieldvalue"><span t-esc="matricula"/></td>
+                            <td colspan="2" class="centertext tdcolored literal">Propietario/Operador:</td>
+                            <td colspan="2" class="fieldvalue"><span t-esc="propietario_operador"/></td>
                         </tr>
                     </table>
 
-                    <br/>
-
-                    <table class="fullwidth">
+                    <table class="fullwidth" style="margin-top:10px; border-bottom:none;">
                         <tr class="noborde">
-                            <td class="noborde" style="width:10%"></td>
-                            <td class="tdcolored centertext" style="width:20%">Aeronave</td>
-                            <td class="tdcolored centertext" style="width:20%">Motor</td>
-                            <td class="noborde" style="width:5%"></td>
-                            <td rowspan="3" class="centertext" style="border:1px solid #aaa; padding:5px;">
-                                <div style="font-size:10px;">Referencia Programa Mantenimiento:</div>
-                                <div style="font-weight:bold; margin-top:5px;"><span t-esc="plan_mantenimiento"/></div>
+                            <td class="centertext tdcolored literal" style="width:10%;"></td>
+                            <td class="centertext tdcolored literal" style="width:20%;">Aeronave</td>
+                            <td class="centertext tdcolored literal" style="width:20%;">Motor</td>
+                            <td colspan="4" rowspan="3" style="width:50%;" class="noborde">
+                                <div style="margin-left:5%; margin-right:5%; border:1px solid #B0B0B0; text-align:center; padding:10px;">
+                                    <span>Referencia Programa Mantenimiento:</span><br/><br/>
+                                    <b><span t-esc="plan_mantenimiento"/></b>
+                                </div>
                             </td>
                         </tr>
                         <tr>
-                            <td class="tdcolored">Marca:</td>
-                            <td><span t-esc="marca_aeronave"/></td>
-                            <td><span t-esc="marca_motor"/></td>
-                            <td class="noborde"></td>
+                            <td class="tdcolored literal">Marca:</td>
+                            <td class="fieldvalue"><span t-esc="marca_aeronave"/></td>
+                            <td class="fieldvalue"><span t-esc="marca_motor"/></td>
                         </tr>
-                        <tr>
-                            <td class="tdcolored">Modelo:</td>
-                            <td><span t-esc="modelo_aeronave"/></td>
-                            <td><span t-esc="modelo_motor"/></td>
-                            <td class="noborde"></td>
+                        <tr style="border-bottom:none;">
+                            <td class="tdcolored literal">Modelo:</td>
+                            <td class="fieldvalue"><span t-esc="modelo_aeronave"/></td>
+                            <td class="fieldvalue"><span t-esc="modelo_motor"/></td>
                         </tr>
                     </table>
 
-                    <br/>
-
                     <table class="fullwidth">
                         <tr>
-                            <td class="tdcolored" style="width:10%">S/N:</td>
-                            <td style="width:20%"><span t-esc="sn_aeronave"/></td>
-                            <td style="width:20%"><span t-esc="sn_motor"/></td>
-                            <td class="tdcolored centertext" style="width:10%">C. Totales</td>
-                            <td class="tdcolored centertext" style="width:10%">Ciclos NG</td>
-                            <td class="tdcolored centertext" style="width:10%">Ciclos NF</td>
+                            <td class="tdcolored literal" style="width:10%;">S/N:</td>
+                            <td class="fieldvalue" style="width:20%;"><span t-esc="sn_aeronave"/></td>
+                            <td class="fieldvalue" style="width:20%;"><span t-esc="sn_motor"/></td>
+                            <td class="centertext tdcolored literal" style="width:10%;">C. Totales</td>
+                            <td class="centertext tdcolored literal" style="width:10%;">Ciclos NG</td>
+                            <td class="centertext tdcolored literal" style="width:10%;">Ciclos NF</td>
+                            <td style="width:20%;" class="noborde"></td>
+                        </tr>
+                        <tr>
+                            <td class="tdcolored literal">TSN:</td>
+                            <td class="fieldvalue"><span t-esc="tsn_aeronave"/></td>
+                            <td class="fieldvalue"><span t-esc="tsn_motor"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_tsn"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_ng_tsn"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_nf_tsn"/></td>
                             <td class="noborde"></td>
                         </tr>
                         <tr>
-                            <td class="tdcolored">TSN:</td>
-                            <td><span t-esc="tsn_aeronave"/></td>
-                            <td><span t-esc="tsn_motor"/></td>
-                            <td><span t-esc="ciclos_tsn"/></td>
-                            <td><span t-esc="ciclos_ng_tsn"/></td>
-                            <td><span t-esc="ciclos_nf_tsn"/></td>
-                            <td class="noborde"></td>
-                        </tr>
-                        <tr>
-                            <td class="tdcolored">TSO:</td>
-                            <td><span t-esc="tso_aeronave"/></td>
-                            <td><span t-esc="tso_motor"/></td>
-                            <td><span t-esc="ciclos_tso"/></td>
-                            <td><span t-esc="ciclos_ng_tso"/></td>
-                            <td><span t-esc="ciclos_nf_tso"/></td>
+                            <td class="tdcolored literal">TSO:</td>
+                            <td class="fieldvalue"><span t-esc="tso_aeronave"/></td>
+                            <td class="fieldvalue"><span t-esc="tso_motor"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_tso"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_ng_tso"/></td>
+                            <td class="fieldvalue"><span t-esc="ciclos_nf_tso"/></td>
                             <td class="noborde"></td>
                         </tr>
                     </table>
@@ -241,40 +237,40 @@
                     <table class="fullwidth">
                         <thead>
                             <tr>
-                                <td colspan="5" class="tdcoloredmain centertext">TRABAJOS A REALIZAR</td>
+                                <td colspan="5" class="centertext fullwidth tdcoloredmain theadtitle">TRABAJOS A REALIZAR</td>
                             </tr>
                             <tr>
-                                <td colspan="5" class="tdcolored centertext">Revisiones Programadas</td>
+                                <td colspan="5" class="centertext fullwidth tdcolored literal">Revisiones Programadas</td>
                             </tr>
                             <tr>
-                                <td class="centertext" style="width:5%">Ítem</td>
-                                <td style="width:50%">Descripción</td>
-                                <td class="centertext" style="width:20%">Referencia</td>
-                                <td class="centertext" style="width:12%">Realizado</td>
-                                <td class="centertext" style="width:13%">Supervisado</td>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:58%;">Descripción de los trabajos a efectuar</td>
+                                <td class="centertext literal" style="width:13%;">Referencia</td>
+                                <td class="centertext literal" style="width:12%;">Realizado</td>
+                                <td class="centertext literal" style="width:12%;">Supervisado</td>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-set="cont" t-value="1"/>
                             <t t-foreach="trabajos_realizar" t-as="trabajo_tag">
                                 <tr>
-                                    <td class="centertext tdcolored"><b><span t-esc="cont"/></b></td>
-                                    <td colspan="4" style="background-color:#f5f5f5; font-weight:bold;">
+                                    <td class="fieldvalue centertext tdcolored"><b><span t-esc="cont"/></b></td>
+                                    <td class="fieldvalue" colspan="4" style="background-color:#eee;">
                                         <t t-if="trabajo_tag not in ['Others','']">Rev. <span t-esc="trabajo_tag"/>h</t>
                                         <t t-else=""><span t-esc="trabajo_tag"/></t>
                                     </td>
                                 </tr>
                                 <t t-foreach="trabajos_realizar[trabajo_tag]" t-as="tarea">
                                     <tr>
-                                        <td class="centertext"><span t-esc="tarea[0]"/></td>
-                                        <td><span t-esc="tarea[1]"/></td>
-                                        <td class="centertext" style="font-size:10px;"><span t-esc="tarea[2]"/></td>
-                                        <td class="centertext">
-                                            <t t-if="tarea[5]"><b>N/A</b> </t>
+                                        <td class="fieldvalue centertext heightrow"><span t-esc="tarea[0]"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="tarea[1]"/></td>
+                                        <td class="fieldvalue centertext heightrow" style="font-size:10px;"><span t-esc="tarea[2]"/></td>
+                                        <td class="fieldvalue heightrow centertext">
+                                            <t t-if="tarea[5]"><b>N/A</b></t>
                                             <span t-esc="tarea[3]"/>
                                         </td>
-                                        <td class="centertext">
-                                            <t t-if="tarea[5]"><b>N/A</b> </t>
+                                        <td class="fieldvalue heightrow centertext">
+                                            <t t-if="tarea[5]"><b>N/A</b></t>
                                             <span t-esc="tarea[4]"/>
                                         </td>
                                     </tr>
@@ -286,17 +282,128 @@
 
                     <br/>
                     
-                    <table class="fullwidth">
-                        <tr><td class="tdcolored centertext">Observaciones / Notas</td></tr>
-                        <tr><td style="height:60px; vertical-align:top;"><span t-esc="observaciones"/></td></tr>
+                    <table class="fullwidth" t-if="service_bulletins">
+                        <thead>
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="4">Boletines de Servicio y Directivas de Aeronavegabilidad</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:60%;">Descripción</td>
+                                <td class="centertext literal" style="width:20%;">Referencia</td>
+                                <td class="centertext literal" style="width:15%;">Realizado por</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="service_bulletins" t-as="tarea">
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"><span t-esc="tarea['item']"/></td>
+                                    <td class="fieldvalue heightrow"><span t-esc="tarea['name']"/></td>
+                                    <td class="fieldvalue centertext heightrow"><span t-raw="tarea['referencia']"/></td>
+                                    <td class="fieldvalue heightrow"><span t-esc="tarea['asignado']"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
                     </table>
-                </div>
+                    
+                    <br t-if="service_bulletins"/>
+
+                    <table class="fullwidth" t-if="anomalias">
+                        <thead>
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="4">Instrucciones Especiales y o Anomalías reportadas</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext literal" style="width:5%;">Ítem</td>
+                                <td class="literal" style="width:60%;">Descripción</td>
+                                <td class="centertext literal" style="width:20%;">Referencia</td>
+                                <td class="centertext literal" style="width:15%;">Realizado por</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="anomalias" t-as="anomalia">
+                                <tr>
+                                    <td class="fieldvalue centertext heightrow"><span t-esc="anomalia['item']"/></td>
+                                    <td class="fieldvalue heightrow"><span t-esc="anomalia['name']"/></td>
+                                    <td class="fieldvalue centertext heightrow"><span t-raw="anomalia['referencia']"/></td>
+                                    <td class="fieldvalue heightrow"><span t-esc="anomalia['asignado']"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <br t-if="anomalias"/>
+
+                    <table class="fullwidth">
+                        <thead>
+                            <tr>
+                                <td class="centertext fullwidth tdcolored literal" colspan="9">Sustitución de Componentes</td>
+                            </tr>
+                            <tr>
+                                <td class="" style="width:5%;"></td>
+                                <td class="centertext literal" style="width:15%;">P/N</td>
+                                <td class="centertext literal" style="width:15%;">S/N</td>
+                                <td class="centertext literal" style="width:34%;">Descripción</td>
+                                <td class="centertext literal" style="width:8%;">TSN</td>
+                                <td class="centertext literal" style="width:8%;">TSO</td>
+                                <td class="centertext literal" style="width:20%;">Realizado por</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="moves_componentes">
+                                <t t-foreach="moves_componentes" t-as="move_componente">
+                                    <tr>
+                                        <td class="centertext literal">OFF</td>
+                                        <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['off_pn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_sn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_descripcion']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_tsn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_tso']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['off_realizado_por']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="centertext literal">ON</td>
+                                        <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['on_pn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_sn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_descripcion']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_tsn']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_tso']"/></td>
+                                        <td class="fieldvalue centertext"><span t-esc="move_componente['on_realizado_por']"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td class="centertext literal">OFF</td>
+                                    <td class="fieldvalue heightrow"></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                                <tr>
+                                    <td class="centertext literal">ON</td>
+                                    <td class="fieldvalue heightrow"></td><td></td><td></td><td></td><td></td><td></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <br/>
+                    
+                    <table class="fullwidth">
+                        <tr>
+                            <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
+                        </tr>
+                        <tr>
+                            <td class="fieldvalue" style="height: 100px; vertical-align:top;">
+                                <span t-esc="observaciones"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div> 
 
                 <div class="footer">
                     <div class="footer-text">
                         Página <span class="page"/> de <span class="topage"/>
                     </div>
-                </div>
+                </div> 
             </t>
         </template>
     </data>
