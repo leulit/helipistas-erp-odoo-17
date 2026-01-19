@@ -1,499 +1,254 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <template id="wo_report_css">
             <meta charset="utf-8"/>
             <style>
-                html {
+                html, body {
+                    margin: 0 !important;
+                    padding: 0 !important;
                     font-family: sans-serif;
-                    -ms-text-size-adjust: 100%;
-                    -webkit-text-size-adjust: 100%;
-                }
-                body {
                     font-size: 12px;
+                    width: 100% !important;
                 }
                 .fullwidth {
-                    width: 100%;
+                    width: 100% !important;
                     border-collapse: collapse;
                 }
                 .noborde {
                     border: 0px none !important;
                 }
-                .theadtitle {
-                    font-weight: bold;
-                    font-size: 3.5687mm !important;
-                    text-transform: uppercase;
+                /* Tablas de datos */
+                th, td {
+                    border: 1px solid #B0B0B0;
+                    padding: 4px;
+                    vertical-align: middle;
+                    text-align: left;
                 }
-                .literal {
-                    font-size: 3.5687mm;
-                }
-                .fieldvalue {
-                    font-weight: normal;
-                    font-size: 3.5687mm;
-                }
-                /* Ajuste de colores de fondo para celdas */
+                .centertext { text-align:center; }
                 .tdcolored {
                     background-color: rgba(0,0,0,0.40);
                     color: #ffffff;
                 }
                 .tdcoloredmain {
-                    background-color: rgba(0,0,0,1);
-                    color: #ffffff;
+                    background-color: black;
+                    color: white;
                 }
-                .centertext { text-align:center; }
-                .heightrow { height: 50px; }
-                
-                /* Configuración estricta para impresión */
-                thead { display: table-header-group; }
-                tfoot { display: table-header-group; }
+                /* Evitar cortes de página en filas */
                 tr { page-break-inside: avoid; }
-                
-                /* Bordes de tabla definidos para evitar líneas dobles o faltantes */
-                th, tbody td, tfoot td {
-                    border: 1px solid #B0B0B0;
-                    padding: 4px;
-                    text-align: left;
-                    font-size: 3.5687mm; 
-                    font-weight: normal;
-                    vertical-align: middle;
-                }
-                
-                /* CABECERA: Fondo blanco para evitar que se mezcle con el texto si el margen varía */
-                .header { 
-                    margin-bottom: 0px; 
-                    width: 100%; 
-                    background-color: white; 
-                    z-index: 1000;
-                }
-                .footer { width: 100%; }
-                
-                /* Clase para el contenedor principal sin marca de agua */
-                .article {
-                    width: 100%;
-                    background-color: transparent;
-                }
+                thead { display: table-header-group; }
             </style>
         </template>
 
         <template id="leulit_20230905_1226_informe">
             <t t-call="web.html_container">
                 <t t-call="leulit_taller.wo_report_css"/>
-                
+
                 <div class="header">
                     <t t-if="logo_hlp">
-                        <table class="fullwidth" style="margin-bottom: 10px; border-bottom: 2px solid black;">
+                        <table class="fullwidth">
                             <tr>
-                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;" rowspan="2">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/><br/>
-                                    <span>ES.CAMO.005</span>    
+                                <td class="noborde centertext" style="width:33%;">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="height:50px; width:auto;"/>
+                                    <br/><span>ES.CAMO.005</span>
                                 </td>
-                                <td class="noborde" style="font-size:20px; text-align:center; width:33%;">
-                                    <span><b>WORK ORDER</b></span>
+                                <td class="noborde centertext" style="width:34%; font-size:20px;">
+                                    <b>WORK ORDER</b>
                                 </td>
-                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;">
+                                <td class="noborde centertext" style="width:33%;">
                                     <span>Formato 6</span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="noborde" style="font-size:18px; text-align:center">
+                                <td class="noborde centertext" style="font-size:16px;">
                                     <span t-esc="name"/>
                                 </td>
-                                <td class="noborde" style="font-size:12px; text-align:center">
-                                    <span>Ed.4 Rev: 2</span><br/>
-                                    <span>28/09/2022</span>
+                                <td class="noborde"></td>
+                                <td class="noborde centertext">
+                                    <span>Ed.4 Rev: 2</span><br/><span>28/09/2022</span>
                                 </td>
                             </tr>
                         </table>
                     </t>
                     <t t-if="logo_ica">
-                        <table class="fullwidth" style="margin-bottom: 10px; border-bottom: 2px solid black;">
+                        <table class="fullwidth">
                             <tr>
-                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;" rowspan="3">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
-                                    <span>ES. 145.173</span>
+                                <td class="noborde centertext" style="width:30%;" rowspan="3">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="height:35px; width:auto;"/>
+                                    <br/><span>ES. 145.173</span>
                                 </td>
-                                <td class="noborde" style="font-size:20px; text-align:center; width:33%;" rowspan="2">
-                                    <span><b>WORK ORDER</b></span>
+                                <td class="noborde centertext" style="width:40%; font-size:20px;" rowspan="2">
+                                    <b>WORK ORDER</b>
                                 </td>
-                                <td class="noborde" style="font-size:12px; text-align:center; width:17%;">
-                                    <span>Referencia:</span>
-                                </td>
-                                <td class="noborde" style="font-size:12px; text-align:center; width:16%;">
-                                    <span>M.O.E. 2.13</span>
-                                </td>
+                                <td class="noborde" style="width:15%;">Referencia:</td>
+                                <td class="noborde" style="width:15%;">M.O.E. 2.13</td>
                             </tr>
                             <tr>
-                                <td class="noborde" style="font-size:12px; text-align:center">
-                                    <span>Formato:</span>
-                                </td>
-                                <td class="noborde" style="font-size:12px; text-align:center">
-                                    <span>2.0</span>
-                                </td>
+                                <td class="noborde">Formato:</td>
+                                <td class="noborde">2.0</td>
                             </tr>
                             <tr>
-                                <td class="noborde" style="font-size:18px; text-align:center">
+                                <td class="noborde centertext" style="font-size:18px;">
                                     <span t-esc="name"/>
                                 </td>
-                                <td class="noborde" style="font-size:12px; text-align:center">
-                                    <span>Revisión:</span>
-                                </td>
-                                <td class="noborde" style="font-size:12px; text-align:center">
-                                    <span>Rev. 3-2023</span>
-                                </td>
+                                <td class="noborde">Revisión:</td>
+                                <td class="noborde">Rev. 3-2023</td>
                             </tr>
                         </table>
                     </t>
                 </div>
 
                 <div class="page">
-                    <table class="fullwidth">
+                    <table class="fullwidth" style="margin-top: 10px;">
                         <tr>
-                            <td rowspan="2" colspan="2" style="width:22%">
-                                <span style="vertical-align: text-top;"><b>Firma: </b><span t-esc="name_user"/></span>
+                            <td rowspan="2" colspan="2" style="width:25%">
+                                <b>Firma: </b><span t-esc="name_user"/>
                             </td>
-                            <th class="centertext tdcolored literal" style="width:18%">Fecha Emisión</th>
-                            <th class="centertext tdcolored literal" style="width:18%">Fecha Aceptación</th>
-                            <td rowspan="2" style="border-right: none;">
-                                <b>Firma:</b>
-                                <span>ES. 145.173</span><br/>
-                                <span t-esc="responsable_mant"/>
-                            </td>
-                            <td rowspan="2" style="border-left: none;">
-                                <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="width:auto;height:25px;"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="fieldvalue">
-                                <span t-esc="fecha_emision"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="fecha_aceptacion"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="centertext tdcolored literal">Matricula:</td>
-                            <td class="fieldvalue">
-                                <span t-esc="matricula"/>
-                            </td>
-                            <td colspan="2" class="centertext tdcolored literal">Propietario/Operador:</td>
-                            <td colspan="2" class="fieldvalue">
-                                <span t-esc="propietario_operador"/>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <table class="fullwidth" style="margin-top:10px; border-bottom:none;">
-                        <tr class="noborde">
-                            <td class="centertext tdcolored literal" style="width:10%;"></td>
-                            <td class="centertext tdcolored literal" style="width:20%;">Aeronave</td>
-                            <td class="centertext tdcolored literal" style="width:20%;">Motor</td>
-                            <td colspan="4" rowspan="3" style="width:50%;" class="noborde">
-                                <div style="margin-left:20%; border:1px solid #B0B0B0; border-collapse:collapse; text-align:center; padding-top:10px; padding-bottom:10px;">
-                                    <span>Referencia Programa Mantenimiento:</span><br/><br/>
-                                    <span t-esc="plan_mantenimiento"/>
+                            <th class="centertext tdcolored" style="width:20%">Fecha Emisión</th>
+                            <th class="centertext tdcolored" style="width:20%">Fecha Aceptación</th>
+                            <td rowspan="2" class="noborde" style="width:35%; border:1px solid #B0B0B0 !important;">
+                                <div style="display:inline-block; width:70%;">
+                                    <b>Firma:</b> ES. 145.173<br/>
+                                    <span t-esc="responsable_mant"/>
+                                </div>
+                                <div style="display:inline-block; width:25%; vertical-align:top;">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="height:25px; width:auto;"/>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td class="tdcolored literal">Marca:</td>
-                            <td class="fieldvalue">
-                                <span t-esc="marca_aeronave"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="marca_motor"/>
-                            </td>
+                            <td class="centertext"><span t-esc="fecha_emision"/></td>
+                            <td class="centertext"><span t-esc="fecha_aceptacion"/></td>
                         </tr>
-                        <tr style="border-bottom:none;">
-                            <td class="tdcolored literal" style="border-bottom:none;">Modelo:</td>
-                            <td class="fieldvalue" style="border-bottom:none;">
-                                <span t-esc="modelo_aeronave"/>
-                            </td>
-                            <td class="fieldvalue" style="border-bottom:none;">
-                                <span t-esc="modelo_motor"/>
-                            </td>
+                        <tr>
+                            <td class="tdcolored centertext">Matricula:</td>
+                            <td><span t-esc="matricula"/></td>
+                            <td colspan="2" class="tdcolored centertext">Propietario/Operador:</td>
+                            <td colspan="2"><span t-esc="propietario_operador"/></td>
                         </tr>
                     </table>
-                    
+
+                    <br/>
+
                     <table class="fullwidth">
-                        <tr>
-                            <td class="tdcolored literal" style="width:10%;">S/N:</td>
-                            <td class="fieldvalue" style="width:20%;">
-                                <span t-esc="sn_aeronave"/>
+                        <tr class="noborde">
+                            <td class="noborde" style="width:10%"></td>
+                            <td class="tdcolored centertext" style="width:20%">Aeronave</td>
+                            <td class="tdcolored centertext" style="width:20%">Motor</td>
+                            <td class="noborde" style="width:5%"></td>
+                            <td rowspan="3" class="centertext" style="width:45%; border:1px solid #B0B0B0; padding:10px;">
+                                <b>Referencia Programa Mantenimiento:</b><br/><br/>
+                                <span t-esc="plan_mantenimiento"/>
                             </td>
-                            <td class="fieldvalue" style="width:20%;">
-                                <span t-esc="sn_motor"/>
-                            </td>
-                            <td class="centertext tdcolored literal" style="width:10%;">C. Totales</td>
-                            <td class="centertext tdcolored literal" style="width:10%;">Ciclos NG</td>
-                            <td class="centertext tdcolored literal" style="width:10%;">Ciclos NF</td>
-                            <td style="width:20%;" class="noborde"></td>
                         </tr>
                         <tr>
-                            <td class="tdcolored literal">TSN:</td>
-                            <td class="fieldvalue">
-                                <span t-esc="tsn_aeronave"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="tsn_motor"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_tsn"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_ng_tsn"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_nf_tsn"/>
-                            </td>
+                            <td class="tdcolored">Marca:</td>
+                            <td><span t-esc="marca_aeronave"/></td>
+                            <td><span t-esc="marca_motor"/></td>
                             <td class="noborde"></td>
                         </tr>
                         <tr>
-                            <td class="tdcolored literal">TSO:</td>
-                            <td class="fieldvalue">
-                                <span t-esc="tso_aeronave"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="tso_motor"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_tso"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_ng_tso"/>
-                            </td>
-                            <td class="fieldvalue">
-                                <span t-esc="ciclos_nf_tso"/>
-                            </td>
+                            <td class="tdcolored">Modelo:</td>
+                            <td><span t-esc="modelo_aeronave"/></td>
+                            <td><span t-esc="modelo_motor"/></td>
                             <td class="noborde"></td>
                         </tr>
                     </table>
-                    
+
                     <br/>
-                    
+
                     <table class="fullwidth">
                         <tr>
-                            <td colspan="5" class="centertext fullwidth tdcoloredmain theadtitle">TRABAJOS A REALIZAR</td>
+                            <td class="tdcolored" style="width:10%">S/N:</td>
+                            <td style="width:20%"><span t-esc="sn_aeronave"/></td>
+                            <td style="width:20%"><span t-esc="sn_motor"/></td>
+                            <td class="tdcolored centertext" style="width:10%">C. Totales</td>
+                            <td class="tdcolored centertext" style="width:10%">Ciclos NG</td>
+                            <td class="tdcolored centertext" style="width:10%">Ciclos NF</td>
+                            <td class="noborde"></td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="centertext fullwidth tdcolored literal">Revisiones Programadas</td>
+                            <td class="tdcolored">TSN:</td>
+                            <td><span t-esc="tsn_aeronave"/></td>
+                            <td><span t-esc="tsn_motor"/></td>
+                            <td><span t-esc="ciclos_tsn"/></td>
+                            <td><span t-esc="ciclos_ng_tsn"/></td>
+                            <td><span t-esc="ciclos_nf_tsn"/></td>
+                            <td class="noborde"></td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="centertext fullwidth literal">Flight-Hours or month Intervals - Inspections / Checks</td>
+                            <td class="tdcolored">TSO:</td>
+                            <td><span t-esc="tso_aeronave"/></td>
+                            <td><span t-esc="tso_motor"/></td>
+                            <td><span t-esc="ciclos_tso"/></td>
+                            <td><span t-esc="ciclos_ng_tso"/></td>
+                            <td><span t-esc="ciclos_nf_tso"/></td>
+                            <td class="noborde"></td>
                         </tr>
-                        <tr>
-                            <td class="centertext literal" style="width:5%;">Ítem</td>
-                            <td class="literal" style="width:58%;">Descripción de los trabajos a efectuar</td>
-                            <td class="centertext literal" style="width:13%;">Referencia</td>
-                            <td class="centertext literal" style="width:12%;">Realizado por</td>
-                            <td class="centertext literal" style="width:12%;">Supervisado por</td>
-                        </tr>
-                        <t t-set="cont" t-value="1"/>
-                        <t t-foreach="trabajos_realizar" t-as="trabajo_tag">
+                    </table>
+
+                    <br/>
+
+                    <table class="fullwidth">
+                        <thead>
                             <tr>
-                                <td class="fieldvalue centertext"><span t-esc="cont"/></td>
-                                <t t-if="trabajo_tag not in ['Others','']">
-                                    <td class="fieldvalue" colspan="4">Rev. <span t-esc="trabajo_tag"/>h</td>
-                                </t>
-                                <t t-else="">
-                                    <td class="fieldvalue" colspan="4"><span t-esc="trabajo_tag"/></td>
-                                </t>
+                                <td colspan="5" class="tdcoloredmain centertext" style="font-weight:bold;">TRABAJOS A REALIZAR</td>
                             </tr>
-                            <t t-foreach="trabajos_realizar[trabajo_tag]" t-as="tarea">
+                            <tr>
+                                <td colspan="5" class="tdcolored centertext">Revisiones Programadas</td>
+                            </tr>
+                            <tr>
+                                <td class="centertext" style="width:5%">Ítem</td>
+                                <td style="width:55%">Descripción</td>
+                                <td class="centertext" style="width:15%">Referencia</td>
+                                <td class="centertext" style="width:12%">Realizado</td>
+                                <td class="centertext" style="width:13%">Supervisado</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="cont" t-value="1"/>
+                            <t t-foreach="trabajos_realizar" t-as="trabajo_tag">
                                 <tr>
-                                    <td class="fieldvalue centertext heightrow"><span t-esc="tarea[0]"/></td>
-                                    <td class="fieldvalue heightrow"><span t-esc="tarea[1]"/></td>
-                                    <td class="fieldvalue centertext heightrow"><span t-esc="tarea[2]"/></td>
-                                    <td class="fieldvalue heightrow">
-                                        <t t-if="tarea[5]">
-                                            <h3>N/A</h3>
-                                            <span t-esc="tarea[3]"/>
-                                        </t>
-                                        <t t-else="">
-                                            <span t-esc="tarea[3]"/>
-                                        </t>
+                                    <td class="centertext"><b><span t-esc="cont"/></b></td>
+                                    <td colspan="4" style="background-color:#eee;">
+                                        <t t-if="trabajo_tag not in ['Others','']">Rev. <span t-esc="trabajo_tag"/>h</t>
+                                        <t t-else=""><span t-esc="trabajo_tag"/></t>
                                     </td>
-                                    <td class="fieldvalue heightrow">
-                                        <t t-if="tarea[5]">
-                                            <h3>N/A</h3>
+                                </tr>
+                                <t t-foreach="trabajos_realizar[trabajo_tag]" t-as="tarea">
+                                    <tr>
+                                        <td class="centertext"><span t-esc="tarea[0]"/></td>
+                                        <td><span t-esc="tarea[1]"/></td>
+                                        <td class="centertext"><span t-esc="tarea[2]"/></td>
+                                        <td>
+                                            <t t-if="tarea[5]"><b>N/A</b> </t>
+                                            <span t-esc="tarea[3]"/>
+                                        </td>
+                                        <td>
+                                            <t t-if="tarea[5]"><b>N/A</b> </t>
                                             <span t-esc="tarea[4]"/>
-                                        </t>
-                                        <t t-else="">
-                                            <span t-esc="tarea[4]"/>
-                                        </t>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-set="cont" t-value="cont+1"/>
                             </t>
-                            <t t-set="cont" t-value="cont+1"/>
-                        </t>
+                        </tbody>
                     </table>
-                    
-                    <br/><br/><br/>
-                    
-                    <table class="fullwidth">
-                        <tr>
-                            <td class="centertext fullwidth tdcolored literal" colspan="4">Boletines de Servicio y Directivas de Aeronavegabilidad</td>
-                        </tr>
-                        <tr>
-                            <td class="centertext literal" style="width:5%;">Ítem</td>
-                            <td class="literal" style="width:60%;">Descripción de los trabajos a efectuar</td>
-                            <td class="centertext literal" style="width:20%;">Referencia</td>
-                            <td class="centertext literal" style="width:15%;">Realizado por</td>
-                        </tr>
-                        <t t-if="service_bulletins">
-                            <t t-foreach="service_bulletins" t-as="tarea">
-                                <tr>
-                                    <td class="fieldvalue centertext heightrow"><span t-esc="tarea['item']"/></td>
-                                    <td class="fieldvalue heightrow"><span t-esc="tarea['name']"/></td>
-                                    <td class="fieldvalue centertext heightrow"><span t-raw="tarea['referencia']"/></td>
-                                    <td class="fieldvalue heightrow"><span t-esc="tarea['asignado']"/></td>
-                                </tr>
-                            </t>
-                        </t>
-                        <t t-else="">
-                            <tr>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                            </tr>
-                            <tr>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                            </tr>
-                        </t>
-                    </table>
-                    
+
                     <br/>
                     
                     <table class="fullwidth">
-                        <tr>
-                            <td class="centertext fullwidth tdcolored literal" colspan="4">Instrucciones Especiales y o Anomalías reportadas</td>
-                        </tr>
-                        <tr>
-                            <td class="centertext literal" style="width:5%;">Ítem</td>
-                            <td class="literal" style="width:60%;">Descripción de los trabajos a efectuar</td>
-                            <td class="centertext literal" style="width:20%;">Referencia</td>
-                            <td class="centertext literal" style="width:15%;">Realizado por</td>
-                        </tr>
-                        <t t-if="anomalias">
-                            <t t-foreach="anomalias" t-as="anomalia">
-                                <tr>
-                                    <td class="fieldvalue centertext heightrow"><span t-esc="anomalia['item']"/></td>
-                                    <td class="fieldvalue heightrow"><span t-esc="anomalia['name']"/></td>
-                                    <td class="fieldvalue centertext heightrow"><span t-raw="anomalia['referencia']"/></td>
-                                    <td class="fieldvalue heightrow"><span t-esc="anomalia['asignado']"/></td>
-                                </tr>
-                            </t>
-                        </t>
-                        <t t-else="">
-                            <tr>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                            </tr>
-                            <tr>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue centertext heightrow"></td>
-                                <td class="fieldvalue heightrow"></td>
-                            </tr>
-                        </t>
-                    </table>
-                    
-                    <br/>
-                    
-                    <table class="fullwidth">
-                        <tr>
-                            <td class="centertext fullwidth tdcolored literal" colspan="9">Sustitución de Componentes</td>
-                        </tr>
-                        <tr>
-                            <td class="" style="width:5%;"></td>
-                            <td class="centertext literal" style="width:15%;">P/N</td>
-                            <td class="centertext literal" style="width:15%;">S/N</td>
-                            <td class="centertext literal" style="width:34%;">Descripción</td>
-                            <td class="centertext literal" style="width:8%;">TSN</td>
-                            <td class="centertext literal" style="width:8%;">TSO</td>
-                            <td class="centertext literal" style="width:20%;">Realizado por</td>
-                        </tr>
-                        <t t-if="moves_componentes">
-                            <t t-foreach="moves_componentes" t-as="move_componente">
-                                <tr>
-                                    <td class="centertext literal">OFF</td>
-                                    <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['off_pn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['off_sn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['off_descripcion']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['off_tsn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['off_tso']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['off_realizado_por']"/></td>
-                                </tr>
-                                <tr>
-                                    <td class="centertext literal">ON</td>
-                                    <td class="fieldvalue heightrow centertext"><span t-esc="move_componente['on_pn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['on_sn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['on_descripcion']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['on_tsn']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['on_tso']"/></td>
-                                    <td class="fieldvalue centertext"><span t-esc="move_componente['on_realizado_por']"/></td>
-                                </tr>
-                            </t>
-                        </t>
-                        <t t-else="">
-                            <tr>
-                                <td class="centertext literal">OFF</td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                            </tr>
-                            <tr>
-                                <td class="centertext literal">ON</td>
-                                <td class="fieldvalue heightrow"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                                <td class="fieldvalue"></td>
-                            </tr>
-                        </t>
-                    </table>
-                    
-                    <br/>
-                    
-                    <table class="fullwidth">
-                        <tr>
-                            <td class="centertext fullwidth tdcolored literal">Observaciones / Notas</td>
-                        </tr>
-                        <tr>
-                            <td class="fieldvalue" style="height: 100px;">
-                                <span t-esc="observaciones"/>
-                            </td>
-                        </tr>
+                        <tr><td class="tdcolored centertext">Observaciones / Notas</td></tr>
+                        <tr><td style="height:80px; vertical-align:top;"><span t-esc="observaciones"/></td></tr>
                     </table>
                 </div>
 
                 <div class="footer">
-                    <div class="row text-center" style="border-top: 1px solid black;">
-                        <div class="col col-3 offset-9 text-right">
-                            <ul class="list-inline mt-2">
-                                <li class="list-inline-item" style="font-size:10px;">Página:</li>
-                                <li class="list-inline-item">
-                                    <span style="font-size:10px;">A-</span><span class="page" style="font-size:10px;"/>
-                                </li>
-                                <li class="list-inline-item" style="font-size:10px;">de</li>
-                                <li class="list-inline-item">
-                                    <span style="font-size:10px;">A-</span><span class="topage" style="font-size:10px;"/>
-                                </li>
-                            </ul>
-                        </div>
+                    <div style="text-align:right;">
+                        Página <span class="page"/> de <span class="topage"/>
                     </div>
-                </div> 
+                </div>
             </t>
         </template>
-
     </data>
 </odoo>
