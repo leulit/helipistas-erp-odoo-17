@@ -52,7 +52,7 @@ class LeulitJobCard(models.Model):
         try:
             env = api.Environment(new_cr, self.env.uid, self.env.context)
             # Obtener todos los registros de leulit.job_card
-            for job_card in env['leulit.job_card'].search([]):
+            for job_card in env['leulit.job_card'].search([('maintenance_plan_id','=',33)]):
                 # Si el job_card tiene un activity_planned_id relacionado
                 if job_card.activity_planned_id:
                     # Actualizar el campo job_card_id en maintenance.planned.activity
