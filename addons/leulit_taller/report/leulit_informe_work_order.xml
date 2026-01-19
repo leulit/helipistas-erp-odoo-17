@@ -18,6 +18,17 @@
                 .noborde {
                     border: 0px none !important;
                 }
+                /* Forzamos alineación de cabecera y pie */
+                .header-content {
+                    width: 100% !important;
+                    border-bottom: 2px solid black;
+                    margin-bottom: 0px;
+                }
+                .footer-content {
+                    width: 100% !important;
+                    border-top: 1px solid black;
+                    padding-top: 5px;
+                }
                 /* Tablas de datos */
                 th, td {
                     border: 1px solid #B0B0B0;
@@ -35,7 +46,8 @@
                     color: white;
                 }
                 /* Evitar cortes de página en filas */
-                tr { page-break-inside: avoid; }
+                tr { page-break-inside: avoid; 
+                width: 100%;}
                 thead { display: table-header-group; }
             </style>
         </template>
@@ -45,57 +57,59 @@
                 <t t-call="leulit_taller.wo_report_css"/>
 
                 <div class="header">
-                    <t t-if="logo_hlp">
-                        <table class="fullwidth">
-                            <tr>
-                                <td class="noborde centertext" style="width:33%;">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="height:50px; width:auto;"/>
-                                    <br/><span>ES.CAMO.005</span>
-                                </td>
-                                <td class="noborde centertext" style="width:34%; font-size:20px;">
-                                    <b>WORK ORDER</b>
-                                </td>
-                                <td class="noborde centertext" style="width:33%;">
-                                    <span>Formato 6</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="noborde centertext" style="font-size:16px;">
-                                    <span t-esc="name"/>
-                                </td>
-                                <td class="noborde"></td>
-                                <td class="noborde centertext">
-                                    <span>Ed.4 Rev: 2</span><br/><span>28/09/2022</span>
-                                </td>
-                            </tr>
-                        </table>
-                    </t>
-                    <t t-if="logo_ica">
-                        <table class="fullwidth">
-                            <tr>
-                                <td class="noborde centertext" style="width:30%;" rowspan="3">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="height:35px; width:auto;"/>
-                                    <br/><span>ES. 145.173</span>
-                                </td>
-                                <td class="noborde centertext" style="width:40%; font-size:20px;" rowspan="2">
-                                    <b>WORK ORDER</b>
-                                </td>
-                                <td class="noborde" style="width:15%;">Referencia:</td>
-                                <td class="noborde" style="width:15%;">M.O.E. 2.13</td>
-                            </tr>
-                            <tr>
-                                <td class="noborde">Formato:</td>
-                                <td class="noborde">2.0</td>
-                            </tr>
-                            <tr>
-                                <td class="noborde centertext" style="font-size:18px;">
-                                    <span t-esc="name"/>
-                                </td>
-                                <td class="noborde">Revisión:</td>
-                                <td class="noborde">Rev. 3-2023</td>
-                            </tr>
-                        </table>
-                    </t>
+                    <div class="header-content">
+                        <t t-if="logo_hlp">
+                            <table class="fullwidth">
+                                <tr>
+                                    <td class="noborde centertext" style="width:33%;">
+                                        <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="height:50px; width:auto;"/>
+                                        <br/><span>ES.CAMO.005</span>
+                                    </td>
+                                    <td class="noborde centertext" style="width:34%; font-size:20px;">
+                                        <b>WORK ORDER</b>
+                                    </td>
+                                    <td class="noborde centertext" style="width:33%;">
+                                        <span>Formato 6</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="noborde centertext" style="font-size:16px;">
+                                        <span t-esc="name"/>
+                                    </td>
+                                    <td class="noborde"></td>
+                                    <td class="noborde centertext">
+                                        <span>Ed.4 Rev: 2</span><br/><span>28/09/2022</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+                        <t t-if="logo_ica">
+                            <table class="fullwidth">
+                                <tr>
+                                    <td class="noborde centertext" style="width:30%;" rowspan="3">
+                                        <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="height:35px; width:auto;"/>
+                                        <br/><span>ES. 145.173</span>
+                                    </td>
+                                    <td class="noborde centertext" style="width:40%; font-size:20px;" rowspan="2">
+                                        <b>WORK ORDER</b>
+                                    </td>
+                                    <td class="noborde" style="width:15%;">Referencia:</td>
+                                    <td class="noborde" style="width:15%;">M.O.E. 2.13</td>
+                                </tr>
+                                <tr>
+                                    <td class="noborde">Formato:</td>
+                                    <td class="noborde">2.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="noborde centertext" style="font-size:18px;">
+                                        <span t-esc="name"/>
+                                    </td>
+                                    <td class="noborde">Revisión:</td>
+                                    <td class="noborde">Rev. 3-2023</td>
+                                </tr>
+                            </table>
+                        </t>
+                    </div>
                 </div>
 
                 <div class="page">
@@ -244,8 +258,10 @@
                 </div>
 
                 <div class="footer">
-                    <div style="text-align:right;">
-                        Página <span class="page"/> de <span class="topage"/>
+                    <div class="footer-content">
+                        <div style="text-align:right;">
+                            Página <span class="page"/> de <span class="topage"/>
+                        </div>
                     </div>
                 </div>
             </t>
