@@ -645,7 +645,7 @@ class MaintenanceRequest(models.Model):
                 'code' : task.code,
                 'name' : task.solucion_defecto,
                 'descripcion' : task.name,
-                'asignado' : task.user_id.name,
+                'asignado' : task.user_ids.name,
                 'fecha' : task.date_start,
                 'doble_check_tecnico' : task.supervisado_por.name,
             }
