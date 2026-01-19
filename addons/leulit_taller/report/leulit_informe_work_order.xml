@@ -1,85 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
-<odoo>
-    <data>
-
-        <template id="wo_report_header_icarus">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.wo_report_css"/>
-                <table class="fullwidth" style="margin-bottom: 30px">
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
-                            <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
-                            <span>ES. 145.173</span>
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span><b>WORK ORDER</b></span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
-                            <span>Referencia:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
-                            <span>M.O.E. 2.13</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Formato:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>2.0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:18px; white-space: nowrap; text-align:center">
-                            <span t-esc="name"/>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Revisión:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Rev. 3-2023</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-
-        <template id="wo_report_header_hlp">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.wo_report_css"/>
-                <table class="fullwidth" style="margin-bottom: 30px">
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/><br/>
-                            <span>ES.CAMO.005</span>    
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;">
-                            <span><b>WORK ORDER</b></span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;">
-                            <span>Formato 6</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:18px; white-space: nowrap; text-align:center">
-                            <span t-esc="name"/>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Ed.4 Rev: 2</span><br/>
-                            <span>28/09/2022</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>   
-
-        <template id="wo_report_css">
+<template id="wo_report_css">
             <meta charset="utf-8"/>
             <style>
                 html {
-                    font-family: sans-serif; /* 1 */
-                    -ms-text-size-adjust: 100%; /* 2 */
-                    -webkit-text-size-adjust: 100%; /* 2 */
+                    font-family: sans-serif;
+                    -ms-text-size-adjust: 100%;
+                    -webkit-text-size-adjust: 100%;
                 }
                 .fullwidth {
                     width: 100%;
@@ -100,25 +25,6 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
-                .numericfieldvalue {
-                    font-weight: normal;
-                    font-size: 3.5687mm;
-                }
-                .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
-                    width: 230mm;
-                    height: 320mm;
-                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
-                    page-break-after: always;
-                }
-                .pagecontent {
-                    width: 230mm;
-                    height: 320mm;
-                }
                 .tdcolored {
                     background-color: rgba(0,0,0,0.40);
                     color: #ffffff;
@@ -129,39 +35,95 @@
                 }
                 .centertext {text-align:center;}
                 .heightrow {height: 50px;}
-                .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
                 tfoot { display: table-header-group }
                 tr { page-break-inside: avoid }
                 th, tbody td, tfoot td {
                     border: 1px solid #B0B0B0;
-                    padding-right:3px;
-                    padding-left:3px;
-                    padding-top:3px;
-                    padding-bottom:3px;
+                    padding: 3px;
                     text-align:left;
                     font-size:12px;
                     font-weight:normal;
+                    vertical-align: middle;
                 }
-                td{
-                    vertical-align: middle
-                }
+                /* Asegurar que header y footer se comporten bien */
+                .header { margin-bottom: 0px; width: 100%; }
+                .footer { width: 100%; }
             </style>
         </template>
 
         <template id="leulit_20230905_1226_informe">
             <t t-call="web.html_container">
-                <t t-set="data_report_header_spacing" t-value="25"/>
-                <t t-set="data_report_margin_top" t-value="30"/>
-                <div class="page">
-                    <t t-call="leulit_taller.wo_report_css"/>
+                <t t-call="leulit_taller.wo_report_css"/>
+                
+                <div class="header">
                     <t t-if="logo_hlp">
-                        <t t-call="leulit_taller.wo_report_header_hlp" />
+                        <table class="fullwidth" style="margin-bottom: 10px; border-bottom: 2px solid black;">
+                            <tr>
+                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;" rowspan="2">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/><br/>
+                                    <span>ES.CAMO.005</span>    
+                                </td>
+                                <td class="noborde" style="font-size:20px; text-align:center; width:33%;">
+                                    <span><b>WORK ORDER</b></span>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;">
+                                    <span>Formato 6</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborde" style="font-size:18px; text-align:center">
+                                    <span t-esc="name"/>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center">
+                                    <span>Ed.4 Rev: 2</span><br/>
+                                    <span>28/09/2022</span>
+                                </td>
+                            </tr>
+                        </table>
                     </t>
                     <t t-if="logo_ica">
-                        <t t-call="leulit_taller.wo_report_header_icarus" />
+                        <table class="fullwidth" style="margin-bottom: 10px; border-bottom: 2px solid black;">
+                            <tr>
+                                <td class="noborde" style="font-size:12px; text-align:center; width:33%;" rowspan="3">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
+                                    <span>ES. 145.173</span>
+                                </td>
+                                <td class="noborde" style="font-size:20px; text-align:center; width:33%;" rowspan="2">
+                                    <span><b>WORK ORDER</b></span>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center; width:17%;">
+                                    <span>Referencia:</span>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center; width:16%;">
+                                    <span>M.O.E. 2.13</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborde" style="font-size:12px; text-align:center">
+                                    <span>Formato:</span>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center">
+                                    <span>2.0</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="noborde" style="font-size:18px; text-align:center">
+                                    <span t-esc="name"/>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center">
+                                    <span>Revisión:</span>
+                                </td>
+                                <td class="noborde" style="font-size:12px; text-align:center">
+                                    <span>Rev. 3-2023</span>
+                                </td>
+                            </tr>
+                        </table>
                     </t>
-                    <div class="row">
+                </div>
+
+                <div class="article">
+                    <div class="page"> <div class="row">
                         <table class="fullwidth">
                             <tr>
                                 <td rowspan="2" colspan="2" style="width:22%">
@@ -197,6 +159,7 @@
                                 </td>
                             </tr>
                         </table>
+                        
                         <table class="fullwidth" style="margin-top:10px; border-bottom:none;">
                             <tr class="noborde">
                                 <td class="centertext tdcolored literal" style="width:10%;"></td>
@@ -228,6 +191,7 @@
                                 </td>
                             </tr>
                         </table>
+                        
                         <table class="fullwidth">
                             <tr>
                                 <td class="tdcolored literal" style="width:10%;">S/N:</td>
@@ -478,26 +442,25 @@
                                 </td>
                             </tr>
                         </table>
-                    </div> 
-                    <div class="footer">
-                        <div class="row text-center" style="border-top: 1px solid black;">
-                            <div class="col col-3 offset-9 text-right">
-                                <ul class="list-inline mt-2">
-                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">A-</span><span class="page" style="font-size:10px;"/>
-                                    </li>
-                                    <li class="list-inline-item" style="font-size:10px;">de</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">A-</span><span class="topage" style="font-size:10px;"/>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    </div>
                     </div> 
                 </div>
+
+                <div class="footer">
+                    <div class="row text-center" style="border-top: 1px solid black;">
+                        <div class="col col-3 offset-9 text-right">
+                            <ul class="list-inline mt-2">
+                                <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                <li class="list-inline-item">
+                                    <span style="font-size:10px;">A-</span><span class="page" style="font-size:10px;"/>
+                                </li>
+                                <li class="list-inline-item" style="font-size:10px;">de</li>
+                                <li class="list-inline-item">
+                                    <span style="font-size:10px;">A-</span><span class="topage" style="font-size:10px;"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> 
             </t>
         </template>
-
-    </data>
-</odoo>
