@@ -10,7 +10,7 @@
                     <field name="question_id"/>
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="name" invisible="1"/>
+                    <field name="name" column_invisible="1"/>
                 </xpath>
             </field>
         </record>
