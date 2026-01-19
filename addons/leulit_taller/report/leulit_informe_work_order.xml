@@ -86,7 +86,6 @@
                     border-top: 1px solid black;
                     text-align: right;
                     font-size: 10px;
-                    padding-top: 5px;
                 }
             </style>
         </template>
@@ -96,25 +95,26 @@
                 <t t-call="leulit_taller.wo_report_css"/>
 
                 <div class="header">
+                    <t t-call="leulit_taller.wo_report_css"/>
                     <t t-if="logo_hlp">
-                        <table class="fullwidth" style="border-bottom: 2px solid black; background: white;">
+                        <table class="fullwidth">
                             <tr>
-                                <td class="noborde centertext" style="width:33%;" rowspan="2">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto; max-height:45px;"/><br/>
-                                    <span style="font-size:10px;">ES.CAMO.005</span>    
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                    <img t-att-src="'data:image/png;base64,%s' % to_text(logo_hlp)" style="width:auto;height:50px;"/><br/>
+                                    <span>ES.CAMO.005</span>    
                                 </td>
-                                <td class="noborde centertext" style="width:33%; font-size:20px;">
-                                    <b>WORK ORDER</b>
+                                <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;">
+                                    <span><b>WORK ORDER</b></span>
                                 </td>
-                                <td class="noborde centertext" style="width:33%; font-size:12px;">
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;">
                                     <span>Formato 6</span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="noborde centertext" style="font-size:18px;">
+                                <td  style="font-size:18px; white-space: nowrap; text-align:center">
                                     <span t-esc="name"/>
                                 </td>
-                                <td class="noborde centertext" style="font-size:12px;">
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center">
                                     <span>Ed.4 Rev: 2</span><br/>
                                     <span>28/09/2022</span>
                                 </td>
@@ -124,26 +124,38 @@
                     <t t-if="logo_ica">
                         <table class="fullwidth" style="border-bottom: 2px solid black; background: white;">
                             <tr>
-                                <td class="noborde centertext" style="width:33%;" rowspan="3">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto; max-height:30px;"/><br/>
-                                    <span style="font-size:10px;">ES. 145.173</span>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
+                                    <img t-att-src="'data:image/png;base64,%s' % to_text(logo_ica)" style="width:auto;height:30px;"/><br/>
+                                    <span>ES. 145.173</span>
                                 </td>
-                                <td class="noborde centertext" style="width:33%; font-size:20px;" rowspan="2">
-                                    <b>WORK ORDER</b>
+                                <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                    <span><b>WORK ORDER</b></span>
                                 </td>
-                                <td class="noborde centertext" style="width:17%; font-size:12px;">Referencia:</td>
-                                <td class="noborde centertext" style="width:16%; font-size:12px;">M.O.E. 2.13</td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                    <span>Referencia:</span>
+                                </td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                    <span>M.O.E. 2.13</span>
+                                </td>
                             </tr>
                             <tr>
-                                <td class="noborde centertext" style="font-size:12px;">Formato:</td>
-                                <td class="noborde centertext" style="font-size:12px;">2.0</td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                    <span>Formato:</span>
+                                </td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                    <span>2.0</span>
+                                </td>
                             </tr>
                             <tr>
-                                <td class="noborde centertext" style="font-size:18px;">
+                                <td  style="font-size:18px; white-space: nowrap; text-align:center">
                                     <span t-esc="name"/>
                                 </td>
-                                <td class="noborde centertext" style="font-size:12px;">Revisión:</td>
-                                <td class="noborde centertext" style="font-size:12px;">Rev. 3-2023</td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                    <span>Revisión:</span>
+                                </td>
+                                <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                    <span>Rev. 3-2023</span>
+                                </td>
                             </tr>
                         </table>
                     </t>
