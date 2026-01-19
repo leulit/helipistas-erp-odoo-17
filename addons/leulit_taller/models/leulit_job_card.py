@@ -1,6 +1,8 @@
 from odoo import fields, models, api
 from datetime import datetime, date, timedelta, time
+from odoo.sql_db import db_connect
 import logging
+import threading
 
 _logger = logging.getLogger(__name__)
 
@@ -36,6 +38,35 @@ class LeulitJobCard(models.Model):
     parent_section_id = fields.Many2one(comodel_name="leulit.job_card", string="Job Card")
     sections_ids = fields.One2many(comodel_name="leulit.job_card", inverse_name="parent_section_id", string="Secciones")
 
+    def upd_job_card_planned_activities(self):
+        """Lanza un thread para actualizar job_card_id en maintenance.planned.activity"""
+        _logger.error("upd_job_card_planned_activities iniciando")
+        threaded_calculation = threading.Thread(target=self.run_upd_job_card_planned_activities, args=([]))
+        _logger.error("############################################# upd_job_card_planned_activities start thread")
+        threaded_calculation.start()
+        return {}
+
+    def run_upd_job_card_planned_activities(self):
+        """Actualiza el campo job_card_id en todos los registros de maintenance.planned.activity"""
+        new_cr = db_connect(self.env.cr.dbname).cursor()
+        try:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            # Obtener todos los registros de leulit.job_card
+            for job_card in env['leulit.job_card'].search([]):
+                # Si el job_card tiene un activity_planned_id relacionado
+                if job_card.activity_planned_id:
+                    # Actualizar el campo job_card_id en maintenance.planned.activity
+                    job_card.activity_planned_id.write({
+                        'job_card_id': job_card.id
+                    })
+            new_cr.commit()
+        except Exception as e:
+            _logger.error("Error en upd_job_card_planned_activities: %s", str(e))
+            new_cr.rollback()
+        finally:
+            new_cr.close()
+        _logger.error("############################################# upd_job_card_planned_activities fin")
+
     # def copy(self, default=None):
     #     default = dict(default or {})
     #     default['maintenance_plan_id'] = False
@@ -50,3 +81,5 @@ class LeulitJobCard(models.Model):
     #     for section in self.sections_ids:
     #         section.copy(default={'parent_section_id': new_job_card.id})
     #     return new_job_card
+
+
