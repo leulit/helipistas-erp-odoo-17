@@ -4,13 +4,23 @@
         <template id="wo_report_css">
             <meta charset="utf-8"/>
             <style>
+                /* RESET TOTAL PARA HEADER Y BODY */
                 html, body {
                     margin: 0 !important;
                     padding: 0 !important;
+                    width: 100% !important;
                     font-family: sans-serif;
                     font-size: 11px;
                     color: black;
                 }
+                
+                /* SOLUCIÓN ANCHO HEADER: Elimina cualquier margen fantasma */
+                .header {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: 100% !important;
+                }
+
                 .fullwidth {
                     width: 100% !important;
                     border-collapse: collapse;
@@ -18,13 +28,31 @@
                 .noborde {
                     border: none !important;
                 }
-                /* Estilos directos para la tabla de cabecera */
+                
+                /* CABECERA ESTABLE */
                 .header-table {
-                    width: 100%;
-                    background-color: white; /* Fondo blanco para limpieza */
+                    width: 100% !important;
+                    background-color: white; 
                     border-bottom: 2px solid black;
+                    /* Un pequeño margen negativo horizontal a veces ayuda a clavar el ancho */
+                    margin-left: 0px; 
+                    margin-right: 0px;
                 }
-                /* Tablas de datos */
+
+                /* SOLUCIÓN SALTO DE PÁGINA (PAGE BREAK) */
+                /* Aplicamos 'avoid' a todo nivel posible para evitar cortes en medio de una fila */
+                table {
+                    page-break-inside: auto; /* La tabla puede cortarse... */
+                }
+                tr { 
+                    page-break-inside: avoid !important; /* ...pero las filas NO */
+                    page-break-after: auto;
+                }
+                td, th {
+                    page-break-inside: avoid !important; /* Las celdas tampoco */
+                }
+                
+                /* Estilos de Celdas */
                 th, td {
                     border: 1px solid #aaa;
                     padding: 4px;
@@ -36,20 +64,31 @@
                 .righttext { text-align:right; }
                 
                 .tdcolored {
-                    background-color: #e9e9e9; /* Gris suave */
+                    background-color: #e9e9e9;
                     font-weight: bold;
                     color: black;
+                    /* Importante para impresión: fuerza la impresión del fondo */
+                    -webkit-print-color-adjust: exact; 
+                    print-color-adjust: exact;
                 }
                 .tdcoloredmain {
                     background-color: black;
                     color: white;
                     font-weight: bold;
                     text-transform: uppercase;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
                 }
                 
-                tr { page-break-inside: avoid; }
-                thead { display: table-header-group; }
-                
+                /* Configuración de cabecera de tabla */
+                thead { 
+                    display: table-header-group; /* Repite la cabecera en cada página */
+                }
+                tfoot { 
+                    display: table-row-group; 
+                }
+
+                /* Footer */
                 .footer-text {
                     font-size: 10px;
                     text-align: right;
@@ -69,7 +108,7 @@
                         <table class="fullwidth header-table">
                             <tr>
                                 <td class="noborde centertext" style="width:30%; padding-bottom:5px;">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="max-height:45px; width:auto;"/>
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="max-height:45px; width:auto; display:block; margin:0 auto;"/>
                                     <div style="font-size:10px; margin-top:2px;">ES.CAMO.005</div>
                                 </td>
                                 <td class="noborde centertext" style="width:40%; padding-bottom:5px;">
@@ -88,7 +127,7 @@
                         <table class="fullwidth header-table">
                             <tr>
                                 <td class="noborde centertext" style="width:25%; padding-bottom:5px;" rowspan="2">
-                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="max-height:35px; width:auto;"/>
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="max-height:35px; width:auto; display:block; margin:0 auto;"/>
                                     <div style="font-size:10px;">ES. 145.173</div>
                                 </td>
                                 <td class="noborde centertext" style="width:50%; font-size:18px; padding-bottom:5px;">
