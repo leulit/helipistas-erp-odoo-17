@@ -41,7 +41,6 @@
             <field name="dpi">90</field>
         </record>
 
-
         <record id="paperformat_A4_portrait_without_cabecera" model="report.paperformat">
             <field name="name">A4 Portrait certificados</field>
             <field name="format">A4</field>
@@ -68,7 +67,6 @@
             <field name="dpi">90</field>
         </record>
 
-
         <record id="paperformat_B8_landscape" model="report.paperformat">
             <field name="name">B8 Landscape</field>
             <field name="format">B8</field>
@@ -82,7 +80,6 @@
             <field name="dpi">90</field>
         </record>
 
-
         <record id="paperformat_A4_landscape_form_one" model="report.paperformat">
             <field name="name">A4 Landscape certificados form one</field>
             <field name="format">A4</field>
@@ -95,7 +92,6 @@
             <field name="header_spacing">0</field>
             <field name="dpi">90</field>
         </record>
-
     
     </data>
 </odoo>
