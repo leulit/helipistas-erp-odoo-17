@@ -178,7 +178,7 @@
                                 <span t-esc="responsable_mant"/>
                             </td>
                             <td rowspan="2" style="border-left: none;">
-                                <img t-att-src="'data:image/png;base64,%s' % to_text(logo_p145)" style="width:auto;height:25px;"/>
+                                <img t-att-src="'data:image/png;base64,%s' % logo_p145" style="width:auto;height:25px;"/>
                             </td>
                         </tr>
                         <tr>
