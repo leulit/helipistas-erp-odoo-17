@@ -3,36 +3,6 @@
     <data>
 
 
-        <template id="inspeccion_seguridad_report_header">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.inspeccion_seguridad_report_css"/>
-                <table class="fullwidth">
-                    <tr>
-                        <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span><b>Inspección de Seguridad</b></span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
-                            <span>Nº Exp de Mant:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
-                            <span t-esc="n_exp"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Nº de OT:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span t-esc="n_orden_trabajo"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-
         <template id="inspeccion_seguridad_report_css">
             <meta charset="utf-8"/>
             <style>
@@ -88,8 +58,7 @@
                     color: #ffffff;
                 }
                 .centertext {text-align:center;}
-                .thheightrow {height: 70px;}
-                .heightrow {height: 120px;}
+                .heightrow {height: 50px;}
                 .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
                 tfoot { display: table-header-group }
@@ -112,12 +81,36 @@
 
         <template id="leulit_20230926_1323_informe">
             <t t-call="web.html_container">
-                <t t-set="data_report_header_spacing" t-value="20"/>
-                <t t-set="data_report_margin_top" t-value="30"/>
-                <div class="page">
+                <div style="width:100%;" class="header">
                     <t t-call="leulit_taller.inspeccion_seguridad_report_css"/>
-                    <t t-call="leulit_taller.inspeccion_seguridad_report_header" />
-                    <div class="row">
+                    <table class="fullwidth">
+                        <tr>
+                            <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                            </td>
+                            <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                <span><b>Inspección de Seguridad</b></span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                <span>Nº Exp de Mant:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                <span t-esc="n_exp"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>Nº de OT:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span t-esc="n_orden_trabajo"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="article">
+                    <div class="page">
+                        <t t-call="leulit_taller.inspeccion_seguridad_report_css"/>
                         <t t-if="tareas_is">
                             <t t-foreach="tareas_is" t-as="tarea">
                                 <table class="fullwidth" style="width: 100%;">
@@ -207,24 +200,24 @@
                                 <br/>
                             </t>
                         </t>
-                    </div> 
-                    <div class="footer">
-                        <div class="row text-center" style="border-top: 1px solid black;">
-                            <div class="col col-3 offset-9 text-right">
-                                <ul class="list-inline mt-2">
-                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">F-</span><span class="page" style="font-size:10px;"/>
-                                    </li>
-                                    <li class="list-inline-item" style="font-size:10px;">de</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">F-</span><span class="topage" style="font-size:10px;"/>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> 
+                    </div>
                 </div>
+                <div class="footer">
+                    <div class="row text-center" style="border-top: 1px solid black;">
+                        <div class="col col-3 offset-9 text-right">
+                            <ul class="list-inline mt-2">
+                                <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                <li class="list-inline-item">
+                                    <span style="font-size:10px;">F-</span><span class="page" style="font-size:10px;"/>
+                                </li>
+                                <li class="list-inline-item" style="font-size:10px;">de</li>
+                                <li class="list-inline-item">
+                                    <span style="font-size:10px;">F-</span><span class="topage" style="font-size:10px;"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> 
             </t>
         </template>
 
