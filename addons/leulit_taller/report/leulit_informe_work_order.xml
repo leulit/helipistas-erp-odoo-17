@@ -295,7 +295,7 @@
                                         <td class="fieldvalue centertext heightrow"><span t-esc="tarea[2]"/></td>
                                         <td class="fieldvalue heightrow">
                                             <t t-if="tarea[5]">
-                                                <h3>N/A</h3>
+                                                <h5>N/A</h5>
                                                 <span t-esc="tarea[3]"/>
                                             </t>
                                             <t t-else="">
@@ -304,7 +304,7 @@
                                         </td>
                                         <td class="fieldvalue heightrow">
                                             <t t-if="tarea[5]">
-                                                <h3>N/A</h3>
+                                                <h5>N/A</h5>
                                                 <span t-esc="tarea[4]"/>
                                             </t>
                                             <t t-else="">
