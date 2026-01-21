@@ -308,7 +308,7 @@ class leulit_perfil_formacion_curso(models.Model):
     perfil_formacion = fields.Many2one('leulit.perfil_formacion', 'Perfil formación', ondelete="cascade")
     piloto = fields.Many2one(related='perfil_formacion.piloto',comodel_name='leulit.piloto',string='Piloto',store=True)
     alumno = fields.Many2one(compute=_get_alumno_from_pf,comodel_name="leulit.alumno",string="Alumno",search=_search_alumno_from_pf,store=True)
-    inactivo = fields.Boolean(related='perfil_formacion.inactivo',string='Perfil inactivo', store=True)
+    inactivo = fields.Boolean(related='perfil_formacion.inactivo',string='Perfil inactivo', store=False)
     is_template = fields.Boolean(related='perfil_formacion.is_template',string='Es plantilla')
     pf_curso_tmpl = fields.Many2one('leulit.perfil_formacion_curso', 'Perfil formación curso')
     last_done_history = fields.One2many('leulit.perfil_formacion_curso_last_done', 'pf_curso', 'Historial last done')
