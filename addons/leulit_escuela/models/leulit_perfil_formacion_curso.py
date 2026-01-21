@@ -317,7 +317,7 @@ class leulit_perfil_formacion_curso(models.Model):
     next_done_date = fields.Date(compute=_get_next_done_date,string='Next done date',store=False)
     remainder_dy = fields.Integer(compute=_get_remainder_dy,string='Remain. (DY)',search=_search_remainder_dy,store=False )
     semaforo_dy = fields.Char(compute=_get_semaforo_dy,string='Semáforo', search=_search_semaforo_dy, store=False)
-    finalizado = fields.Boolean('Finalizado')
+    finalizado = fields.Boolean('Finalizado',default=False)
     curso = fields.Many2one(comodel_name='leulit.curso', string='Curso',domain=[('estado','=','activo')])
     estado = fields.Selection(related="curso.estado", selection=[('activo','Activo'),('inactivo','Inactivo')], string="Estado curso")
     last_parte = fields.Char(compute=_last_parte,string='Last parte',store=False)
