@@ -37,11 +37,13 @@ class leulit_report_pf_curso(models.Model):
             CREATE or REPLACE VIEW {} as (
                 SELECT
                     row_number() OVER () AS id,
-                    max(id) as pf_curso,
-                    alumno,
+                    max(leulit_perfil_formacion_curso.id) as pf_curso,
+                    leulit_perfil_formacion_curso.alumno,
 					curso
                 FROM leulit_perfil_formacion_curso
-                WHERE inactivo = 'f' and finalizado = 'f' and alumno is not null
-				GROUP BY alumno, curso
+								JOIN leulit_perfil_formacion
+								ON leulit_perfil_formacion_curso.perfil_formacion = leulit_perfil_formacion.id
+                WHERE leulit_perfil_formacion.inactivo = 'f' and finalizado = 'f' and leulit_perfil_formacion_curso.alumno is not null
+				GROUP BY leulit_perfil_formacion_curso.alumno, curso
             )""".format(self._table)
         )
