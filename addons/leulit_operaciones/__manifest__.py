@@ -38,6 +38,7 @@
         "report/report_format_27.xml",
         "report/ir_actions_report.xml",
         "report/report_piloto_log_book.xml",
+        "report/report_helipuerto.xml",
         "views/ficha_vuelo_report_4_0_1.xml",
         "views/registro_vuelo_aeronaves.xml",
         "views/registro_consumosaeronave_report.xml",
