@@ -110,7 +110,7 @@
                         </table>
                     </t>
                     <t t-if="logo_ica">
-                        <table class="fullwidth" style="border-bottom: 2px solid black; background: white;">
+                        <table class="fullwidth">
                             <tr>
                                 <td style="font-size:12px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
                                     <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto; max-height:30px;"/><br/>
@@ -186,12 +186,12 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="fullwidth" style="margin-top:10px; border-bottom:none;">
-                            <tr class="noborde">
-                                <td class="centertext tdcolored literal" style="width:10%;"></td>
+                        <table style="margin-top:10px;border:1px solid white;width: 100%;border-collapse:collapse;">
+                            <tr style="border:none;">
+                                <td class="centertext tdcolored literal" style="width:10%;"/>
                                 <td class="centertext tdcolored literal" style="width:20%;">Aeronave</td>
                                 <td class="centertext tdcolored literal" style="width:20%;">Motor</td>
-                                <td colspan="4" rowspan="3" style="width:50%;" class="noborde">
+                                <td colspan="4" rowspan="3" style="width:50%;border:none;">
                                     <div style="margin-left:20%; border:1px solid #B0B0B0; border-collapse:collapse; text-align:center; padding-top:10px; padding-bottom:10px;">
                                         <span>Referencia Programa Mantenimiento:</span><br/><br/>
                                         <span t-esc="plan_mantenimiento"/>
@@ -217,8 +217,8 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="fullwidth">
-                            <tr>
+                        <table class="noborde">
+                            <tr class="noborde">
                                 <td class="tdcolored literal" style="width:10%;">S/N:</td>
                                 <td class="fieldvalue" style="width:20%;">
                                     <span t-esc="sn_aeronave"/>
@@ -229,9 +229,9 @@
                                 <td class="centertext tdcolored literal" style="width:10%;">C. Totales</td>
                                 <td class="centertext tdcolored literal" style="width:10%;">Ciclos NG</td>
                                 <td class="centertext tdcolored literal" style="width:10%;">Ciclos NF</td>
-                                <td style="width:20%;" class="noborde"></td>
+                                
                             </tr>
-                            <tr>
+                            <tr class="noborde">
                                 <td class="tdcolored literal">TSN:</td>
                                 <td class="fieldvalue">
                                     <span t-esc="tsn_aeronave"/>
@@ -248,9 +248,9 @@
                                 <td class="fieldvalue">
                                     <span t-esc="ciclos_nf_tsn"/>
                                 </td>
-                                <td class="noborde"></td>
+                                
                             </tr>
-                            <tr>
+                            <tr class="noborde">
                                 <td class="tdcolored literal">TSO:</td>
                                 <td class="fieldvalue">
                                     <span t-esc="tso_aeronave"/>
@@ -267,7 +267,7 @@
                                 <td class="fieldvalue">
                                     <span t-esc="ciclos_nf_tso"/>
                                 </td>
-                                <td class="noborde"></td>
+                                
                             </tr>
                         </table>
                         <br/>
