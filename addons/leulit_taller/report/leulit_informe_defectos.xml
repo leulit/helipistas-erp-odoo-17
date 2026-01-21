@@ -140,87 +140,85 @@
                 <div class="article">
                     <div class="page">
                         <t t-call="leulit_taller.defectos_report_css"/>
-                        <div class="row">
-                            <t t-if="tareas_defectos">
-                                <t t-foreach="tareas_defectos" t-as="tarea">
-                                    <table class="fullwidth" style="width: 100%;">
-                                        <tr>
-                                            <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
-                                            <td class="tdcolored" colspan="5">
-                                                <span>Defecto encontrado:</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="centertext heightrow"><span t-esc="tarea['code']"/></td>
-                                            <td colspan="5"><span t-raw="tarea['descripcion']"/></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="tdcolored" style="width: 30%;" colspan="6">
-                                                <span>Detalle del trabajo realizado:</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="heightrow" colspan="6"><span t-esc="tarea['name']"/></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="tdcolored" style="width: 10%;">
-                                                <span>Nombre:</span>
-                                            </td>
-                                            <td style="width: 20%;"><span t-esc="tarea['asignado']"/></td>
-                                            <td class="tdcolored" style="width: 10%;">
-                                                <span>Fecha:</span>
-                                            </td>
-                                            <td class="centertext" style="width: 20%;"><span t-esc="tarea['fecha']"/></td>
-                                            <td class="tdcolored" style="width: 20%;">
-                                                <span>Doble check técnico:</span>
-                                            </td>
-                                            <td class=""><span t-esc="tarea['doble_check_tecnico']"/></td>
-                                        </tr>
-                                    </table>
-                                    <br/>
-                                </t>
+                        <t t-if="tareas_defectos">
+                            <t t-foreach="tareas_defectos" t-as="tarea">
+                                <table class="fullwidth" style="width: 100%;">
+                                    <tr>
+                                        <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
+                                        <td class="tdcolored" colspan="5">
+                                            <span>Defecto encontrado:</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="centertext heightrow"><span t-esc="tarea['code']"/></td>
+                                        <td colspan="5"><span t-raw="tarea['descripcion']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 30%;" colspan="6">
+                                            <span>Detalle del trabajo realizado:</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="heightrow" colspan="6"><span t-esc="tarea['name']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Nombre:</span>
+                                        </td>
+                                        <td style="width: 20%;"><span t-esc="tarea['asignado']"/></td>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Fecha:</span>
+                                        </td>
+                                        <td class="centertext" style="width: 20%;"><span t-esc="tarea['fecha']"/></td>
+                                        <td class="tdcolored" style="width: 20%;">
+                                            <span>Doble check técnico:</span>
+                                        </td>
+                                        <td class=""><span t-esc="tarea['doble_check_tecnico']"/></td>
+                                    </tr>
+                                </table>
+                                <br/>
                             </t>
-                            <t t-else="">
-                                <t t-set="items" t-value="1"/>
-                                <t t-foreach="items" t-as="item">
-                                    <table class="fullwidth" style="width: 100%;">
-                                        <tr>
-                                            <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
-                                            <td class="tdcolored" colspan="5">
-                                                <span>Defecto encontrado:</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="centertext heightrow"></td>
-                                            <td colspan="5">N/A</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="tdcolored" style="width: 30%;" colspan="6">
-                                                <span>Detalle del trabajo realizado:</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="heightrow" colspan="6"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="tdcolored" style="width: 10%;">
-                                                <span>Nombre:</span>
-                                            </td>
-                                            <td style="width: 20%;"></td>
-                                            <td class="tdcolored" style="width: 10%;">
-                                                <span>Fecha:</span>
-                                            </td>
-                                            <td class="centertext" style="width: 20%;"></td>
-                                            <td class="tdcolored" style="width: 20%;">
-                                                <span>Doble check técnico:</span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                    </table>
-                                    <br/>
-                                </t>
+                        </t>
+                        <t t-else="">
+                            <t t-set="items" t-value="1"/>
+                            <t t-foreach="items" t-as="item">
+                                <table class="fullwidth" style="width: 100%;">
+                                    <tr>
+                                        <td class="tdcolored" style="width: 7%;">Nº Tarea</td>
+                                        <td class="tdcolored" colspan="5">
+                                            <span>Defecto encontrado:</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="centertext heightrow"></td>
+                                        <td colspan="5">N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 30%;" colspan="6">
+                                            <span>Detalle del trabajo realizado:</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="heightrow" colspan="6"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Nombre:</span>
+                                        </td>
+                                        <td style="width: 20%;"></td>
+                                        <td class="tdcolored" style="width: 10%;">
+                                            <span>Fecha:</span>
+                                        </td>
+                                        <td class="centertext" style="width: 20%;"></td>
+                                        <td class="tdcolored" style="width: 20%;">
+                                            <span>Doble check técnico:</span>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                <br/>
                             </t>
-                        </div>
+                        </t>
                     </div>
                 </div> 
                 <div class="footer">
