@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de formulario para el wizard de normalización de etapas -->
+    <record id="view_unificar_etapas_wizard_form" model="ir.ui.view">
+        <field name="name">leulit_tarea.unificar_etapas_wizard.form</field>
+        <field name="model">leulit_tarea.unificar_etapas_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Normalizar Etapas de Proyectos y Tareas">
+                <header>
+                    <button name="action_analizar_etapas" string="Siguiente: Mapear Etapas" 
+                            type="object" class="btn-primary"
+                            attrs="{'invisible': [('estado', '!=', 'paso1')]}"/>
+                    <button name="action_simular_cambios" string="Simular Cambios" 
+                            type="object" class="btn-info"
+                            attrs="{'invisible': [('estado', '!=', 'paso2')]}"/>
+                    <button name="action_volver_paso1" string="← Volver a Paso 1" 
+                            type="object" class="btn-secondary"
+                            attrs="{'invisible': [('estado', '=', 'paso1')]}"/>
+                    <button name="action_unificar_etapas" string="🚀 EJECUTAR NORMALIZACIÓN" 
+                            type="object" class="btn-danger"
+                            confirm="¿Estás seguro? Esta acción modificará los proyectos y tareas seleccionados."
+                            attrs="{'invisible': ['|', ('estado', '!=', 'paso3'), ('modo_ejecucion', '=', 'simulacion')]}"/>
+                    <field name="estado" widget="statusbar" statusbar_visible="paso1,paso2,paso3"/>
+                </header>
+                <sheet>
+                    <!-- PASO 1: SELECCIÓN DE PROYECTOS -->
+                    <div attrs="{'invisible': [('estado', '!=', 'paso1')]}">
+                        <div class="oe_title">
+                            <h1>
+                                <span>Paso 1: Selección de Proyectos</span>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="aplicar_a_proyectos"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        
+                        <group attrs="{'invisible': [('aplicar_a_proyectos', '=', True)]}">
+                            <field name="proyecto_ids" widget="many2many_checkboxes"
+                                   context="{'tree_view_ref': 'project.view_project'}"/>
+                        </group>
+                        
+                        <div class="oe_clear"/>
+                        
+                        <separator string="Información del Proceso"/>
+                        <div class="alert alert-info" role="alert">
+                            <h4><i class="fa fa-info-circle"/> ¿Qué hace esta herramienta?</h4>
+                            <p>
+                                <strong>Esta herramienta normaliza las etapas</strong> en los proyectos y tareas seleccionados, 
+                                permitiéndote mapear cada etapa existente a una etapa destino estandarizada.
+                            </p>
+                            <ul>
+                                <li><strong>Etapas Destino para Tareas:</strong> Pendiente, En proceso, Realizada, Pospuesta, N/A</li>
+                                <li><strong>Proceso:</strong> En el siguiente paso verás todas las etapas existentes y podrás mapear cada una a su etapa destino correspondiente</li>
+                                <li><strong>Historial:</strong> Se mantiene el historial de cambios en las tareas</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-warning" role="alert">
+                            <p>
+                                <i class="fa fa-warning"/> <strong>Advertencia:</strong> Esta acción modificará las etapas de los proyectos y tareas. 
+                                Se recomienda hacer una copia de seguridad antes de ejecutarla.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- PASO 2: MAPEO DE ETAPAS -->
+                    <div attrs="{'invisible': [('estado', '!=', 'paso2')]}">
+                        <div class="oe_title">
+                            <h1>
+                                <span>Paso 2: Mapeo de Etapas</span>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="total_proyectos" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="total_etapas_origen" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <separator string="Mapeo: Etapas Existentes → Etapas Destino"/>
+                        <div class="alert alert-info" role="alert">
+                            <p>
+                                <i class="fa fa-info-circle"/> Para cada etapa existente, selecciona la etapa destino a la que debe mapearse.
+                                Las etapas que coincidan exactamente con las etapas destino se han pre-seleccionado automáticamente.
+                            </p>
+                        </div>
+                        
+                        <field name="mapeo_linea_ids" nolabel="1">
+                            <tree editable="bottom" create="false" delete="false">
+                                <field name="etapa_origen_nombre" readonly="1" string="Etapa Actual"/>
+                                <field name="etapa_destino_id" string="→ Etapa Destino" 
+                                       domain="[('name', 'in', ['Pendiente', 'En proceso', 'Realizada', 'Pospuesta', 'N/A'])]"
+                                       options="{'no_create': True, 'no_create_edit': True}"/>
+                                <field name="proyectos_afectados" readonly="1" string="Proyectos"/>
+                                <field name="tareas_afectadas" readonly="1" string="Tareas"/>
+                                <field name="etapa_origen_id" invisible="1"/>
+                            </tree>
+                        </field>
+                        
+                        <div class="oe_clear"/>
+                        
+                        <separator string="Acciones que se realizarán"/>
+                        <div class="alert alert-success" role="alert">
+                            <h4><i class="fa fa-check-circle"/> El sistema ejecutará las siguientes acciones:</h4>
+                            <ol>
+                                <li><strong>Proyectos sin etapas:</strong> Se asignarán todas las etapas destino</li>
+                                <li><strong>Etapas que coinciden:</strong> Se mantienen sin cambios</li>
+                                <li><strong>Etapas mapeadas:</strong> Se sustituyen por la etapa destino (manteniendo historial en tareas)</li>
+                                <li><strong>Etapas destino faltantes:</strong> Se añadirán al proyecto</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- PASO 3: SIMULACIÓN DE CAMBIOS -->
+                    <div attrs="{'invisible': [('estado', '!=', 'paso3')]}">
+                        <div class="oe_title">
+                            <h1>
+                                <span>Paso 3: Simulación y Ejecución</span>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="modo_ejecucion" widget="radio"/>
+                            </group>
+                            <group>
+                                <field name="crear_snapshot" 
+                                       attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}"/>
+                                <field name="limpiar_etapas_obsoletas"
+                                       attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}"/>
+                            </group>
+                        </group>
+                        
+                        <separator string="Resultado de la Simulación"/>
+                        <div class="alert alert-info" role="alert">
+                            <h4><i class="fa fa-info-circle"/> Vista Previa de Cambios</h4>
+                            <p>A continuación se muestran todos los cambios que se aplicarían:</p>
+                        </div>
+                        
+                        <group>
+                            <field name="simulacion_stats" readonly="1" widget="text"/>
+                        </group>
+                        
+                        <separator string="Detalle de Cambios"/>
+                        <field name="simulacion_resultado" readonly="1" widget="text" 
+                               style="font-family: monospace; white-space: pre-wrap; background-color: #f8f9fa; padding: 10px; border: 1px solid #dee2e6;"/>
+                        
+                        <div class="oe_clear"/>
+                        
+                        <div class="alert alert-warning" role="alert" attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}">
+                            <h4><i class="fa fa-warning"/> MODO EJECUCIÓN REAL ACTIVADO</h4>
+                            <p>
+                                <strong>Al hacer clic en "EJECUTAR NORMALIZACIÓN":</strong>
+                            </p>
+                            <ul>
+                                <li>Se aplicarán TODOS los cambios mostrados arriba</li>
+                                <li>Se modificarán los proyectos y tareas según el mapeo definido</li>
+                                <li attrs="{'invisible': [('crear_snapshot', '=', False)]}">
+                                    Se creará un snapshot automático que te permitirá revertir los cambios
+                                </li>
+                                <li attrs="{'invisible': [('limpiar_etapas_obsoletas', '=', False)]}">
+                                    <strong style="color: #d9534f;">Se eliminarán las etapas obsoletas que no estén en uso</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-danger" role="alert" attrs="{'invisible': ['|', ('modo_ejecucion', '=', 'simulacion'), ('limpiar_etapas_obsoletas', '=', False)]}">
+                            <h4><i class="fa fa-exclamation-triangle"/> LIMPIEZA DE ETAPAS OBSOLETAS ACTIVADA</h4>
+                            <p>
+                                <strong>IMPORTANTE:</strong> Después de la normalización, se eliminarán automáticamente las etapas antiguas 
+                                que NO cumplan alguna de estas condiciones:
+                            </p>
+                            <ul>
+                                <li>✓ Ser una etapa destino normalizada</li>
+                                <li>✓ Estar asignada a algún proyecto como etapa disponible</li>
+                                <li>✓ Estar siendo usada por alguna tarea</li>
+                            </ul>
+                            <p><strong>Solo se eliminarán etapas completamente sin uso.</strong></p>
+                        </div>
+                        
+                        <div class="alert alert-success" role="alert" attrs="{'invisible': [('modo_ejecucion', '=', 'real')]}">
+                            <h4><i class="fa fa-check-circle"/> MODO SIMULACIÓN</h4>
+                            <p>
+                                Estás en modo simulación. Los cambios NO se aplicarán.<br/>
+                                Cambia a "Ejecución Real" cuando estés listo para aplicar los cambios.
+                            </p>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree para Snapshots -->
+    <record id="view_unificar_etapas_snapshot_tree" model="ir.ui.view">
+        <field name="name">leulit_tarea.unificar_etapas_snapshot.tree</field>
+        <field name="model">leulit_tarea.unificar_etapas_snapshot</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not activo">
+                <field name="name"/>
+                <field name="fecha_snapshot"/>
+                <field name="user_id"/>
+                <field name="total_proyectos"/>
+                <field name="total_tareas"/>
+                <field name="activo"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form para Snapshots -->
+    <record id="view_unificar_etapas_snapshot_form" model="ir.ui.view">
+        <field name="name">leulit_tarea.unificar_etapas_snapshot.form</field>
+        <field name="model">leulit_tarea.unificar_etapas_snapshot</field>
+        <field name="arch" type="xml">
+            <form string="Snapshot de Rollback">
+                <header>
+                    <button name="action_rollback" string="🔙 Restaurar Estado Anterior" 
+                            type="object" class="btn-warning"
+                            confirm="¿Estás seguro de que quieres revertir los cambios? Esto restaurará el estado anterior y desactivará este snapshot."
+                            attrs="{'invisible': [('activo', '=', False)]}"/>
+                    <field name="activo" widget="statusbar" statusbar_visible="True,False"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="fecha_snapshot"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="total_proyectos"/>
+                            <field name="total_tareas"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Estado de Proyectos">
+                            <field name="estado_proyectos" widget="text" 
+                                   style="font-family: monospace; white-space: pre-wrap;"/>
+                        </page>
+                        <page string="Estado de Tareas">
+                            <field name="estado_tareas" widget="text" 
+                                   style="font-family: monospace; white-space: pre-wrap;"/>
+                        </page>
+                    </notebook>
+                    
+                    <div class="alert alert-info" role="alert" attrs="{'invisible': [('activo', '=', False)]}">
+                        <p>
+                            <i class="fa fa-info-circle"/> Este snapshot está activo y puede usarse para restaurar el estado anterior.
+                        </p>
+                    </div>
+                    
+                    <div class="alert alert-warning" role="alert" attrs="{'invisible': [('activo', '=', True)]}">
+                        <p>
+                            <i class="fa fa-warning"/> Este snapshot ha sido desactivado y ya no puede usarse para rollback.
+                        </p>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para ver Snapshots -->
+    <record id="action_unificar_etapas_snapshot" model="ir.actions.act_window">
+        <field name="name">Snapshots de Rollback</field>
+        <field name="res_model">leulit_tarea.unificar_etapas_snapshot</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('activo', '=', True)]</field>
+        <field name="context">{'search_default_activo': 1}</field>
+    </record>
+
+    <!-- Acción para ver Todos los Snapshots -->
+    <record id="action_unificar_etapas_snapshot_all" model="ir.actions.act_window">
+        <field name="name">Todos los Snapshots</field>
+        <field name="res_model">leulit_tarea.unificar_etapas_snapshot</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para abrir el wizard -->
+    <record id="action_unificar_etapas_wizard" model="ir.actions.act_window">
+        <field name="name">Normalizar Etapas</field>
+        <field name="res_model">leulit_tarea.unificar_etapas_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="project.model_project_project"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+</odoo>

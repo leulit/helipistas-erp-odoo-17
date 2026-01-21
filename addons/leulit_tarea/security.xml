@@ -27,4 +27,84 @@
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="1"/>
     </record>
+    
+    <!-- Acceso al wizard de normalización de etapas -->
+    <record id="access_unificar_etapas_wizard_admin" model="ir.model.access">
+        <field name="name">leulit_tarea.unificar_etapas_wizard proyectos_tareas_admin</field>
+        <field name="model_id" ref="model_leulit_tarea_unificar_etapas_wizard"/>
+        <field name="group_id" ref="leulit_tarea.RT_proyectos_tareas_administrador"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <!-- Acceso al modelo de líneas de mapeo -->
+    <record id="access_unificar_etapas_mapeo_linea_admin" model="ir.model.access">
+        <field name="name">leulit_tarea.unificar_etapas_mapeo_linea proyectos_tareas_admin</field>
+        <field name="model_id" ref="model_leulit_tarea_unificar_etapas_mapeo_linea"/>
+        <field name="group_id" ref="leulit_tarea.RT_proyectos_tareas_administrador"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <!-- Acceso al modelo de snapshots -->
+    <record id="access_unificar_etapas_snapshot_admin" model="ir.model.access">
+        <field name="name">leulit_tarea.unificar_etapas_snapshot proyectos_tareas_admin</field>
+        <field name="model_id" ref="model_leulit_tarea_unificar_etapas_snapshot"/>
+        <field name="group_id" ref="leulit_tarea.RT_proyectos_tareas_administrador"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <!-- Control de acceso a project.task.type (Etapas) -->
+    <!-- Solo lectura para todos los usuarios -->
+    <record id="access_project_task_type_read_all" model="ir.model.access">
+        <field name="name">project.task.type read all users</field>
+        <field name="model_id" ref="project.model_project_task_type"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    
+    <!-- Control total solo para RT_proyectos_tareas_administrador -->
+    <record id="access_project_task_type_full_stages_admin" model="ir.model.access">
+        <field name="name">project.task.type full access stages admin</field>
+        <field name="model_id" ref="project.model_project_task_type"/>
+        <field name="group_id" ref="leulit_tarea.RT_proyectos_tareas_administrador"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    
+    <!-- Reglas de registro para project.task.type -->
+    <!-- Evitar que otros grupos (incluso administradores) modifiquen etapas -->
+    <record id="project_task_type_rule_readonly" model="ir.rule">
+        <field name="name">project.task.type: Solo lectura para usuarios normales</field>
+        <field name="model_id" ref="project.model_project_task_type"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    
+    <record id="project_task_type_rule_stages_admin" model="ir.rule">
+        <field name="name">project.task.type: Control total para administradores de etapas</field>
+        <field name="model_id" ref="project.model_project_task_type"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('leulit_tarea.RT_proyectos_tareas_administrador'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 </odoo>

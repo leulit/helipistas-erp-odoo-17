@@ -25,6 +25,13 @@
             <field name="category_id" ref="tarea_rol_category"/>
         </record>
 
+        <!-- Grupo específico para gestión de etapas de proyectos y tareas -->
+        <record id="RT_proyectos_tareas_administrador" model="res.groups">
+            <field name="name">Administrador de Etapas de Proyectos y Tareas</field>
+            <field name="comment">Control total sobre etapas: crear, modificar, eliminar y normalizar</field>
+            <field name="category_id" ref="tarea_rol_category"/>
+        </record>
+
 
     </data>
 </odoo>

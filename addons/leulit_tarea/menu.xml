@@ -77,5 +77,30 @@
             sequence="40"
             groups="leulit_tarea.RT_administrador,leulit.RolIT_predev"
         />
+        
+        <!-- Configuración -->
+        <menuitem 
+            id="leulit_tarea_config_menuitem"
+            name="Configuración"
+            parent="leulit_20200907_1307_menuitem"
+            sequence="90"
+            groups="leulit_tarea.RT_administrador"
+        />
+        <menuitem 
+            id="leulit_tarea_unificar_etapas_menuitem"
+            name="Normalizar Etapas"
+            parent="leulit_tarea_config_menuitem"
+            action="action_unificar_etapas_wizard"
+            sequence="10"
+            groups="leulit_tarea.RT_proyectos_tareas_administrador"
+        />
+        <menuitem 
+            id="leulit_tarea_snapshots_menuitem"
+            name="Snapshots de Rollback"
+            parent="leulit_tarea_config_menuitem"
+            action="action_unificar_etapas_snapshot"
+            sequence="20"
+            groups="leulit_tarea.RT_proyectos_tareas_administrador"
+        />
 
 </odoo>

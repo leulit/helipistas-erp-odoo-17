@@ -18,6 +18,7 @@
         "views/sale_order.xml",
         "views/hr_timesheet_views.xml",
         "views/hr_timesheet_switch_view.xml",
+        "views/unificar_etapas_wizard.xml",
         "menu.xml",
     ],
     "demo": [],
