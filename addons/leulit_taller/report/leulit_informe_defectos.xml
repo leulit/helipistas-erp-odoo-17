@@ -63,17 +63,6 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
-                .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
-                    width: 230mm;
-                    height: 320mm;
-                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
-                    page-break-after: always;
-                }
                 .pagecontent {
                     width: 230mm;
                     height: 320mm;
