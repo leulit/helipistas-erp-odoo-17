@@ -58,7 +58,7 @@ class MaintenanceEquipment(models.Model):
                 if child.production_lot.is_motor:
                     motor = child
                     return motor
-        if motor == False:  
+        if motor == False:
             for child in self.get_childs():
                 if child.is_motor:
                     motor = child
