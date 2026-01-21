@@ -603,6 +603,7 @@
             <field name="name">Tareas</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project.task</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="view_ids"
                     eval="[(5, 0, 0),
                             (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_taller.leulit_20230313_1500_tree')}),
@@ -614,6 +615,7 @@
             <field name="name">Trabajos Realizados</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project.task</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="view_ids"
                     eval="[(5, 0, 0),
                             (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_taller.leulit_20231024_1458_tree')}),

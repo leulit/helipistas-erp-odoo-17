@@ -646,7 +646,7 @@ class MaintenanceRequest(models.Model):
                 'name' : task.solucion_defecto,
                 'descripcion' : task.name,
                 'asignado' : task.user_ids.name,
-                'fecha' : task.date_start,
+                'fecha' : task.date_assign,
                 'doble_check_tecnico' : task.supervisado_por.name,
             }
             tareas.append(tarea)

@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data> 
+
+        <record id="view_task_timeline" model="ir.ui.view">
+            <field name="model">project.task</field>
+            <field name="type">timeline</field>
+            <field name="arch" type="xml">
+                <timeline date_start="date_assign"
+                        date_stop="date_end"
+                        string="Tasks"
+                        default_group_by="project_id"
+                        event_open_popup="true"
+                        colors="white: user_ids == []; #2ecb71: state == '1_done'; #ec7063: state == '1_canceled'"
+                        dependency_arrow="depend_on_ids"
+                >
+                    <field name="user_ids" />
+                    <field name="allocated_hours" />
+                    <templates>
+                        <t t-name="timeline-item">
+                            <div class="o_project_timeline_item">
+                                <t t-foreach="record.user_ids" t-as="user" t-key="user.id">
+                                    <img
+                                        t-if="record.user_ids"
+                                        t-attf-src="/web/image/res.users/#{user}/image_128/16x16"
+                                        t-att-title="record.user"
+                                        width="16"
+                                        height="16"
+                                        class="mr8"
+                                        alt="User"
+                                    />
+                                </t>
+                                <span name="display_name">
+                                    <t t-esc="record.display_name" />
+                                </span>
+                                <small
+                                    name="allocated_hours"
+                                    class="text-info ml4"
+                                    t-if="record.allocated_hours"
+                                >
+                                    <t
+                                        t-out="formatters.get('float_time')(record.allocated_hours)"
+                                    />
+                                </small>
+                            </div>
+                        </t>
+                    </templates>
+                </timeline>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_task_form2_inherited_leulit">
             <field name="name">project.task.form.inherited.leulit</field>
             <field name="model">project.task</field>
@@ -84,7 +132,7 @@
          <record id="leulit_20230829_1244_action" model="ir.actions.act_window">
             <field name="name">Tareas solicitadas</field>
             <field name="res_model">project.task</field>
-            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="domain">[('create_uid','=',uid),('project_borrador', '=', False)]</field>
             <field name="search_view_id" ref="project.view_task_search_form"/>
             <field name="help" type="html">
@@ -100,7 +148,7 @@
          <record id="leulit_20230829_1245_action" model="ir.actions.act_window">
             <field name="name">Tareas implicado</field>
             <field name="res_model">project.task</field>
-            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="context">{'search_default_followed_by_me': 1, 'all_task': 0}</field>
             <field name="search_view_id" ref="project.view_task_search_form"/>
             <field name="help" type="html">
@@ -117,7 +165,7 @@
          <record id="leulit_20250206_1019_action" model="ir.actions.act_window">
             <field name="name">Mis Tareas</field>
             <field name="res_model">project.task</field>
-            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="domain">[('user_ids', 'in', uid),('project_borrador', '=', False)]</field>
             <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
@@ -125,7 +173,7 @@
          <record id="leulit_20250519_1017_action" model="ir.actions.act_window">
             <field name="name">Todas las tareas</field>
             <field name="res_model">project.task</field>
-            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="domain">[('project_borrador', '=', False)]</field>
             <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
