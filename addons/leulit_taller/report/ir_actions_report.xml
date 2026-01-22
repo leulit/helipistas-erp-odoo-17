@@ -77,8 +77,8 @@
         <field name="name">Material Utilizado</field>
         <field name="model">maintenance.request</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">leulit_taller.leulit_20241127_1528_informe</field>
-        <field name="report_file">leulit_taller.leulit_20241127_1528_informe</field>
+        <field name="report_name">leulit_taller.leulit_20230118_1037_informe</field>
+        <field name="report_file">leulit_taller.leulit_20230118_1037_informe</field>
         <field name="paperformat_id" ref="paperformat_A4_portrait_icarus"/>
         <field name="print_report_name">'Material Utilizado-%s' % (object.name or '')</field>
         <field name="binding_model_id" ref="model_maintenance_request"/>
