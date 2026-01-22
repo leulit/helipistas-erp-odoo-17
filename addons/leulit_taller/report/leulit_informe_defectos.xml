@@ -2,36 +2,6 @@
 <odoo>
     <data>
 
-        <template id="defectos_report_header">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.defectos_report_css"/>
-                <table class="fullwidth">
-                    <tr>
-                        <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span><b>Defectos encontrados<br/>durante el mantenimiento</b></span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
-                            <span>Nº Exp de Mant:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
-                            <span t-esc="n_exp"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Nº de OT:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span t-esc="n_orden_trabajo"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-
         <template id="defectos_report_css">
             <meta charset="utf-8"/>
             <style>
