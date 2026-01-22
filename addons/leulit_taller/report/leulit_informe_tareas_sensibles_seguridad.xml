@@ -2,44 +2,6 @@
 <odoo>
     <data>
 
-        <template id="tareas_sensibles_seguridad_report_header">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_taller.tareas_sensibles_seguridad_report_css"/>
-                <table class="fullwidth">
-                    <tr>
-                        <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
-                            <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
-                            <span><b>Control de tareas sensibles<br/>para la seguridad</b></span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
-                            <span>Referencia:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
-                            <span>M.O.E. 2.23</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Formato:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>2-9</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>Revisión:</span>
-                        </td>
-                        <td  style="font-size:12px; white-space: nowrap; text-align:center">
-                            <span>3-2023</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-
         <template id="tareas_sensibles_seguridad_report_css">
             <meta charset="utf-8"/>
             <style>
@@ -71,17 +33,6 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
-                .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
-                    width: 230mm;
-                    height: 320mm;
-                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
-                    page-break-after: always;
-                }
                 .pagecontent {
                     width: 230mm;
                     height: 320mm;
@@ -95,7 +46,6 @@
                     color: #ffffff;
                 }
                 .centertext {text-align:center;}
-                .thheightrow {height: 70px;}
                 .heightrow {height: 50px;}
                 .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
@@ -119,12 +69,44 @@
 
         <template id="leulit_20230927_1958_informe">
             <t t-call="web.html_container">
-                <t t-set="data_report_header_spacing" t-value="20"/>
-                <t t-set="data_report_margin_top" t-value="30"/>
-                <div class="page">
+                <div style="width:100%;" class="header">
                     <t t-call="leulit_taller.tareas_sensibles_seguridad_report_css"/>
-                    <t t-call="leulit_taller.tareas_sensibles_seguridad_report_header"/>
-                    <div class="row">
+                    <table class="fullwidth">
+                        <tr>
+                            <td  style="font-size:16px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
+                                <span>ICARUS Manteniment, SL.</span><br/><span>EASA Part 145 ES-173</span>
+                            </td>
+                            <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="3">
+                                <span><b>Control de tareas sensibles<br/>para la seguridad</b></span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:17%;">
+                                <span>Referencia:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center; width:16%;">
+                                <span>M.O.E. 2.23</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>Formato:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>2-9</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>Revisión:</span>
+                            </td>
+                            <td  style="font-size:12px; white-space: nowrap; text-align:center">
+                                <span>3-2023</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="article">
+                    <div class="page">
+                        <t t-call="leulit_taller.tareas_sensibles_seguridad_report_css"/>
                         <table class="fullwidth" style="margin-bottom:50px;">
                             <tr>
                                 <td class="tdcolored centertext">Nº Expediente de Mantenimiento</td>
@@ -166,24 +148,11 @@
                                 </t>
                             </t>
                         </table>
-                    </div> 
-                    <div class="footer">
-                        <div class="row text-center" style="border-top: 1px solid black;">
-                            <div class="col col-3 offset-9 text-right">
-                                <ul class="list-inline mt-2">
-                                    <li class="list-inline-item" style="font-size:10px;">Página:</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">G-</span><span class="page" style="font-size:10px;"/>
-                                    </li>
-                                    <li class="list-inline-item" style="font-size:10px;">de</li>
-                                    <li class="list-inline-item">
-                                        <span style="font-size:10px;">G-</span><span class="topage" style="font-size:10px;"/>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> 
+                    </div>
                 </div>
+                <div class="footer">
+                    <div style="text-align:right;font-size:10px;border-top:1px solid black;">Página: G-<span class="page"/> / G-<span class="topage"/></div>
+                </div> 
             </t>
         </template>
 
