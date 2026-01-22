@@ -2,65 +2,6 @@
 <odoo>
     <data>
 
-
-        <template id="formone_report_header">
-            <table class="fullwidth noborde">
-                <tr class="noborde">
-                    <th class="noborde">
-                        <table class="noborde">
-                            <tr>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                    <i style="font-size:8px;">Fecha creación documento</i><br/>
-                                    <i><span style="font-size:8px;" t-esc="formone['fecha']"/></i>
-                                </td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                    <t t-if="hashcode">
-                                        <i style="font-size:8px;">Firmado por:</i><br/>
-                                        <i><span style="font-size:8px;" t-esc="firmado_por"/></i>
-                                    </t>
-                                </td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                    <t t-if="hashcode">
-                                        <i style="font-size:8px;">CSV/CID</i><br/>
-                                        <span style="font-size:8px;" t-esc="hashcode"/>
-                                    </t>
-                                    <t t-if="not hashcode">
-                                        <i style="font-size:8px;">Referencia</i><br/>
-                                        <span style="font-size:8px;" t-esc="hashcode_interno"/>
-                                    </t>
-                                </td>
-                            </tr>
-                        </table>
-                    </th>
-                    <th class="noborde">
-                        <table align="right">
-                            <tr>
-                                <td style="white-space: nowrap; text-align:center" class="noborde"><b style="font-size:8px;">Código:</b></td>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0010</td>
-                                <td style="white-space: nowrap; text-align:center" class="noborde"><b style="font-size:8px;">Versión:</b></td>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
-                            </tr>
-                        </table>
-                    </th>
-                </tr>
-                <tr class="noborde">
-                    <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
-                        <table class="fullwidth noborde" style="margin-bottom: 15px">
-                            <tbody>
-                                <tr class="noborde">
-                                    <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
-                                        Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </th>
-                </tr>
-            </table>
-        </template>   
-
-
         <template id="form_one_report_css">
             <meta charset="utf-8"/>
             <style>
@@ -103,7 +44,60 @@
                     <div class="watermark" style="position:absolute;opacity:0.25;font-size:1em;width:10%;text-align:left;z-index:9999;">
                         <img t-att-src="'data:image/png;base64,'+ watermark"/>
                     </div>
-                    <t t-call="leulit_taller.formone_report_header" />
+                    <table class="fullwidth noborde">
+                        <tr class="noborde">
+                            <th class="noborde">
+                                <table class="noborde">
+                                    <tr>
+                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
+                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                            <i style="font-size:8px;">Fecha creación documento</i><br/>
+                                            <i><span style="font-size:8px;" t-esc="formone['fecha']"/></i>
+                                        </td>
+                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                            <t t-if="hashcode">
+                                                <i style="font-size:8px;">Firmado por:</i><br/>
+                                                <i><span style="font-size:8px;" t-esc="firmado_por"/></i>
+                                            </t>
+                                        </td>
+                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                            <t t-if="hashcode">
+                                                <i style="font-size:8px;">CSV/CID</i><br/>
+                                                <span style="font-size:8px;" t-esc="hashcode"/>
+                                            </t>
+                                            <t t-if="not hashcode">
+                                                <i style="font-size:8px;">Referencia</i><br/>
+                                                <span style="font-size:8px;" t-esc="hashcode_interno"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </th>
+                            <th class="noborde">
+                                <table align="right">
+                                    <tr>
+                                        <td style="white-space: nowrap; text-align:center" class="noborde"><b style="font-size:8px;">Código:</b></td>
+                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0010</td>
+                                        <td style="white-space: nowrap; text-align:center" class="noborde"><b style="font-size:8px;">Versión:</b></td>
+                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
+                        <tr class="noborde">
+                            <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
+                                <table class="fullwidth noborde" style="margin-bottom: 15px">
+                                    <tbody>
+                                        <tr class="noborde">
+                                            <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                                                Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </th>
+                        </tr>
+                    </table>
                     <table class="fullwidth">
                         <tr>
                             <td style="width:26%;">

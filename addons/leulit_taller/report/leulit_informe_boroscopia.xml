@@ -1,6 +1,81 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data>
+    
+        <template id="boroscopia_report_header">
+            <table class="fullwidth noborde">
+                <tr>
+                    <th class="noborde">
+                        <table class="noborde">
+                            <tr>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <i>Fecha creación documento</i><br/>
+                                    <i><span t-esc="item['fecha']"/></i>
+                                </td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <t t-if="hashcode">
+                                        <i>Firmado por:</i><br/>
+                                        <i><span t-esc="firmado_por"/></i>
+                                    </t>
+                                </td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <t t-if="hashcode">
+                                        <i>CSV/CID</i><br/>
+                                        <span t-esc="hashcode"/>
+                                    </t>
+                                    <t t-if="not hashcode">
+                                        <i>Referencia</i><br/>
+                                        <span t-esc="hashcode_interno"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+                    </th>
+                    <th class="noborde">
+                        <table align="right">
+                            <tr>
+                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
+                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0011</td>
+                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
+                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
+                            </tr>
+                        </table>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
+                        <table class="fullwidth noborde" style="margin-bottom: 30px">
+                            <tbody>
+                                <tr class="noborde">
+                                    <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                                        Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                    </td>
+                                </tr>
+                                <tr class="noborde">
+                                    <td class="noborde">
+                                        <table class="fullwidth">
+                                            <tr>
+                                                <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:left">
+                                                    <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:25px;"/><br/>
+                                                </td>
+                                                <td class="noborde" style="font-size:20px; white-space: nowrap; text-align:center">
+                                                    <span><b>Informe de Boroscopia</b></span><br/>
+                                                </td>
+                                                <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
+                                                    <span>M.O.E  2.16</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>
+                </tr>
+            </table>
+        </template>   
+
 
         <template id="boroscopia_report_css">
             <meta charset="utf-8"/>
@@ -33,26 +108,36 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
+                .page {
+                    %if hashcode:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
+                    %else:
+                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
+                    %endif
+                    width: 230mm;
+                    height: 320mm;
+                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
+                    page-break-after: always;
+                }
                 .pagecontent {
                     width: 230mm;
                     height: 320mm;
                 }
-                .tdcolored {
-                    background-color: rgba(0,0,0,0.40);
-                    color: #ffffff;
-                }
-                .tdcoloredmain {
-                    background-color: rgba(0,0,0,1);
-                    color: #ffffff;
-                }
+                    .tdcolored {
+                        background-color: rgba(0,0,0,0.40);
+                        color: #ffffff;
+                    }
+                    .tdcoloredmain {
+                        background-color: rgba(0,0,0,1);
+                        color: #ffffff;
+                    }
                 .centertext {text-align:center;}
-                .heightrow {height: 50px;}
                 .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
                 tfoot { display: table-header-group }
                 tr { page-break-inside: avoid }
                 th, tbody td, tfoot td {
-                    border: 1px solid #B0B0B0;
+                    border: 1px solid #EEEEEE;
                     padding-right:3px;
                     padding-left:3px;
                     padding-top:3px;
@@ -69,84 +154,12 @@
 
         <template id="leulit_20240214_0956_informe">
             <t t-call="web.html_container">
-                <div class="header">
-                    <table class="fullwidth noborde">
-                        <tr>
-                            <th class="noborde">
-                                <table class="noborde">
-                                    <tr>
-                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
-                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                            <i>Fecha creación documento</i><br/>
-                                            <i><span t-esc="item['fecha']"/></i>
-                                        </td>
-                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                            <t t-if="hashcode">
-                                                <i>Firmado por:</i><br/>
-                                                <i><span t-esc="firmado_por"/></i>
-                                            </t>
-                                        </td>
-                                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                                            <t t-if="hashcode">
-                                                <i>CSV/CID</i><br/>
-                                                <span t-esc="hashcode"/>
-                                            </t>
-                                            <t t-if="not hashcode">
-                                                <i>Referencia</i><br/>
-                                                <span t-esc="hashcode_interno"/>
-                                            </t>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </th>
-                            <th class="noborde">
-                                <table align="right">
-                                    <tr>
-                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
-                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0011</td>
-                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
-                                        <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
-                                    </tr>
-                                </table>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
-                                <table class="fullwidth noborde" style="margin-bottom: 30px">
-                                    <tbody>
-                                        <tr class="noborde">
-                                            <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
-                                                Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
-                                            </td>
-                                        </tr>
-                                        <tr class="noborde">
-                                            <td class="noborde">
-                                                <table class="fullwidth">
-                                                    <tr>
-                                                        <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:left">
-                                                            <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:25px;"/><br/>
-                                                        </td>
-                                                        <td class="noborde" style="font-size:20px; white-space: nowrap; text-align:center">
-                                                            <span><b>Informe de Boroscopia</b></span><br/>
-                                                        </td>
-                                                        <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
-                                                            <span>M.O.E  2.16</span>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </th>
-                        </tr>
-                    </table>
-                </div>
-                <div class="article">
-                    <div class="page">
-                        <t t-set="cont" t-value="1"/>
-                        <t t-foreach="boroscopialist" t-as="item">
-                            <t t-call="leulit_taller.boroscopia_report_css"/>
+                <div class="page">
+                    <t t-set="cont" t-value="1"/>
+                    <t t-foreach="boroscopialist" t-as="item">
+                        <t t-call="leulit_taller.boroscopia_report_css"/>
+                        <t t-call="leulit_taller.boroscopia_report_header" />
+                        <div class="row">
                             <table class="fullwidth">
                                 <tr>
                                     <td class="tdcolored theadtitle" >
@@ -230,12 +243,25 @@
                                 </table>
                             </t>
                             <t t-set="cont" t-value="cont+1"/>
-                        </t>
-                    </div>
+                        </div> 
+                        <div class="footer">
+                            <div class="row text-center" style="border-top: 1px solid black;">
+                                <div class="col col-3 offset-9 text-right">
+                                    <ul class="list-inline mt-2">
+                                        <li class="list-inline-item" style="font-size:10px;">Página:</li>
+                                        <li class="list-inline-item">
+                                            <span style="font-size:10px;">I-</span><span class="page" style="font-size:10px;"/>
+                                        </li>
+                                        <li class="list-inline-item" style="font-size:10px;">de</li>
+                                        <li class="list-inline-item">
+                                            <span style="font-size:10px;">I-</span><span class="topage" style="font-size:10px;"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div> 
+                    </t>
                 </div>
-                <div class="footer">
-                    <div style="text-align:right;font-size:10px;border-top:1px solid black;">Página: I-<span class="page"/> / I-<span class="topage"/></div>
-                </div> 
             </t>
         </template>
     
