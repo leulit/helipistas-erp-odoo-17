@@ -762,32 +762,11 @@ class MaintenanceRequest(models.Model):
             }
             materiales.append(material)
         
-        items_per_page = 9
-        total_items = len(materiales)
-        remaining_items = items_per_page - (total_items % items_per_page) if total_items % items_per_page != 0 else 0
-        
-        empty_item = {
-            'name': '-',
-            'pn': '-',
-            'sn': '-',
-            'revision': '-',
-            'lote': '-',
-            'ref_origen': '-',
-            'qty': '-',
-            'price': '-',
-            'empleado': '-',
-            'fecha': '-'
-        }
-        
-        materiales.extend([empty_item.copy() for _ in range(remaining_items)])
-        pages = [materiales[i:i + items_per_page] for i in range(0, len(materiales), items_per_page)]
-
         data = {
             'n_exp' : 'EM'+self.name,
             'n_orden_trabajo' : self.name,
             'matricula' : self.equipment_id.helicoptero.name,
-            'pages' : pages,
-            'total_pages': len(pages),
+            'materiales' : materiales,
             'observaciones' : self.description
         }
 
