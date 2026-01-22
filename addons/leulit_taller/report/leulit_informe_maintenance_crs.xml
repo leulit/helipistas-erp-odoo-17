@@ -3,6 +3,7 @@
     <data>
 
         <template id="crs_report_header">
+            <t t-call="leulit_taller.crs_report_css"/>
             <table class="fullwidth noborde">
                 <tr>
                     <th class="noborde">
@@ -110,29 +111,14 @@
                     font-weight: normal;
                     font-size: 3.5687mm;
                 }
-                .page {
-                    %if hashcode:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    %else:
-                        background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua-informe-interno-2.jpg) no-repeat 50% 50%;
-                    %endif
-                    width: 230mm;
-                    height: 320mm;
-                    margin: 0.5mm 0.5mm 0.5mm 0.5mm;  
-                    page-break-after: always;
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
                 }
-                .pagecontent {
-                    width: 230mm;
-                    height: 320mm;
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
                 }
-                    .tdcolored {
-                        background-color: rgba(0,0,0,0.40);
-                        color: #ffffff;
-                    }
-                    .tdcoloredmain {
-                        background-color: rgba(0,0,0,1);
-                        color: #ffffff;
-                    }
                 .centertext {text-align:center;}
                 .nowrap {white-space: nowrap;}
                 thead { display: table-header-group }
@@ -156,12 +142,12 @@
 
         <template id="leulit_20230707_1128_informe">
             <t t-call="web.html_container">
-                <div class="page">
-                    <t t-set="cont" t-value="1"/>
-                    <t t-foreach="crslist" t-as="item">
-                        <t t-call="leulit_taller.crs_report_css"/>
-                        <t t-call="leulit_taller.crs_report_header" />
-                        <div class="row">
+                <div class="article">
+                    <div class="page">
+                        <t t-set="cont" t-value="1"/>
+                        <t t-foreach="crslist" t-as="item">
+                            <t t-call="leulit_taller.crs_report_css"/>
+                            <t t-call="leulit_taller.crs_report_header" />
                             <table class="fullwidth">
                                 <tr>
                                     <td class="tdcolored theadtitle" >
@@ -262,25 +248,12 @@
                                 </table>
                             </t>
                             <t t-set="cont" t-value="cont+1"/>
-                        </div> 
-                        <div class="footer">
-                            <div class="row text-center" style="border-top: 1px solid black;">
-                                <div class="col col-3 offset-9 text-right">
-                                    <ul class="list-inline mt-2">
-                                        <li class="list-inline-item" style="font-size:10px;">Página:</li>
-                                        <li class="list-inline-item">
-                                            <span style="font-size:10px;">H-</span><span class="page" style="font-size:10px;"/>
-                                        </li>
-                                        <li class="list-inline-item" style="font-size:10px;">de</li>
-                                        <li class="list-inline-item">
-                                            <span style="font-size:10px;">H-</span><span class="topage" style="font-size:10px;"/>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div> 
-                    </t>
+                        </t>
+                    </div>
                 </div>
+                <div class="footer">
+                    <div style="text-align:right;font-size:10px;border-top:1px solid black;">Página: H-<span class="page"/> / H-<span class="topage"/></div>
+                </div> 
             </t>
         </template>
 
