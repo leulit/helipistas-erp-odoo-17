@@ -291,13 +291,9 @@ class UnificarEtapasWizard(models.TransientModel):
 
     @api.constrains('aplicar_a_proyectos', 'proyecto_ids')
     def _check_proyectos(self):
-        for wizard in self:
-            if wizard.estado == 'paso1':
-                if not wizard.aplicar_a_proyectos and not wizard.proyecto_ids:
-                    raise UserError(_('Debes seleccionar al menos un proyecto o marcar "Aplicar a Todos los Proyectos"'))
-
-    @api.constrains('aplicar_a_proyectos', 'proyecto_ids')
-    def _check_proyectos(self):
+        """
+        Validación: En paso 1, debe haber al menos un proyecto seleccionado o marcar aplicar a todos.
+        """
         for wizard in self:
             if wizard.estado == 'paso1':
                 if not wizard.aplicar_a_proyectos and not wizard.proyecto_ids:

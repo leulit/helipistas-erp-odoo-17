@@ -9,22 +9,22 @@
                 <header>
                     <button name="action_analizar_etapas" string="Siguiente: Mapear Etapas" 
                             type="object" class="btn-primary"
-                            attrs="{'invisible': [('estado', '!=', 'paso1')]}"/>
+                            invisible="estado != 'paso1'"/>
                     <button name="action_simular_cambios" string="Simular Cambios" 
                             type="object" class="btn-info"
-                            attrs="{'invisible': [('estado', '!=', 'paso2')]}"/>
+                            invisible="estado != 'paso2'"/>
                     <button name="action_volver_paso1" string="← Volver a Paso 1" 
                             type="object" class="btn-secondary"
-                            attrs="{'invisible': [('estado', '=', 'paso1')]}"/>
+                            invisible="estado == 'paso1'"/>
                     <button name="action_unificar_etapas" string="🚀 EJECUTAR NORMALIZACIÓN" 
                             type="object" class="btn-danger"
                             confirm="¿Estás seguro? Esta acción modificará los proyectos y tareas seleccionados."
-                            attrs="{'invisible': ['|', ('estado', '!=', 'paso3'), ('modo_ejecucion', '=', 'simulacion')]}"/>
+                            invisible="estado != 'paso3' or modo_ejecucion == 'simulacion'"/>
                     <field name="estado" widget="statusbar" statusbar_visible="paso1,paso2,paso3"/>
                 </header>
                 <sheet>
                     <!-- PASO 1: SELECCIÓN DE PROYECTOS -->
-                    <div attrs="{'invisible': [('estado', '!=', 'paso1')]}">
+                    <div invisible="estado != 'paso1'">
                         <div class="oe_title">
                             <h1>
                                 <span>Paso 1: Selección de Proyectos</span>
@@ -39,7 +39,7 @@
                             </group>
                         </group>
                         
-                        <group attrs="{'invisible': [('aplicar_a_proyectos', '=', True)]}">
+                        <group invisible="aplicar_a_proyectos">
                             <field name="proyecto_ids" widget="many2many_checkboxes"
                                    context="{'tree_view_ref': 'project.view_project'}"/>
                         </group>
@@ -69,7 +69,7 @@
                     </div>
                     
                     <!-- PASO 2: MAPEO DE ETAPAS -->
-                    <div attrs="{'invisible': [('estado', '!=', 'paso2')]}">
+                    <div invisible="estado != 'paso2'">
                         <div class="oe_title">
                             <h1>
                                 <span>Paso 2: Mapeo de Etapas</span>
@@ -120,7 +120,7 @@
                     </div>
                     
                     <!-- PASO 3: SIMULACIÓN DE CAMBIOS -->
-                    <div attrs="{'invisible': [('estado', '!=', 'paso3')]}">
+                    <div invisible="estado != 'paso3'">
                         <div class="oe_title">
                             <h1>
                                 <span>Paso 3: Simulación y Ejecución</span>
@@ -133,9 +133,9 @@
                             </group>
                             <group>
                                 <field name="crear_snapshot" 
-                                       attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}"/>
+                                       invisible="modo_ejecucion == 'simulacion'"/>
                                 <field name="limpiar_etapas_obsoletas"
-                                       attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}"/>
+                                       invisible="modo_ejecucion == 'simulacion'"/>
                             </group>
                         </group>
                         
@@ -155,7 +155,7 @@
                         
                         <div class="oe_clear"/>
                         
-                        <div class="alert alert-warning" role="alert" attrs="{'invisible': [('modo_ejecucion', '=', 'simulacion')]}">
+                        <div class="alert alert-warning" role="alert" invisible="modo_ejecucion == 'simulacion'">
                             <h4><i class="fa fa-warning"/> MODO EJECUCIÓN REAL ACTIVADO</h4>
                             <p>
                                 <strong>Al hacer clic en "EJECUTAR NORMALIZACIÓN":</strong>
@@ -163,16 +163,16 @@
                             <ul>
                                 <li>Se aplicarán TODOS los cambios mostrados arriba</li>
                                 <li>Se modificarán los proyectos y tareas según el mapeo definido</li>
-                                <li attrs="{'invisible': [('crear_snapshot', '=', False)]}">
+                                <li invisible="not crear_snapshot">
                                     Se creará un snapshot automático que te permitirá revertir los cambios
                                 </li>
-                                <li attrs="{'invisible': [('limpiar_etapas_obsoletas', '=', False)]}">
+                                <li invisible="not limpiar_etapas_obsoletas">
                                     <strong style="color: #d9534f;">Se eliminarán las etapas obsoletas que no estén en uso</strong>
                                 </li>
                             </ul>
                         </div>
                         
-                        <div class="alert alert-danger" role="alert" attrs="{'invisible': ['|', ('modo_ejecucion', '=', 'simulacion'), ('limpiar_etapas_obsoletas', '=', False)]}">
+                        <div class="alert alert-danger" role="alert" invisible="modo_ejecucion == 'simulacion' or not limpiar_etapas_obsoletas">
                             <h4><i class="fa fa-exclamation-triangle"/> LIMPIEZA DE ETAPAS OBSOLETAS ACTIVADA</h4>
                             <p>
                                 <strong>IMPORTANTE:</strong> Después de la normalización, se eliminarán automáticamente las etapas antiguas 
@@ -186,7 +186,7 @@
                             <p><strong>Solo se eliminarán etapas completamente sin uso.</strong></p>
                         </div>
                         
-                        <div class="alert alert-success" role="alert" attrs="{'invisible': [('modo_ejecucion', '=', 'real')]}">
+                        <div class="alert alert-success" role="alert" invisible="modo_ejecucion == 'real'">
                             <h4><i class="fa fa-check-circle"/> MODO SIMULACIÓN</h4>
                             <p>
                                 Estás en modo simulación. Los cambios NO se aplicarán.<br/>
@@ -228,7 +228,7 @@
                     <button name="action_rollback" string="🔙 Restaurar Estado Anterior" 
                             type="object" class="btn-warning"
                             confirm="¿Estás seguro de que quieres revertir los cambios? Esto restaurará el estado anterior y desactivará este snapshot."
-                            attrs="{'invisible': [('activo', '=', False)]}"/>
+                            invisible="not activo"/>
                     <field name="activo" widget="statusbar" statusbar_visible="True,False"/>
                 </header>
                 <sheet>
@@ -259,13 +259,13 @@
                         </page>
                     </notebook>
                     
-                    <div class="alert alert-info" role="alert" attrs="{'invisible': [('activo', '=', False)]}">
+                    <div class="alert alert-info" role="alert" invisible="not activo">
                         <p>
                             <i class="fa fa-info-circle"/> Este snapshot está activo y puede usarse para restaurar el estado anterior.
                         </p>
                     </div>
                     
-                    <div class="alert alert-warning" role="alert" attrs="{'invisible': [('activo', '=', True)]}">
+                    <div class="alert alert-warning" role="alert" invisible="activo">
                         <p>
                             <i class="fa fa-warning"/> Este snapshot ha sido desactivado y ya no puede usarse para rollback.
                         </p>
