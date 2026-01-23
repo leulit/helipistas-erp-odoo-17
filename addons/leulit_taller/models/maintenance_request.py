@@ -1005,110 +1005,7 @@ class MaintenanceRequest(models.Model):
             data.update(self._get_data_to_print_inspeccion_seguridad())
             data.update(self._get_data_to_print_tareas_sensibles_seguridad())
 
-            def calculate_content_size(tarea):
-                """
-                Calcula el espacio aproximado que ocupará una tarea en la página
-                teniendo en cuenta el formato actual
-                """
-                # Espacio base para el título de la tarea
-                size = 4  # Título + espaciado
-                
-                if tarea.get('subtareas'):
-                    # Espacio para el encabezado de subtareas
-                    size += 1
-                    # Espacio para cada subtarea
-                    size += len(tarea['subtareas'])
-                    # Espacio adicional para separación
-                    size += 1
-                else:
-                    # Espacio adicional para separación
-                    size += 1
-
-                return size
-
-            def optimize_chunks(tareas, lines_per_page=40):
-                """
-                Optimiza la distribución de tareas en páginas para maximizar
-                el uso del espacio disponible
-                """
-                chunks = []
-                current_chunk = []
-                current_lines = 0
-                total_content_size = 0
-
-                # Primero, calculamos el tamaño total del contenido
-                for tarea in tareas:
-                    total_content_size += calculate_content_size(tarea)
-
-                # Calculamos el número óptimo de páginas
-                optimal_pages = max(1, (total_content_size + lines_per_page - 1) // lines_per_page)
-                target_size_per_page = total_content_size / optimal_pages
-
-                for tarea in tareas:
-                    tarea_size = calculate_content_size(tarea)
-                    
-                    # Si esta tarea haría que la página actual exceda significativamente
-                    # el tamaño objetivo y ya tenemos contenido, comenzar nueva página
-                    if (current_lines + tarea_size > target_size_per_page * 1.3 and 
-                        current_chunk and 
-                        len(chunks) < optimal_pages - 1):
-                        chunks.append(current_chunk)
-                        current_chunk = []
-                        current_lines = 0
-
-                    current_chunk.append(tarea)
-                    current_lines += tarea_size
-
-                # Añadir el último chunk si existe
-                if current_chunk:
-                    chunks.append(current_chunk)
-
-                # Ajustar los chunks si es necesario para equilibrar mejor el contenido
-                balanced_chunks = balance_chunks(chunks, lines_per_page)
-                
-                return balanced_chunks
-
-            def balance_chunks(chunks, lines_per_page):
-                """
-                Placeholder para futura lógica de rebalanceo de chunks.
-                Por ahora retorna los chunks sin modificar.
-                """
-                return chunks
-
-            # Modificar la función principal para usar estas nuevas funciones
-            failed_reports = []  # Track de reportes que fallen
-            
-            def generate_pdf_safely(report_ref, report_name, data_dict, is_continuation=False, chunk_index=None, total_chunks=None):
-                try:
-                    report = self.env.ref(report_ref)
-                    local_data = dict(data_dict)
-                    if is_continuation:
-                        local_data.update({
-                            'is_continuation': True,
-                            'chunk_index': chunk_index,
-                            'total_chunks': total_chunks,
-                            'current_page': chunk_index + 1,
-                            'total_pages': total_chunks
-                        })
-                    pdf_options = {
-                        'margin-top': '25mm',
-                        'margin-bottom': '20mm',
-                        'margin-left': '15mm',
-                        'margin-right': '15mm',
-                        'encoding': 'utf-8',
-                        'page-size': 'A4',
-                        'dpi': '300',
-                        '--header-spacing': '5',
-                    }
-                    pdf = self.env['ir.actions.report'].with_context(pdf_options=pdf_options)._render_qweb_pdf(report, self, data=local_data)[0]
-                    return pdf
-                except Exception as e:
-                    error_msg = f"Error generando {report_name}: {str(e)}"
-                    _logger.error(error_msg)
-                    failed_reports.append(report_name)
-                    return None
-
-            # Lista de reportes con sus configuraciones específicas
+            # Lista de reportes a generar
             base_reports = [
                 ('leulit_taller.leulit_20230905_1226_report', 'Orden de Trabajo'),
                 ('leulit_taller.leulit_20230926_1832_report', 'Defectos'),
@@ -1120,63 +1017,17 @@ class MaintenanceRequest(models.Model):
             ]
 
             pdf_list = []
+            failed_reports = []
 
-            # Generar PDFs
+            # Generar PDFs de forma simplificada (sin chunks - Odoo 17 maneja cabeceras correctamente)
             for report_ref, report_name in base_reports:
-                # Verificar si necesitamos dividir el reporte en chunks
-                if report_name == 'Log Cards':
-                    all_tareas = data.get('all_tareas', [])
-                    if all_tareas:
-                        # Usar la nueva función de optimización
-                        chunks = optimize_chunks(all_tareas, lines_per_page=40)
-                        total_chunks = len(chunks)
-                        
-                        for i, chunk in enumerate(chunks):
-                            chunk_data = dict(data)
-                            chunk_data['all_tareas'] = chunk
-                            pdf = generate_pdf_safely(
-                                report_ref,
-                                f"{report_name} - Parte {i + 1}", 
-                                chunk_data,
-                                True,
-                                i,
-                                total_chunks
-                            )
-                            if pdf:
-                                pdf_list.append(pdf)
-                    else:
-                        pdf = generate_pdf_safely(report_ref, report_name, data)
-                        if pdf:
-                            pdf_list.append(pdf)
-
-                elif report_name == 'Material':
-                    # Mantener el chunking existente para Material
-                    chunk_size = 8
-                    materiales = data.get('materiales', [])
-                    if len(materiales) > chunk_size:
-                        total_chunks = (len(materiales) + chunk_size - 1) // chunk_size
-                        for i in range(0, len(materiales), chunk_size):
-                            chunk_data = dict(data)
-                            chunk_data['materiales'] = materiales[i:i + chunk_size]
-                            pdf = generate_pdf_safely(
-                                report_ref, 
-                                f"{report_name} - Parte {i//chunk_size + 1}", 
-                                chunk_data, 
-                                True, 
-                                i//chunk_size,
-                                total_chunks
-                            )
-                            if pdf:
-                                pdf_list.append(pdf)
-                    else:
-                        pdf = generate_pdf_safely(report_ref, report_name, data)
-                        if pdf:
-                            pdf_list.append(pdf)
-                else:
-                    # Resto de reportes sin chunking
-                    pdf = generate_pdf_safely(report_ref, report_name, data)
-                    if pdf:
-                        pdf_list.append(pdf)
+                try:
+                    report = self.env.ref(report_ref)
+                    pdf = self.env['ir.actions.report']._render_qweb_pdf(report, self.ids, data=data)[0]
+                    pdf_list.append(pdf)
+                except Exception as e:
+                    _logger.error(f"Error generando {report_name}: {str(e)}")
+                    failed_reports.append(report_name)
 
             # Generar documentos adicionales
             if self.crs:
