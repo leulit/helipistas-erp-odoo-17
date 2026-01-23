@@ -398,9 +398,8 @@ class MaintenanceRequest(models.Model):
             off_name = str(off_move.product_id.name) if off_move.product_id.name else 'N/A'
             off_tsn = str(off_move.lot_id.tsn_actual) if off_move.lot_id.tsn_actual else '0'
             off_tso = str(off_move.lot_id.tso_actual) if off_move.lot_id.tso_actual else '0'
-            off_user = str(off_move.create_uid.name) if off_move.create_uid.name else 'N/A'
             text += '<b>- OFF - P/N </b>' + off_pn + '<b> - S/N </b>' + off_sn + '<b> - Descripción </b>' + off_name + \
-                    '<b> - TSN </b>' + off_tsn + '<b> - TSO </b>' + off_tso + '<b> - Realizado por </b>' + off_user
+                    '<b> - TSN </b>' + off_tsn + '<b> - TSO </b>' + off_tso
             text += '<br/>'
             # ON component - proteger campos que pueden ser False
             on_pn = str(move_line.product_id.default_code) if move_line.product_id.default_code else 'N/A'
@@ -408,9 +407,8 @@ class MaintenanceRequest(models.Model):
             on_name = str(move_line.product_id.name) if move_line.product_id.name else 'N/A'
             on_tsn = str(move_line.lot_id.tsn_actual) if move_line.lot_id.tsn_actual else '0'
             on_tso = str(move_line.lot_id.tso_actual) if move_line.lot_id.tso_actual else '0'
-            on_user = str(move_line.create_uid.name) if move_line.create_uid.name else 'N/A'
             text += '<b>- ON - P/N </b>' + on_pn + '<b> - S/N </b>' + on_sn + '<b> - Descripción </b>' + on_name + \
-                    '<b> - TSN </b>' + on_tsn + '<b> - TSO </b>' + on_tso + '<b> - Realizado por </b>' + on_user
+                    '<b> - TSN </b>' + on_tsn + '<b> - TSO </b>' + on_tso
             text += '<br/>'
 
         mecanico = self.env['leulit.mecanico'].search([('partner_id','=',self.env.user.partner_id.id),('active','=',True),('certificador','=',True)])
@@ -424,13 +422,13 @@ class MaintenanceRequest(models.Model):
         tsn_motor = 0
         tso_motor = 0
         if motor and hasattr(motor, 'production_lot') and motor.production_lot:
-            tsn_motor = motor.production_lot.tsn_actual if motor.production_lot.tsn_actual else 0
-            tso_motor = motor.production_lot.tso_actual if motor.production_lot.tso_actual else 0
+            tsn_motor = round(motor.production_lot.tsn_actual, 2) if motor.production_lot.tsn_actual else 0
+            tso_motor = round(motor.production_lot.tso_actual, 2) if motor.production_lot.tso_actual else 0
         
         context = {
             'default_tareas': text,
             'default_request': self.id,
-            'default_horas_crs': self.horometro,
+            'default_horas_crs': round(self.horometro, 2),
             'default_tso_crs': str(tso),
             'default_tsn_motor': tsn_motor,
             'default_tso_motor': str(tso_motor),
@@ -483,10 +481,10 @@ class MaintenanceRequest(models.Model):
         context = {
             'default_tareas': text,
             'default_request': self.id,
-            'default_horas_crs': self.tsn,
+            'default_horas_crs': round(self.tsn, 2),
             'default_tso_crs': str(tso),
-            'default_tsn_motor': motor.production_lot.tsn_actual if motor else 0,
-            'default_tso_motor': str(motor.production_lot.tso_actual) if motor else 0,
+            'default_tsn_motor': round(motor.production_lot.tsn_actual, 2) if motor and motor.production_lot else 0,
+            'default_tso_motor': str(round(motor.production_lot.tso_actual, 2)) if motor and motor.production_lot else '0',
             'default_certificador': mecanico.id if mecanico else False,
             'default_tipo_crs': 'completo',
         }
