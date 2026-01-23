@@ -4,23 +4,23 @@
 
         <template id="crs_report_header">
             <t t-call="leulit_taller.crs_report_css"/>
-            <table class="fullwidth noborde">
-                <tr>
-                    <th class="noborde">
-                        <table class="noborde">
-                            <tr>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+            <table style="border: 0px white;width:100%;">
+                <tr style="border: 0px white;">
+                    <th style="border: 0px white;">
+                        <table style="border: 0px white;">
+                            <tr style="border: 0px white;">
+                                <td style="border: 0px white;font-size:8px; white-space: nowrap; text-align:center">(c) Icarus Manteniment</td>
+                                <td style="border: 0px white;font-size:8px; white-space: nowrap; text-align:center">
                                     <i>Fecha creación documento</i><br/>
                                     <i><span t-esc="item['fecha']"/></i>
                                 </td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                <td style="border: 0px white;font-size:8px; white-space: nowrap; text-align:center">
                                     <t t-if="hashcode">
                                         <i>Firmado por:</i><br/>
                                         <i><span t-esc="firmado_por"/></i>
                                     </t>
                                 </td>
-                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                <td style="border: 0px white;font-size:8px; white-space: nowrap; text-align:center">
                                     <t t-if="hashcode">
                                         <i>CSV/CID</i><br/>
                                         <span t-esc="hashcode"/>
@@ -33,38 +33,38 @@
                             </tr>
                         </table>
                     </th>
-                    <th class="noborde">
-                        <table align="right">
-                            <tr>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0009</td>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
-                                <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.1.0</td>
+                    <th style="border: 0px white;">
+                        <table style="border: 0px white;" align="right">
+                            <tr style="border: 0px white;">
+                                <td style="border: 0px none;font-size:8px; white-space: nowrap; text-align:center"><b>Código:</b></td>
+                                <td style="border: 0px none;font-size:8px; white-space: nowrap; text-align:center">HLP-DOC-0009</td>
+                                <td style="border: 0px none;font-size:8px; white-space: nowrap; text-align:center"><b>Versión:</b></td>
+                                <td style="border: 0px none;font-size:8px; white-space: nowrap; text-align:center">1.1.0</td>
                             </tr>
                         </table>
                     </th>
                 </tr>
                 <tr>
-                    <th class="noborde" colspan="2" style="border-top: 1px solid #575757;">
-                        <table class="fullwidth noborde" style="margin-bottom: 30px">
-                            <tbody>
-                                <tr class="noborde">
-                                    <td colspan="2" class="noborde" style="font-size:8px;width:100%; text-align:center">
+                    <th colspan="2" style="border: 0px white;border-top: 1px solid #575757;">
+                        <table class="fullwidth noborde" style="border: 0px white;margin-bottom: 30px">
+                            <tbody style="border: 0px white;">
+                                <tr style="border: 0px white;">
+                                    <td colspan="2" style="border: 0px white;font-size:8px;width:100%; text-align:center">
                                         Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
                                     </td>
                                 </tr>
-                                <tr class="noborde">
-                                    <td class="noborde">
-                                        <table class="fullwidth">
-                                            <tr>
-                                                <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
+                                <tr style="border: 0px white;">
+                                    <td style="border: 0px white;">
+                                        <table style="border: 0px white;width:100%;">
+                                            <tr style="border: 0px white;">
+                                                <td style="border: 0px white;font-size:12px; width:15%; white-space: nowrap; text-align:center">
                                                     <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:25px;"/><br/><b>ES.145.173</b>
                                                 </td>
-                                                <td class="noborde" style="font-size:20px; white-space: nowrap; text-align:center">
+                                                <td style="border: 0px white;font-size:20px; white-space: nowrap; text-align:center">
                                                     <span><b>Certificado de Aptitud al Servicio</b></span><br/>
                                                     <span style="font-size:12px;">Release to service certificate</span>
                                                 </td>
-                                                <td class="noborde" style="font-size:12px; width:15%; white-space: nowrap; text-align:center">
+                                                <td style="border: 0px white;font-size:12px; width:15%; white-space: nowrap; text-align:center">
                                                     <span>M.O.E  2.16</span><br/>
                                                     <span>Formato  2.7</span>
                                                 </td>

@@ -963,7 +963,6 @@ class MaintenanceRequest(models.Model):
 
     def merge_pdfs(self, pdf_list):
         pdf_writer = PdfWriter()
-        page_number = 1  # Inicializa el número de página
 
         for pdf_data in pdf_list:
             pdf_reader = PdfReader(io.BytesIO(pdf_data))
@@ -1071,19 +1070,14 @@ class MaintenanceRequest(models.Model):
 
             def balance_chunks(chunks, lines_per_page):
                 """
-                Equilibra los chunks para que tengan un tamaño más uniforme
+                Placeholder para futura lógica de rebalanceo de chunks.
+                Por ahora retorna los chunks sin modificar.
                 """
-                if len(chunks) <= 1:
-                    return chunks
-
-                # Calcular el tamaño de cada chunk
-                chunk_sizes = []
-                for chunk in chunks:
-                    size = sum(calculate_content_size(tarea) for tarea in chunk)
-                    chunk_sizes.append(size)
                 return chunks
 
             # Modificar la función principal para usar estas nuevas funciones
+            failed_reports = []  # Track de reportes que fallen
+            
             def generate_pdf_safely(report_ref, report_name, data_dict, is_continuation=False, chunk_index=None, total_chunks=None):
                 try:
                     report = self.env.ref(report_ref)
@@ -1109,7 +1103,9 @@ class MaintenanceRequest(models.Model):
                     pdf = self.env['ir.actions.report'].with_context(pdf_options=pdf_options)._render_qweb_pdf(report, self, data=local_data)[0]
                     return pdf
                 except Exception as e:
-                    _logger.error(f"Error generando {report_name}: {str(e)}")
+                    error_msg = f"Error generando {report_name}: {str(e)}"
+                    _logger.error(error_msg)
+                    failed_reports.append(report_name)
                     return None
 
             # Lista de reportes con sus configuraciones específicas
@@ -1204,13 +1200,17 @@ class MaintenanceRequest(models.Model):
 
             if not pdf_list:
                 raise UserError('No se pudo generar ningún PDF del expediente')
+            
+            # Advertir si algunos reportes fallaron
+            if failed_reports:
+                warning_msg = f"⚠️ Advertencia: Los siguientes reportes no pudieron generarse y fueron omitidos del expediente:\n\n" + "\n".join(f"- {r}" for r in failed_reports)
+                _logger.warning(warning_msg)
+                # Continuar con los PDFs que sí se generaron correctamente
 
             # Combinar PDFs y guardar
             try:
                 self.expediente_mantenimiento = base64.b64encode(self.merge_pdfs(pdf_list).getvalue())
                 self.combined_pdf_filename = f"Expediente de Mantenimiento {self.name}.pdf"
-                
-                self.env.cr.commit()
     
                 return {
                     'type': 'ir.actions.act_url',
