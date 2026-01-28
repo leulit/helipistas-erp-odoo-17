@@ -19,7 +19,7 @@ class HrExpense(models.Model):
         for item in self:
             item.is_dieta_pernocta = False
             if item.piloto_id:
-                item.is_dieta_pernocta = item.product_id.name in ['Dieta con pernocta', 'Dieta sin pernocta', 'Plus de disponibilidad/activación']
+                item.is_dieta_pernocta = item.product_id.name in ['Dieta con pernocta', 'Dieta sin pernocta', 'Plus Festivo/Nacional']
 
     @api.onchange('product_id', 'date')
     def _onchange_product_id_date(self):
@@ -32,7 +32,7 @@ class HrExpense(models.Model):
                     else:
                         self.sudo().price_unit = self.piloto_id.dieta_tb
                         self.sudo().total_amount_currency = self.piloto_id.dieta_tb
-            if self.product_id.name == 'Plus de disponibilidad/activación':
+            if self.product_id.name == 'Plus Festivo/Nacional':
                 if self.piloto_id:
                     self.sudo().price_unit = self.piloto_id.plus_activacion 
                     self.sudo().total_amount_currency = self.piloto_id.plus_activacion 

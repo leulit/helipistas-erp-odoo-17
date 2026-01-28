@@ -325,7 +325,7 @@ class leulit_piloto(models.Model):
     documentos_ids = fields.One2many(comodel_name="leulit.piloto_adjunto", inverse_name="piloto_id", string="Documentos")
     dieta_ta = fields.Float(string="Dieta Temporada Alta")
     dieta_tb = fields.Float(string="Dieta Temporada Baja")
-    plus_activacion = fields.Float(string="Plus Disponibilidad/Activación")
+    plus_activacion = fields.Float(string="Plus Festivo/Nacional")
     n_licencia = fields.Char(string="Nº Licencia")
     freelance = fields.Boolean(string="Freelance")
 
