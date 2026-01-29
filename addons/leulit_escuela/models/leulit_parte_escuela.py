@@ -306,7 +306,9 @@ class leulit_parte_escuela(models.Model):
         for item in self:
             items2 = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('rel_parte_escuela','=',item.id)])
             idsquery = []
-            [idsquery.append(x.rel_curso.id) for x in items2 if x not in idsquery]
+            for x in items2:
+                if x.rel_curso.id not in idsquery:
+                    idsquery.append(x.rel_curso.id)
             item.cursos = idsquery
 
     @api.model
@@ -316,7 +318,6 @@ class leulit_parte_escuela(models.Model):
             for linea in items2:
                 if linea.rel_curso.ato:
                     item.ato = True
-
 
     @api.depends('rel_curso_alumno','estado')
     def _is_verificado(self):
