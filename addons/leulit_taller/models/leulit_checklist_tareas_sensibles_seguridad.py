@@ -10,5 +10,6 @@ class ChecklistTareasSensiblesSeguridad(models.Model):
     _description = 'Checklist de Tareas Sensibles para la Seguridad'
     _rec_name = "name"
 
+    active = fields.Boolean(string="Activo", default=True)
     name = fields.Char(string="Nombre")
     tareas = fields.One2many(comodel_name="leulit.tarea_sensible_seguridad", inverse_name="checklist_id", string="Tareas")
