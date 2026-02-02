@@ -124,7 +124,7 @@
                                     </tr>
                                     <t t-if="tarea['descripcion']">
                                         <tr>
-                                            <table>
+                                            <table class="fullwidth">
                                                 <tr>
                                                     <td class="tdcolored">Descripción</td>
                                                     <td colspan="2"><span t-out="tarea['descripcion']"/></td>
@@ -142,16 +142,16 @@
                                                 <td><span t-esc="subtarea['name']"/></td>
                                                 <td class="centertext" colspan="2"><span t-out="subtarea['realizado_por']"/></td>
                                             </tr>
-                                        </t>
-                                        <t t-if="subtarea['descripcion']">
-                                            <tr>
-                                                <table>
-                                                    <tr>
-                                                        <td class="tdcolored">Descripción</td>
-                                                        <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
-                                                    </tr>
-                                                </table>
-                                            </tr>
+                                            <t t-if="subtarea['descripcion']">
+                                                <tr>
+                                                    <table class="fullwidth">
+                                                        <tr>
+                                                            <td class="tdcolored">Descripción</td>
+                                                            <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
+                                                        </tr>
+                                                    </table>
+                                                </tr>
+                                            </t>
                                         </t>
                                     </t>
                                 </table>

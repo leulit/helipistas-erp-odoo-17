@@ -938,7 +938,7 @@ class MaintenanceRequest(models.Model):
         tareas = []
         for task in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',False),('tipo_tarea_taller','!=','defecto_encontrado')], order="id asc"):
             subtareas = []
-            for subtask in self.env['project.task'].search([('maintenance_request_id','=',self.id),('id','child_of',task.id), ('id', '!=', self.id)], order="id asc"):
+            for subtask in self.env['project.task'].search([('maintenance_request_id','=',self.id),('parent_id','=',task.id), ('id', '!=', self.id)], order="id asc"):
                 if subtask.subtask_count == 0:
                     subtarea = {
                         'name' : subtask.name,
