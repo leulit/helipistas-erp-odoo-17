@@ -915,7 +915,7 @@ class MaintenanceRequest(models.Model):
             'modelo_motor':motor.production_lot.product_id.default_code if motor else '-',
             'sn_motor':motor.production_lot.sn if motor else '-',
             'tsn_motor':round(last_crs.tsn_motor,2) if last_crs and round(last_crs.tsn_motor,2)>0 else '-',
-            'tso_motor':round(last_crs.tso_motor,2) if last_crs and round(last_crs.tso_motor,2)>0 else '-',
+            'tso_motor':last_crs.tso_motor if last_crs else '-',
             'ciclos_tsn':False,
             'ciclos_ng_tsn':False,
             'ciclos_nf_tsn':False,
