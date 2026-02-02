@@ -181,14 +181,14 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
                     break
 
         # === LÓGICA DE FILTRADO BIDIRECCIONAL ===
-        cursos_ids = []
+        cursos_ids = Curso.search([('estado', '=', 'activo')]).ids
         alumnos_ids = []
         
         # CASO 1: Hay alumnos seleccionados → filtrar cursos
         if alumnos:
             if alumno_employee:
                 # Si es empleado activo → todos los cursos activos
-                cursos_ids = Curso.search([('estado','=','activo')]).ids
+                cursos_ids = Curso.search([('estado', '=', 'activo')]).ids
             else:
                 # Si NO es empleado → solo cursos asignados sin finalizar
                 cursos_ids = RelAlumnoCurso.search([
@@ -208,14 +208,22 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
                 # Si NO tiene ATO MI → todos los alumnos del sistema
                 alumnos_ids = Alumno.search([]).ids
             
-            # Si no hay alumnos seleccionados, actualizar cursos_ids con todos los activos
+            # Si no hay alumnos seleccionados, mantener todos los cursos activos
             if not alumnos:
-                cursos_ids = Curso.search([('estado','=','activo')]).ids
-        
-        # Si no hay ni curso ni alumnos, los cursos deben estar vacíos
-        if not self.rel_curso and not alumnos:
-            cursos_ids = []
-        
+                cursos_ids = Curso.search([('estado', '=', 'activo')]).ids
+
+        try:
+            _logger.info(
+                "[Escuela] onchange_colores domains computed: cursos_ids=%s alumnos_ids=%s",
+                cursos_ids,
+                alumnos_ids,
+            )
+        except Exception:
+            _logger.exception("[Escuela] Error logging onchange_colores domains")
+
+        self.cursos_domain_ids = [(6, 0, cursos_ids)]
+        self.alumnos_domain_ids = [(6, 0, alumnos_ids)]
+
         return {
             'domain': {
                 'rel_curso': [('id', 'in', cursos_ids if cursos_ids else []), ('estado', '=', 'activo')],
@@ -301,6 +309,8 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
     valoracion = fields.Selection(_get_valoracion_options,'Valoración')
     search_tipo = fields.Char(string="")
     fase_vuelo = fields.Selection([('fase_1', 'Fase 1'), ('fase_2', 'Fase 2')], 'Fase de vuelo')
+    cursos_domain_ids = fields.Many2many('leulit.curso', string='Cursos dominio', readonly=True)
+    alumnos_domain_ids = fields.Many2many('leulit.alumno', string='Alumnos dominio', readonly=True)
 
 
 
