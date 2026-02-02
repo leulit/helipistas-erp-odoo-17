@@ -122,6 +122,16 @@
                                         <td class="centertext"><span t-out="tarea['realizado_por']"/></td>
                                         <td class="centertext"><span t-out="tarea['supervisado_por']"/></td>
                                     </tr>
+                                    <t t-if="tarea['descripcion']">
+                                        <tr>
+                                            <table>
+                                                <tr>
+                                                    <td class="tdcolored">Descripción</td>
+                                                    <td colspan="2"><span t-out="tarea['descripcion']"/></td>
+                                                </tr>
+                                            </table>
+                                        </tr>
+                                    </t>
                                     <t t-if="tarea['subtareas']">
                                         <tr>
                                             <td class="tdcolored">Sub-Tareas</td>
@@ -133,14 +143,16 @@
                                                 <td class="centertext" colspan="2"><span t-out="subtarea['realizado_por']"/></td>
                                             </tr>
                                         </t>
-                                        <tr>
-                                            <table>
-                                                <tr>
-                                                    <td class="tdcolored">Descripción</td>
-                                                    <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
-                                                </tr>
-                                            </table>
-                                        </tr>
+                                        <t t-if="subtarea['descripcion']">
+                                            <tr>
+                                                <table>
+                                                    <tr>
+                                                        <td class="tdcolored">Descripción</td>
+                                                        <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
+                                                    </tr>
+                                                </table>
+                                            </tr>
+                                        </t>
                                     </t>
                                 </table>
                                 <br/>

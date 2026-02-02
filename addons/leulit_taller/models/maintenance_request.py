@@ -944,14 +944,15 @@ class MaintenanceRequest(models.Model):
                         'name' : subtask.name,
                         'realizado_por' : subtask.user_ids.name if subtask.stage_id.name not in ['Pendiente','En proceso'] else '',
                         'supervisado_por' : subtask.supervisado_por.name if subtask.stage_id.name not in ['Pendiente','En proceso'] and subtask.supervisado_por else '',
-                        'descripcion' : subtask.description if subtask.stage_id.name not in ['Pendiente','En proceso'] and subtask.description else ''
+                        'descripcion' : subtask.description if subtask.stage_id.name not in ['Pendiente','En proceso'] and subtask.description else False
                     }
                     subtareas.append(subtarea)
             tarea = {
                 'name' : task.name,
                 'realizado_por' : task.user_ids.name if task.stage_id.name not in ['Pendiente','En proceso'] else '',
                 'supervisado_por' : task.supervisado_por.name if task.stage_id.name not in ['Pendiente','En proceso'] and task.supervisado_por else '',
-                'subtareas' : subtareas
+                'subtareas' : subtareas,
+                'descripcion' : task.description if task.stage_id.name not in ['Pendiente','En proceso'] and task.subtask_count == 0 else False
             }
             tareas.append(tarea)
         data = {
