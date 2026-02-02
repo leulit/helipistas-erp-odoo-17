@@ -59,12 +59,12 @@
 					<group>
 						<field name="search_tipo" invisible="1"/>
 	                	<field name="rel_curso" domain="[('estado','=','activo')]" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-	                	<field name="rel_alumnos"  readonly="not rel_curso and not silabus"  >
+	                	<field name="rel_alumnos"  readonly="not rel_curso and not silabus">
 	                   		<tree create="false">
 	                   			<field name="name"/>
 	                   		</tree>
 	                   	</field>
-	                   	<field name="silabus" domain="[('curso_id','=',rel_curso),('tipo','=','teorica')]"  readonly="not rel_curso" > 
+	                   	<field name="silabus" domain="[('curso_id','=',rel_curso),('tipo','=','teorica')]"  readonly="not rel_curso"> 
 	                   		<tree create="false">
 	                   			<field name="silabusDoit" column_invisible="1"/>
 	                   			<field name="id"/>

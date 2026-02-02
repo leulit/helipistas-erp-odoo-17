@@ -122,9 +122,13 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
             )
         except Exception:
             _logger.exception("[Escuela] Error logging onchange_colores inputs")
+        
         RelCursoAlu  = self.env['leulit.rel_parte_escuela_cursos_alumnos']
         Silabus      = self.env['leulit.silabus']
         PFCurso      = self.env['leulit.perfil_formacion_curso']
+        Alumno       = self.env['leulit.alumno']
+        Curso        = self.env['leulit.curso']
+        RelAlumnoCurso = self.env['leulit.rel_alumno_curso']
         
         objAllSilabus_ids = []
         objSilabus = []
@@ -146,6 +150,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
         else:
             alumnos = self.rel_alumnos.ids
 
+        # Marcar sílabus ya utilizados
         if alumnos and self.rel_curso:
             objAllSilabus_ids = Silabus.search([('curso_id','=',self.rel_curso.id)])
             for alumno in alumnos:
@@ -165,20 +170,58 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
                 for rec_silabus in objAllSilabus_ids:
                     rec_silabus.silabusDoit = False
 
+        # Determinar si hay alumnos empleados/inactivos (una sola búsqueda)
         alumno_employee = False
-        for alumno in self.env['leulit.alumno'].search([('id','in',alumnos)]):
-            user = self.env['res.users'].search([('partner_id','=',alumno.partner_id.id)])
-            if user.employee_id or alumno.activo == False:
-                alumno_employee = True
+        if alumnos:
+            alumnos_objs = Alumno.search([('id','in',alumnos)])
+            for alumno in alumnos_objs:
+                user = self.env['res.users'].search([('partner_id','=',alumno.partner_id.id)], limit=1)
+                if user.employee_id or alumno.activo == False:
+                    alumno_employee = True
+                    break
 
-
-        cursos_ids = self.env['leulit.curso'].search([('estado','=','activo')]).ids
-        if not self.rel_curso and not alumno_employee:
+        # === LÓGICA DE FILTRADO BIDIRECCIONAL ===
+        cursos_ids = []
+        alumnos_ids = []
+        
+        # CASO 1: Hay alumnos seleccionados → filtrar cursos
+        if alumnos:
+            if alumno_employee:
+                # Si es empleado activo → todos los cursos activos
+                cursos_ids = Curso.search([('estado','=','activo')]).ids
+            else:
+                # Si NO es empleado → solo cursos asignados sin finalizar
+                cursos_ids = RelAlumnoCurso.search([
+                    ('alumno_id', 'in', alumnos),
+                    ('fecha_finalizacion', '=', False)
+                ]).mapped('curso_id').filtered(lambda c: c.estado == 'activo').ids
+        
+        # CASO 2: Hay curso seleccionado → filtrar alumnos
+        if self.rel_curso:
+            if self.rel_curso.ato_mi:
+                # Si el curso tiene ATO MI → solo alumnos con ese curso asignado sin finalizar
+                alumnos_ids = RelAlumnoCurso.search([
+                    ('curso_id', '=', self.rel_curso.id),
+                    ('fecha_finalizacion', '=', False)
+                ]).mapped('alumno_id').ids
+            else:
+                # Si NO tiene ATO MI → todos los alumnos del sistema
+                alumnos_ids = Alumno.search([]).ids
+            
+            # Si no hay alumnos seleccionados, actualizar cursos_ids con todos los activos
+            if not alumnos:
+                cursos_ids = Curso.search([('estado','=','activo')]).ids
+        
+        # Si no hay ni curso ni alumnos, los cursos deben estar vacíos
+        if not self.rel_curso and not alumnos:
             cursos_ids = []
-            for curso in self.env['leulit.curso'].search([]):
-                for obj_rel in self.env['leulit.rel_alumno_curso'].search([('alumno_id','in',alumnos),('curso_id','=',curso.id),('fecha_finalizacion','=',False)]):
-                    cursos_ids.append(obj_rel.curso_id.id)
-        return {'domain':{'rel_curso':[('id','in',cursos_ids),('estado','=','activo')]}}
+        
+        return {
+            'domain': {
+                'rel_curso': [('id', 'in', cursos_ids if cursos_ids else []), ('estado', '=', 'activo')],
+                'rel_alumnos': [('id', 'in', alumnos_ids)] if alumnos_ids else []
+            }
+        }
 
 
 
