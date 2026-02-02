@@ -866,6 +866,7 @@ class MaintenanceRequest(models.Model):
                 'name' : task.name,
                 'referencia' : referencia,
                 'asignado' : task.user_ids.name,
+                'supervisado_por' : task.supervisado_por.name if task.supervisado_por else '',
             }
             service_bulletins.append(tarea)
             cont_sb += 1

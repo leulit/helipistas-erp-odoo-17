@@ -319,13 +319,14 @@
                         <br/>
                         <table class="fullwidth">
                             <tr>
-                                <td class="centertext fullwidth tdcolored literal" colspan="4">Boletines de Servicio y Directivas de Aeronavegabilidad</td>
+                                <td class="centertext fullwidth tdcolored literal" colspan="5">Boletines de Servicio y Directivas de Aeronavegabilidad</td>
                             </tr>
                             <tr>
                                 <td class="centertext literal" style="width:5%;">Ítem</td>
-                                <td class="literal" style="width:60%;">Descripción de los trabajos a efectuar</td>
-                                <td class="centertext literal" style="width:20%;">Referencia</td>
-                                <td class="centertext literal" style="width:15%;">Realizado por</td>
+                                <td class="literal" style="width:58%;">Descripción de los trabajos a efectuar</td>
+                                <td class="centertext literal" style="width:13%;">Referencia</td>
+                                <td class="centertext literal" style="width:12%;">Realizado por</td>
+                                <td class="centertext literal" style="width:12%;">Supervisado por</td>
                             </tr>
                             <t t-if="service_bulletins">
                                 <t t-foreach="service_bulletins" t-as="tarea">
@@ -333,6 +334,7 @@
                                         <td class="fieldvalue centertext heightrow"><span t-esc="tarea['item']"/></td>
                                         <td class="fieldvalue heightrow"><span t-esc="tarea['name']"/></td>
                                         <td class="fieldvalue centertext heightrow"><span t-raw="tarea['referencia']"/></td>
+                                        <td class="fieldvalue heightrow"><span t-esc="tarea['asignado']"/></td>
                                         <td class="fieldvalue heightrow"><span t-esc="tarea['asignado']"/></td>
                                     </tr>
                                 </t>
@@ -343,11 +345,13 @@
                                     <td class="fieldvalue heightrow"/>
                                     <td class="fieldvalue centertext heightrow"/>
                                     <td class="fieldvalue heightrow"/>
+                                    <td class="fieldvalue heightrow"/>
                                 </tr>
                                 <tr>
                                     <td class="fieldvalue centertext heightrow"/>
                                     <td class="fieldvalue heightrow"/>
                                     <td class="fieldvalue centertext heightrow"/>
+                                    <td class="fieldvalue heightrow"/>
                                     <td class="fieldvalue heightrow"/>
                                 </tr>
                             </t>

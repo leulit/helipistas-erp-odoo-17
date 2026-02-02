@@ -277,7 +277,7 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             docref = datetime.now().strftime("%Y%m%d%I%M%S")
             datos = {
                 'paginas' : paginas,
-                'data' : data,                
+                'data' : data,
                 'docref' : docref
             }            
             return self.env.ref('leulit_operaciones.leulit_report_piloto_log_book').report_action([],data=datos)
