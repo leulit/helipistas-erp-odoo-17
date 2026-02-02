@@ -133,6 +133,14 @@
                                                 <td class="centertext" colspan="2"><span t-out="subtarea['realizado_por']"/></td>
                                             </tr>
                                         </t>
+                                        <tr>
+                                            <table>
+                                                <tr>
+                                                    <td class="tdcolored">Descripción</td>
+                                                    <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
+                                                </tr>
+                                            </table>
+                                        </tr>
                                     </t>
                                 </table>
                                 <br/>
