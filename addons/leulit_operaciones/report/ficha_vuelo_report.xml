@@ -1146,7 +1146,7 @@
                                     <tbody>
                                         <tr>
                                             <td style="width:100%">
-                                                <img t-att-src="performance_h_v" style="width:100%;height:auto;"/>
+                                                <img t-att-src="performance_h_v" style="width:60%;height:auto;display:block;margin:auto;"/>
                                             </td>
                                         </tr>
                                     </tbody>
