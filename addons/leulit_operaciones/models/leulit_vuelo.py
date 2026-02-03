@@ -463,16 +463,7 @@ class leulit_vuelo(models.Model):
                     data['performance_oge'] = f"data:image/png;base64,{img_data}"
                 else:
                     data['performance_oge'] = img_data
-            
-            # if data.get('performance_h_v'):
-            #     img_data = data['performance_h_v']
-            #     if isinstance(img_data, bytes):
-            #         img_data = img_data.decode('utf-8')
-            #     if not img_data.startswith('data:image'):
-            #         data['performance_h_v'] = f"data:image/png;base64,{img_data}"
-            #     else:
-            #         data['performance_h_v'] = img_data
-            
+        
             # Agregar prefijo para los gráficos de weight and balance
             if data.get('wandb'):
                 wandb = data['wandb']
@@ -741,7 +732,7 @@ class leulit_vuelo(models.Model):
                 'hashcode_interno' : hashcode_interno,
                 'performance_ige': item.performance.ige,
                 'performance_oge': item.performance.oge,
-                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad if item.helicoptero_id.modelo.performance_altura_velocidad else False
+                'performance_h_v' : item.helicoptero_id.modelo.performance_altura_velocidad.decode() if item.helicoptero_id.modelo.performance_altura_velocidad else False
             }
             return data
 
