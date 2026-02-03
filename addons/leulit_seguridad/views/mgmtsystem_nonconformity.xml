@@ -7,7 +7,7 @@
             <tree>
                 <field name="ref" />
                 <field name="create_date" />
-                <field name="partner_id" />
+                <field name="partner_id" column_invisible="1"/>
                 <field name="short_description"/>
                 <field name="user_id" />
                 <field name="responsible_user_id" />
@@ -43,7 +43,6 @@
                     <filter name="groupby_manager" string="Manager" icon="terp-personal+" context="{'group_by':'manager_user_id'}" />
                     <separator orientation="vertical" />
                     <filter name="groupby_system" string="System" icon="gtk-execute" context="{'group_by':'system_id'}" />
-                    <filter name="groupby_partner" string="Partner" icon="terp-personal+" domain="[]" context="{'group_by':'partner_id'}" />
                     <filter name="groupby_procedure" string="Procedure" icon="terp-stock_symbol-selection" context="{'group_by':'procedure_ids'}" />
                 </group>
             </search>
@@ -67,7 +66,7 @@
                             <field name="name" readonly="state not in 'draft'" />
                             <field name="ref" readonly="state not in 'draft'" />
                             <field name="create_date" readonly="1" />
-                            <field name="partner_id" readonly="state not in ('draft', 'analysis')" />
+                            <field name="partner_id" readonly="state not in ('draft', 'analysis')" invisible="1"/>
                             <field name="reference" readonly="state not in 'draft'" />
                             <field name="origin_ids" widget="many2many_tags" readonly="state not in ('draft', 'analysis')" />
                         </group>

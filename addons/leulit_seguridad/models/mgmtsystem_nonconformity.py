@@ -17,3 +17,4 @@ class MgmtsystemNonconformity(models.Model):
         store=True,
         readonly=True,
     )
+    partner_id = fields.Many2one("res.partner", "Partner", required=False)
