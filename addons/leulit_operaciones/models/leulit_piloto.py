@@ -261,7 +261,6 @@ class leulit_piloto(models.Model):
                 valor = hist[0].start_hv_ifr
             item.start_hv_ifr_float = valor 
 
-
     def _is_piloto_helipistas(self):
         for item in self:
             item.piloto_helipistas = False
