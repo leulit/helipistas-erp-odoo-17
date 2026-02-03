@@ -195,6 +195,7 @@ class leulit_calendar_event(models.Model):
 
 
     def _check_overlaps(self, event_id, ids, start_date, end_date, field):
+        _logger.error('Comprobando solapamientos para IDs %s en el rango %s - %s (campo: %s)...', ids, start_date, end_date, field)
         """
         Comprueba si hay solapamientos para un conjunto de IDs en un rango de fechas.
         :param event_id: ID del evento actual (se excluye de la búsqueda)
