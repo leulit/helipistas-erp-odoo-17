@@ -163,6 +163,7 @@ class leulit_calendar_event(models.Model):
 
 
     def _validate_resources_overlap(self, event):
+        _logger.error('Validando solapamientos de recursos para el evento ID %s...', event.id)
         resources = [res.resource.id for res in event.resource_fields]
         overlap = self._check_overlaps(
             event.id, 
@@ -178,6 +179,7 @@ class leulit_calendar_event(models.Model):
 
 
     def _validate_participants_overlap(self, event):
+        _logger.error('Validando solapamientos de participantes para el evento ID %s...', event.id)
         participant_ids = event.partner_ids.ids
         overlap = self._check_overlaps(
             event.id, 
@@ -251,6 +253,7 @@ class leulit_calendar_event(models.Model):
 
 
     def _set_resources_from_recurrence(self, event):
+        _logger.error('Estableciendo recursos desde recurrencia para el evento ID %s...', event.id)
         recurrence = self.env['calendar.recurrence'].browse(event.recurrence_id.id)
         # Recoge los valores sin escribir directamente
         new_values = {
@@ -263,6 +266,7 @@ class leulit_calendar_event(models.Model):
         event.type_event = recurrence.base_event_id.type_event.id
 
     def _update_resource_availability(self, event):
+        _logger.error('Actualizando disponibilidad de recursos para el evento ID %s...', event.id)
         start_hour = utilitylib.leulit_str_to_float_time(
             '{0}:{1}'.format(event.start.hour, event.start.minute)
         )
