@@ -113,16 +113,6 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
 
     @api.onchange('rel_alumnos','rel_curso')
     def onchange_colores(self):
-        try:
-            _logger.info(
-                "[Escuela] onchange_colores triggered: rel_curso=%s rel_alumnos_ctx=%s rel_alumnos_field=%s",
-                self.rel_curso.id if self.rel_curso else None,
-                self.env.context.get('default_rel_alumnos'),
-                self.rel_alumnos.ids,
-            )
-        except Exception:
-            _logger.exception("[Escuela] Error logging onchange_colores inputs")
-        
         RelCursoAlu  = self.env['leulit.rel_parte_escuela_cursos_alumnos']
         Silabus      = self.env['leulit.silabus']
         PFCurso      = self.env['leulit.perfil_formacion_curso']
@@ -212,14 +202,6 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
             if not alumnos:
                 cursos_ids = Curso.search([('estado', '=', 'activo')]).ids
 
-        try:
-            _logger.info(
-                "[Escuela] onchange_colores domains computed: cursos_ids=%s alumnos_ids=%s",
-                cursos_ids,
-                alumnos_ids,
-            )
-        except Exception:
-            _logger.exception("[Escuela] Error logging onchange_colores domains")
 
         self.cursos_domain_ids = [(6, 0, cursos_ids)]
         self.alumnos_domain_ids = [(6, 0, alumnos_ids)]
