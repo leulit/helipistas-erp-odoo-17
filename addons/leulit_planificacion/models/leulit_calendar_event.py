@@ -134,12 +134,9 @@ class leulit_calendar_event(models.Model):
 
     @api.constrains('resource_fields', 'partner_ids', 'start', 'stop', 'duration')
     def validate_event_constraints(self):
-        _logger.error('Validando restricciones del evento...')
         if self.env.context.get('skip_validation', False):
-            _logger.error('Validación omitida por contexto.')
             return
         for event in self:
-            _logger.error('Validando evento ID %s...', event.id)
             if not event.cancelado:
                 if not event.allday:
                     # Validar superposición de recursos
@@ -163,7 +160,6 @@ class leulit_calendar_event(models.Model):
 
 
     def _validate_resources_overlap(self, event):
-        _logger.error('Validando solapamientos de recursos para el evento ID %s...', event.id)
         resources = [res.resource.id for res in event.resource_fields]
         overlap = self._check_overlaps(
             event.id, 
@@ -179,7 +175,6 @@ class leulit_calendar_event(models.Model):
 
 
     def _validate_participants_overlap(self, event):
-        _logger.error('Validando solapamientos de participantes para el evento ID %s...', event.id)
         participant_ids = event.partner_ids.ids
         overlap = self._check_overlaps(
             event.id, 
@@ -195,7 +190,6 @@ class leulit_calendar_event(models.Model):
 
 
     def _check_overlaps(self, event_id, ids, start_date, end_date, field):
-        _logger.error('Comprobando solapamientos para IDs %s en el rango %s - %s (campo: %s)...', ids, start_date, end_date, field)
         """
         Comprueba si hay solapamientos para un conjunto de IDs en un rango de fechas.
         :param event_id: ID del evento actual (se excluye de la búsqueda)
@@ -234,7 +228,6 @@ class leulit_calendar_event(models.Model):
                 {allday_condition}
                 AND (ce.start, ce.stop) OVERLAPS (%s, %s)
             """.format(table=table, column=column, event_column=event_column, allday_condition=allday_condition)
-            _logger.error('Ejecutando SQL de solapamiento: %s', sql)
             self._cr.execute(sql, (event_id, item_id, start_date, end_date))
             rows = self._cr.fetchall()
 
@@ -254,7 +247,6 @@ class leulit_calendar_event(models.Model):
 
 
     def _set_resources_from_recurrence(self, event):
-        _logger.error('Estableciendo recursos desde recurrencia para el evento ID %s...', event.id)
         recurrence = self.env['calendar.recurrence'].browse(event.recurrence_id.id)
         # Recoge los valores sin escribir directamente
         new_values = {
@@ -267,7 +259,6 @@ class leulit_calendar_event(models.Model):
         event.type_event = recurrence.base_event_id.type_event.id
 
     def _update_resource_availability(self, event):
-        _logger.error('Actualizando disponibilidad de recursos para el evento ID %s...', event.id)
         start_hour = utilitylib.leulit_str_to_float_time(
             '{0}:{1}'.format(event.start.hour, event.start.minute)
         )
