@@ -234,7 +234,7 @@ class leulit_calendar_event(models.Model):
                 {allday_condition}
                 AND (ce.start, ce.stop) OVERLAPS (%s, %s)
             """.format(table=table, column=column, event_column=event_column, allday_condition=allday_condition)
-            
+            _logger.error('Ejecutando SQL de solapamiento: %s', sql)
             self._cr.execute(sql, (event_id, item_id, start_date, end_date))
             rows = self._cr.fetchall()
 
