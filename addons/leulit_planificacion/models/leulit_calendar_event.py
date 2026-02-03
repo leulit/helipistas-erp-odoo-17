@@ -390,7 +390,7 @@ class leulit_calendar_event(models.Model):
     min_cloud_height = fields.Float(string='Base de nubes (ft)', default=1000)
     # TAREA
     no_modificar = fields.Boolean(string='Prioritario',default=False)
-    cancelado = fields.Boolean(string='Cancelado')
+    cancelado = fields.Boolean(string='Cancelado', default=False)
     motivo_cancelacion = fields.Text(string='Motivo cancelación')
     cancelado_por = fields.Many2one(comodel_name='res.users', string='Cancelado por')
     cancelado_date = fields.Date(string='Fecha cancelación')
