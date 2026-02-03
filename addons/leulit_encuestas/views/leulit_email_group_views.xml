@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <data>
+
+    <record id="view_leulit_encuestas_email_group_tree" model="ir.ui.view">
+      <field name="name">leulit_encuestas.email.group.tree</field>
+      <field name="model">leulit_encuestas.email.group</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="company_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_leulit_encuestas_email_group_form" model="ir.ui.view">
+      <field name="name">leulit_encuestas.email.group.form</field>
+      <field name="model">leulit_encuestas.email.group</field>
+      <field name="arch" type="xml">
+        <form string="Grupo de correo">
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="company_id"/>
+            </group>
+            <group>
+              <field name="partner_ids" widget="many2many_tags"/>
+              <field name="external_emails"/>
+            </group>
+            <group>
+              <field name="computed_emails" readonly="1"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_leulit_encuestas_email_group" model="ir.actions.act_window">
+      <field name="name">Grupos de correo</field>
+      <field name="res_model">leulit_encuestas.email.group</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="leulit_encuestas_menu_email_groups" name="Grupos de correo" parent="survey.menu_surveys" action="action_leulit_encuestas_email_group"/>
+
+  </data>
+</odoo>

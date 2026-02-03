@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <data>
+    <record id="leulit_encuestas_survey_invite_inherit" model="ir.ui.view">
+      <field name="name">leulit_encuestas.survey.invite.form</field>
+      <field name="model">survey.invite</field>
+      <field name="inherit_id" ref="survey.survey_invite_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='partner_ids']" position="before">
+          <field name="email_group_id"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

@@ -10,7 +10,10 @@
         "survey"
     ],
     "data": [
-        "views/survey.xml"
+        "security/ir.model.access.csv",
+        "views/leulit_email_group_views.xml",
+        "views/survey.xml",
+        "views/survey_invite_inherit.xml",
     ],
     "demo": [],
     "css": [],
