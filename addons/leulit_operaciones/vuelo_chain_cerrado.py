@@ -49,7 +49,7 @@ class ComprobacionChecksHandler(vuelo.AbstractHandler):
             vuelo = o_vuelo.browse(request.vuelo_id)
 
             if not vuelo.checklist_postvuelo_realizado:
-                raise UserError ('Este vuelo no puede pasar a cerrado. NO HA MARCADO LA INSPECCIÓN POSTVUELO CÓMO REALIZADA')
+                raise UserError ('Este vuelo no puede pasar a cerrado. NO HA MARCADO EL DEBRIEFING CON LOS TRIPULANTES/ INSPECCIÓN POSTVUELO CÓMO REALIZADA')
 
             request.env.cr.commit()
         return super().handle(request)
