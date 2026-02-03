@@ -134,9 +134,12 @@ class leulit_calendar_event(models.Model):
 
     @api.constrains('resource_fields', 'partner_ids', 'start', 'stop', 'duration')
     def validate_event_constraints(self):
+        _logger.error('Validando restricciones del evento...')
         if self.env.context.get('skip_validation', False):
+            _logger.error('Validación omitida por contexto.')
             return
         for event in self:
+            _logger.error('Validando evento ID %s...', event.id)
             if not event.cancelado:
                 if not event.allday:
                     # Validar superposición de recursos
