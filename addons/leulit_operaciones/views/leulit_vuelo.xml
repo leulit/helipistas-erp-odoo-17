@@ -106,7 +106,7 @@
                                             </div>
                                             <div   invisible="estado_vista in ('prevuelo', 'cerrado', 'cancelado')" >
                                                 <group>
-                                                    <field name="checklist_postvuelo_realizado" string="Inspección postvuelo realizada"  readonly="estado in ('prevuelo', 'cerrado', 'cancelado')" />
+                                                    <field name="checklist_postvuelo_realizado" string="Debriefing con los tripulantes/ Inspección postvuelo realizada"  readonly="estado in ('prevuelo', 'cerrado', 'cancelado')" />
                                                 </group>
                                             </div>
                                             <div  invisible="estado_vista in ('cancelado')" >
@@ -129,7 +129,7 @@
                                             </div>
                                             <div  invisible="estado_vista in ('cancelado')" >
                                                 <group>
-                                                    <field name="briefing_realizado" string="Briefing Salida, LLegada y Alt."  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
+                                                    <field name="briefing_realizado" string="Briefing con los tripulantes/ Briefing Salida, LLegada y Alternativo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
                                                 </group>
                                             </div>
                                         </div>
@@ -877,7 +877,7 @@
                                                 <field name="presupuesto_vuelo" string="Presupuesto"/>
                                             </group>
                                             <group>
-                                                <field name="briefing_realizado" string="Briefing Salida, LLegada y Alt."/>
+                                                <field name="briefing_realizado" string="Briefing con los tripulantes/ Briefing Salida, LLegada y Alternativo"/>
                                             </group>
                                         </div>
                                         <div>
@@ -889,7 +889,7 @@
                                                         <field name="checklist_prevuelo_entre_vuelos" string ="Inspección entre vuelos"/>
                                                     </group>
                                                 </div>
-                                                <field name="checklist_postvuelo_realizado" string="Inspección postvuelo realizada"/>
+                                                <field name="checklist_postvuelo_realizado" string="Debriefing con los tripulantes/ Inspección postvuelo realizada"/>
                                             </group>
                                         </div>
                                     </div>
