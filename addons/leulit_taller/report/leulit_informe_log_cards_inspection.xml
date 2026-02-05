@@ -147,7 +147,7 @@
                                                     <td colspan="3">
                                                         <table class="fullwidth noborde">
                                                             <tr>
-                                                                <td class="centertext tdcolored heightrow" style="width: 30%;">Descripción</td>
+                                                                <td class="centertext tdcolored" style="width: 30%;">Descripción</td>
                                                                 <td class="centertext" colspan="2"><span t-out="subtarea['descripcion']"/></td>
                                                             </tr>
                                                         </table>
