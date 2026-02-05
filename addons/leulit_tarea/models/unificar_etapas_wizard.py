@@ -643,6 +643,143 @@ class UnificarEtapasWizard(models.TransientModel):
             'target': 'new',
         }
 
+    def _validar_antes_de_ejecutar(self, proyectos, mapeo_dict, etapas_destino):
+        """
+        Valida que todo esté correcto ANTES de iniciar la ejecución.
+        Lanza UserError con información detallada si encuentra problemas.
+        
+        Args:
+            proyectos: Recordset de proyectos a procesar
+            mapeo_dict: Diccionario {etapa_origen_id: etapa_destino_obj}
+            etapas_destino: Recordset de etapas destino
+        
+        Raises:
+            UserError: Con detalles técnicos del problema encontrado
+        """
+        problemas = []
+        
+        # ========== VALIDACIÓN 1: Etapas destino existen ==========
+        _logger.info('Validando existencia de %s etapas destino...', len(self.mapeo_linea_ids))
+        for linea in self.mapeo_linea_ids:
+            if not linea.etapa_destino_id.exists():
+                problemas.append(
+                    f"❌ ETAPA DESTINO ELIMINADA\n"
+                    f"   Origen: '{linea.etapa_origen_nombre}' (ID: {linea.etapa_origen_id.id})\n"
+                    f"   Destino: '{linea.etapa_destino_nombre}' (ID: {linea.etapa_destino_id.id})\n"
+                    f"   ⚠️  La etapa destino fue borrada después de crear el mapeo\n"
+                    f"   🔧 Solución: Vuelve al paso 1 y regenera el mapeo"
+                )
+        
+        # ========== VALIDACIÓN 2: Etapas origen aún existen ==========
+        _logger.info('Validando existencia de %s etapas origen...', len(self.mapeo_linea_ids))
+        for linea in self.mapeo_linea_ids:
+            if not linea.etapa_origen_id.exists():
+                problemas.append(
+                    f"❌ ETAPA ORIGEN ELIMINADA\n"
+                    f"   Origen: '{linea.etapa_origen_nombre}' (ID: {linea.etapa_origen_id.id})\n"
+                    f"   ⚠️  La etapa origen fue borrada después de crear el mapeo\n"
+                    f"   🔧 Solución: Vuelve al paso 1 y regenera el mapeo"
+                )
+        
+        # ========== VALIDACIÓN 3: Permisos de escritura en proyectos ==========
+        _logger.info('Validando permisos de escritura en %s proyectos...', len(proyectos))
+        proyectos_sin_permiso = []
+        for proyecto in proyectos:
+            try:
+                proyecto.check_access_rights('write')
+                proyecto.check_access_rule('write')
+            except Exception as e:
+                proyectos_sin_permiso.append(f"{proyecto.name} (ID: {proyecto.id})")
+                _logger.debug('Sin permisos en proyecto %s: %s', proyecto.id, str(e))
+        
+        if proyectos_sin_permiso:
+            problemas.append(
+                f"❌ SIN PERMISOS DE ESCRITURA EN PROYECTOS\n"
+                f"   Proyectos: {', '.join(proyectos_sin_permiso[:5])}\n"
+                f"   {'... y ' + str(len(proyectos_sin_permiso) - 5) + ' más' if len(proyectos_sin_permiso) > 5 else ''}\n"
+                f"   ⚠️  El usuario actual no puede modificar estos proyectos\n"
+                f"   🔧 Solución: Ejecuta como administrador o solicita permisos"
+            )
+        
+        # ========== VALIDACIÓN 4: Permisos de escritura en tareas ==========
+        _logger.info('Validando permisos de escritura en tareas...')
+        try:
+            self.env['project.task'].check_access_rights('write')
+        except Exception as e:
+            problemas.append(
+                f"❌ SIN PERMISOS DE ESCRITURA EN TAREAS\n"
+                f"   Error: {str(e)}\n"
+                f"   ⚠️  El usuario actual no puede modificar tareas\n"
+                f"   🔧 Solución: Ejecuta como administrador o solicita permisos en model project.task"
+            )
+        
+        # ========== VALIDACIÓN 5: Tareas con proyectos válidos ==========
+        _logger.info('Validando integridad de tareas...')
+        tareas_con_problemas = self.env['project.task'].search([
+            ('project_id', 'in', proyectos.ids),
+            ('stage_id', 'in', list(mapeo_dict.keys())),
+            ('project_id', '=', False)
+        ])
+        
+        if tareas_con_problemas:
+            problemas.append(
+                f"❌ TAREAS HUÉRFANAS (SIN PROYECTO)\n"
+                f"   Cantidad: {len(tareas_con_problemas)}\n"
+                f"   IDs: {tareas_con_problemas.ids[:10]}\n"
+                f"   {'... y ' + str(len(tareas_con_problemas) - 10) + ' más' if len(tareas_con_problemas) > 10 else ''}\n"
+                f"   ⚠️  Estas tareas no tienen proyecto asignado\n"
+                f"   🔧 Solución: Asigna proyectos a estas tareas o elimínalas"
+            )
+        
+        # ========== VALIDACIÓN 6: Proyectos existen ==========
+        _logger.info('Validando existencia de %s proyectos...', len(proyectos))
+        proyectos_existentes = proyectos.exists()
+        if len(proyectos_existentes) < len(proyectos):
+            problemas.append(
+                f"❌ PROYECTOS BORRADOS\n"
+                f"   Original: {len(proyectos)} proyectos\n"
+                f"   Actuales: {len(proyectos_existentes)} proyectos\n"
+                f"   ⚠️  Algunos proyectos fueron eliminados después de iniciar el wizard\n"
+                f"   🔧 Solución: Vuelve al paso 1 y selecciona proyectos de nuevo"
+            )
+        
+        # ========== VALIDACIÓN 7: Permisos de eliminación (si limpieza activada) ==========
+        if self.limpiar_etapas_obsoletas:
+            _logger.info('Validando permisos de eliminación de etapas...')
+            try:
+                self.env['project.task.type'].check_access_rights('unlink')
+            except Exception as e:
+                problemas.append(
+                    f"❌ SIN PERMISOS PARA ELIMINAR ETAPAS\n"
+                    f"   Error: {str(e)}\n"
+                    f"   ⚠️  'Limpiar etapas obsoletas' activado pero sin permisos\n"
+                    f"   🔧 Solución: Desactiva la opción o ejecuta como administrador"
+                )
+        
+        # ========== GENERAR ERROR SI HAY PROBLEMAS ==========
+        if problemas:
+            mensaje_error = (
+                "\n" + "═" * 80 + "\n"
+                "⛔ VALIDACIÓN FALLIDA - NO SE PUEDE EJECUTAR LA NORMALIZACIÓN\n"
+                "═" * 80 + "\n\n"
+                "Se encontraron los siguientes problemas que DEBEN resolverse:\n\n"
+            )
+            mensaje_error += "\n\n".join(problemas)
+            mensaje_error += "\n\n" + "═" * 80 + "\n"
+            mensaje_error += (
+                "📋 INFORMACIÓN TÉCNICA:\n"
+                f"   • Usuario: {self.env.user.name} (ID: {self.env.user.id})\n"
+                f"   • Proyectos seleccionados: {len(proyectos)}\n"
+                f"   • Mapeos definidos: {len(self.mapeo_linea_ids)}\n"
+                f"   • Modo: {'Limpieza activada' if self.limpiar_etapas_obsoletas else 'Solo normalización'}\n"
+            )
+            mensaje_error += "═" * 80
+            
+            _logger.error('Validación fallida: %s problemas encontrados', len(problemas))
+            raise UserError(_(mensaje_error))
+        
+        _logger.info('✓ Todas las validaciones pasaron correctamente')
+
     def action_unificar_etapas(self):
         """
         Paso 3: Ejecuta la normalización de etapas según el mapeo definido.
@@ -661,14 +798,29 @@ class UnificarEtapasWizard(models.TransientModel):
         else:
             proyectos = self.proyecto_ids
         
+        # Crear diccionario de mapeo
+        mapeo_dict = {linea.etapa_origen_id.id: linea.etapa_destino_id for linea in self.mapeo_linea_ids}
+        
+        # Obtener etapas destino
+        etapas_destino = self.env['project.task.type'].browse([
+            linea.etapa_destino_id.id for linea in self.mapeo_linea_ids
+        ])
+        
+        # ========== VALIDACIONES PREVENTIVAS ==========
+        # CRÍTICO: Validar ANTES de crear snapshot o modificar datos
+        _logger.info('═' * 60)
+        _logger.info('Iniciando validaciones preventivas...')
+        self._validar_antes_de_ejecutar(proyectos, mapeo_dict, etapas_destino)
+        _logger.info('✓ Validaciones completadas - Sistema listo para ejecutar')
+        _logger.info('═' * 60)
+        
         # Crear snapshot antes de aplicar cambios
         snapshot_id = None
         if self.crear_snapshot:
             snapshot_id = self._crear_snapshot(proyectos)
             self.write({'snapshot_id': snapshot_id.id})
-            _logger.info('Snapshot creado: %s (ID: %s)', snapshot_id.name, snapshot_id.id)
         
-        # Estadísticas
+        # Inicializar estadísticas
         stats = {
             'proyectos_actualizados': 0,
             'etapas_sustituidas': 0,
@@ -679,13 +831,7 @@ class UnificarEtapasWizard(models.TransientModel):
         
         _logger.info('Iniciando normalización de etapas para %s proyectos', len(proyectos))
         
-        # Crear diccionario de mapeo para acceso rápido
-        mapeo_dict = {linea.etapa_origen_id.id: linea.etapa_destino_id for linea in self.mapeo_linea_ids}
-        
-        # Obtener todas las etapas destino únicas
-        etapas_destino = self.env['project.task.type'].browse([
-            linea.etapa_destino_id.id for linea in self.mapeo_linea_ids
-        ])
+        # Obtener IDs de etapas destino para normalización
         etapas_destino_ids = set(etapas_destino.ids)
         
         # Procesar cada proyecto
@@ -706,10 +852,9 @@ class UnificarEtapasWizard(models.TransientModel):
             stats['etapas_eliminadas'] = etapas_eliminadas
             self.write({'etapas_eliminadas': etapas_eliminadas})
         
-        _logger.info('Normalización completada: %s', stats)
-        
-        # Mostrar mensaje de éxito con link a snapshot
+        # Generar mensaje de resultado
         mensaje = self._generar_mensaje_resultado(stats)
+        
         if snapshot_id:
             mensaje += _('\n\n💾 Snapshot creado: %s\n'
                         'Puedes revertir los cambios desde: Gestión tareas → Configuración → Snapshots de Rollback') % snapshot_id.name
@@ -814,11 +959,16 @@ class UnificarEtapasWizard(models.TransientModel):
         
         # Actualizar proyecto si hay cambios
         if hubo_cambios:
-            proyecto.write({
-                'type_ids': [(6, 0, list(nuevas_etapas_ids))]
-            })
-            _logger.info('Proyecto actualizado: "%s" (ID: %s) - Total etapas disponibles: %s', 
-                        proyecto.name, proyecto.id, len(nuevas_etapas_ids))
+            try:
+                proyecto.write({
+                    'type_ids': [(6, 0, list(nuevas_etapas_ids))]
+                })
+                _logger.info('Proyecto actualizado: "%s" (ID: %s) - Total etapas disponibles: %s', 
+                            proyecto.name, proyecto.id, len(nuevas_etapas_ids))
+            except Exception as e:
+                _logger.error('Error al actualizar proyecto "%s" (ID: %s): %s', 
+                             proyecto.name, proyecto.id, str(e))
+                raise UserError(_('Error al actualizar el proyecto "%s": %s') % (proyecto.name, str(e)))
         
         return hubo_cambios
 
@@ -896,10 +1046,8 @@ class UnificarEtapasWizard(models.TransientModel):
         """
         TaskType = self.env['project.task.type']
         
-        # Obtener todas las etapas del sistema
+        # Obtener etapas candidatas a eliminar (todas menos las etapas destino)
         todas_las_etapas = TaskType.search([])
-        
-        # Etapas obsoletas candidatas = todas - etapas destino
         etapas_candidatas = todas_las_etapas - etapas_destino
         
         if not etapas_candidatas:
@@ -935,13 +1083,11 @@ class UnificarEtapasWizard(models.TransientModel):
                 continue
             
             # Seguro eliminar: no está en uso en ningún lado
-            try:
-                etapa_nombre = etapa.name
-                etapa.unlink()
-                etapas_eliminadas += 1
-                _logger.info('✓ Etapa obsoleta eliminada: "%s" (ID: %s)', etapa_nombre, etapa.id)
-            except Exception as e:
-                _logger.error('✗ Error al eliminar etapa "%s": %s', etapa.name, str(e))
+            etapa_nombre = etapa.name
+            etapa_id_log = etapa.id
+            etapa.unlink()
+            etapas_eliminadas += 1
+            _logger.info('✓ Etapa obsoleta eliminada: "%s" (ID: %s)', etapa_nombre, etapa_id_log)
         
         # Log de resumen
         if etapas_eliminadas > 0:
