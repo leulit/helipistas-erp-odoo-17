@@ -247,8 +247,11 @@ class UnificarEtapasWizard(models.TransientModel):
     limpiar_etapas_obsoletas = fields.Boolean(
         string='Eliminar Etapas Obsoletas',
         default=False,
-        help='Después de normalizar, elimina las etapas antiguas que ya no estén en uso. '
-             'SOLO se eliminan etapas que no estén asignadas a ningún proyecto ni tarea.'
+        help='Después de normalizar, elimina las etapas antiguas que ya no estén en uso.\n\n'
+             'IMPORTANTE:\n'
+             '• SOLO elimina etapas compartidas/públicas (user_id = False)\n'
+             '• NUNCA elimina etapas personales de usuarios (Bandeja de entrada, Hoy, etc.)\n'
+             '• SOLO elimina si no están en uso en proyectos ni tareas'
     )
     
     snapshot_id = fields.Many2one(
@@ -1034,8 +1037,13 @@ class UnificarEtapasWizard(models.TransientModel):
         
         SEGURIDAD: Solo elimina etapas que cumplan TODAS estas condiciones:
         1. NO son etapas destino (normalizadas)
-        2. NO están asignadas a ningún proyecto como etapa disponible
-        3. NO están siendo usadas por ninguna tarea como etapa actual
+        2. NO son etapas personales (user_id != False)
+        3. NO están asignadas a ningún proyecto como etapa disponible
+        4. NO están siendo usadas por ninguna tarea como etapa actual
+        
+        IMPORTANTE: Las etapas personales NUNCA se eliminan porque:
+        - Odoo requiere que cada usuario tenga al menos una etapa personal
+        - Son etapas privadas del usuario (Bandeja de entrada, Hoy, etc.)
         
         Args:
             etapas_destino: Recordset de etapas destino normalizadas
@@ -1046,15 +1054,23 @@ class UnificarEtapasWizard(models.TransientModel):
         """
         TaskType = self.env['project.task.type']
         
-        # Obtener etapas candidatas a eliminar (todas menos las etapas destino)
-        todas_las_etapas = TaskType.search([])
+        # Obtener SOLO etapas compartidas/públicas (no personales)
+        # CRÍTICO: Excluir etapas personales (user_id != False) para evitar violar
+        # la restricción de Odoo de "al menos una etapa personal por usuario"
+        todas_las_etapas = TaskType.search([('user_id', '=', False)])
         etapas_candidatas = todas_las_etapas - etapas_destino
+        
+        # Contar etapas personales para información
+        etapas_personales = TaskType.search_count([('user_id', '!=', False)])
+        if etapas_personales > 0:
+            _logger.info('Info: Detectadas %s etapas personales (NO se eliminarán - son privadas de usuarios)', 
+                        etapas_personales)
         
         if not etapas_candidatas:
             _logger.info('No hay etapas obsoletas candidatas para eliminar')
             return 0
         
-        _logger.info('Analizando %s etapas candidatas para eliminación', len(etapas_candidatas))
+        _logger.info('Analizando %s etapas candidatas para eliminación (solo etapas compartidas/públicas)', len(etapas_candidatas))
         
         etapas_eliminadas = 0
         etapas_retenidas = []
