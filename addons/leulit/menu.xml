@@ -18,6 +18,14 @@
         groups="leulit.RBase_employee"
     />
     <menuitem
+        id="leulit_20260205_1219_menuitem"
+        name="KPI"
+        action="leulit_20260205_1219_action"
+        web_icon="leulit,static/description/kpi_.png"
+        sequence="75"
+        groups="leulit.RBase_employee"
+    />
+    <menuitem
         id="leulit_20230328_1139_menuitem"
         name="Documentación ATO"
         action="leulit_20230328_1139_action"
