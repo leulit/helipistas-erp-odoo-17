@@ -44,6 +44,8 @@
                             <field name="inspeccion_seguridad"/>
                             <field name="oblig_form_one"/>
                             <field name="no_aplica"/>
+                            <field name="have_observations"/>
+                            <button name="open_observations" type="object" icon="fa-solid fa-eye"/>
                             <field name="tiempo_defecto" string="Tiempo" widget="float_time" sum="Total"/>
                         </tree>
                     </field>

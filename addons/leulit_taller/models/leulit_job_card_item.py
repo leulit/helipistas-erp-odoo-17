@@ -28,3 +28,25 @@ class LeulitJobCardItem(models.Model):
     type_maintenance = fields.Selection(selection=[('A', 'A'), ('B', 'B'), ('C','C')], string="Tipo")
     ata_ids = fields.Many2many(comodel_name="leulit.ata", relation="leulit_jcitem_ata" , column1="job_card_item_id" , column2="ata_id", string="ATAs")
     certificacion_ids = fields.Many2many(comodel_name="leulit.certificacion", relation="leulit_jcitem_certificacion" , column1="job_card_item_id" , column2="certificacion_id", string="Certificaciones")
+    observaciones = fields.Text(string="Observaciones")
+    have_observations = fields.Boolean(string="Observaciones", compute="_compute_have_observations")
+
+    def open_observations(self):
+        """Abre un popup con las observaciones del item"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Observaciones',
+            'res_model': 'leulit.job_card_item',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': self.id,
+            'view_id': self.env.ref('leulit_taller.leulit_20230720_1549_form').id,
+            'target': 'new',  # Esto hace que sea popup/modal
+            'context': dict(self.env.context),
+        }
+
+    @api.depends('observaciones')
+    def _compute_have_observations(self):
+        for record in self:
+            record.have_observations = bool(record.observaciones and record.observaciones.strip())

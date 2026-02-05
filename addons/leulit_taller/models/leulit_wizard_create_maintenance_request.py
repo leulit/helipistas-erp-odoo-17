@@ -56,7 +56,8 @@ class leulit_wizard_create_maintenance_request(models.TransientModel):
                         'type_maintenance': item_jc.type_maintenance,
                         'ata_ids': item_jc.ata_ids.ids,
                         'certificacion_ids': item_jc.certificacion_ids.ids,
-                        'manuales_ids': item_jc.manual_id.ids
+                        'manuales_ids': item_jc.manual_id.ids,
+                        'observaciones': item_jc.observaciones
                     })
                     if item_jc.no_aplica:
                         stage_id = self.env['project.task.type'].search([('project_ids','in',[int(self.env['ir.config_parameter'].sudo().get_param('leulit.maintenance_hours_project'))]),('name','=','N/A')])

@@ -169,7 +169,11 @@
                                 <field name="sb_ad_one_time" invisible="1"/>
                             </group>
                         </group>
-                        <div id="manuales_project_task"  invisible="((not maintenance_request_id))" >
+                        <div id="observaciones_project_task"  invisible="not maintenance_request_id" >
+                            <separator string="Observaciones"/>
+                            <field name="observaciones" nolabel="1" colspan="2" readonly="1"/>
+                        </div>
+                        <div id="manuales_project_task"  invisible="not maintenance_request_id" >
                             <separator string="Manuales"/>
                             <field name="manuales_ids" nolabel="1" colspan="2">
                                 <tree string="Manuales" create="false" delete="false">

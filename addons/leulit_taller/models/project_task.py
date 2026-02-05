@@ -230,7 +230,8 @@ class ProjectTask(models.Model):
                     'company_id' : company.id,
                     'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                     'maintenance_request_id' : self.maintenance_request_id.id,
-                    'tipo_tarea_taller': 'tarea'
+                    'tipo_tarea_taller': 'tarea',
+                    'observaciones': item.observaciones
                 })
                 if not self.external_aircraft:
                     if self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
@@ -276,7 +277,8 @@ class ProjectTask(models.Model):
                         'company_id' : company.id,
                         'user_ids' : [(6, 0, self.env['res.users'].search([('name','=','Albert Petanas')]).ids)],
                         'maintenance_request_id' : self.maintenance_request_id.id,
-                        'tipo_tarea_taller': 'tarea'
+                        'tipo_tarea_taller': 'tarea',
+                        'observaciones': item.observaciones
                     })
                     if not self.external_aircraft:
                         if self.job_card_id.equipamiento_id == self.maintenance_equipment_id:
@@ -363,6 +365,7 @@ class ProjectTask(models.Model):
     airworthiness_directive_id = fields.Many2one(comodel_name="leulit.airworthiness_directive", string="Airworthiness directive", domain="[('apply','=',True)]")
     task_maintenance = fields.Boolean(compute=_get_task_maintenance, string="Tarea de mantenimiento")
     sb_ad_one_time = fields.Boolean(string="SB/AD one time")
+    observaciones = fields.Text(string="Observaciones")
 
 
     def set_into_workorder(self):

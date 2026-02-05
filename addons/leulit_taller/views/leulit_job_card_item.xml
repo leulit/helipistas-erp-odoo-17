@@ -40,5 +40,15 @@
             <field name="context">{"search_default_group_by_job_card":1}</field>
         </record>
 
+        <record id="leulit_20230720_1549_form" model="ir.ui.view">
+            <field name="name">leulit_20230720_1549_form</field>
+            <field name="model">leulit.job_card_item</field>
+            <field name="arch" type="xml">
+                <form string="Observaciones">
+                    <field name="observaciones"/>
+                </form>
+            </field>
+        </record>
+
     </data>
 </odoo>
