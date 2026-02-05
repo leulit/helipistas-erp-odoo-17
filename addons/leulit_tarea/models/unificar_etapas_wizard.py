@@ -109,10 +109,15 @@ class UnificarEtapasSnapshot(models.Model):
         for proyecto_data in estado_proyectos:
             proyecto = self.env['project.project'].browse(proyecto_data['id'])
             if proyecto.exists():
-                proyecto.write({
-                    'type_ids': [(6, 0, proyecto_data['type_ids'])]
-                })
-                proyectos_restaurados += 1
+                try:
+                    proyecto.write({
+                        'type_ids': [(6, 0, proyecto_data['type_ids'])]
+                    })
+                    proyectos_restaurados += 1
+                except Exception:
+                    _logger.exception('Error restaurando proyecto %s (ID: %s) desde snapshot %s',
+                                      proyecto.name, proyecto.id, self.name)
+                    # continuar con los demás proyectos
         
         # Restaurar tareas
         estado_tareas = json.loads(self.estado_tareas)
@@ -121,10 +126,15 @@ class UnificarEtapasSnapshot(models.Model):
         for tarea_data in estado_tareas:
             tarea = self.env['project.task'].browse(tarea_data['id'])
             if tarea.exists():
-                tarea.write({
-                    'stage_id': tarea_data['stage_id']
-                })
-                tareas_restauradas += 1
+                try:
+                    tarea.write({
+                        'stage_id': tarea_data['stage_id']
+                    })
+                    tareas_restauradas += 1
+                except Exception:
+                    _logger.exception('Error restaurando tarea %s (ID: %s) desde snapshot %s',
+                                      tarea.name, tarea.id, self.name)
+                    # continuar con las demás tareas
         
         # Desactivar este snapshot
         self.write({'activo': False})
@@ -751,13 +761,17 @@ class UnificarEtapasWizard(models.TransientModel):
             })
         
         # Crear snapshot
-        snapshot = self.env['leulit_tarea.unificar_etapas_snapshot'].create({
-            'name': _('Snapshot antes de normalización - %s proyectos') % len(proyectos),
-            'total_proyectos': len(proyectos),
-            'total_tareas': len(tareas),
-            'estado_proyectos': json.dumps(estado_proyectos, ensure_ascii=False, indent=2),
-            'estado_tareas': json.dumps(estado_tareas, ensure_ascii=False, indent=2),
-        })
+        try:
+            snapshot = self.env['leulit_tarea.unificar_etapas_snapshot'].create({
+                'name': _('Snapshot antes de normalización - %s proyectos') % len(proyectos),
+                'total_proyectos': len(proyectos),
+                'total_tareas': len(tareas),
+                'estado_proyectos': json.dumps(estado_proyectos, ensure_ascii=False, indent=2),
+                'estado_tareas': json.dumps(estado_tareas, ensure_ascii=False, indent=2),
+            })
+        except Exception:
+            _logger.exception('Error creando snapshot antes de normalización para %s proyectos', len(proyectos))
+            raise
         
         return snapshot
 
@@ -814,9 +828,13 @@ class UnificarEtapasWizard(models.TransientModel):
         
         # Actualizar proyecto si hay cambios
         if hubo_cambios:
-            proyecto.write({
-                'type_ids': [(6, 0, list(nuevas_etapas_ids))]
-            })
+            try:
+                proyecto.write({
+                    'type_ids': [(6, 0, list(nuevas_etapas_ids))]
+                })
+            except Exception:
+                _logger.exception('Error actualizando proyecto "%s" (ID: %s)', proyecto.name, proyecto.id)
+                raise
             _logger.info('Proyecto actualizado: "%s" (ID: %s) - Total etapas disponibles: %s', 
                         proyecto.name, proyecto.id, len(nuevas_etapas_ids))
         
@@ -848,9 +866,13 @@ class UnificarEtapasWizard(models.TransientModel):
                 # Solo actualizar si la etapa destino es diferente
                 if tarea.stage_id.id != etapa_destino.id:
                     etapa_origen_nombre = tarea.stage_id.name
-                    tarea.write({
-                        'stage_id': etapa_destino.id
-                    })
+                    try:
+                        tarea.write({
+                            'stage_id': etapa_destino.id
+                        })
+                    except Exception:
+                        _logger.exception('Error actualizando tarea "%s" (ID: %s)', tarea.name, tarea.id)
+                        raise
                     stats['tareas_actualizadas'] += 1
                     _logger.debug('Tarea "%s" (ID: %s) actualizada: "%s" → "%s"', 
                                  tarea.name, tarea.id, etapa_origen_nombre, etapa_destino.name)
@@ -941,7 +963,7 @@ class UnificarEtapasWizard(models.TransientModel):
                 etapas_eliminadas += 1
                 _logger.info('✓ Etapa obsoleta eliminada: "%s" (ID: %s)', etapa_nombre, etapa.id)
             except Exception as e:
-                _logger.error('✗ Error al eliminar etapa "%s": %s', etapa.name, str(e))
+                _logger.exception('✗ Error al eliminar etapa "%s": %s', etapa.name, str(e))
         
         # Log de resumen
         if etapas_eliminadas > 0:
