@@ -1072,12 +1072,19 @@ class UnificarEtapasWizard(models.TransientModel):
         
         _logger.info('Analizando %s etapas candidatas para eliminación (solo etapas compartidas/públicas)', len(etapas_candidatas))
         
+        # CRÍTICO: Flush all para asegurar que los cambios de normalización estén en BD
+        # Sin esto, las verificaciones pueden leer datos cacheados obsoletos
+        self.env.flush_all()
+        _logger.debug('Cache flushed - Verificando estado REAL en base de datos')
+        
         etapas_eliminadas = 0
         etapas_retenidas = []
         
         for etapa in etapas_candidatas:
             # Verificar si algún proyecto la tiene como etapa disponible
-            proyectos_con_etapa = self.env['project.project'].search_count([
+            # IMPORTANTE: Usar sudo() para bypass de reglas de seguridad que puedan ocultar proyectos
+            # IMPORTANTE: with_context(active_test=False) para incluir proyectos archivados
+            proyectos_con_etapa = self.env['project.project'].with_context(active_test=False).sudo().search_count([
                 ('type_ids', 'in', etapa.id)
             ])
             
@@ -1088,7 +1095,9 @@ class UnificarEtapasWizard(models.TransientModel):
                 continue
             
             # Verificar si alguna tarea la usa como etapa actual
-            tareas_con_etapa = self.env['project.task'].search_count([
+            # CRÍTICO: sudo() + active_test=False para ver TODAS las tareas (incluso archivadas)
+            # Sin esto, tareas archivadas/inactivas pueden quedar con referencias huérfanas
+            tareas_con_etapa = self.env['project.task'].with_context(active_test=False).sudo().search_count([
                 ('stage_id', '=', etapa.id)
             ])
             
