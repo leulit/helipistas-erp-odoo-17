@@ -145,10 +145,10 @@
                                             <t t-if="subtarea['descripcion']">
                                                 <tr>
                                                     <td colspan="3">
-                                                        <table class="fullwidth">
+                                                        <table class="fullwidth noborde">
                                                             <tr>
-                                                                <td class="tdcolored">Descripción</td>
-                                                                <td colspan="2"><span t-out="subtarea['descripcion']"/></td>
+                                                                <td class="centertext tdcolored heightrow" style="width: 30%;">Descripción</td>
+                                                                <td class="centertext" colspan="2"><span t-out="subtarea['descripcion']"/></td>
                                                             </tr>
                                                         </table>
                                                     </td>
