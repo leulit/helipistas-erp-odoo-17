@@ -963,7 +963,7 @@ class MaintenanceRequest(models.Model):
 
         motor = self.equipment_id.get_motor()
         responsable_mant = self.env['leulit.mecanico'].search([('active','=',True),('responsable_mant','=',True)])
-        last_crs = self.env['leulit.maintenance_crs'].search([('request','=',self.id)], limit=1, order="id desc")
+        first_crs = self.env['leulit.maintenance_crs'].search([('request','=',self.id)], limit=1, order="id asc")
 
         data={
             'plan_mantenimiento':self.maintenance_plan_id.name if self.maintenance_plan_id else self.referencia_programa_mantenimiento,
@@ -984,8 +984,8 @@ class MaintenanceRequest(models.Model):
             'marca_motor':motor.marca_motor if motor else '-',
             'modelo_motor':motor.production_lot.product_id.default_code if motor else '-',
             'sn_motor':motor.production_lot.sn if motor else '-',
-            'tsn_motor':round(last_crs.tsn_motor,2) if last_crs and round(last_crs.tsn_motor,2)>0 else '-',
-            'tso_motor':last_crs.tso_motor if last_crs else '-',
+            'tsn_motor':round(first_crs.tsn_motor,2) if first_crs and round(first_crs.tsn_motor,2)>0 else '-',
+            'tso_motor':first_crs.tso_motor if first_crs else '-',
             'ciclos_tsn':False,
             'ciclos_ng_tsn':False,
             'ciclos_nf_tsn':False,
