@@ -104,6 +104,7 @@
                                 <button name="print_material" type="object" class="oe_highlight" string="Imprimir Material"  invisible="((not material_ids))" />
                                 <button name="create_sale_order_from_material_utilizado" type="object" class="" string="Crear Presupuesto de Venta"  invisible="((not material_ids) or (sale_order_id))" />
                                 <button name="open_sale_order" type="object" class="" string="Abrir Presupuesto de Venta"  invisible="((not sale_order_id))" />
+                                <button name="import_materials_to_existing_sale_order" type="object" class="oe_highlight" string="Importar a Presupuesto de Venta"  invisible="((not sale_order_id))" />
                                 <group>
                                     <field name="sale_order_id"/>
                                     <!-- <field name="sale_order_id" groups="leulit.RolIT_developer"/> -->

@@ -183,6 +183,77 @@ class MaintenanceRequest(models.Model):
                             'price_unit': material.lot_id.precio * 1.2 
                         })
 
+    def import_materials_to_existing_sale_order(self):
+        """
+        Importa los materiales de `material_ids` al presupuesto ya existente en `sale_order_id`.
+        Si existe una línea con el mismo producto, incrementa la cantidad; si no, crea una nueva línea.
+        """
+        for request in self:
+            if not request.sale_order_id:
+                raise UserError('No hay presupuesto de venta asociado a esta Orden de Trabajo.')
+            sale_order = request.sale_order_id
+
+            results = []
+            created_count = 0
+            updated_count = 0
+            total_qty = 0
+            total_amount = 0.0
+
+            for material in request.material_ids:
+                try:
+                    if 'DES' in (material.reference or ''):
+                        continue
+                    product = material.lot_id.product_id if material.lot_id else False
+                    if not product:
+                        continue
+                    qty = float(material.quantity or 0)
+                    price = float(getattr(material.lot_id, 'precio', 0) or 0)
+                    price_unit = price * 1.2
+
+                    # Buscar línea existente con mismo producto
+                    existing_line = sale_order.order_line.filtered(lambda l: l.product_id.id == product.id)
+                    if existing_line:
+                        line = existing_line[0]
+                        line.product_uom_qty = qty
+                        line.price_unit = price_unit
+                        updated_count += 1
+                    else:
+                        self.env['sale.order.line'].create({
+                            'order_id': sale_order.id,
+                            'product_id': product.id,
+                            'name': product.name,
+                            'product_uom_qty': qty,
+                            'price_unit': price_unit,
+                        })
+                        created_count += 1
+
+                    total_qty += qty
+                    total_amount += qty * price_unit
+                except Exception:
+                    _logger.exception('Error importando material %s al presupuesto %s', getattr(material, 'id', 'n/a'), getattr(sale_order, 'id', 'n/a'))
+
+            results.append({'request_id': request.id, 'created': created_count, 'updated': updated_count, 'qty': total_qty, 'amount': total_amount})
+
+            # Si se llamó sobre un único registro, devolver una notificación UI
+            if len(results) == 1:
+                r = results[0]
+                message = (
+                    f"Importación completada: {r['created']} líneas creadas, {r['updated']} actualizadas. "
+                    f"Cantidad total: {r['qty']}. Importe: {r['amount']:.2f}."
+                )
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Importación de materiales',
+                        'message': message,
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+
+            return True
+
     def comprobar_estado_wo(self):
         resultado = self.env['project.task'].comprobar_estado_wo_tareas(self.id)
         if not resultado['valid']:
@@ -292,7 +363,6 @@ class MaintenanceRequest(models.Model):
     def action_create_form_one(self):
         self.ensure_one()
         view = self.env.ref('leulit_taller.leulit_20230706_1118_form',raise_if_not_found=False)
-        
         mecanico = self.env['leulit.mecanico'].search([('partner_id','=',self.env.user.partner_id.id),('active','=',True)])
         form_one_today = self.env['leulit.maintenance_form_one'].search([('fecha','=',datetime.now().date())])
         sequence = 1
