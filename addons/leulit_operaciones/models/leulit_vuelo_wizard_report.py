@@ -126,8 +126,8 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             _logger.error("Vuelos encontrados") 
             
             data['piloto_id'] = piloto_id
-            data['from_date'] = from_date
-            data['to_date'] = to_date
+            data['from_date'] = from_date.strftime('%Y-%m-%d') if from_date else False
+            data['to_date'] = to_date.strftime('%Y-%m-%d') if to_date else False
             data['owner'] = item.piloto_id.name
 
             cursos_list = []
@@ -135,9 +135,10 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 cursos = []
                 for curso in pe.cursos:
                     cursos.append(curso.name)
+                # Convertir recordsets a valores primitivos (ids / listas) para evitar enviar objetos grandes por RPC
                 values = {
-                    'cursos': pe['cursos'],
-                    'vuelo': pe['vuelo_id'],
+                    'cursos': pe.cursos.ids if pe.cursos else [],
+                    'vuelo': pe.vuelo_id.id if pe.vuelo_id else False,
                     'cursos_name': cursos
                 }
                 cursos_list.append(values)
@@ -290,13 +291,8 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             return self.env.ref('leulit_operaciones.leulit_report_piloto_log_book').report_action([],data=datos)
 
 
-
     def create_log_book_report(self):
         for item in self:
-            try:
-                return item.create_log_book_report_action()
-            except Exception as e:
-                _logger.error("Error al crear el reporte: %s", str(e))
-                raise UserError(_("Ha ocurrido un error al generar el reporte: %s") % str(e))
+            return item.create_log_book_report_action()
 
 
