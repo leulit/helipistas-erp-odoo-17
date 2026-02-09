@@ -123,7 +123,7 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 domain = ['|', ('piloto_id', '=', piloto_id), ('verificado', '=', piloto_id)] + domain
             
             vuelos = self.env['leulit.vuelo'].search(domain, limit=None, order='fechasalida asc')
-            _logger.error("Vuelos encontrados: %s", vuelos) 
+            _logger.error("Vuelos encontrados") 
             
             data['piloto_id'] = piloto_id
             data['from_date'] = from_date
@@ -175,7 +175,7 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                     'supervisor_firma' : vuelo.piloto_supervisor_id.firma,
                 }
                 vuelosarr.append( datos )
-            _logger.error("Vuelos array: %s", vuelosarr)
+            _logger.error("Vuelos array")
             vuelosarr = sorted(vuelosarr, key=lambda k: k['fechasalida'])
             vueloschunks = list( utilitylib.chunk_based_on_size( vuelosarr, 10 ) )
 
@@ -280,13 +280,13 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 total_paginas_previas_instructor_ato = acumulador_paginas_previas_ins_ato + total_pagina_ins_ato 
                 total_paginas_previas_instructor_actividad = acumulador_paginas_previas_ins_act + total_pagina_ins_act 
             docref = datetime.now().strftime("%Y%m%d%I%M%S")
-            _logger.error("Total páginas: %s", len(paginas))
+            _logger.error("Total páginas")
             datos = {
                 'paginas' : paginas,
                 'data' : data,
                 'docref' : docref
             }
-            _logger.error("Datos para el reporte: %s", datos)
+            _logger.error("Datos para el reporte")
             return self.env.ref('leulit_operaciones.leulit_report_piloto_log_book').report_action([],data=datos)
 
 
