@@ -162,7 +162,8 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                     'strtiemposervicio' : vuelo.strtiemposervicio,
                     'tiemposervicio' : vuelo.tiemposervicio,
                     'piloto_name' : vuelo.piloto_id.name,
-                    'piloto_firma' : vuelo.piloto_id.firma,
+                    # Do not serialize binary signatures (can be large). Send ids and fetch in template.
+                    'piloto_id': vuelo.piloto_id.id if vuelo.piloto_id else False,
                     'landings' : vuelo.landings if vuelo.landings else 0,
                     'nightlandings' : vuelo.nightlandings if vuelo.nightlandings else 0,
                     'ifr' : vuelo.ifr,
@@ -173,7 +174,8 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                     'instructor' :  True if item.piloto_id.instructor( vuelo ) and vuelo.tiempo_ato > 0.0 else False,
                     'instructoractividad' : True if item.piloto_id.instructor( vuelo ) and vuelo.tiempo_instuctor_actividad > 0.0 else False,
                     'cursos' : list( dict.fromkeys( vuelo.parte_escuela_id.cursos.ids ) ) if vuelo.parte_escuela_id and vuelo.parte_escuela_id.cursos else [],
-                    'supervisor_firma' : vuelo.piloto_supervisor_id.firma,
+                    'vuelo_id': vuelo.id,
+                    'supervisor_id': vuelo.piloto_supervisor_id.id if vuelo.piloto_supervisor_id else False,
                 }
                 vuelosarr.append( datos )
             _logger.error("Vuelos array")
