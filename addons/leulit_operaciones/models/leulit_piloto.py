@@ -51,31 +51,70 @@ class leulit_piloto(models.Model):
     def copiloto(self, vuelo):
         for item in self:
             return False
+    def _first_alumno_id(self, obj):
+        """Normaliza varios tipos de `alumno` y devuelve el primer id o False.
+
+        Acepta recordsets (tienen `ids`), listas/tuplas de records o dicts, dicts con 'id' o 'alumno_id',
+        o directamente objetos con atributo `id`.
+        """
+        if not obj:
+            return False
+        # recordset / record con .ids
+        if hasattr(obj, 'ids'):
+            return obj.ids[0] if obj.ids else False
+        # dict
+        if isinstance(obj, dict):
+            return obj.get('id') or obj.get('alumno_id') or False
+        # list/tuple
+        if isinstance(obj, (list, tuple)):
+            first = obj[0] if len(obj) > 0 else False
+            if not first:
+                return False
+            if isinstance(first, dict):
+                return first.get('id') or first.get('alumno_id') or False
+            try:
+                return first.id
+            except Exception:
+                return first
+        # fallback: try .id
+        try:
+            return obj.id
+        except Exception:
+            return False
 
     def doblemando(self, vuelo):
         for item in self:
-            valor = False
-            # aceptar que `vuelo` pueda ser un dict (desde el informe) o un recordset
+            # normalizar vuelo (puede venir como dict desde el informe)
             vuelo_rec = vuelo
             if isinstance(vuelo, dict):
-                vuelo_id = vuelo.get('vuelo_id') or vuelo.get('id')
-                if not vuelo_id:
+                vid = vuelo.get('vuelo_id') or vuelo.get('id')
+                if not vid:
                     return False
-                vuelo_rec = self.env['leulit.vuelo'].browse(vuelo_id)
+                vuelo_rec = self.env['leulit.vuelo'].browse(vid)
 
-            # alumno es un One2many, obtener el primer registro si existe
-            if hasattr(vuelo_rec, 'alumno') and vuelo_rec.alumno and item.alumno:
-                item_alumno_id = item.alumno[0].id if len(item.alumno) > 0 else False
-                # vuelo_rec.alumno puede ser record o recordset
-                if hasattr(vuelo_rec.alumno, 'id'):
-                    vuelo_alumno_id = vuelo_rec.alumno.id
-                else:
-                    vuelo_alumno_id = vuelo_rec.alumno[0].id if len(vuelo_rec.alumno) > 0 else False
-                vuelo_piloto_alumno_ids = vuelo_rec.piloto_id.alumno.ids if vuelo_rec.piloto_id and vuelo_rec.piloto_id.alumno else []
+            item_alumno_id = self._first_alumno_id(getattr(item, 'alumno', False))
+            vuelo_alumno_id = self._first_alumno_id(getattr(vuelo_rec, 'alumno', False))
 
-                if item_alumno_id and vuelo_alumno_id:
-                    valor = item_alumno_id == vuelo_alumno_id and vuelo_alumno_id not in vuelo_piloto_alumno_ids
-            return valor
+            # obtener ids de alumnos ya asociados al piloto del vuelo
+            vuelo_piloto_alumno_ids = []
+            if hasattr(vuelo_rec, 'piloto_id') and vuelo_rec.piloto_id:
+                pilot_al = getattr(vuelo_rec.piloto_id, 'alumno', False)
+                if pilot_al:
+                    if hasattr(pilot_al, 'ids'):
+                        vuelo_piloto_alumno_ids = pilot_al.ids
+                    elif isinstance(pilot_al, (list, tuple)):
+                        ids_tmp = []
+                        for a in pilot_al:
+                            if isinstance(a, dict):
+                                ids_tmp.append(a.get('id') or a.get('alumno_id'))
+                            else:
+                                try:
+                                    ids_tmp.append(a.id)
+                                except Exception:
+                                    ids_tmp.append(a)
+                        vuelo_piloto_alumno_ids = ids_tmp
+
+            return bool(item_alumno_id and vuelo_alumno_id and item_alumno_id == vuelo_alumno_id and vuelo_alumno_id not in (vuelo_piloto_alumno_ids or []))
 
     
     def instructor(self, vuelo):

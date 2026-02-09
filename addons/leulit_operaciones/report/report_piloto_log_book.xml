@@ -174,7 +174,7 @@
                                     <td class="fontsize2">
                                         <span t-if="vuelo" t-esc="vuelo['piloto_name']"/><br/>                                        
                                         <span t-if="vuelo" style="padding-left:0.2cm">
-                                            <img t-if="vuelo and vuelo.get('piloto_id') and data.get('signatures', {}).get(vuelo.get('piloto_id'))" t-att-src="'data:image/svg ;base64,%s' % data.get('signatures', {}).get(vuelo.get('piloto_id'))" style="width: auto; height:20px"/>
+                                            <img t-if="vuelo and vuelo.get('piloto_id')" t-att-src="'/web/content?model=leulit.piloto&amp;id=%s&amp;field=firma' % vuelo.get('piloto_id')" style="width: auto; height:20px"/>
                                         </span>
                                     </td>
                                     <td style="text-align:center" class="fontsize1"><span t-if="vuelo" t-esc="vuelo['landings']"/></td>
@@ -195,7 +195,7 @@
                                             </t>
                                         </t>
                                         <span style="font-size:6px" t-if="vuelo" t-esc="vuelo['vuelo_tipo_main']"/><br/>
-                                        <img t-if="vuelo and vuelo.get('supervisor_id') and data.get('signatures', {}).get(vuelo.get('supervisor_id'))" t-att-src="'data:image/svg ;base64,%s' % data.get('signatures', {}).get(vuelo.get('supervisor_id'))" style="width: auto; height:20px"/>
+                                        <img t-if="vuelo and vuelo.get('supervisor_id')" t-att-src="'/web/content?model=leulit.piloto&amp;id=%s&amp;field=firma' % vuelo.get('supervisor_id')" style="width: auto; height:20px"/>
                                     </td>
                                 </tr>
                             </t>
