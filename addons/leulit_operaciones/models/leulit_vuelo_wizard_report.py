@@ -293,6 +293,10 @@ class leulit_vuelo_wizard_report(models.TransientModel):
 
     def create_log_book_report(self):
         for item in self:
-            return item.create_log_book_report_action()
+            try:
+                return item.create_log_book_report_action()
+            except Exception as e:
+                _logger.error("Error al crear el reporte: %s", str(e))
+                raise UserError(_("Ha ocurrido un error al generar el reporte: %s") % str(e))
 
 
