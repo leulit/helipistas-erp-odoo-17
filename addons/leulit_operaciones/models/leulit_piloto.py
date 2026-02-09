@@ -55,12 +55,24 @@ class leulit_piloto(models.Model):
     def doblemando(self, vuelo):
         for item in self:
             valor = False
+            # aceptar que `vuelo` pueda ser un dict (desde el informe) o un recordset
+            vuelo_rec = vuelo
+            if isinstance(vuelo, dict):
+                vuelo_id = vuelo.get('vuelo_id') or vuelo.get('id')
+                if not vuelo_id:
+                    return False
+                vuelo_rec = self.env['leulit.vuelo'].browse(vuelo_id)
+
             # alumno es un One2many, obtener el primer registro si existe
-            if vuelo.alumno and item.alumno:
-                item_alumno_id = item.alumno[0].id if item.alumno else False
-                vuelo_alumno_id = vuelo.alumno.id if hasattr(vuelo.alumno, 'id') else (vuelo.alumno[0].id if vuelo.alumno else False)
-                vuelo_piloto_alumno_ids = vuelo.piloto_id.alumno.ids if vuelo.piloto_id.alumno else []
-                
+            if hasattr(vuelo_rec, 'alumno') and vuelo_rec.alumno and item.alumno:
+                item_alumno_id = item.alumno[0].id if len(item.alumno) > 0 else False
+                # vuelo_rec.alumno puede ser record o recordset
+                if hasattr(vuelo_rec.alumno, 'id'):
+                    vuelo_alumno_id = vuelo_rec.alumno.id
+                else:
+                    vuelo_alumno_id = vuelo_rec.alumno[0].id if len(vuelo_rec.alumno) > 0 else False
+                vuelo_piloto_alumno_ids = vuelo_rec.piloto_id.alumno.ids if vuelo_rec.piloto_id and vuelo_rec.piloto_id.alumno else []
+
                 if item_alumno_id and vuelo_alumno_id:
                     valor = item_alumno_id == vuelo_alumno_id and vuelo_alumno_id not in vuelo_piloto_alumno_ids
             return valor
