@@ -78,7 +78,7 @@
             <field name="name">Mis Gastos</field>
             <field name="res_model">hr.expense.sheet</field>
             <field name="view_mode">tree,kanban,form,pivot,graph,activity</field>
-            <field name="search_view_id" ref="hr_expense_sheet_view_search"/>
+            <field name="search_view_id" ref="hr_expense.hr_expense_sheet_view_search"/>
             <field name="domain">[('employee_id.user_id', '=', uid)]</field>
         </record>
 
