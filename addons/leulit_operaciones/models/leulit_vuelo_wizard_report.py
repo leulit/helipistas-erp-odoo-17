@@ -182,6 +182,16 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             vuelosarr = sorted(vuelosarr, key=lambda k: k['fechasalida'])
             vueloschunks = list( utilitylib.chunk_based_on_size( vuelosarr, 10 ) )
 
+            # Pre-cache firmas por piloto/supervisor para evitar múltiples browses en la plantilla
+            firmas_cache = {}
+            for v in vuelosarr:
+                pid = v.get('piloto_id')
+                sid = v.get('supervisor_id')
+                if pid and pid not in firmas_cache:
+                    firmas_cache[pid] = self.env['leulit.piloto'].browse(pid).firma or False
+                if sid and sid not in firmas_cache:
+                    firmas_cache[sid] = self.env['leulit.piloto'].browse(sid).firma or False
+
             ## CÁLCULO TOTALES PÁGINAS
             paginas = []
             total_paginas_previas_tiempo_vuelo = 0
@@ -284,6 +294,9 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 total_paginas_previas_instructor_actividad = acumulador_paginas_previas_ins_act + total_pagina_ins_act 
             docref = datetime.now().strftime("%Y%m%d%I%M%S")
             _logger.error("Total páginas")
+            # Añadir firmas en el diccionario `data` para que la plantilla las use desde una única fuente
+            data['signatures'] = firmas_cache
+
             datos = {
                 'paginas' : paginas,
                 'data' : data,
