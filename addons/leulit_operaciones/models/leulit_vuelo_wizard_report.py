@@ -86,10 +86,8 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             tiempo_instructor_ato_inicial = 0
             total_pagina = 0
 
-            _logger.error("Piloto ID: %s", item.piloto_id.id)
             # alumno es un One2many (recordset), obtener los IDs
             alumno_ids = item.piloto_id.alumno.ids if item.piloto_id.alumno else []
-            _logger.error("Alumno IDs: %s", alumno_ids)
             
             # Construir dominio para el primer vuelo
             primer_vuelo_domain = [('estado', '=', 'cerrado')]
@@ -99,7 +97,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 primer_vuelo_domain = ['|', ('piloto_id', '=', item.piloto_id.id), ('verificado', '=', item.piloto_id.id)] + primer_vuelo_domain
             
             primer_vuelo_piloto = self.env['leulit.vuelo'].search(primer_vuelo_domain, order='fechavuelo asc', limit=1)
-            _logger.error("Primer vuelo encontrado: %s", primer_vuelo_piloto)
             data = {}
             piloto_id = item.piloto_id.id
             # alumno es un One2many (recordset), por lo que puede tener múltiples registros
@@ -107,7 +104,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
             alumno_ids = item.piloto_id.alumno.ids if item.piloto_id.alumno else []
             from_date = item.from_date
             to_date = item.to_date
-            _logger.error("From Date: %s, To Date: %s", from_date, to_date)
             
             # Construir el dominio de búsqueda
             domain = [
@@ -123,7 +119,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 domain = ['|', ('piloto_id', '=', piloto_id), ('verificado', '=', piloto_id)] + domain
             
             vuelos = self.env['leulit.vuelo'].search(domain, limit=None, order='fechasalida asc')
-            _logger.error("Vuelos encontrados") 
             
             data['piloto_id'] = piloto_id
             data['from_date'] = from_date.strftime('%Y-%m-%d') if from_date else False
@@ -143,7 +138,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 }
                 cursos_list.append(values)
             data['cursos_list'] = cursos_list
-            _logger.error("Cursos list: %s", cursos_list)
             vuelosarr = []
             for vuelo in vuelos:
                 datos = {
@@ -178,7 +172,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                     'supervisor_id': vuelo.piloto_supervisor_id.id if vuelo.piloto_supervisor_id else False,
                 }
                 vuelosarr.append( datos )
-            _logger.error("Vuelos array")
             vuelosarr = sorted(vuelosarr, key=lambda k: k['fechasalida'])
             vueloschunks = list( utilitylib.chunk_based_on_size( vuelosarr, 10 ) )
 
@@ -248,7 +241,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                     acumulador_paginas_previas_ins_ato = total_paginas_previas_instructor_ato if total_paginas_previas_instructor_ato != 0 else item.piloto_id._calc_horas_instructor_ato_fechas( primer_vuelo_piloto.fechavuelo, fecha )
                     acumulador_paginas_previas_ins_act = total_paginas_previas_instructor_actividad if total_paginas_previas_instructor_actividad != 0 else item.piloto_id._calc_horas_instructor_fechas( primer_vuelo_piloto.fechavuelo, fecha )
 
-                _logger.error("Acumuladores previos - Total: %s, Night: %s, IFR: %s, PM: %s, DM: %s, Ins ATO: %s, Ins Act: %s", acumulador_paginas_previas_total, acumulador_paginas_previas_night, acumulador_paginas_previas_ifr, acumulador_paginas_previas_pm, acumulador_paginas_previas_dm, acumulador_paginas_previas_ins_ato, acumulador_paginas_previas_ins_act)
                 cursoslist = []
                 for curso in self.env['leulit.curso'].search([('id','in', cursosfooter)]):
                     cursoslist.append({
@@ -293,7 +285,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 total_paginas_previas_instructor_ato = acumulador_paginas_previas_ins_ato + total_pagina_ins_ato 
                 total_paginas_previas_instructor_actividad = acumulador_paginas_previas_ins_act + total_pagina_ins_act 
             docref = datetime.now().strftime("%Y%m%d%I%M%S")
-            _logger.error("Total páginas")
             # Añadir firmas en el diccionario `data` para que la plantilla las use desde una única fuente
             data['signatures'] = firmas_cache
 
@@ -302,7 +293,6 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 'data' : data,
                 'docref' : docref
             }
-            _logger.error("Datos para el reporte")
             return self.env.ref('leulit_operaciones.leulit_report_piloto_log_book').report_action([],data=datos)
 
 
