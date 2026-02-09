@@ -99,12 +99,11 @@
                 id="leulit_20201014_1010_menuitem"
                 name="Gastos"
                 parent="leulit_20201014_1008_menuitem"
-                action="hr_expense.action_hr_expense_sheet_my_all"
+                action="leulit_20260209_0937_action"
                 sequence="1"
                 groups="ROperaciones_operador,leulit_user_checklist"
             />
 
-        
     
     <!-- Menu Operaciones -->
     <menuitem
