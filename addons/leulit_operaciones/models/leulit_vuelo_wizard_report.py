@@ -181,9 +181,22 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                 pid = v.get('piloto_id')
                 sid = v.get('supervisor_id')
                 if pid and pid not in firmas_cache:
-                    firmas_cache[pid] = self.env['leulit.piloto'].browse(pid).firma or False
+                    f = self.env['leulit.piloto'].browse(pid).firma or False
+                    if f and isinstance(f, bytes):
+                        try:
+                            f = f.decode('utf-8')
+                        except Exception:
+                            f = str(f)
+                    firmas_cache[pid] = f or False
                 if sid and sid not in firmas_cache:
-                    firmas_cache[sid] = self.env['leulit.piloto'].browse(sid).firma or False
+                    s = self.env['leulit.piloto'].browse(sid).firma or False
+                    if s and isinstance(s, bytes):
+                        try:
+                            s = s.decode('utf-8')
+                        except Exception:
+                            s = str(s)
+                    firmas_cache[sid] = s or False
+            _logger.error("Firmas cache keys: %s", list(firmas_cache.keys()))
 
             ## CÁLCULO TOTALES PÁGINAS
             paginas = []
