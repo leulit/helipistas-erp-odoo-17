@@ -197,6 +197,15 @@ class leulit_vuelo_wizard_report(models.TransientModel):
                             s = str(s)
                     firmas_cache[sid] = s or False
             _logger.error("Firmas cache keys: %s", list(firmas_cache.keys()))
+            # Log detalles de cada firma para depuración
+            for k, v in firmas_cache.items():
+                try:
+                    length = len(v) if v else 0
+                    preview = v[:30] if v and isinstance(v, str) else ''
+                except Exception:
+                    length = 0
+                    preview = ''
+                _logger.error("Firma id=%s present=%s length=%s preview=%s", k, bool(v), length, preview)
 
             ## CÁLCULO TOTALES PÁGINAS
             paginas = []
