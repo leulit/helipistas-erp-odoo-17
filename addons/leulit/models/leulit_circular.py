@@ -42,22 +42,22 @@ class leulit_circular(models.Model):
         enviados_error = []
         
         for destinatario in self.historial_ids:            
-            if not destinatario.enviado:
-                context.update({'mail_to': destinatario.partner_email})
-                template = self.with_context(context).env.ref("leulit.leulit_circular_template")
-                try:
-                    template.send_mail(self.id, force_send=True, raise_exception=True)
-                    # Solo marcar como enviado si fue exitoso
-                    destinatario.write({'enviado': True})
-                    enviados_ok.append(destinatario.partner_email)
-                except Exception as e:
-                    error_msg = str(e)
-                    enviados_error.append({
-                        'email': destinatario.partner_email,
-                        'error': error_msg
-                    })
-                    _logger.error('Error enviando circular "%s" (ID: %s) a %s: %s', 
-                                 self.name, self.id, destinatario.partner_email, error_msg)
+            #if not destinatario.enviado:
+            context.update({'mail_to': destinatario.partner_email})
+            template = self.with_context(context).env.ref("leulit.leulit_circular_template")
+            try:
+                template.send_mail(self.id, force_send=True, raise_exception=True)
+                # Solo marcar como enviado si fue exitoso
+                destinatario.write({'enviado': True})
+                enviados_ok.append(destinatario.partner_email)
+            except Exception as e:
+                error_msg = str(e)
+                enviados_error.append({
+                    'email': destinatario.partner_email,
+                    'error': error_msg
+                })
+                _logger.error('Error enviando circular "%s" (ID: %s) a %s: %s', 
+                                self.name, self.id, destinatario.partner_email, error_msg)
         
         # Mostrar resultado al usuario siempre
         msg_partes = []
