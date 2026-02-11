@@ -21,6 +21,10 @@ class leulit_circular(models.Model):
     
     
     def enviarEmail(self):
+        _logger.info('='*80)
+        _logger.info('INICIO enviarEmail() - Circular: "%s" (ID: %s)', self.name, self.id)
+        _logger.info('Total destinatarios en historial: %s', len(self.historial_ids))
+        
         context = self.env.context.copy()
         context.update({'fecha':self.fecha_emision,
                         'autor': self.autor_id.name,
@@ -41,27 +45,38 @@ class leulit_circular(models.Model):
         enviados_ok = []
         enviados_error = []
         
+        _logger.info('Iniciando bucle de envío de emails...')
+        
         for destinatario in self.historial_ids:            
             # TEMPORAL: Comentado para probar reenvío de todos los emails
             # if not destinatario.enviado:
+            _logger.info('Procesando destinatario: %s (enviado=%s)', 
+                        destinatario.partner_email, destinatario.enviado)
+            
             context.update({'mail_to': destinatario.partner_email})
             template = self.with_context(context).env.ref("leulit.leulit_circular_template")
             try:
+                _logger.info('Intentando enviar email a: %s', destinatario.partner_email)
                 template.send_mail(self.id, force_send=True, raise_exception=True)
                 # Solo marcar como enviado si fue exitoso
                 destinatario.write({'enviado': True})
                 enviados_ok.append(destinatario.partner_email)
+                _logger.info('✓ Email enviado exitosamente a: %s', destinatario.partner_email)
             except Exception as e:
                 error_msg = str(e)
                 enviados_error.append({
                     'email': destinatario.partner_email,
                     'error': error_msg
                 })
-                _logger.error('Error enviando circular "%s" (ID: %s) a %s: %s', 
-                                self.name, self.id, destinatario.partner_email, error_msg)
+                _logger.error('✗ Error enviando circular "%s" (ID: %s) a %s: %s', 
+                             self.name, self.id, destinatario.partner_email, error_msg)
+        
+        _logger.info('Bucle finalizado. Enviados OK: %s, Errores: %s', 
+                    len(enviados_ok), len(enviados_error))
         
         # Mostrar resultado al usuario siempre
         if enviados_error:
+            _logger.info('Caso: HAY ERRORES - Mostrando UserError con detalles')
             # Hay errores - usar UserError para mostrar detalles
             msg_partes = []
             
@@ -78,12 +93,16 @@ class leulit_circular(models.Model):
             msg_partes.append("")
             msg_partes.append(_("Revise los logs del servidor para más detalles técnicos."))
             
-            raise UserError("\n".join(msg_partes))
+            mensaje_final = "\n".join(msg_partes)
+            _logger.info('Lanzando UserError con mensaje: %s', mensaje_final)
+            raise UserError(mensaje_final)
         elif enviados_ok:
+            _logger.info('Caso: TODO OK - Mostrando notificación de éxito')
             # Todo OK - mostrar notificación de éxito y retornar acción
             mensaje_exito = _("✓ Todos los emails se han enviado correctamente (%s):\n\n") % len(enviados_ok)
             mensaje_exito += "  • " + "\n  • ".join(enviados_ok)
             
+            _logger.info('Retornando display_notification con mensaje: %s', mensaje_exito)
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
@@ -96,6 +115,7 @@ class leulit_circular(models.Model):
                 }
             }
         else:
+            _logger.info('Caso: NO HAY PENDIENTES - Mostrando UserError')
             # No había destinatarios pendientes
             raise UserError(_("No hay emails pendientes de enviar."))
 
