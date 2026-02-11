@@ -159,7 +159,7 @@
                         <tr>
                             <td colspan="3" style="text-align:center; background-color:lightgrey;"><strong><t t-esc="ctx.get('nombre') or ''"/></strong></td>
                         </tr>
-                        <tr><td colspan="3">&nbsp;</td></tr>
+                        <tr><td colspan="3"></td></tr>
                         <tr>
                             <td width="15%">
                                 <table>
