@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from multiprocessing import context
 from odoo import models, fields, api, tools, exceptions, registry, _
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
 import logging
@@ -21,6 +22,7 @@ class leulit_circular(models.Model):
     
 
     def enviarEmail(self):
+        _logger.error('Enviando email para Circular ID: %s', self.id)
         context = self.env.context.copy()
         context.update({'fecha':self.fecha_emision,
                         'autor': self.autor_id.name,
@@ -36,7 +38,9 @@ class leulit_circular(models.Model):
             context.update({'fecha': self.fecha_emision})
         else:
             context.update({'fecha': '-'})
-        for destinatario in self.historial_ids:            
+        _logger.error('Enviando context: %s', context)
+        for destinatario in self.historial_ids:    
+            _logger.error('Enviando destinatario: %s', destinatario)        
             if not destinatario.enviado:
                 context.update({'mail_to': destinatario.partner_email})
                 template = self.with_context(context).env.ref("leulit.leulit_circular_template")
