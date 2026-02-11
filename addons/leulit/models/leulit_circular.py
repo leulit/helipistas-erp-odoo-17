@@ -42,8 +42,8 @@ class leulit_circular(models.Model):
         enviados_error = []
         
         for destinatario in self.historial_ids:            
-            #if not destinatario.enviado:
-            context.update({'mail_to': destinatario.partner_email})
+            if not destinatario.enviado:
+                context.update({'mail_to': destinatario.partner_email})
             template = self.with_context(context).env.ref("leulit.leulit_circular_template")
             try:
                 template.send_mail(self.id, force_send=True, raise_exception=True)
@@ -60,10 +60,10 @@ class leulit_circular(models.Model):
                                 self.name, self.id, destinatario.partner_email, error_msg)
         
         # Mostrar resultado al usuario siempre
-        msg_partes = []
-        
         if enviados_error:
-            # Hay errores - mensaje detallado con éxitos y fallos
+            # Hay errores - usar UserError para mostrar detalles
+            msg_partes = []
+            
             if enviados_ok:
                 msg_partes.append(_("✓ Emails enviados correctamente (%s):") % len(enviados_ok))
                 msg_partes.append("  • " + "\n  • ".join(enviados_ok))
@@ -79,12 +79,21 @@ class leulit_circular(models.Model):
             
             raise UserError("\n".join(msg_partes))
         elif enviados_ok:
-            # Todo OK - mensaje de éxito
-            msg_partes.append(_("✓ Todos los emails se han enviado correctamente (%s):") % len(enviados_ok))
-            msg_partes.append("")
-            msg_partes.append("  • " + "\n  • ".join(enviados_ok))
+            # Todo OK - mostrar notificación de éxito y retornar acción
+            mensaje_exito = _("✓ Todos los emails se han enviado correctamente (%s):\n\n") % len(enviados_ok)
+            mensaje_exito += "  • " + "\n  • ".join(enviados_ok)
             
-            raise UserError("\n".join(msg_partes))
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Envío Completado'),
+                    'message': mensaje_exito,
+                    'sticky': True,
+                    'type': 'success',
+                    'next': {'type': 'ir.actions.act_window_close'},
+                }
+            }
         else:
             # No había destinatarios pendientes
             raise UserError(_("No hay emails pendientes de enviar."))
