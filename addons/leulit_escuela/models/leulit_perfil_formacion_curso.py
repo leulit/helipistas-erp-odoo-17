@@ -330,7 +330,7 @@ class leulit_perfil_formacion_curso(models.Model):
         _logger.error("Contexto perfil_formacion: %s", perfil_formacion)
         _logger.error("Contexto perfil_formacion_tmpl: %s", perfil_formacion_tmpl)
         for item in self:
-            item.copy(default={'perfil_formacion':perfil_formacion, 'is_template':False, 'pf_curso_tmpl': item.id})
+            item.copy(default={'perfil_formacion':perfil_formacion[0], 'is_template':False, 'pf_curso_tmpl': item.id})
         
         view_ref = self.env['ir.model.data']._xmlid_to_res_model_res_id('leulit_escuela.leulit_popup_replicar_cursos_pf_form')
         view_id = view_ref and view_ref[1] or False
