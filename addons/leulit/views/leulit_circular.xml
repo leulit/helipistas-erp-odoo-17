@@ -152,54 +152,56 @@
             <field name="email_to">{{ ctx.get('mail_to') }}</field>
             <field name="model_id" ref="model_leulit_circular" />
             <field name="auto_delete" eval="True" />
-            <field name="subject">Circular - ${ctx.get('fecha')} - ${ctx.get('nombre')}</field>
-            <field name="body_html"><![CDATA[
-                <table width=100%>
-                	<tr>
-		            	<td style="text-align:left;vertical-align: middle" colspan="3">
-		                	<img src="https://s3-eu-west-1.amazonaws.com/helimisc/helipistas_logo.jpg" />
-		               	</td>
-		            </tr>
-		            <tr>
-                		<td style="text-align:center; background-color:lightgrey;" colspan="3"><b>${ctx.get('nombre')}</b></td>
-                	</tr>
-                	<tr><td colspan="3"></td></tr>
-                	<tr>
-						<td width=15%>
-							<table>
-								<tr>
-								    <td width=15%><b>AUTOR</b></td>
-                					<td width=2%></td>
-                					<td width=15%>${ctx.get('autor')}</td>
-								</tr>
-								<tr>
-									<td><b>ÁREA</b></td>
-									<td></td>
-									<td>${ctx.get('area')}</td>
-								</tr>
-								<tr>
-									<td><b>FECHA EMISIÓN</b></td>
-									<td></td>
-									<td>${ctx.get('fecha')}</td>
-								</tr>
-								<tr>
-									<td><b>FECHA FIN</b></td>
-									<td></td>
-									<td>${ctx.get('fecha_fin')}</td>
-								</tr>
-							</table>
-						</td>
-                		<td width=2%></td>
-                        
-                	</tr>
-		            <tr>
-                		<td style="text-align:center; background-color:lightgrey;" colspan="3"></td>
-                	</tr>
-                    <tr>
-                		<td style="text-align:justify;vertical-align:top;"  width=66%>${object.description | safe}</td>
-                	</tr>
-                </table>
-            ]]>
+            <field name="subject">Circular - {{ctx.get('fecha')}} - {{ctx.get('nombre')}}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <table width="100%">
+                        <tr>
+                            <td colspan="3" style="text-align:center; background-color:lightgrey;"><strong><t t-esc="ctx.get('nombre') or ''"/></strong></td>
+                        </tr>
+                        <tr><td colspan="3">&nbsp;</td></tr>
+                        <tr>
+                            <td width="15%">
+                                <table>
+                                    <tr>
+                                        <td width="15%"><strong>AUTOR</strong></td>
+                                        <td width="2%"></td>
+                                        <td width="15%"><t t-esc="ctx.get('autor') or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ÁREA</strong></td>
+                                        <td></td>
+                                        <td><t t-esc="ctx.get('area') or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FECHA EMISIÓN</strong></td>
+                                        <td></td>
+                                        <td><t t-esc="ctx.get('fecha') or ''"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FECHA FIN</strong></td>
+                                        <td></td>
+                                        <td><t t-esc="ctx.get('fecha_fin') or ''"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td width="2%"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align:center; background-color:lightgrey;">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td width="66%" style="text-align:justify;vertical-align:top;">
+                                <t t-if="object and object.description">
+                                    <t t-raw="object.description"/>
+                                </t>
+                                <t t-else="">
+                                    <p>No hay descripción.</p>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </field>
         </record>
 
