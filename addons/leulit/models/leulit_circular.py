@@ -36,16 +36,47 @@ class leulit_circular(models.Model):
             context.update({'fecha': self.fecha_emision})
         else:
             context.update({'fecha': '-'})
+        
+        # Acumular resultados de envío
+        enviados_ok = []
+        enviados_error = []
+        
         for destinatario in self.historial_ids:            
             if not destinatario.enviado:
                 context.update({'mail_to': destinatario.partner_email})
                 template = self.with_context(context).env.ref("leulit.leulit_circular_template")
                 try:
                     template.send_mail(self.id, force_send=True, raise_exception=True)
+                    # Solo marcar como enviado si fue exitoso
+                    destinatario.write({'enviado': True})
+                    enviados_ok.append(destinatario.partner_email)
                 except Exception as e:
-                    pass
-                sql = "UPDATE leulit_historial_circular SET enviado = 't' WHERE id = {0}".format(destinatario.id)
-                self._cr.execute(sql)
+                    error_msg = str(e)
+                    enviados_error.append({
+                        'email': destinatario.partner_email,
+                        'error': error_msg
+                    })
+                    _logger.error('Error enviando circular "%s" (ID: %s) a %s: %s', 
+                                 self.name, self.id, destinatario.partner_email, error_msg)
+        
+        # Mostrar resultado al usuario si hubo errores
+        if enviados_error:
+            msg_partes = []
+            
+            if enviados_ok:
+                msg_partes.append(_("✓ Emails enviados correctamente (%s):") % len(enviados_ok))
+                msg_partes.append("  • " + "\n  • ".join(enviados_ok))
+                msg_partes.append("")
+            
+            msg_partes.append(_("✗ Emails con errores (%s):") % len(enviados_error))
+            for error_info in enviados_error:
+                msg_partes.append(f"  • {error_info['email']}")
+                msg_partes.append(f"    Error: {error_info['error']}")
+            
+            msg_partes.append("")
+            msg_partes.append(_("Revise los logs del servidor para más detalles técnicos."))
+            
+            raise UserError("\n".join(msg_partes))
 
 
     def create_historial_circular(self, from_onchange=False):
