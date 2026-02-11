@@ -19,14 +19,8 @@ class leulit_circular(models.Model):
     _order          = "fecha_emision desc"
     _inherit        = ['mail.thread']
     
-    
+
     def enviarEmail(self):
-        _logger.info('='*80)
-        _logger.info('INICIO enviarEmail() - Circular: "%s" (ID: %s)', self.name, self.id)
-        _logger.info('Total destinatarios en historial: %s', len(self.historial_ids))
-        
-        # Verificar configuración de email
-        
         context = self.env.context.copy()
         context.update({'fecha':self.fecha_emision,
                         'autor': self.autor_id.name,
@@ -42,86 +36,116 @@ class leulit_circular(models.Model):
             context.update({'fecha': self.fecha_emision})
         else:
             context.update({'fecha': '-'})
-        
-        # Acumular resultados de envío
-        enviados_ok = []
-        enviados_error = []
-        
-        _logger.info('Iniciando bucle de envío de emails...')
-        
         for destinatario in self.historial_ids:            
-            # TEMPORAL: Comentado para probar reenvío de todos los emails
-            # if not destinatario.enviado:
-            _logger.info('Procesando destinatario: %s (enviado=%s)', 
-                        destinatario.partner_email, destinatario.enviado)
-            
-            context.update({'mail_to': destinatario.partner_email})
-            template = self.with_context(context).env.ref("leulit.leulit_circular_template")
-            _logger.info('Template email_from: %s', template.email_from or 'No configurado en template')
-            _logger.info('Template email_to: %s', template.email_to or 'No configurado en template')
-            try:
-                _logger.info('Intentando enviar email a: %s', destinatario.partner_email)
-                template.with_context(context).send_mail(self.id, force_send=True, raise_exception=True)
-                # Solo marcar como enviado si fue exitoso
-                destinatario.write({'enviado': True})
-                enviados_ok.append(destinatario.partner_email)
-                _logger.info('✓ Email enviado exitosamente a: %s', destinatario.partner_email)
-            except Exception as e:
-                error_msg = str(e)
-                enviados_error.append({
-                    'email': destinatario.partner_email,
-                    'error': error_msg
-                })
-                _logger.error('✗ Error enviando circular "%s" (ID: %s) a %s: %s', 
-                             self.name, self.id, destinatario.partner_email, error_msg)
+            if not destinatario.enviado:
+                context.update({'mail_to': destinatario.partner_email})
+                template = self.with_context(context).env.ref("leulit.leulit_circular_template")
+                template.with_context(context).send_mail(self.id, force_send=True)
+                sql = "UPDATE leulit_historial_circular SET enviado = 't' WHERE id = {0}".format(destinatario.id)
+                self._cr.execute(sql)
+    
+    # def enviarEmail(self):
+    #     _logger.info('='*80)
+    #     _logger.info('INICIO enviarEmail() - Circular: "%s" (ID: %s)', self.name, self.id)
+    #     _logger.info('Total destinatarios en historial: %s', len(self.historial_ids))
         
-        _logger.info('Bucle finalizado. Enviados OK: %s, Errores: %s', 
-                    len(enviados_ok), len(enviados_error))
+    #     # Verificar configuración de email
         
-        # Mostrar resultado al usuario siempre
-        if enviados_error:
-            _logger.info('Caso: HAY ERRORES - Mostrando UserError con detalles')
-            # Hay errores - usar UserError para mostrar detalles
-            msg_partes = []
+    #     context = self.env.context.copy()
+    #     context.update({'fecha':self.fecha_emision,
+    #                     'autor': self.autor_id.name,
+    #                     'area': self.area.name,
+    #                     'nombre': self.name,
+    #                     'descrip': self.description
+    #                     })
+    #     if self.fecha_fin:
+    #         context.update({'fecha_fin': self.fecha_fin})
+    #     else:
+    #         context.update({'fecha_fin': '-'})
+    #     if self.fecha_emision:
+    #         context.update({'fecha': self.fecha_emision})
+    #     else:
+    #         context.update({'fecha': '-'})
+        
+    #     # Acumular resultados de envío
+    #     enviados_ok = []
+    #     enviados_error = []
+        
+    #     _logger.info('Iniciando bucle de envío de emails...')
+        
+    #     for destinatario in self.historial_ids:            
+    #         # TEMPORAL: Comentado para probar reenvío de todos los emails
+    #         # if not destinatario.enviado:
+    #         _logger.info('Procesando destinatario: %s (enviado=%s)', 
+    #                     destinatario.partner_email, destinatario.enviado)
             
-            if enviados_ok:
-                msg_partes.append(_("✓ Emails enviados correctamente (%s):") % len(enviados_ok))
-                msg_partes.append("  • " + "\n  • ".join(enviados_ok))
-                msg_partes.append("")
+    #         context.update({'mail_to': destinatario.partner_email})
+    #         template = self.with_context(context).env.ref("leulit.leulit_circular_template")
+    #         _logger.info('Template email_from: %s', template.email_from or 'No configurado en template')
+    #         _logger.info('Template email_to: %s', template.email_to or 'No configurado en template')
+    #         try:
+    #             _logger.info('Intentando enviar email a: %s', destinatario.partner_email)
+    #             template.with_context(context).send_mail(self.id, force_send=True, raise_exception=True)
+    #             # Solo marcar como enviado si fue exitoso
+    #             destinatario.write({'enviado': True})
+    #             enviados_ok.append(destinatario.partner_email)
+    #             _logger.info('✓ Email enviado exitosamente a: %s', destinatario.partner_email)
+    #         except Exception as e:
+    #             error_msg = str(e)
+    #             enviados_error.append({
+    #                 'email': destinatario.partner_email,
+    #                 'error': error_msg
+    #             })
+    #             _logger.error('✗ Error enviando circular "%s" (ID: %s) a %s: %s', 
+    #                          self.name, self.id, destinatario.partner_email, error_msg)
+        
+    #     _logger.info('Bucle finalizado. Enviados OK: %s, Errores: %s', 
+    #                 len(enviados_ok), len(enviados_error))
+        
+    #     # Mostrar resultado al usuario siempre
+    #     if enviados_error:
+    #         _logger.info('Caso: HAY ERRORES - Mostrando UserError con detalles')
+    #         # Hay errores - usar UserError para mostrar detalles
+    #         msg_partes = []
             
-            msg_partes.append(_("✗ Emails con errores (%s):") % len(enviados_error))
-            for error_info in enviados_error:
-                msg_partes.append(f"  • {error_info['email']}")
-                msg_partes.append(f"    Error: {error_info['error']}")
+    #         if enviados_ok:
+    #             msg_partes.append(_("✓ Emails enviados correctamente (%s):") % len(enviados_ok))
+    #             msg_partes.append("  • " + "\n  • ".join(enviados_ok))
+    #             msg_partes.append("")
             
-            msg_partes.append("")
-            msg_partes.append(_("Revise los logs del servidor para más detalles técnicos."))
+    #         msg_partes.append(_("✗ Emails con errores (%s):") % len(enviados_error))
+    #         for error_info in enviados_error:
+    #             msg_partes.append(f"  • {error_info['email']}")
+    #             msg_partes.append(f"    Error: {error_info['error']}")
             
-            mensaje_final = "\n".join(msg_partes)
-            _logger.info('Lanzando UserError con mensaje: %s', mensaje_final)
-            raise UserError(mensaje_final)
-        elif enviados_ok:
-            _logger.info('Caso: TODO OK - Mostrando notificación de éxito')
-            # Todo OK - mostrar notificación de éxito y retornar acción
-            mensaje_exito = _("✓ Todos los emails se han enviado correctamente (%s):\n\n") % len(enviados_ok)
-            mensaje_exito += "  • " + "\n  • ".join(enviados_ok)
+    #         msg_partes.append("")
+    #         msg_partes.append(_("Revise los logs del servidor para más detalles técnicos."))
             
-            _logger.info('Retornando display_notification con mensaje: %s', mensaje_exito)
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Envío Completado'),
-                    'message': mensaje_exito,
-                    'sticky': True,
-                    'type': 'success',
-                    'next': {'type': 'ir.actions.act_window_close'},
-                }
-            }
-        else:
-            _logger.info('Caso: NO HAY PENDIENTES - Mostrando UserError')
-            # No había destinatarios pendientes
-            raise UserError(_("No hay emails pendientes de enviar."))
+    #         mensaje_final = "\n".join(msg_partes)
+    #         _logger.info('Lanzando UserError con mensaje: %s', mensaje_final)
+    #         raise UserError(mensaje_final)
+    #     elif enviados_ok:
+    #         _logger.info('Caso: TODO OK - Mostrando notificación de éxito')
+    #         # Todo OK - mostrar notificación de éxito y retornar acción
+    #         mensaje_exito = _("✓ Todos los emails se han enviado correctamente (%s):\n\n") % len(enviados_ok)
+    #         mensaje_exito += "  • " + "\n  • ".join(enviados_ok)
+            
+    #         _logger.info('Retornando display_notification con mensaje: %s', mensaje_exito)
+    #         return {
+    #             'type': 'ir.actions.client',
+    #             'tag': 'display_notification',
+    #             'params': {
+    #                 'title': _('Envío Completado'),
+    #                 'message': mensaje_exito,
+    #                 'sticky': True,
+    #                 'type': 'success',
+    #                 'next': {'type': 'ir.actions.act_window_close'},
+    #             }
+    #         }
+    #     else:
+    #         _logger.info('Caso: NO HAY PENDIENTES - Mostrando UserError')
+    #         # No había destinatarios pendientes
+    #         raise UserError(_("No hay emails pendientes de enviar."))
 
 
     def create_historial_circular(self, from_onchange=False):
