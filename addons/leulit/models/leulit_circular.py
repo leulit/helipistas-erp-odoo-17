@@ -25,6 +25,18 @@ class leulit_circular(models.Model):
         _logger.info('INICIO enviarEmail() - Circular: "%s" (ID: %s)', self.name, self.id)
         _logger.info('Total destinatarios en historial: %s', len(self.historial_ids))
         
+        # Verificar configuración de email
+        mail_server = self.env['ir.mail_server'].sudo().search([], limit=1, order='sequence')
+        if mail_server:
+            _logger.info('Servidor de correo configurado:')
+            _logger.info('  - Nombre: %s', mail_server.name)
+            _logger.info('  - SMTP: %s:%s', mail_server.smtp_host, mail_server.smtp_port)
+            _logger.info('  - Usuario: %s', mail_server.smtp_user)
+            _logger.info('  - De (From): %s', mail_server.smtp_from or 'Default')
+            _logger.info('  - SSL/TLS: %s', mail_server.smtp_encryption)
+        else:
+            _logger.warning('⚠ NO HAY SERVIDOR DE CORREO CONFIGURADO!')
+        
         context = self.env.context.copy()
         context.update({'fecha':self.fecha_emision,
                         'autor': self.autor_id.name,
@@ -55,6 +67,8 @@ class leulit_circular(models.Model):
             
             context.update({'mail_to': destinatario.partner_email})
             template = self.with_context(context).env.ref("leulit.leulit_circular_template")
+            _logger.info('Template email_from: %s', template.email_from or 'No configurado en template')
+            _logger.info('Template email_to: %s', template.email_to or 'No configurado en template')
             try:
                 _logger.info('Intentando enviar email a: %s', destinatario.partner_email)
                 template.send_mail(self.id, force_send=True, raise_exception=True)
