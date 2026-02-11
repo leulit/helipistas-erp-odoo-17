@@ -61,7 +61,7 @@ class leulit_circular(models.Model):
             _logger.info('Template email_to: %s', template.email_to or 'No configurado en template')
             try:
                 _logger.info('Intentando enviar email a: %s', destinatario.partner_email)
-                template.send_mail(self.id, force_send=True, raise_exception=True)
+                template.with_context(context).send_mail(self.id, force_send=True, raise_exception=True)
                 # Solo marcar como enviado si fue exitoso
                 destinatario.write({'enviado': True})
                 enviados_ok.append(destinatario.partner_email)
