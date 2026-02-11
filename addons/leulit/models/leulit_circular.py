@@ -59,10 +59,11 @@ class leulit_circular(models.Model):
                     _logger.error('Error enviando circular "%s" (ID: %s) a %s: %s', 
                                  self.name, self.id, destinatario.partner_email, error_msg)
         
-        # Mostrar resultado al usuario si hubo errores
+        # Mostrar resultado al usuario siempre
+        msg_partes = []
+        
         if enviados_error:
-            msg_partes = []
-            
+            # Hay errores - mensaje detallado con éxitos y fallos
             if enviados_ok:
                 msg_partes.append(_("✓ Emails enviados correctamente (%s):") % len(enviados_ok))
                 msg_partes.append("  • " + "\n  • ".join(enviados_ok))
@@ -77,6 +78,16 @@ class leulit_circular(models.Model):
             msg_partes.append(_("Revise los logs del servidor para más detalles técnicos."))
             
             raise UserError("\n".join(msg_partes))
+        elif enviados_ok:
+            # Todo OK - mensaje de éxito
+            msg_partes.append(_("✓ Todos los emails se han enviado correctamente (%s):") % len(enviados_ok))
+            msg_partes.append("")
+            msg_partes.append("  • " + "\n  • ".join(enviados_ok))
+            
+            raise UserError("\n".join(msg_partes))
+        else:
+            # No había destinatarios pendientes
+            raise UserError(_("No hay emails pendientes de enviar."))
 
 
     def create_historial_circular(self, from_onchange=False):
