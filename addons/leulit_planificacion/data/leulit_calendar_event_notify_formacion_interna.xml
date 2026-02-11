@@ -18,7 +18,7 @@
             <field name="model_id" ref="base.model_res_users"/>
             <field name="subject">Recordatorio de Programar Entrenamientos de Compañía y Resumen de lo Programado</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">ops@helipistas.com</field>
+            <field name="email_to">jgarcia@helipistas.com</field>
             <field name="body_html" type="html">
                 <div>
                     <t t-if="ctx.get('values_flag')">
