@@ -42,8 +42,9 @@ class leulit_circular(models.Model):
         enviados_error = []
         
         for destinatario in self.historial_ids:            
-            if not destinatario.enviado:
-                context.update({'mail_to': destinatario.partner_email})
+            # TEMPORAL: Comentado para probar reenvío de todos los emails
+            # if not destinatario.enviado:
+            context.update({'mail_to': destinatario.partner_email})
             template = self.with_context(context).env.ref("leulit.leulit_circular_template")
             try:
                 template.send_mail(self.id, force_send=True, raise_exception=True)
