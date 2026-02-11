@@ -327,6 +327,8 @@ class leulit_perfil_formacion_curso(models.Model):
     def replicar_curso(self):
         perfil_formacion = self.env.context.get('perfil_formacion')
         perfil_formacion_tmpl = self.env.context.get('perfil_formacion_tmpl')
+        _logger.error("Contexto perfil_formacion: %s", perfil_formacion)
+        _logger.error("Contexto perfil_formacion_tmpl: %s", perfil_formacion_tmpl)
         for item in self:
             item.copy(default={'perfil_formacion':perfil_formacion[0][2][0], 'is_template':False, 'pf_curso_tmpl': item.id})
         
