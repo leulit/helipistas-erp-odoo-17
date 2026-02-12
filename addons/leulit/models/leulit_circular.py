@@ -22,7 +22,6 @@ class leulit_circular(models.Model):
     
 
     def enviarEmail(self):
-        _logger.error('Enviando email para Circular ID: %s', self.id)
         context = self.env.context.copy()
         context.update({'fecha':self.fecha_emision,
                         'autor': self.autor_id.name,
@@ -38,9 +37,7 @@ class leulit_circular(models.Model):
             context.update({'fecha': self.fecha_emision})
         else:
             context.update({'fecha': '-'})
-        _logger.error('Enviando context: %s', context)
         for destinatario in self.historial_ids:
-            _logger.error('Enviando destinatario: %s', destinatario)        
             if not destinatario.enviado:
                 context.update({'mail_to': destinatario.partner_email})
                 template = self.with_context(context).env.ref("leulit.leulit_circular_template")
@@ -69,7 +66,6 @@ class leulit_circular(models.Model):
                                 })
             else:
                 empleados = self.env['hr.employee'].search([('department_id','=', self.area.id)])
-                _logger.error("Empleados area {0}: {1}".format(self.area.name, len(empleados)))
                 for empleado in empleados:
                     if empleado.user_id and empleado.user_id.partner_id:
                         if empleado.user_id.partner_id.id not in partner_ids_existentes:
