@@ -193,7 +193,7 @@
                         <tr>
                             <td width="66%" style="text-align:justify;vertical-align:top;">
                                 <t t-if="object and object.description">
-                                    <t t-raw="object.description"/>
+                                    <t t-out="object.description"/>
                                 </t>
                                 <t t-else="">
                                     <p>No hay descripción.</p>
