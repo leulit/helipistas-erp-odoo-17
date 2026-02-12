@@ -39,7 +39,7 @@ class leulit_circular(models.Model):
         else:
             context.update({'fecha': '-'})
         _logger.error('Enviando context: %s', context)
-        for destinatario in self.historial_ids:    
+        for destinatario in self.historial_ids:
             _logger.error('Enviando destinatario: %s', destinatario)        
             if not destinatario.enviado:
                 context.update({'mail_to': destinatario.partner_email})
