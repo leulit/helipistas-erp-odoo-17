@@ -58,7 +58,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         if not pages:
             raise UserError(_('No hay datos para generar el informe en el rango indicado.'))
 
-        report_ref = self.env.ref('leulit_actividad_taller.leulit_20240521_1012_report')
+        report_xmlid = 'leulit_actividad_taller.leulit_20240521_1012_report'
 
         # Render por lotes de páginas para controlar memoria
         CHUNK_PAGES = 10
@@ -74,7 +74,8 @@ class leulit_wizard_report_experiencia(models.TransientModel):
                 'total_pages': len(pages)
             }
             # _render_qweb_pdf devuelve tupla (pdf_bytes, content_type)
-            pdf_bytes = report_ref._render_qweb_pdf([], data=datos)[0]
+            # pasar el xmlid como primer argumento (forma esperada por algunas sobrecargas)
+            pdf_bytes = self.env['ir.actions.report']._render_qweb_pdf(report_xmlid, [], data=datos)[0]
             pdf_parts.append(pdf_bytes)
 
         # Si hay una sola parte, devolverla directamente
