@@ -21,6 +21,8 @@ class leulit_wizard_report_experiencia(models.TransientModel):
     mecanico_id = fields.Many2one(comodel_name='leulit.mecanico', string='Mecánico')
     from_date = fields.Date('Desde')
     to_date = fields.Date('Hasta')
+    pdf_merged = fields.Binary()
+    pdf_filename = fields.Char()
 
 
     def merge_pdfs(self, pdf_list):
@@ -100,19 +102,18 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             merged = self.merge_pdfs(pdf_parts)
             merged = merged.getvalue()
 
-        # Crear attachment y devolver URL de descarga
-        import time
-        fname = 'experiencia_%s_%s.pdf' % (self.mecanico_id.id if self.mecanico_id else 'unknown', datetime.now().strftime('%Y%m%d%H%M%S'))
-        attach_vals = {
-            'name': fname,
-            'type': 'binary',
-            'datas': base64.b64encode(merged).decode('utf-8'),
-            'mimetype': 'application/pdf',
-        }
-        attachment = self.env['ir.attachment'].create(attach_vals)
-        url = '/web/content/%s?model=ir.attachment&field=datas&download=true' % attachment.id
-        return {
-            'type': 'ir.actions.act_url',
-            'url': url,
-            'target': 'self',
-        }
+        # Combinar PDFs y guardar
+        try:
+            self.pdf_merged = base64.b64encode(merged.getvalue())
+            self.pdf_filename = f"Expediente de Mantenimiento {self.name}.pdf"
+
+            return {
+                'type': 'ir.actions.act_url',
+                'url': "web/content/?model=leulit.wizard_report_experiencia&id=" + str(self.id) + "&filename_field=pdf_filename&field=pdf_merged&download=true",
+                'target': 'self'
+            }
+
+        except Exception as e:
+            _logger.exception("Error al combinar PDFs")
+            raise UserError(f"Error al generar el expediente completo: {str(e)}")
+            
