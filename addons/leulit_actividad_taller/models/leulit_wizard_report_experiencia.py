@@ -100,7 +100,6 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             merged = pdf_parts[0]
         else:
             merged = self.merge_pdfs(pdf_parts)
-            merged = merged.getvalue()
 
         # Combinar PDFs y guardar
         try:
