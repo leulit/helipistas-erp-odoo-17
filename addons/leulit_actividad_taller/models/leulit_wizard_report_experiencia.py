@@ -120,32 +120,31 @@ class leulit_wizard_report_experiencia(models.TransientModel):
 
         def _background_generate(dbname, attachment_id, report_xmlid, pages, logo_ica, mecanico_name, from_date_s, to_date_s):
             try:
-                with api.Environment.manage():
-                    with oregistry(dbname).cursor() as new_cr:
-                        env = api.Environment(new_cr, SUPERUSER_ID, {})
-                        pdf_parts_bg = []
-                        for j in range(0, len(pages), CHUNK_PAGES):
-                            pages_slice_bg = pages[j:j + CHUNK_PAGES]
-                            datos_bg = {
-                                'logo_ica': logo_ica,
-                                'mecanico': mecanico_name,
-                                'pages': pages_slice_bg,
-                                'from_date': from_date_s,
-                                'to_date': to_date_s,
-                                'total_pages': len(pages),
-                            }
-                            part = env['ir.actions.report']._render_qweb_pdf(report_xmlid, [], data=datos_bg)[0]
-                            pdf_parts_bg.append(part)
+                with oregistry(dbname).cursor() as new_cr:
+                    env = api.Environment(new_cr, SUPERUSER_ID, {})
+                    pdf_parts_bg = []
+                    for j in range(0, len(pages), CHUNK_PAGES):
+                        pages_slice_bg = pages[j:j + CHUNK_PAGES]
+                        datos_bg = {
+                            'logo_ica': logo_ica,
+                            'mecanico': mecanico_name,
+                            'pages': pages_slice_bg,
+                            'from_date': from_date_s,
+                            'to_date': to_date_s,
+                            'total_pages': len(pages),
+                        }
+                        part = env['ir.actions.report']._render_qweb_pdf(report_xmlid, [], data=datos_bg)[0]
+                        pdf_parts_bg.append(part)
 
-                        if len(pdf_parts_bg) == 1:
-                            merged_bg = pdf_parts_bg[0]
-                        else:
-                            merged_buf = env['leulit.wizard_report_experiencia'].merge_pdfs(env['leulit.wizard_report_experiencia'], pdf_parts_bg)
-                            merged_bg = merged_buf.getvalue()
+                    if len(pdf_parts_bg) == 1:
+                        merged_bg = pdf_parts_bg[0]
+                    else:
+                        merged_buf = env['leulit.wizard_report_experiencia'].merge_pdfs(env['leulit.wizard_report_experiencia'], pdf_parts_bg)
+                        merged_bg = merged_buf.getvalue()
 
-                        # escribir resultado en attachment
-                        env['ir.attachment'].browse(attachment_id).write({'datas': base64.b64encode(merged_bg).decode('utf-8')})
-                        new_cr.commit()
+                    # escribir resultado en attachment
+                    env['ir.attachment'].browse(attachment_id).write({'datas': base64.b64encode(merged_bg).decode('utf-8')})
+                    new_cr.commit()
             except Exception:
                 _logger.exception('Error generando PDF en background')
 
