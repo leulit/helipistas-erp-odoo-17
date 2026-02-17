@@ -281,7 +281,7 @@
                                             <td style="height: 60px;" class="centertext"><t t-esc="item['maintenance_record_ref']"/></td>
                                             <td style="max-height: 60px !important; height: 60px !important; overflow: hidden;" class="centertext">
                                                 <span style="max-height: 55px !important; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                                                    <t t-out="item['remarks']"/>
+                                                    <t t-raw="item['remarks']"/>
                                                 </span>
                                             </td>
                                         </tr>
@@ -289,6 +289,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <!-- Paginación -->
+                        <div class="page-number-container">
+                            <span class="page-number">
+                                Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
+                            </span>
+                        </div>
+                        <t t-set="contador" t-value="contador + 1"/>
                     </div>
                 </t>
             </t>
