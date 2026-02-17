@@ -289,14 +289,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        
-                        <!-- Paginación -->
-                        <div class="page-number-container">
-                            <span class="page-number">
-                                Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
-                            </span>
-                        </div>
-                        <t t-set="contador" t-value="contador + 1"/>
                     </div>
                 </t>
             </t>
