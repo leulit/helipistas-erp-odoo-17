@@ -104,7 +104,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         # Combinar PDFs y guardar
         try:
             self.pdf_merged = base64.b64encode(merged.getvalue())
-            self.pdf_filename = f"Expediente de Mantenimiento {self.name}.pdf"
+            self.pdf_filename = f"Registro Experiencia 6_24 {self.mecanico_id.name}.pdf"
 
             return {
                 'type': 'ir.actions.act_url',
