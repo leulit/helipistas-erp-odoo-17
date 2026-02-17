@@ -26,7 +26,7 @@
                 </xpath>
             </field>
         </record>
-
+<!-- 
 
         <record id="leulit_20230901_1253_tree" model="ir.ui.view">
             <field name="name">leulit_20230901_1253_tree</field>
@@ -137,7 +137,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="leulit_20230901_1253_form" />
             <field name="act_window_id" ref="leulit_20230901_1253_action" />
-        </record>
+        </record> -->
 
 
     </data>

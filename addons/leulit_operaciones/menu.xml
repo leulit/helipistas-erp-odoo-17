@@ -97,15 +97,6 @@
             />
 
     <menuitem 
-        id="leulit_20230901_1253_menuitem" 
-        name="Presupuestos Activos" 
-        parent="leulit.leulit_20200618_1104_menuitem"
-        action="leulit_20230901_1253_action"
-        sequence="100"
-        groups="leulit.ROperaciones_responsable"
-    />
-
-    <menuitem 
         id="leulit_20201026_1040_menuitem" 
         name="Rutas y aerovías" 
         parent="leulit.leulit_20200618_1104_menuitem"  
