@@ -139,7 +139,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
                     if len(pdf_parts_bg) == 1:
                         merged_bg = pdf_parts_bg[0]
                     else:
-                        merged_buf = env['leulit.wizard_report_experiencia'].merge_pdfs(env['leulit.wizard_report_experiencia'], pdf_parts_bg)
+                        merged_buf = env['leulit.wizard_report_experiencia'].merge_pdfs(pdf_parts_bg)
                         merged_bg = merged_buf.getvalue()
 
                     # escribir resultado en attachment
