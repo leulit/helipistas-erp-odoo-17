@@ -24,6 +24,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='company_id']" position="after">
                     <field name="origin" optional="show"/>
+                    <field name="payment_reference" optional="show"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_origin']" position="attributes">
                     <attribute name="optional">show</attribute>
