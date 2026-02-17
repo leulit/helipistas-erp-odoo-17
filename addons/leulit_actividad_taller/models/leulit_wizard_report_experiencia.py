@@ -10,6 +10,8 @@ import logging
 import base64
 import io
 from pypdf import PdfWriter, PdfReader
+import threading
+from odoo import api, SUPERUSER_ID, registry as oregistry
 _logger = logging.getLogger(__name__)
 
 
@@ -82,7 +84,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         for i in range(0, len(pages), CHUNK_PAGES):
             pages_slice = pages[i:i + CHUNK_PAGES]
             datos = {
-                'logo_ica': company_icarus.logo_reports,
+                'logo_ica': company_icarus.logo_reports.decode(),
                 'mecanico': self.mecanico_id.name if self.mecanico_id else '',
                 'pages': pages_slice,
                 'from_date': self.from_date.strftime('%d/%m/%Y') if self.from_date else '',
@@ -94,25 +96,67 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             pdf_bytes = self.env['ir.actions.report']._render_qweb_pdf(report_xmlid, [], data=datos)[0]
             pdf_parts.append(pdf_bytes)
 
-        # Si hay una sola parte, devolverla directamente
-        if len(pdf_parts) == 1:
-            # crear attachment para descarga consistente
-            merged = pdf_parts[0]
-        else:
-            merged = self.merge_pdfs(pdf_parts)
+        # Crear attachment vacío y lanzar generación en background para evitar timeouts
+        fname = f"Registro Experiencia 6_24 {self.mecanico_id.name if self.mecanico_id else 'unknown'}.pdf"
+        attach_vals = {
+            'name': fname,
+            'type': 'binary',
+            'datas': False,
+            'mimetype': 'application/pdf',
+        }
+        if self.mecanico_id:
+            attach_vals.update({'res_model': 'leulit.mecanico', 'res_id': self.mecanico_id.id})
+        attachment = self.env['ir.attachment'].create(attach_vals)
 
-        # Combinar PDFs y guardar
-        try:
-            self.pdf_merged = base64.b64encode(merged.getvalue())
-            self.pdf_filename = f"Registro Experiencia 6_24 {self.mecanico_id.name}.pdf"
+        # preparar parámetros para el hilo
+        dbname = self.env.cr.dbname
+        attachment_id = attachment.id
+        report_xmlid_local = report_xmlid
+        pages_local = pages
+        logo_local = company_icarus.logo_reports.decode() if company_icarus.logo_reports else False
+        mecanico_name_local = self.mecanico_id.name if self.mecanico_id else ''
+        from_date_local = self.from_date.strftime('%d/%m/%Y') if self.from_date else ''
+        to_date_local = self.to_date.strftime('%d/%m/%Y') if self.to_date else ''
 
-            return {
-                'type': 'ir.actions.act_url',
-                'url': "web/content/?model=leulit.wizard_report_experiencia&id=" + str(self.id) + "&filename_field=pdf_filename&field=pdf_merged&download=true",
-                'target': 'self'
-            }
+        def _background_generate(dbname, attachment_id, report_xmlid, pages, logo_ica, mecanico_name, from_date_s, to_date_s):
+            try:
+                with api.Environment.manage():
+                    with oregistry(dbname).cursor() as new_cr:
+                        env = api.Environment(new_cr, SUPERUSER_ID, {})
+                        pdf_parts_bg = []
+                        for j in range(0, len(pages), CHUNK_PAGES):
+                            pages_slice_bg = pages[j:j + CHUNK_PAGES]
+                            datos_bg = {
+                                'logo_ica': logo_ica,
+                                'mecanico': mecanico_name,
+                                'pages': pages_slice_bg,
+                                'from_date': from_date_s,
+                                'to_date': to_date_s,
+                                'total_pages': len(pages),
+                            }
+                            part = env['ir.actions.report']._render_qweb_pdf(report_xmlid, [], data=datos_bg)[0]
+                            pdf_parts_bg.append(part)
 
-        except Exception as e:
-            _logger.exception("Error al combinar PDFs")
-            raise UserError(f"Error al generar el expediente completo: {str(e)}")
+                        if len(pdf_parts_bg) == 1:
+                            merged_bg = pdf_parts_bg[0]
+                        else:
+                            merged_buf = env['leulit.wizard_report_experiencia'].merge_pdfs(env['leulit.wizard_report_experiencia'], pdf_parts_bg)
+                            merged_bg = merged_buf.getvalue()
+
+                        # escribir resultado en attachment
+                        env['ir.attachment'].browse(attachment_id).write({'datas': base64.b64encode(merged_bg).decode('utf-8')})
+                        new_cr.commit()
+            except Exception:
+                _logger.exception('Error generando PDF en background')
+
+        thread = threading.Thread(target=_background_generate, args=(dbname, attachment_id, report_xmlid_local, pages_local, logo_local, mecanico_name_local, from_date_local, to_date_local))
+        thread.daemon = True
+        thread.start()
+
+        # Devolver inmediatamente URL al attachment (se completará en background)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f"/web/content/{attachment.id}?model=ir.attachment&field=datas&filename_field=name&download=true",
+            'target': 'self',
+        }
             
