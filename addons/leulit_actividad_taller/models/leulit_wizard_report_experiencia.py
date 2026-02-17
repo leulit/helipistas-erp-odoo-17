@@ -9,10 +9,7 @@ from datetime import timedelta
 import logging
 import base64
 import io
-try:
-    from PyPDF2 import PdfMerger
-except Exception:
-    PdfMerger = None
+from pypdf import PdfWriter, PdfReader
 _logger = logging.getLogger(__name__)
 
 
@@ -25,6 +22,23 @@ class leulit_wizard_report_experiencia(models.TransientModel):
     from_date = fields.Date('Desde')
     to_date = fields.Date('Hasta')
 
+
+    def merge_pdfs(self, pdf_list):
+        pdf_writer = PdfWriter()
+
+        for pdf_data in pdf_list:
+            pdf_reader = PdfReader(io.BytesIO(pdf_data))
+            for page_num in range(len(pdf_reader.pages)):
+                page = pdf_reader.pages[page_num]
+                pdf_writer.add_page(page)
+
+        # Crear un objeto BytesIO para almacenar el PDF combinado en memoria
+        combined_pdf = io.BytesIO()
+        pdf_writer.write(combined_pdf)
+
+        # Posiciona el puntero al inicio del archivo
+        combined_pdf.seek(0)
+        return combined_pdf
 
 
     def print_report_experiencia(self):
@@ -83,15 +97,8 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             # crear attachment para descarga consistente
             merged = pdf_parts[0]
         else:
-            if PdfMerger is None:
-                raise UserError(_('PyPDF2 no está instalado en el servidor. Instala PyPDF2 para permitir fusión de PDFs en memoria.'))
-            merger = PdfMerger()
-            for part in pdf_parts:
-                merger.append(io.BytesIO(part))
-            out = io.BytesIO()
-            merger.write(out)
-            merger.close()
-            merged = out.getvalue()
+            merged = self.merge_pdfs(pdf_parts)
+            merged = merged.getvalue()
 
         # Crear attachment y devolver URL de descarga
         import time
