@@ -6,6 +6,7 @@
             <field name="res_model">mgmtsystem.action</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[("user_id", "=", uid)]</field>
+            <field name="context">{'create': False, 'edit': False}</field>
         </record>
 
 </odoo>
