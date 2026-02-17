@@ -79,7 +79,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         report_xmlid = 'leulit_actividad_taller.leulit_20240521_1012_report'
 
         # Render por lotes de páginas para controlar memoria
-        CHUNK_PAGES = 2
+        CHUNK_PAGES = 5
         pdf_parts = []
         for i in range(0, len(pages), CHUNK_PAGES):
             pages_slice = pages[i:i + CHUNK_PAGES]
