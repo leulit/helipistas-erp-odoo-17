@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record id="paperformat_A4_landscape_19022026_1553" model="report.paperformat">
+        <field name="name">A4 Landscape</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
     <record id="leulit_20240521_1012_report" model="ir.actions.report">
         <field name="name">Registro Experiencia 6/24 - Mecánico</field>
         <field name="model">leulit.item_experiencia_mecanico</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">leulit_actividad_taller.leulit_20240521_1012_informe</field>
         <field name="report_file">leulit_actividad_taller.leulit_20240521_1012_informe</field>
-        <field name="paperformat_id" ref="leulit.paperformat_A4_landscape"/>
+        <field name="paperformat_id" ref="paperformat_A4_landscape_19022026_1553"/>
         <field name="print_report_name">'Registro Experiencia 6_24'</field>
         <field name="binding_type">report</field>
     </record>
+
 </odoo>
