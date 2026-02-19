@@ -2,8 +2,9 @@
 
 import base64
 import html as py_html
-import json
+import io
 import pytz
+import zipfile
 
 from odoo import models, fields, api, tools, exceptions, registry, _
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
@@ -240,7 +241,7 @@ class leulit_helipuerto(models.Model):
 
         return '' if value in (False, None) else str(value)
 
-    def _build_helipuerto_popup_html(self):
+    def _build_helipuerto_kml_description(self):
         self.ensure_one()
 
         excluded_fields = {
@@ -279,7 +280,7 @@ class leulit_helipuerto(models.Model):
             'activity_exception_icon',
         }
 
-        image_fields = []
+        image_links = []
         rows = []
         key_field_names = {
             'name',
@@ -296,6 +297,7 @@ class leulit_helipuerto(models.Model):
             'horario_combustible',
         }
         key_rows = []
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', '')
 
         for field_name, field_def in self._fields.items():
             if field_name in excluded_fields:
@@ -303,11 +305,9 @@ class leulit_helipuerto(models.Model):
             if field_def.type == 'binary':
                 image_b64 = self[field_name]
                 if image_b64:
-                    if isinstance(image_b64, bytes):
-                        image_b64 = image_b64.decode('utf-8')
-                    image_fields.append({
+                    image_links.append({
                         'label': field_def.string,
-                        'src': 'data:image/*;base64,%s' % image_b64,
+                        'url': '%s/web/image/leulit.helipuerto/%s/%s' % (base_url, self.id, field_name),
                     })
                 continue
 
@@ -338,10 +338,7 @@ class leulit_helipuerto(models.Model):
         if self.operaciones_LCI:
             operaciones_badges.append('LCI')
 
-        badges_html = ''.join([
-            '<span class="hp-chip">%s</span>' % py_html.escape(badge)
-            for badge in operaciones_badges
-        ]) or '<span class="hp-chip hp-chip-muted">Sin operación marcada</span>'
+        badges_html = ', '.join([py_html.escape(badge) for badge in operaciones_badges]) or 'Sin operación marcada'
 
         def _rows_to_html(data_rows):
             return ''.join([
@@ -356,32 +353,29 @@ class leulit_helipuerto(models.Model):
         rows_html = _rows_to_html(rows)
 
         image_html = ''.join([
-            '<div class="hp-image-card"><div class="hp-image-title">%s</div><img src="%s" alt="%s"/></div>' % (
-                py_html.escape(image['label']),
-                image['src'],
+            '<li><a href="%s" target="_blank">%s</a></li>' % (
+                py_html.escape(image['url']),
                 py_html.escape(image['label']),
             )
-            for image in image_fields
-        ])
+            for image in image_links
+        ]) or '<li>Sin imágenes</li>'
 
         return (
-            '<div class="hp-popup">'
-            '<div class="hp-header">'
-            '<div class="hp-title">%s</div>'
-            '<div class="hp-subtitle">%s</div>'
-            '<div class="hp-revision">Edición/Revisión: %s</div>'
-            '<div class="hp-desc">%s</div>'
+            '<div style="font-family:Arial,sans-serif; min-width:420px;">'
+            '<div style="background:#1f2a44;color:#fff;padding:10px 12px;border-radius:8px;">'
+            '<div style="font-size:18px;font-weight:700;">%s</div>'
+            '<div style="font-size:14px;opacity:0.95;">%s</div>'
+            '<div style="margin-top:4px;font-size:12px;">Edición/Revisión: %s</div>'
+            '<div style="margin-top:8px;font-size:12px;line-height:1.4;">%s</div>'
             '</div>'
-            '<div class="hp-section-title">Operaciones</div>'
-            '<div class="hp-chips">%s</div>'
-            '<div class="hp-section-title">Datos clave</div>'
-            '<table class="hp-table hp-table-key">%s</table>'
-            '<div class="hp-section-title">Imágenes</div>'
-            '<div class="hp-images">%s</div>'
-            '<details class="hp-details">'
-            '<summary>Ver ficha completa</summary>'
-            '<table class="hp-table hp-table-all">%s</table>'
-            '</details>'
+            '<div style="margin:10px 0 6px;font-size:13px;font-weight:700;color:#1f2a44;">Operaciones</div>'
+            '<div style="font-size:12px;">%s</div>'
+            '<div style="margin:10px 0 6px;font-size:13px;font-weight:700;color:#1f2a44;">Datos clave</div>'
+            '<table style="width:100%%;border-collapse:collapse;background:#fff;border:1px solid #d8dde6;">%s</table>'
+            '<div style="margin:10px 0 6px;font-size:13px;font-weight:700;color:#1f2a44;">Imágenes (URL)</div>'
+            '<ul>%s</ul>'
+            '<div style="margin:10px 0 6px;font-size:13px;font-weight:700;color:#1f2a44;">Ficha completa</div>'
+            '<table style="width:100%%;border-collapse:collapse;background:#fff;border:1px solid #d8dde6;">%s</table>'
             '</div>'
         ) % (
             title,
@@ -390,16 +384,15 @@ class leulit_helipuerto(models.Model):
             descripcion,
             badges_html,
             key_rows_html,
-            image_html or '<div>Sin imágenes</div>',
+            image_html,
             rows_html,
         )
 
-    def action_exportar_mapa_html(self):
+    def action_exportar_mapa_kmz(self):
         if not self:
             raise UserError(_('Debes seleccionar al menos un helipuerto/aeródromo.'))
 
-        markers = []
-        valid_coords = []
+        placemarks = []
 
         for record in self:
             if record.lat is False or record.long is False:
@@ -407,95 +400,41 @@ class leulit_helipuerto(models.Model):
 
             lat = float(record.lat)
             lng = float(record.long)
-            valid_coords.append((lat, lng))
 
-            markers.append({
-                'lat': lat,
-                'lng': lng,
-                'popup_html': record._build_helipuerto_popup_html(),
-            })
+            name = py_html.escape(record.display_name or record.name or 'Helipuerto/Aeródromo')
+            description_html = record._build_helipuerto_kml_description()
+            placemarks.append(
+                '<Placemark>'
+                '<name>%s</name>'
+                '<description><![CDATA[%s]]></description>'
+                '<Point><coordinates>%s,%s,0</coordinates></Point>'
+                '</Placemark>' % (name, description_html, lng, lat)
+            )
 
-        if not markers:
+        if not placemarks:
             raise UserError(_('Ninguno de los registros seleccionados tiene latitud/longitud válidas.'))
 
-        center_lat = sum(item[0] for item in valid_coords) / len(valid_coords)
-        center_lng = sum(item[1] for item in valid_coords) / len(valid_coords)
+        kml_content = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<kml xmlns="http://www.opengis.net/kml/2.2">'
+            '<Document>'
+            '<name>Helipuertos/Aeródromos seleccionados</name>'
+            '<description>Exportación de helipuertos con descripción completa e imágenes por URL</description>'
+            '%s'
+            '</Document>'
+            '</kml>'
+        ) % ''.join(placemarks)
 
-        html_content = """<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Mapa Helipuertos/Aeródromos</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <style>
-        :root { color-scheme: light; }
-        body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fa; }
-        .topbar { padding: 12px 16px; background: #1f2a44; color: #fff; font-size: 16px; font-weight: 600; }
-        #map { width: 100%%; height: calc(100vh - 48px); }
-        .leaflet-popup-content { margin: 8px; min-width: 420px; max-width: 700px; }
-        .hp-popup { max-height: 560px; overflow: auto; }
-        .hp-header { background: linear-gradient(135deg, #2f5aa8, #1f2a44); color: #fff; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
-        .hp-title { font-size: 18px; font-weight: 700; }
-        .hp-subtitle { font-size: 14px; opacity: 0.95; }
-        .hp-revision { margin-top: 4px; font-size: 12px; }
-        .hp-desc { margin-top: 8px; font-size: 12px; line-height: 1.4; opacity: 0.95; }
-        .hp-section-title { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: #1f2a44; }
-        .hp-table { width: 100%%; border-collapse: collapse; background: #fff; border: 1px solid #d8dde6; border-radius: 8px; overflow: hidden; }
-        .hp-table th, .hp-table td { text-align: left; vertical-align: top; padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #eef1f5; }
-        .hp-table th { width: 32%%; background: #f4f7ff; color: #2f3b52; font-weight: 600; }
-        .hp-table-key td { font-weight: 600; }
-        .hp-table-all th { width: 35%%; }
-        .hp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-        .hp-chip { background: #e8f0ff; color: #163f7a; border: 1px solid #cadcff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px; }
-        .hp-chip-muted { background: #f3f4f6; color: #4b5563; border-color: #e5e7eb; }
-        .hp-images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .hp-image-card { border: 1px solid #d8dde6; border-radius: 8px; padding: 6px; background: #fff; }
-        .hp-image-title { font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #2f3b52; }
-        .hp-image-card img { width: 100%%; height: 120px; object-fit: cover; border-radius: 6px; display: block; }
-        .hp-details { margin-top: 10px; }
-        .hp-details summary { cursor: pointer; font-weight: 700; color: #1f2a44; margin-bottom: 8px; }
-    </style>
-</head>
-<body>
-    <div class="topbar">Mapa de Helipuertos/Aeródromos seleccionados</div>
-    <div id="map"></div>
+        kmz_buffer = io.BytesIO()
+        with zipfile.ZipFile(kmz_buffer, mode='w', compression=zipfile.ZIP_DEFLATED) as kmz_file:
+            kmz_file.writestr('doc.kml', kml_content.encode('utf-8'))
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script>
-        const markers = __MARKERS_JSON__;
-        const map = L.map('map').setView([__CENTER_LAT__, __CENTER_LNG__], 7);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        const bounds = [];
-        markers.forEach((item) => {
-            const marker = L.marker([item.lat, item.lng]).addTo(map);
-            marker.bindPopup(item.popup_html, { maxWidth: 700 });
-            bounds.push([item.lat, item.lng]);
-        });
-
-        if (bounds.length > 1) {
-            map.fitBounds(bounds, { padding: [40, 40] });
-        }
-    </script>
-</body>
-</html>
-"""
-
-        html_content = html_content.replace('__MARKERS_JSON__', json.dumps(markers))
-        html_content = html_content.replace('__CENTER_LAT__', str(center_lat))
-        html_content = html_content.replace('__CENTER_LNG__', str(center_lng))
-
-        file_name = 'helipuertos_mapa_%s.html' % fields.Datetime.now().strftime('%Y%m%d_%H%M%S')
+        file_name = 'helipuertos_mapa_%s.kmz' % fields.Datetime.now().strftime('%Y%m%d_%H%M%S')
         attachment = self.env['ir.attachment'].create({
             'name': file_name,
             'type': 'binary',
-            'datas': base64.b64encode(html_content.encode('utf-8')),
-            'mimetype': 'text/html',
+            'datas': base64.b64encode(kmz_buffer.getvalue()),
+            'mimetype': 'application/vnd.google-earth.kmz',
             'res_model': 'leulit.helipuerto',
             'res_id': self[0].id,
         })
