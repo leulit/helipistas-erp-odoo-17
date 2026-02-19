@@ -68,4 +68,4 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             'to_date': self.to_date.strftime('%d/%m/%Y') if self.to_date else '',
             # 'total_pages': len(pages)
         }
-        return self.env.ref('leulit_actividad_taller.leulit_20240521_1012_report').report_action(items,data=datos)
+        return self.env.ref('leulit_actividad_taller.leulit_20240521_1012_report').report_action(items.ids,data=datos)
