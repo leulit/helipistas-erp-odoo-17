@@ -39,7 +39,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
 
         pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(
             'leulit_actividad_taller.leulit_20240521_1012_informe',
-            items,
+            items.ids,
             data=datos
         )
         self.pdf_file = base64.b64encode(pdf_content)
