@@ -327,6 +327,14 @@
                 }
             </style>
         </template>
+<!-- 
+        <template id="leulit_20240521_1012_informe">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">  
+                    <p>Hello, <t t-esc="o" />!</p>
+                </t>
+            </t>
+        </template> -->
 
         <template id="leulit_20240521_1012_informe">
             <t t-call="web.html_container">
@@ -336,7 +344,7 @@
                     <table class="fullwidth">
                         <tr>
                             <td colspan="100%" style="border:0px;">
-                                <table class="fullwidth header-table">
+                                <table class="fullwidth">
                                     <tr>
                                         <td style="font-size:12px; white-space: nowrap; text-align:center; width:25%;" rowspan="3">
                                             <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
