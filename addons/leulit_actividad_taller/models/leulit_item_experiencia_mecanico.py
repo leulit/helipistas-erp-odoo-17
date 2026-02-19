@@ -41,6 +41,9 @@ class LeulitItemExperienciaMecanico(models.Model):
         if self.duration:
             return utilitylib.leulit_float_time_to_str(self.duration)
         return ''
+    
+    def get_privilege_to_report(self):
+        return ', '.join(priv.name for priv in self.privilege)
 
     def get_data_to_report(self):
         activity_flags = {

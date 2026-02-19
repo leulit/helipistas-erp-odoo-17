@@ -6,7 +6,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">leulit_actividad_taller.leulit_20240521_1012_informe</field>
         <field name="report_file">leulit_actividad_taller.leulit_20240521_1012_informe</field>
-        <field name="paperformat_id" ref="leulit_taller.paperformat_A4_portrait_icarus"/>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_landscape"/>
         <field name="print_report_name">'Registro Experiencia 6_24 - %s' % (object.mecanico_id.name or '')</field>
         <field name="binding_model_id" ref="model_leulit_item_experiencia_mecanico"/>
         <field name="binding_type">report</field>
