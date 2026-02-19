@@ -29,7 +29,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             ('date', '<=', self.to_date)
         ])
         datos = {
-            'logo_ica': company_icarus.logo_reports,
+            'logo_ica': company_icarus.logo_reports.decode(),
             'mecanico': self.mecanico_id.name if self.mecanico_id else '',
             'from_date': self.from_date.strftime('%d/%m/%Y') if self.from_date else '',
             'to_date': self.to_date.strftime('%d/%m/%Y') if self.to_date else '',
