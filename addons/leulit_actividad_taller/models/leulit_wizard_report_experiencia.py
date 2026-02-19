@@ -63,19 +63,11 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         datos = {
             'logo_ica': company_icarus.logo_reports,
             'mecanico': self.mecanico_id.name if self.mecanico_id else '',
-            # 'pages': pages,
+            'docs': items,
             'from_date': self.from_date.strftime('%d/%m/%Y') if self.from_date else '',
             'to_date': self.to_date.strftime('%d/%m/%Y') if self.to_date else '',
             # 'total_pages': len(pages)
         }
         _logger.error('Datos para el reporte: %s', datos)
         _logger.error('Items para el reporte: %s', items)
-        return {
-            'type': 'ir.actions.report',
-            'report_name': 'leulit_actividad_taller.leulit_20240521_1012_informe',
-            'report_type': 'qweb-pdf',
-            'model': 'leulit.item_experiencia_mecanico',
-            'res_ids': items.ids,
-            'context': self.env.context,
-            'data': datos,
-        }
+        return self.env.ref('leulit_actividad_taller.leulit_20240521_1012_report').report_action(items,data=datos)
