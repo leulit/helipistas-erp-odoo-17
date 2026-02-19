@@ -1,7 +1,7 @@
 <odoo>
     <data>
 
-        <template id="experiencia_mecanico_report_css">
+        <!-- <template id="experiencia_mecanico_report_css">
             <meta charset="utf-8"/>
             <style>
                 html {
@@ -139,10 +139,10 @@
                     overflow: hidden;
                 }
             </style>
-        </template>
+        </template> -->
 
-    <!-- 
-        <template id="">
+
+        <!-- <template id="leulit_20240521_1012_informe">
             <t t-call="web.html_container">
                 <t t-set="data_report_margin_top" t-value="5"/>
                 <t t-set="data_report_header_spacing" t-value="1"/>
@@ -154,44 +154,6 @@
                         <div class="content-wrapper">
                             <table class="main-table">
                                 <thead class="report-header">
-                                    <tr>
-                                        <td colspan="100%" style="border:0px;">
-                                            <table class="fullwidth header-table">
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="page" t-as="item">
-                                    </t>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="page-number-container">
-                            <span class="page-number">
-                                Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
-                            </span>
-                        </div>
-                        <t t-set="contador" t-value="contador + 1"/>
-                    </div>
-                </t>
-            </t>
-        </template>
-    -->
-
-        <template id="leulit_20240521_1012_informe">
-            <t t-call="web.html_container">
-                <t t-set="data_report_margin_top" t-value="5"/>
-                <t t-set="data_report_header_spacing" t-value="1"/>
-                <t t-set="data_report_dpi" t-value="90"/>
-                <t t-set="contador" t-value="1"/>
-                <t t-foreach="pages" t-as="page">
-                    <div class="page-container">
-                        <t t-call="leulit_actividad_taller.experiencia_mecanico_report_css"/>
-                        <div class="content-wrapper">
-                            <table class="main-table">
-                                <thead class="report-header">
-                                    <!-- Cabecera del reporte -->
                                     <tr>
                                         <td colspan="100%" style="border:0px;">
                                             <table class="fullwidth header-table">
@@ -221,7 +183,6 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <!-- Headers de la tabla -->
                                     <tr class="header-row-1">
                                         <td class="centertext literal tdcolored" rowspan="2" style="width:6%">Date</td>
                                         <td class="centertext literal tdcolored" rowspan="2" style="width:5%">Location</td>
@@ -290,7 +251,6 @@
                             </table>
                         </div>
                         
-                        <!-- Paginación -->
                         <div class="page-number-container">
                             <span class="page-number">
                                 Página <t t-esc="contador"/> de <t t-esc="total_pages"/>
@@ -299,6 +259,183 @@
                         <t t-set="contador" t-value="contador + 1"/>
                     </div>
                 </t>
+            </t>
+        </template> -->
+
+
+        <template id="experiencia_mecanico_report_css">
+            <meta charset="utf-8"/>
+            <style>
+                html {
+                    font-family: sans-serif; /* 1 */
+                    -ms-text-size-adjust: 100%; /* 2 */
+                    -webkit-text-size-adjust: 100%; /* 2 */
+                }
+                .fullwidth {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .noborde {
+                    border: 0px none;
+                }
+                .theadtitle {
+                    font-weight: bold;
+                    font-size: 3.5687mm !important;
+                    text-transform: uppercase;
+                }
+                .literal {
+                    font-size: 3.5687mm;
+                }
+                .fieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .numericfieldvalue {
+                    font-weight: normal;
+                    font-size: 3.5687mm;
+                }
+                .pagecontent {
+                    width: 230mm;
+                    height: 320mm;
+                }
+                .tdcolored {
+                    background-color: rgba(0,0,0,0.40);
+                    color: #ffffff;
+                }
+                .tdcoloredmain {
+                    background-color: rgba(0,0,0,1);
+                    color: #ffffff;
+                }
+                .centertext {text-align:center;}
+                .heightrow {height: 50px;}
+                .nowrap {white-space: nowrap;}
+                thead { display: table-header-group }
+                tfoot { display: table-header-group }
+                tr { page-break-inside: avoid }
+                th, tbody td, tfoot td {
+                    border: 1px solid #B0B0B0;
+                    padding-right:3px;
+                    padding-left:3px;
+                    padding-top:3px;
+                    padding-bottom:3px;
+                    text-align:left;
+                    font-size:12px;
+                    font-weight:normal;
+                }
+                td{
+                    vertical-align: middle
+                }
+            </style>
+        </template>
+
+        <template id="leulit_20240521_1012_informe">
+            <t t-call="web.html_container">
+                <div style="width:100%;" class="header">
+                    <table class="fullwidth">
+                        <tr>
+                            <td colspan="100%" style="border:0px;">
+                                <table class="fullwidth header-table">
+                                    <tr>
+                                        <td style="font-size:12px; white-space: nowrap; text-align:center; width:25%;" rowspan="3">
+                                            <img t-att-src="'data:image/png;base64,%s' % logo_ica" style="width:auto;height:30px;"/><br/>
+                                            <span>ES. 145.173</span>
+                                        </td>
+                                        <td style="font-size:20px; white-space: nowrap; text-align:center" rowspan="3">
+                                            <span><b>Registro Experiencia 6/24 meses de</b></span><br/>
+                                            <span t-esc="mecanico"/>
+                                        </td>
+                                        <td style="font-size:12px; white-space: nowrap; text-align:center; width:25%;">
+                                            <span>Referencia: M.O.E. 3.19</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:12px; white-space: nowrap; text-align:center;">
+                                            <span>Formato: 3-3</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:12px; white-space: nowrap; text-align:center">
+                                            <span>De: </span><span t-esc="from_date"/><span> Hasta: </span><span t-esc="to_date"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:6%">Date</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:5%">Location</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:5%">A/C or Type</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:7%">A/C Reg. or Comp S/N</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:3%">Type of maint.</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:5%">Privilege used</td>
+                            <td class="centertext literal tdcolored" colspan="7" style="width:14%">Task Type</td>
+                            <td class="centertext literal tdcolored" colspan="4" style="width:9%">Type of Activity</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:3%">ATA</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:9%">Operation Performed</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:6%">Time Duration</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:9%">Maintenance record ref.</td>
+                            <td class="centertext literal tdcolored" rowspan="2" style="width:7%">Remarks</td>
+                        </tr>
+                        <tr>
+                            <td class="centertext literal tdcolored">F<br/>O<br/>T</td>
+                            <td class="centertext literal tdcolored">S<br/>G<br/>H</td>
+                            <td class="centertext literal tdcolored">R<br/>/<br/>I</td>
+                            <td class="centertext literal tdcolored">T<br/>S</td>
+                            <td class="centertext literal tdcolored">M<br/>O<br/>D</td>
+                            <td class="centertext literal tdcolored">R<br/>E<br/>P</td>
+                            <td class="centertext literal tdcolored">I<br/>N<br/>S<br/>P</td>
+                            <td class="centertext literal tdcolored">T<br/>r<br/>a<br/>i<br/>n<br/>i<br/>n<br/>g</td>
+                            <td class="centertext literal tdcolored">P<br/>e<br/>r<br/>f<br/>o<br/>r<br/>m</td>
+                            <td class="centertext literal tdcolored">S<br/>u<br/>p<br/>e<br/>r<br/>v<br/>i<br/>s<br/>e</td>
+                            <td class="centertext literal tdcolored">C<br/>R<br/>S</td>
+                        </tr>
+                    </tab>
+                </div>
+                <div class="article" style="font-family:Sans">
+                    <div class="page">
+                        <table class="fullwidth">
+                            <t t-foreach="docs" t-as="o">
+                                <t t-foreach="o.ata_ids" t-as="ata">
+                                    <tr style="max-height: 60px !important;height: 60px !important;">
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.date"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.location"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.ac_type"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.ac_comp"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.type_maintenance"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.privilege"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('FOT')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('SGH')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('R/I')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('TS')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('MOD')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('REP')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('INSP')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('Training')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('Perform')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('Supervise')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_activity_to_report('CRS')"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="ata.name"/></td>
+                                        <td style="max-height: 60px !important; height: 60px !important; overflow: hidden;" class="centertext">
+                                            <span style="max-height: 42px !important; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                <t t-esc="o.operation_performed"/>
+                                            </span>
+                                        </td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.get_duration_to_report()"/></td>
+                                        <td style="height: 60px;" class="centertext"><t t-esc="o.maintenance_record_ref"/></td>
+                                        <td style="max-height: 60px !important; height: 60px !important; overflow: hidden;" class="centertext">
+                                            <span style="max-height: 55px !important; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                                <t t-out="o.remarks"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </table>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div style="text-align:right;font-size:10px;border-top:1px solid black;">Página: A-<span class="page"/> / A-<span class="topage"/></div>
+                </div> 
             </t>
         </template>
 

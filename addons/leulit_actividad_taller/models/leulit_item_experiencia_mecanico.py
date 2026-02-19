@@ -31,6 +31,17 @@ class LeulitItemExperienciaMecanico(models.Model):
     mecanico_id = fields.Many2one(comodel_name='leulit.mecanico', string='Mecánico')
     account_analytic_line_id = fields.Many2one('account.analytic.line', string='Account Analytic Line')
 
+    def get_activity_to_report(self, actividad):
+        for actividad_mecanico in self.tipos_actividad_ids:
+            if actividad_mecanico.nombre == actividad:
+                return 'X'
+        return ''
+
+    def get_duration_to_report(self):
+        if self.duration:
+            return utilitylib.leulit_float_time_to_str(self.duration)
+        return ''
+
     def get_data_to_report(self):
         activity_flags = {
             'FOT': False,
