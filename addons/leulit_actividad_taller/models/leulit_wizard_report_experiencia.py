@@ -70,4 +70,12 @@ class leulit_wizard_report_experiencia(models.TransientModel):
         }
         _logger.error('Datos para el reporte: %s', datos)
         _logger.error('Items para el reporte: %s', items)
-        return self.env.ref('leulit_actividad_taller.leulit_20240521_1012_report').report_action(items,data=datos)
+        return {
+            'type': 'ir.actions.report',
+            'report_name': 'leulit_actividad_taller.leulit_20240521_1012_informe',
+            'report_type': 'qweb-pdf',
+            'model': 'leulit.item_experiencia_mecanico',
+            'res_ids': items.ids,
+            'context': self.env.context,
+            'data': datos,
+        }
