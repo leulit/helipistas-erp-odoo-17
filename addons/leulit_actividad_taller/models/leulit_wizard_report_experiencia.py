@@ -11,7 +11,6 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-
 class leulit_wizard_report_experiencia(models.TransientModel):
     _name = "leulit.wizard_report_experiencia"
     _description = "leulit_wizard_report_experiencia"
@@ -34,9 +33,6 @@ class leulit_wizard_report_experiencia(models.TransientModel):
             'from_date': self.from_date.strftime('%d/%m/%Y') if self.from_date else '',
             'to_date': self.to_date.strftime('%d/%m/%Y') if self.to_date else '',
         }
-        _logger.error('Datos para el reporte: %s', datos)
-        _logger.error('Items para el reporte: %s', items)
-
         pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(
             'leulit_actividad_taller.leulit_20240521_1012_informe',
             items.ids,

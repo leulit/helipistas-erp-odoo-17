@@ -13,6 +13,9 @@ class LeulitAta(models.Model):
     _description = "ATA Chapters"
     _rec_name = "display_name"
 
+    def get_number(self):
+        return self.ata_number.replace('ATA ', '')
+
     ata_number = fields.Char(string="ATA Number")
     ata_name = fields.Char(string="ATA Chapter name")
     doble_check = fields.Boolean(string='Doble check')
