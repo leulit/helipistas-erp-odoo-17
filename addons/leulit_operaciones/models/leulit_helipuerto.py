@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+import base64
+import html as py_html
+import json
 import pytz
 
 from odoo import models, fields, api, tools, exceptions, registry, _
@@ -216,3 +219,289 @@ class leulit_helipuerto(models.Model):
             return self.env.ref('leulit_operaciones.ficha_helipuerto_report').report_action([],data=data)
         except Exception as e:
             raise UserError ('Faltan datos en el helipuerto/aeródromo, revisar antes de seguir.')
+
+    def _format_helipuerto_field_value(self, field_name, field_def):
+        self.ensure_one()
+        value = self[field_name]
+
+        if field_def.type == 'boolean':
+            return 'Sí' if value else 'No'
+        if field_def.type == 'many2one':
+            return value.display_name if value else ''
+        if field_def.type in ('many2many', 'one2many'):
+            return ', '.join(value.mapped('display_name')) if value else ''
+        if field_def.type == 'selection':
+            selection = field_def.selection(self) if callable(field_def.selection) else field_def.selection
+            return dict(selection).get(value, value or '')
+        if field_def.type == 'date':
+            return fields.Date.to_string(value) if value else ''
+        if field_def.type == 'datetime':
+            return fields.Datetime.to_string(value) if value else ''
+
+        return '' if value in (False, None) else str(value)
+
+    def _build_helipuerto_popup_html(self):
+        self.ensure_one()
+
+        excluded_fields = {
+            'id',
+            'display_name',
+            '__last_update',
+            'message_ids',
+            'message_follower_ids',
+            'message_partner_ids',
+            'message_main_attachment_id',
+            'activity_ids',
+            'activity_state',
+            'activity_user_id',
+            'activity_type_id',
+            'activity_date_deadline',
+            'activity_summary',
+            'activity_exception_icon',
+            'activity_exception_decoration',
+            'activity_calendar_event_id',
+            'website_message_ids',
+            'message_has_error',
+            'message_has_error_counter',
+            'message_needaction',
+            'message_needaction_counter',
+            'message_attachment_count',
+            'message_bounce',
+            'is_follower',
+            'has_message',
+            'message_is_follower',
+            'message_unread',
+            'message_unread_counter',
+            'message_type',
+            'message_channel_ids',
+            'message_has_sms_error',
+            'message_has_sms_error_counter',
+            'activity_exception_icon',
+        }
+
+        image_fields = []
+        rows = []
+        key_field_names = {
+            'name',
+            'descripcion',
+            'edicion_revision',
+            'municipio',
+            'direccion',
+            'telefono',
+            'lat',
+            'long',
+            'elevacion',
+            'superficie',
+            'horario_operacion',
+            'horario_combustible',
+        }
+        key_rows = []
+
+        for field_name, field_def in self._fields.items():
+            if field_name in excluded_fields:
+                continue
+            if field_def.type == 'binary':
+                image_b64 = self[field_name]
+                if image_b64:
+                    if isinstance(image_b64, bytes):
+                        image_b64 = image_b64.decode('utf-8')
+                    image_fields.append({
+                        'label': field_def.string,
+                        'src': 'data:image/*;base64,%s' % image_b64,
+                    })
+                continue
+
+            value = self._format_helipuerto_field_value(field_name, field_def)
+            if value:
+                row_data = {
+                    'label': field_def.string,
+                    'value': value,
+                }
+                rows.append(row_data)
+                if field_name in key_field_names:
+                    key_rows.append(row_data)
+
+        title = py_html.escape(self.descripcion or self.name or 'Helipuerto/Aeródromo')
+        subtitle = py_html.escape(self.name or '')
+        revision = py_html.escape(self.edicion_revision or 'N/A')
+        descripcion = py_html.escape(self.descripcion or 'Sin descripción')
+
+        operaciones_badges = []
+        if self.operaciones_AOCP3:
+            operaciones_badges.append('AOCP3')
+        if self.operaciones_AOCEH05:
+            operaciones_badges.append('AOCEH05')
+        if self.operaciones_ATO:
+            operaciones_badges.append('ATO')
+        if self.operaciones_TTAA:
+            operaciones_badges.append('TTAA')
+        if self.operaciones_LCI:
+            operaciones_badges.append('LCI')
+
+        badges_html = ''.join([
+            '<span class="hp-chip">%s</span>' % py_html.escape(badge)
+            for badge in operaciones_badges
+        ]) or '<span class="hp-chip hp-chip-muted">Sin operación marcada</span>'
+
+        def _rows_to_html(data_rows):
+            return ''.join([
+                '<tr><th>%s</th><td>%s</td></tr>' % (
+                    py_html.escape(row['label']),
+                    py_html.escape(row['value']).replace('\n', '<br/>'),
+                )
+                for row in data_rows
+            ])
+
+        key_rows_html = _rows_to_html(key_rows)
+        rows_html = _rows_to_html(rows)
+
+        image_html = ''.join([
+            '<div class="hp-image-card"><div class="hp-image-title">%s</div><img src="%s" alt="%s"/></div>' % (
+                py_html.escape(image['label']),
+                image['src'],
+                py_html.escape(image['label']),
+            )
+            for image in image_fields
+        ])
+
+        return (
+            '<div class="hp-popup">'
+            '<div class="hp-header">'
+            '<div class="hp-title">%s</div>'
+            '<div class="hp-subtitle">%s</div>'
+            '<div class="hp-revision">Edición/Revisión: %s</div>'
+            '<div class="hp-desc">%s</div>'
+            '</div>'
+            '<div class="hp-section-title">Operaciones</div>'
+            '<div class="hp-chips">%s</div>'
+            '<div class="hp-section-title">Datos clave</div>'
+            '<table class="hp-table hp-table-key">%s</table>'
+            '<div class="hp-section-title">Imágenes</div>'
+            '<div class="hp-images">%s</div>'
+            '<details class="hp-details">'
+            '<summary>Ver ficha completa</summary>'
+            '<table class="hp-table hp-table-all">%s</table>'
+            '</details>'
+            '</div>'
+        ) % (
+            title,
+            subtitle,
+            revision,
+            descripcion,
+            badges_html,
+            key_rows_html,
+            image_html or '<div>Sin imágenes</div>',
+            rows_html,
+        )
+
+    def action_exportar_mapa_html(self):
+        if not self:
+            raise UserError(_('Debes seleccionar al menos un helipuerto/aeródromo.'))
+
+        markers = []
+        valid_coords = []
+
+        for record in self:
+            if record.lat is False or record.long is False:
+                continue
+
+            lat = float(record.lat)
+            lng = float(record.long)
+            valid_coords.append((lat, lng))
+
+            markers.append({
+                'lat': lat,
+                'lng': lng,
+                'popup_html': record._build_helipuerto_popup_html(),
+            })
+
+        if not markers:
+            raise UserError(_('Ninguno de los registros seleccionados tiene latitud/longitud válidas.'))
+
+        center_lat = sum(item[0] for item in valid_coords) / len(valid_coords)
+        center_lng = sum(item[1] for item in valid_coords) / len(valid_coords)
+
+        html_content = """<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Mapa Helipuertos/Aeródromos</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        :root { color-scheme: light; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fa; }
+        .topbar { padding: 12px 16px; background: #1f2a44; color: #fff; font-size: 16px; font-weight: 600; }
+        #map { width: 100%%; height: calc(100vh - 48px); }
+        .leaflet-popup-content { margin: 8px; min-width: 420px; max-width: 700px; }
+        .hp-popup { max-height: 560px; overflow: auto; }
+        .hp-header { background: linear-gradient(135deg, #2f5aa8, #1f2a44); color: #fff; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+        .hp-title { font-size: 18px; font-weight: 700; }
+        .hp-subtitle { font-size: 14px; opacity: 0.95; }
+        .hp-revision { margin-top: 4px; font-size: 12px; }
+        .hp-desc { margin-top: 8px; font-size: 12px; line-height: 1.4; opacity: 0.95; }
+        .hp-section-title { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: #1f2a44; }
+        .hp-table { width: 100%%; border-collapse: collapse; background: #fff; border: 1px solid #d8dde6; border-radius: 8px; overflow: hidden; }
+        .hp-table th, .hp-table td { text-align: left; vertical-align: top; padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #eef1f5; }
+        .hp-table th { width: 32%%; background: #f4f7ff; color: #2f3b52; font-weight: 600; }
+        .hp-table-key td { font-weight: 600; }
+        .hp-table-all th { width: 35%%; }
+        .hp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .hp-chip { background: #e8f0ff; color: #163f7a; border: 1px solid #cadcff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px; }
+        .hp-chip-muted { background: #f3f4f6; color: #4b5563; border-color: #e5e7eb; }
+        .hp-images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .hp-image-card { border: 1px solid #d8dde6; border-radius: 8px; padding: 6px; background: #fff; }
+        .hp-image-title { font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #2f3b52; }
+        .hp-image-card img { width: 100%%; height: 120px; object-fit: cover; border-radius: 6px; display: block; }
+        .hp-details { margin-top: 10px; }
+        .hp-details summary { cursor: pointer; font-weight: 700; color: #1f2a44; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">Mapa de Helipuertos/Aeródromos seleccionados</div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const markers = __MARKERS_JSON__;
+        const map = L.map('map').setView([__CENTER_LAT__, __CENTER_LNG__], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const bounds = [];
+        markers.forEach((item) => {
+            const marker = L.marker([item.lat, item.lng]).addTo(map);
+            marker.bindPopup(item.popup_html, { maxWidth: 700 });
+            bounds.push([item.lat, item.lng]);
+        });
+
+        if (bounds.length > 1) {
+            map.fitBounds(bounds, { padding: [40, 40] });
+        }
+    </script>
+</body>
+</html>
+"""
+
+        html_content = html_content.replace('__MARKERS_JSON__', json.dumps(markers))
+        html_content = html_content.replace('__CENTER_LAT__', str(center_lat))
+        html_content = html_content.replace('__CENTER_LNG__', str(center_lng))
+
+        file_name = 'helipuertos_mapa_%s.html' % fields.Datetime.now().strftime('%Y%m%d_%H%M%S')
+        attachment = self.env['ir.attachment'].create({
+            'name': file_name,
+            'type': 'binary',
+            'datas': base64.b64encode(html_content.encode('utf-8')),
+            'mimetype': 'text/html',
+            'res_model': 'leulit.helipuerto',
+            'res_id': self[0].id,
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=true' % attachment.id,
+            'target': 'self',
+        }

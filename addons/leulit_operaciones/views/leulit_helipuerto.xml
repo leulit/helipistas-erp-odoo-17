@@ -139,6 +139,15 @@
             </field>
         </record>
 
+        <record id="leulit_20260219_1010_server_action_exportar_mapa_html" model="ir.actions.server">
+            <field name="name">Exportar mapa HTML (seleccionados)</field>
+            <field name="model_id" ref="model_leulit_helipuerto"/>
+            <field name="binding_model_id" ref="model_leulit_helipuerto"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_exportar_mapa_html()</field>
+        </record>
+
         <record model="ir.actions.act_window" id="leulit_20201026_1222_action">
             <field name="name">Helipuertos/Aerodromos</field>
             <field name="res_model">leulit.helipuerto</field>
