@@ -12,9 +12,15 @@
                         <field name="mecanico_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
                         <field name="ata_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
                         <field name="certificaciones_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name="model" />
-                        <field name="from_date" />
-                        <field name="to_date" />
+                        <group>
+                            <field name="eurocpoter"/>
+                            <field name="robinson"/>
+                            <field name="guimbal"/>
+                        </group>
+                        <group>
+                            <field name="from_date" />
+                            <field name="to_date" />
+                        </group>
                     </group>
                     <footer>
                         <button type="object" name="print_report_experiencia" string="Imprimir" class="oe_highlight"/>

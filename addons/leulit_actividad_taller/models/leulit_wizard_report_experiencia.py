@@ -19,7 +19,9 @@ class leulit_wizard_report_experiencia(models.TransientModel):
     from_date = fields.Date('Desde')
     to_date = fields.Date('Hasta')
     ata_ids = fields.Many2many(comodel_name='leulit.ata', relation='rel_report_experiencia_ata', column1='item_report_experiencia_id', column2='ata_id', string='ATAs')
-    model = fields.Selection([('Eurocopter', 'Eurocopter'), ('Robinson', 'Robinson'), ('Guimbal', 'Guimbal')], string='Modelo')
+    eurocpoter = fields.Boolean(string='Eurocopter')
+    robinson = fields.Boolean(string='Robinson')
+    guimbal = fields.Boolean(string='Guimbal')
     certificaciones_ids = fields.Many2many(comodel_name='leulit.certificacion', relation='leulit_report_experiencia_certificacion_rel', column1='item_report_experiencia_id', column2='certificacion_id', string='Certificaciones')
     pdf_file = fields.Binary(string="PDF generado")
 
