@@ -147,7 +147,7 @@
             parent="leulit_20211011_1044_menuitem"
             action="leulit_20201106_1049_action"
             sequence="20"
-            groups="leulit.ROperaciones_gestor"
+            groups="leulit.ROperaciones_gestor, leulit_planificacion.RPlanificacion_planner"
         />
         <menuitem
             id="leulit_20250520_1538_menuitem"
