@@ -15,7 +15,7 @@
                             <field name="certificaciones_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
                         </group>
                         <group>
-                            <field name="eurocpoter"/>
+                            <field name="eurocopter"/>
                             <field name="robinson"/>
                             <field name="guimbal"/>
                         </group>
