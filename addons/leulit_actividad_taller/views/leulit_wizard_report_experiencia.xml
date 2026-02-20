@@ -9,17 +9,22 @@
             <field name="arch" type="xml">
                 <form string="Registro Experiencia 6/24 meses">
                     <group>
-                        <field name="mecanico_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name="ata_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        <field name="certificaciones_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <group>
+                            <field name="mecanico_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                            <field name="ata_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                            <field name="certificaciones_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        </group>
                         <group>
                             <field name="eurocpoter"/>
                             <field name="robinson"/>
                             <field name="guimbal"/>
                         </group>
+                        <separator string="Rango de Fechas"/>
                         <group>
-                            <field name="from_date" />
-                            <field name="to_date" />
+                            <field name="from_date"/>
+                        </group>
+                        <group>
+                            <field name="to_date"/>
                         </group>
                     </group>
                     <footer>
