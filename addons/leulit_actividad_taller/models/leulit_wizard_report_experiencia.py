@@ -44,7 +44,7 @@ class leulit_wizard_report_experiencia(models.TransientModel):
 
         items = self.env['leulit.item_experiencia_mecanico'].search(domain)
         if not items: 
-            raise UserError(_('No se encontraron registros para los criterios seleccionados.'))
+            raise UserError('No se encontraron registros para los criterios seleccionados.')
         datos = {
             'logo_ica': company_icarus.logo_reports.decode(),
             'mecanico': self.mecanico_id.name if self.mecanico_id else '',
