@@ -21,7 +21,7 @@ def _tz_get(self):
 class leulit_helipuerto(models.Model):
     _name             = "leulit.helipuerto"
     _description    = "leulit_helipuerto"
-    _inherit        = ['mail.thread']
+    _inherit        = ['mail.thread', 'mail.activity.mixin']
     _rec_name = "display_name"
 
     @api.model
