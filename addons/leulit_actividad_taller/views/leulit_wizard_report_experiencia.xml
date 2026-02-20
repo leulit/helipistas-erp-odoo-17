@@ -10,6 +10,9 @@
                 <form string="Registro Experiencia 6/24 meses">
                     <group>
                         <field name="mecanico_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="ata_ids" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="certificaciones_ids" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="model" />
                         <field name="from_date" />
                         <field name="to_date" />
                     </group>
