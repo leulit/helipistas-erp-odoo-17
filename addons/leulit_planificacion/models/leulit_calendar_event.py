@@ -374,7 +374,7 @@ class leulit_calendar_event(models.Model):
     type_event = fields.Many2one(comodel_name='leulit.tipo_planificacion', string='Tipo', required=True)
     tipo_vuelo = fields.Boolean(related='type_event.is_vuelo', string='Tipo vuelo')
     equipamientos_ids = fields.Many2many(comodel_name='leulit.equipamientos_planificacion', relation='leulit_equipamientos_evento', column1='evento_id', column2='equipamiento_id', string='Equipamientos')
-    sale_order_id = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('state','=','sale')])
+    sale_order_id = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('task_done','=',False)])
     uid_in_resources = fields.Boolean(compute="_uid_in_resources", string="User in evento", search="_uid_in_resources_search")
     documentos = fields.Many2many('ir.attachment', 'leulit_calendar_rel', 'calendar_rel', 'doc_rel','Documentos')
     localizaciones = fields.Many2many('leulit.ruta_punto','leulit_evento_punto_rel','evento_id','punto_id','Localizaciones')
