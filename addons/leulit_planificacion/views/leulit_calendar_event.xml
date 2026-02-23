@@ -209,7 +209,7 @@
                             <field name="sale_order_id"  required="tipo_vuelo" options="{'no_create': True, 'no_open': True}"/>
                             <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="tipo_vuelo" />
                             <field name="min_cloud_height"  required="tipo_vuelo" />
-                            <field name="resource_fields"  readonly="(cancelado)" string="Recursos">
+                            <field name="resource_fields" string="Recursos">
                                 <tree create="true" edit="true" editable="bottom"> 
                                     <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
                                     <field name="work_hours" widget="float_time" string="H. V."/>

@@ -692,6 +692,15 @@ def leulit_datetime_to_float_time(odatetime):
     seconds = fields[2] if len(fields) > 2 else 0.0
     return float(hours) + (float(minutes) / 60.0) + (float(seconds) / pow(60.0, 2))
 
+def leulit_time_to_float(otime):
+    if not isinstance(otime, time):
+        otime = datetime.strptime(otime, "%H:%M:%S").time()
+    time_string = otime.strftime("%H:%M")
+    fields = time_string.split(":")
+    hours = fields[0] if len(fields) > 0 else 0.0
+    minutes = fields[1] if len(fields) > 1 else 0.0
+    seconds = fields[2] if len(fields) > 2 else 0.0
+    return float(hours) + (float(minutes) / 60.0) + (float(seconds) / pow(60.0, 2))
 
 def getLabelFromSelection( valor, selection ):
     lista = selection

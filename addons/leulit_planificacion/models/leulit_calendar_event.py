@@ -373,11 +373,11 @@ class leulit_calendar_event(models.Model):
             'asunto': self.name,
             'event_id': self.id,
             'fecha_ini': self.start.date(),
-            'hora_inicio_evento': utilitylib.leulit_datetime_to_float_time(self.start.time()) if self.allday == False else 9,
+            'hora_inicio_evento': utilitylib.leulit_time_to_float(self.start.time()) if self.allday == False else 9,
             'duration': self.duration if self.allday == False else 1,
             'location': 'Ullastrell',
             'company_id': self.env.company.id,
-            'descripcion': self.description if self.description else 'Orden del dia por definir',
+            'descripcion': self.description if self.description else ' ',
             'asistentes': [(0, 0, {'partner_id': partner.id}) for partner in self.partner_ids]
         })
         self.reunion_id = reunion.id
