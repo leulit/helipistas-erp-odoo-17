@@ -43,6 +43,7 @@
                                         <field name="resource" domain="[('active','=',True)]"/>
                                         <field name="hora_ini" widget="float_time"/>
                                         <field name="hora_fin" widget="float_time"/>
+                                        <field name="event_id" groups="leulit.RolIT_developer"/>
                                     </tree>
                                 </field>
                             </group>
