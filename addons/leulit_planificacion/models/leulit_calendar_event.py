@@ -370,7 +370,7 @@ class leulit_calendar_event(models.Model):
         if self.reunion_id:
             raise UserError('El evento ya tiene una reunión asociada.')
         reunion = self.env['leulit.reunion'].create({
-            'name': self.name,
+            'asunto': self.name,
             'event_id': self.id,
             'fecha_ini': self.start.date(),
             'hora_inicio_evento': utilitylib.time_to_float(self.start.time()) if self.allday == False else 9,
