@@ -377,7 +377,7 @@ class leulit_calendar_event(models.Model):
     sale_order_id = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('task_done','=',False)])
     uid_in_resources = fields.Boolean(compute="_uid_in_resources", string="User in evento", search="_uid_in_resources_search")
     documentos = fields.Many2many('ir.attachment', 'leulit_calendar_rel', 'calendar_rel', 'doc_rel','Documentos')
-    localizaciones = fields.Many2many('leulit.ruta_punto','leulit_evento_punto_rel','evento_id','punto_id','Localizaciones')
+    localizaciones = fields.Many2many('leulit.ruta_punto','leulit_evento_punto_rel','evento_id','punto_id','Localizaciones', default=lambda self: self.env['leulit.ruta_punto'].search([('indicativo', '=', 'LEUL')]))
     min_cloud_height = fields.Float(string='Base de nubes (ft)', default=1000)
     # TAREA
     no_modificar = fields.Boolean(string='Prioritario',default=False)

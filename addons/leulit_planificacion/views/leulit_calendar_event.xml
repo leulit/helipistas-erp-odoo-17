@@ -148,6 +148,13 @@
                         </field>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='partner_ids']" position="replace">
+                    <field name="partner_ids" widget="many2manyattendee"
+                                placeholder="Agregue asistentes..."
+                                options="{'no_quick_create': True, 'no_create': True}"
+                                class="oe_inline"
+                            />
+                </xpath>
             </field>
         </record>
 
