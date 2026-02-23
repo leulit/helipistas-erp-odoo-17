@@ -1811,7 +1811,6 @@ class leulit_vuelo(models.Model):
                 nombre_actividad = rel_tipovuelo[0].vuelo_tipo_id.name
             item.nombre_actividad = nombre_actividad
 
-
     def set_nombre_actividad(self):
         _logger.error("################### set_nombre_actividad ")
         threaded_calculation = threading.Thread(target=self.run_set_nombre_actividad, args=([]))
@@ -1822,7 +1821,7 @@ class leulit_vuelo(models.Model):
         db_registry = registry(self.env.cr.dbname)
         with db_registry.cursor() as new_cr:
             env = api.Environment(new_cr, self.env.uid, self.env.context)
-            for vuelo in env['leulit.vuelo'].search(['nombre_actividad','=',False]):
+            for vuelo in env['leulit.vuelo'].search([('nombre_actividad','=',False)]):
                 nombre_actividad = ''
                 rel_tipovuelo = env['leulit.vuelo_tipo_line'].search([('vuelo_id','=',vuelo.id)])
                 if rel_tipovuelo.ids and len(rel_tipovuelo.ids) > 0:
@@ -1830,8 +1829,6 @@ class leulit_vuelo(models.Model):
                 vuelo.write({'nombre_actividad': nombre_actividad})
             new_cr.commit()
         _logger.error('################### set_nombre_actividad fin thread')
-
-
 
     @api.depends('horasalida')
     def _strhorasalida(self):
