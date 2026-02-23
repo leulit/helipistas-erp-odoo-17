@@ -37,15 +37,6 @@
                                         <field name="partner_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                                         <field name="asistencia" string="Asistencia"/>
                                     </tree>
-                                </field>
-                                <field name="recursos_disponibles" nolabel="1" invisible="1">
-                                    <tree create="0">
-                                        <field name="resource" domain="[('active','=',True)]"/>
-                                        <field name="hora_ini" widget="float_time"/>
-                                        <field name="hora_fin" widget="float_time"/>
-                                        <field name="event_id" groups="leulit.RolIT_developer"/>
-                                    </tree>
-                                </field>
                             </group>
                             <group col="2">
                                 <group>
@@ -62,6 +53,7 @@
                                     <field name="hora_inicio_evento" widget="float_time"  readonly="((end_meeting))" />
                                     <field name="duration" widget="float_time"  readonly="((end_meeting))" />
                                     <field name="hora_fin_evento" widget="float_time" readonly="1"/>
+                                    <field name="event_id" groups="leulit.RolIT_developer"/>
                                 </group>
                             </group>
                             <group>
