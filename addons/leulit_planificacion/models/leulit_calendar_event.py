@@ -377,6 +377,7 @@ class leulit_calendar_event(models.Model):
             'duration': self.duration if self.allday == False else 1,
             'location': 'Ullastrell',
             'company_id': self.env.company.id,
+            'descripcion': self.description if self.description else 'Orden del dia por definir',
         })
         self.reunion_id = reunion.id
         return {
