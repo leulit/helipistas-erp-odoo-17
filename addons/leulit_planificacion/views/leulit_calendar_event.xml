@@ -111,8 +111,10 @@
                 </xpath>
                 <xpath expr="//button[@name='action_open_calendar_event']" position="before">
                     <div></div>
-                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="(cancelado)" />
+                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="cancelado" />
                     <field name="cancelado" invisible="1"/>
+                    <button string="Crear Reunión" icon="fa-plus" type="object" name="create_reunion"  invisible="reunion_id" />
+                    <button string="Abrir Reunión" icon="fa-edit" type="object" name="open_reunion"  invisible="not reunion_id" />
                 </xpath>
                 <xpath expr="//field[@name='description']" position="before">
                     <field name="resource_fields"  readonly="(cancelado)" string="Recursos">

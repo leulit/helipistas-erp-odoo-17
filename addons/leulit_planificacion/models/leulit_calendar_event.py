@@ -365,6 +365,42 @@ class leulit_calendar_event(models.Model):
                 editor_candidates.add(self.env.user)
             event.user_can_edit = self.env.user in editor_candidates
 
+    def create_reunion(self):
+        self.ensure_one()
+        if self.reunion_id:
+            raise UserError('El evento ya tiene una reunión asociada.')
+        reunion = self.env['leulit.reunion'].create({
+            'name': self.name,
+            'event_id': self.id,
+            'fecha_ini': self.start.date(),
+            'hora_inicio_evento': utilitylib.time_to_float(self.start.time()) if self.allday == False else 9,
+            'duration': self.duration if self.allday == False else 1,
+            'location': 'Ullastrell',
+            'company_id': self.env.company.id,
+        })
+        self.reunion_id = reunion.id
+        return {
+            'name': 'Reunión',
+            'type': 'ir.actions.act_window',
+            'res_model': 'leulit.reunion',
+            'view_mode': 'form',
+            'res_id': reunion.id,
+            'target': 'new',
+        }
+
+    def open_reunion(self):
+        self.ensure_one()
+        if not self.reunion_id:
+            raise UserError('El evento no tiene una reunión asociada.')
+        return {
+            'name': 'Reunión',
+            'type': 'ir.actions.act_window',
+            'res_model': 'leulit.reunion',
+            'view_mode': 'form',
+            'res_id': self.reunion_id.id,
+            'target': 'current',
+        }
+
 
     partner_ids = fields.Many2many('res.partner', 'calendar_event_res_partner_rel', string='Attendees', default=_default_partners, domain="[('user_ids', '!=', False)]")
     resource_fields = fields.One2many(comodel_name='leulit.event_resource', inverse_name='event', string='Recurso')
@@ -395,6 +431,7 @@ class leulit_calendar_event(models.Model):
     ## Audit Log
     historic_lines = fields.One2many(compute=_get_historic_lines, comodel_name='auditlog.log', string='Lineas historico', readonly=True)
     task_id = fields.Many2one(comodel_name='project.task', string='Tarea')
+    reunion_id = fields.Many2one(comodel_name='leulit.reunion', string='Reunión')
 
 
     def open_task(self):

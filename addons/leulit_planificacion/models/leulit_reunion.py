@@ -184,6 +184,7 @@ class leulit_reunion(models.Model):
     task_ids = fields.One2many('project.task', 'reunion_id', string='Tasks')
     task_count = fields.Integer(compute=_compute_task_count, string='Task Count')
     reunion_template_id = fields.Many2one('leulit.reunion_template', 'Plantilla reunión')
+    event_id = fields.Many2one('calendar.event', 'Evento calendario')
 
 
 class WizardReunionCreateTask(models.TransientModel):
