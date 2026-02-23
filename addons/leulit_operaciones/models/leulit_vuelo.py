@@ -1801,6 +1801,7 @@ class leulit_vuelo(models.Model):
                 tipo_actividad= rel_tipovuelo[0].vuelo_tipo_id.tipo_trabajo
             item.tipo_actividad = tipo_actividad
 
+    @api.depends('vuelo_tipo_line')
     def _get_nombre_actividad(self):
         for item in self:
             nombre_actividad = ''

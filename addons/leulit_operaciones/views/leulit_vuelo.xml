@@ -23,6 +23,7 @@
                     <field name="night_hours" invisible="1" />
                     <field name="peso_piloto" invisible="1" />
                     <field name="is_comercial_uid" invisible="1" />
+                    <field name="nombre_actividad" invisible="1" />
                     <field name="active" invisible="1" />
                     <header class=" d-flex justify-content-between " style="z-index: 50; width: -webkit-fill-available;">
                         <field name="is_comercial_uid" invisible="1"/>
@@ -1589,6 +1590,7 @@
                     <field name="foto_piloto" widget="image" class="foto_piloto_tree" optional="show"/>
                     <field name="piloto_id" />
                     <field name="estado" column_invisible="1"/>
+                    <field name="nombre_actividad" column_invisible="1"/>
                     <field name="presupuesto_vuelo" optional="show"/>
                     <field name="strfechasalida" string="Fecha Salida" optional="show"/>       
                     <field name="strfechallegada" string="Fecha Llegada" optional="show"/>
