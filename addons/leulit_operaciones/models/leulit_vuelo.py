@@ -1792,7 +1792,7 @@ class leulit_vuelo(models.Model):
             ex_type, ex_value, ex_traceback = sys.exc_info()
             s = "ERROR AL DESCARGAR NOTAM : {1}  --- {0}".format(ex_value,ex_traceback)
         return s
-        
+
     def _get_tipo_actividad(self):
         for item in self:
             tipo_actividad = None
@@ -1834,14 +1834,14 @@ class leulit_vuelo(models.Model):
             valor = item.tiemposervicio
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strtiemposervicio = tira
-            
+
     @api.depends('tiempoprevisto')
     def _strtiempoprevisto(self):
         for item in self:
             valor = item.tiempoprevisto
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strtiempoprevisto = tira            
-    
+
     @api.depends('airtime')
     def _strairtime(self):
         tira = ""
@@ -1938,11 +1938,11 @@ class leulit_vuelo(models.Model):
             if item.horallegadaprevista and item.lugarsalida and item.fechavuelo:
                 valor = utilitylib.getStrTimeUTC(item.fechavuelo, item.horallegadaprevista, item.lugarllegada.tz)
             item.utc_horallegadaprevista = valor 
-                   
+     
     def _tiempo_instuctor_actividad(self):
         for item in self:
             item.tiempo_instuctor_actividad = item.tiempo_aoc + item.tiempo_lci + item.tiempo_ato_mo
-    
+
     @api.depends('fechavuelo','helicoptero_id')
     def _calc_delta_landings(self):
         for item in self:
@@ -2018,7 +2018,7 @@ class leulit_vuelo(models.Model):
     def wizardSetPrevuelo(self):
         self.p_corregido = True
         self.estado = 'prevuelo'
-    
+
     @api.depends('fechasalida', 'helicoptero_id')
     def check_first_flight(self):
         if self.helicoptero_tipo in ('EC120B', 'CABRI G2'):
@@ -2041,15 +2041,14 @@ class leulit_vuelo(models.Model):
             self.checklist_prevuelo_entre_vuelos = False  
         else:
             self.checklist_prevuelo_entre_vuelos = True
-            
+
     @api.onchange('checklist_prevuelo_entre_vuelos')
     def select_BFF(self):
         if self.checklist_prevuelo_entre_vuelos:
             self.checklist_prevuelo_BFF = False
         else:
             self.checklist_prevuelo_BFF = True
-        
-    
+
     @api.onchange('verificado')
     def cambio_numtripulantes_verificado(self):
         if self.verificado: 
