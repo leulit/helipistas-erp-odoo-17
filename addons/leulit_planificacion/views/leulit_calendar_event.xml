@@ -115,6 +115,7 @@
                     <field name="cancelado" invisible="1"/>
                     <button string="Crear Reunión" icon="fa-plus" type="object" name="create_reunion"  invisible="reunion_id" />
                     <button string="Abrir Reunión" icon="fa-edit" type="object" name="open_reunion"  invisible="not reunion_id" />
+                    <field name="reunion_id" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='description']" position="before">
                     <field name="resource_fields"  readonly="(cancelado)" string="Recursos">
