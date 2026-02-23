@@ -37,6 +37,7 @@
                                         <field name="partner_id" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                                         <field name="asistencia" string="Asistencia"/>
                                     </tree>
+                                </field>
                             </group>
                             <group col="2">
                                 <group>
