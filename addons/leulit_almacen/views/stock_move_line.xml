@@ -66,6 +66,9 @@
                 <xpath expr="//field[@name='lot_name']" position="attributes">
                     <attribute name="column_invisible">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='owner_id']" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='quantity']" position="before">
                     <field name="sn"/>
                     <field name="lote"/>

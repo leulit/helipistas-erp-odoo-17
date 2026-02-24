@@ -281,7 +281,7 @@ class ComprobacionPerfilesFormacionHandler(vuelo.AbstractHandler):
             o_alumno = request.env['leulit.alumno']
             vuelo = o_vuelo.browse(request.vuelo_id)
             exists_pf = False
-            if vuelo.piloto_supervisor_id:
+            if vuelo.piloto_supervisor_id and not vuelo.piloto_supervisor_id.supervisor_privados:
                 tripulante_alumno = o_alumno.search([('partner_id','=',vuelo.piloto_supervisor_id.getPartnerId())])
             else:
                 tripulante_alumno = o_alumno.search([('partner_id','=',vuelo.piloto_id.getPartnerId())])
