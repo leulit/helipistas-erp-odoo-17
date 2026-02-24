@@ -118,7 +118,32 @@ class StockPicking(models.Model):
             'url': "web/content/?model=stock.picking&id=" + str(self.id) + "&filename_field=combined_pdf_filename&field=etiquetas&download=true",
             'target': 'self'
         }
-            
+
+    def create_picking_in_from_reparacion(self):
+        picking_type = self.env['stock.picking.type'].search([('name','=','Recepción Reparación')])
+        picking = self.env['stock.picking'].create({'picking_related': self.id, 'picking_type_id':picking_type.id,'origin':self.origin,'partner_id':self.partner_id.id})
+        self.picking_related = picking.id
+        for move in self.move_ids_without_package:
+            move.copy(default={'picking_id':picking.id})
+        return {
+            'name': _('Recepción Reparación'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'stock.picking',
+            'view_id': False,
+            'res_id': picking.id
+        }
+    
+    def view_picking_reparacion(self):
+        return {
+            'name': _('Albarán Reparación'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'stock.picking',
+            'view_id': False,
+            'res_id': self.picking_related.id
+        }
+
 
     rel_stock_production_lot = fields.One2many(compute="_get_stock_production_lot_from_stock_move_line",comodel_name="stock.lot",inverse_name="rel_stock_picking",string="Piezas", store=False)
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order", domain=[('done','=',False)])
@@ -131,7 +156,16 @@ class StockPicking(models.Model):
     is_instalacion = fields.Boolean(compute="get_tipo_instalacion", string="¿Es instalacion?", store=False)
     etiquetas = fields.Binary()
     combined_pdf_filename = fields.Char()
+    is_reparacion = fields.Boolean(compute="get_tipo_reparacion", string="¿Es reparación?", store=False)
+    picking_related = fields.Many2one('stock.picking', string="Albarán relacionado")
     # repair_id = fields.Many2one(comodel_name="repair.order", string="Orden de Reparación")
+
+    @api.depends('picking_type_id')
+    def get_tipo_reparacion(self):
+        for item in self:
+            item.is_reparacion = False
+            if item.picking_type_id and item.picking_type_id.name == 'Envio Reparación':
+                item.is_reparacion = True
 
     @api.depends('picking_type_id')
     def get_tipo_instalacion(self):
