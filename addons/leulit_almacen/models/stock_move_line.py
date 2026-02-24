@@ -50,6 +50,42 @@ class StockMoveLine(models.Model):
         self.lot_name = name_lot
 
 
+    def _create_lot_ids_from_move_line_vals(self, vals_list, product_id, company_id):
+        """Override: Crea lotes con revision y fecha_caducidad si están en vals_list."""
+        lot_names = {vals['lot_name'] for vals in vals_list if vals.get('lot_name')}
+        lot_ids = self.env['stock.lot'].search([
+            ('product_id', '=', product_id),
+            ('company_id', '=', company_id),
+            ('name', 'in', list(lot_names)),
+        ])
+
+        lot_names_to_create = lot_names - set(lot_ids.mapped('name'))
+        lots_to_create_vals = []
+        for lot_name in lot_names_to_create:
+            # Busca el primer vals con ese lot_name para extraer revision y fecha_caducidad
+            vals_match = next((v for v in vals_list if v.get('lot_name') == lot_name), {})
+            lot_val = {
+                'product_id': product_id,
+                'name': lot_name,
+                'company_id': company_id,
+            }
+            if 'revision' in vals_match:
+                lot_val['revision'] = vals_match['revision']
+            if 'fecha_caducidad' in vals_match:
+                lot_val['fecha_caducidad'] = vals_match['fecha_caducidad']
+            lots_to_create_vals.append(lot_val)
+
+        lot_ids |= self.env['stock.lot'].create(lots_to_create_vals)
+
+        lot_id_by_name = {lot.name: lot.id for lot in lot_ids}
+        for vals in vals_list:
+            lot_name = vals.get('lot_name', None)
+            if not lot_name:
+                continue
+            vals['lot_id'] = lot_id_by_name[lot_name]
+            vals['lot_name'] = False
+
+
     id_movimiento = fields.Char('id movimiento antiguo')
     sn = fields.Char(string="Serial Number", default="N/A")
     lote = fields.Char(string="Lote", default="N/A")

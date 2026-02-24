@@ -73,6 +73,8 @@
                     <field name="sn"/>
                     <field name="lote"/>
                     <field name="ref_origen"/>
+                    <field name="revision"/>
+                    <field name="fecha_caducidad"/>
                 </xpath>
             </field>
         </record>
