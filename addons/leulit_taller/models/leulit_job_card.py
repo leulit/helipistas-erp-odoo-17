@@ -31,6 +31,7 @@ class LeulitJobCard(models.Model):
 
     descripcion = fields.Char(string="Descripción")
     activity_planned_id = fields.Many2one(comodel_name="maintenance.planned.activity", string="Ítem de Plan de Mantenimiento")
+    referencia = fields.Char(related="activity_planned_id.reference", string="Referencia", store=True)
     equipamiento_id = fields.Many2one(related="activity_planned_id.equipment_id_maintenance_plan", comodel_name="maintenance.equipment", string="Equipo", store=True)
     maintenance_plan_id = fields.Many2one(related="activity_planned_id.maintenance_plan_id", comodel_name="maintenance.plan", string="Plan de Matenimiento")
     task_id = fields.Many2one(comodel_name="project.task", domain="[('maintenance_request_id','!=',False)]", string="Tarea de Orden de Trabajo")
