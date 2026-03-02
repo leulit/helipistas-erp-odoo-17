@@ -793,6 +793,8 @@
                         <div class="card-body d-flex">
                             <div><group><field name="nv" string="N.F."/></group></div>
                             <div><group><field name="ifr" string="IFR"/></group></div>
+                            <fields name="nv_uid" invisible="1"/>
+                            <fields name="nv_date" invisible="1"/>
                         </div>
                     </div>
                     <div class="oe_chatter" name="fin de pag">
