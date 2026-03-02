@@ -2022,7 +2022,7 @@ class leulit_vuelo(models.Model):
         self.estado = 'prevuelo'
 
     @api.onchange('nv')
-    def wizardSetPrevuelo(self):
+    def onchange_nv(self):
         if self.nv:
             self.nv_uid = self.env.uid
             self.nv_date = fields.Datetime.now()
