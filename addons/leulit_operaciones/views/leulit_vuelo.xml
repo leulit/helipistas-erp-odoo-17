@@ -791,8 +791,8 @@
                     <div class="card my-2">
                         <div class="card-body d-flex">
                             <div><group><field name="nv" string="N.F."/></group></div>
+                            <div invisible="not nv"><group><field name="nv_uid" string="N.F. UID"/></group></div>
                             <div><group><field name="ifr" string="IFR"/></group></div>
-                            <fields name="nv_uid" invisible="1"/>
                             <fields name="nv_date" invisible="1"/>
                         </div>
                     </div>
