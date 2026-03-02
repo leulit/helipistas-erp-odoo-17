@@ -9,6 +9,8 @@
                 <form string="Vuelo">
                     <field name="wbdata" invisible="1"/>
                     <field name="p_corregido" invisible="1"/>
+                    <field name="p_corregido_uid" invisible="1"/>
+                    <field name="p_corregido_date" invisible="1"/>
                     <field name="wbimage" invisible="1"/>
                     <field name="wbokey" invisible="1"/>
                     <field name="id" invisible="1"/>

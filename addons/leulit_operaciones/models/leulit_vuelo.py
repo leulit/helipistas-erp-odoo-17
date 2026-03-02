@@ -2018,6 +2018,8 @@ class leulit_vuelo(models.Model):
     @api.model
     def wizardSetPrevuelo(self):
         self.p_corregido = True
+        self.p_corregido_uid = self.env.uid
+        self.p_corregido_date = fields.Datetime.now()
         self.estado = 'prevuelo'
 
     @api.depends('fechasalida', 'helicoptero_id')
@@ -2086,6 +2088,8 @@ class leulit_vuelo(models.Model):
 
 
     p_corregido = fields.Boolean(string="Parte corregido", default=False)
+    p_corregido_uid = fields.Many2one('res.users', string="Usuario que corrigió el parte")
+    p_corregido_date = fields.Datetime(string="Fecha en que se corrigió el parte")
     codigo = fields.Char('Código', )
     fechavuelo = fields.Date('Fecha', required=True, default=fields.Date.context_today)
     fuelqty = fields.Float('Combustible añadido (l.)', help='Cantidad combustible añadida antes de iniciar el vuelo (en litros)')
