@@ -36,7 +36,7 @@
 
             <!--  Collapsable content  -->
             <div class="collapse navbar-collapse" id="o_portal_navbar_content">
-                <form t-if="searchbar_inputs" class="form-inline o_portal_search_panel ml-lg-4 col-xl-4 col-md-5">
+                <form t-if="searchbar_inputs" class="form-inline o_portal_search_panel ml-lg-4 col-xl-4 col-md-5" method="get" action="/verifycsv">
                     <div class="input-group input-group-sm w-100">
                         <span>CSV Code</span>
                         <div class="input-group-prepend">
@@ -51,7 +51,7 @@
                         </div>
                         <input type="text" class="form-control form-control-sm" placeholder="Search" t-att-value='search' name="search"/>
                         <span class="input-group-append">
-                            <button class="btn btn-secondary search-submit" type="button">
+                            <button class="btn btn-secondary search-submit" type="submit">
                                 <span class="fa fa-search"/>
                             </button>
                         </span>
