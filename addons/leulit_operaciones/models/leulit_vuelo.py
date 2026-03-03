@@ -1995,7 +1995,7 @@ class leulit_vuelo(models.Model):
             return dt_utc.replace(tzinfo=None)
         except Exception as e:
             _logger.error("_date_end_utc %r",e)
-            return None            
+            return None
 
     def _date_start_utc(self):
         try:
@@ -2004,7 +2004,7 @@ class leulit_vuelo(models.Model):
                 item.date_start_utc = valor
         except Exception as e:
             _logger.error("_date_start_utc %r",e)
-            item.date_start_utc = None            
+            item.date_start_utc = None
 
     def _date_end_utc(self):
         try:

@@ -68,19 +68,19 @@ class LeulitJobCard(models.Model):
             new_cr.close()
         _logger.error("############################################# upd_job_card_planned_activities fin")
 
-    # def copy(self, default=None):
-    #     default = dict(default or {})
-    #     default['maintenance_plan_id'] = False
-    #     default['equipamiento_id'] = False
-    #     default['activity_planned_id'] = False
-    #     default['task_id'] = False
-    #     # Duplicar los items relacionados
-    #     new_job_card = super().copy(default)
-    #     for item in self.job_card_item_ids:
-    #         item.copy(default={'job_card_id': new_job_card.id, 'equipamiento_id': False})
-    #     # Duplicar las secciones relacionados
-    #     for section in self.sections_ids:
-    #         section.copy(default={'parent_section_id': new_job_card.id})
-    #     return new_job_card
+    def copy(self, default=None):
+        default = dict(default or {})
+        default['maintenance_plan_id'] = False
+        default['equipamiento_id'] = False
+        default['activity_planned_id'] = False
+        default['task_id'] = False
+        # Duplicar los items relacionados
+        new_job_card = super().copy(default)
+        for item in self.job_card_item_ids:
+            item.copy(default={'job_card_id': new_job_card.id, 'equipamiento_id': False})
+        # Duplicar las secciones relacionados
+        for section in self.sections_ids:
+            section.copy(default={'parent_section_id': new_job_card.id})
+        return new_job_card
 
 
