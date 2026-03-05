@@ -84,12 +84,24 @@
                             <field name="ng" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
                             <field name="nf" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
                             <group>
-                                <field name="tsn_inicio"/>
-                                <field name="tsn_actual"/>
+                                <field name="tsn_inicio" groups="leulit.RolIT_developer"/>
+                                <field name="tsn_actual" groups="leulit.RolIT_developer"/>
                             </group>
                             <group>
-                                <field name="tso_inicio"/>
-                                <field name="tso_actual"/>
+                                <field name="tso_inicio" groups="leulit.RolIT_developer"/>
+                                <field name="tso_actual" groups="leulit.RolIT_developer"/>
+                            </group>
+                            <group>
+                                <field name="potencial_consumido_hr"/>
+                                <field name="potencial_consumido_date"/>
+                            </group>
+                            <group>
+                                <field name="limit_hours"/>
+                                <field name="limit_date"/>
+                            </group>
+                            <group>
+                                <field name="tbo_hours"/>
+                                <field name="tbo_date"/>
                             </group>
                             <group>
                                 <field name="ng_inicio"  invisible="((tipo_motor != 'turbina'))" />

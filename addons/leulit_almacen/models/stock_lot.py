@@ -404,7 +404,12 @@ class StockLot(models.Model):
     rotable_lifelimit = fields.Boolean(related="product_id.rotable_lifelimit",string="Rotable/Life Limit")
     plan_id = fields.Many2one(comodel_name="maintenance.plan", string="Plan")
     equipment_id = fields.Many2one(compute=_get_equipment, comodel_name="maintenance.equipment", string="Componente")
-
+    potencial_consumido_hr = fields.Float(string="Potencial consumido")
+    potencial_consumido_date = fields.Date(string="Fecha potencial consumido")
+    limit_hours = fields.Float(string="Vida límite horas")
+    limit_date = fields.Integer(string="Vida límite dias")
+    tbo_hours = fields.Float(string="TBO horas")
+    tbo_date = fields.Integer(string="TBO dias")
 
     def create_form_one(self):
         self.ensure_one()
