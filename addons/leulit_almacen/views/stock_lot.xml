@@ -93,14 +93,12 @@
                             </group>
                             <group>
                                 <field name="potencial_consumido_hr"/>
-                                <field name="potencial_consumido_date"/>
-                            </group>
-                            <group>
                                 <field name="limit_hours"/>
-                                <field name="limit_date"/>
+                                <field name="tbo_hours"/>
                             </group>
                             <group>
-                                <field name="tbo_hours"/>
+                                <field name="potencial_consumido_date"/>
+                                <field name="limit_date"/>
                                 <field name="tbo_date"/>
                             </group>
                             <group>
