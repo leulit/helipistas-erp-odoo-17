@@ -77,19 +77,9 @@
                             <field name="o_life_hours"/>
                         </group>
                         <group>
-                            <field name="is_motor"/>
-                            <field name="tipo_motor"  invisible="((not is_motor))" />
-                            <field name="tsn" groups="leulit.RolIT_developer"/>
-                            <field name="tso" groups="leulit.RolIT_developer"/>
-                            <field name="ng" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
-                            <field name="nf" groups="leulit.RolIT_developer"  invisible="((tipo_motor != 'turbina'))" />
-                            <group>
-                                <field name="tsn_inicio" groups="leulit.RolIT_developer"/>
-                                <field name="tsn_actual" groups="leulit.RolIT_developer"/>
-                            </group>
-                            <group>
-                                <field name="tso_inicio" groups="leulit.RolIT_developer"/>
-                                <field name="tso_actual" groups="leulit.RolIT_developer"/>
+                            <group>        
+                                <field name="is_motor"/>
+                                <field name="tipo_motor"  invisible="((not is_motor))" />
                             </group>
                             <group>
                                 <field name="potencial_consumido_hr"/>
@@ -108,6 +98,14 @@
                             <group>
                                 <field name="nf_inicio"  invisible="((tipo_motor != 'turbina'))" />
                                 <field name="nf_actual"  invisible="((tipo_motor != 'turbina'))" />
+                            </group>
+                            <group>
+                                <field name="tsn_inicio" groups="leulit.RolIT_developer"/>
+                                <field name="tsn_actual" groups="leulit.RolIT_developer"/>
+                            </group>
+                            <group>
+                                <field name="tso_inicio" groups="leulit.RolIT_developer"/>
+                                <field name="tso_actual" groups="leulit.RolIT_developer"/>
                             </group>
                         </group>
                     </group>
