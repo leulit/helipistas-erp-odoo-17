@@ -128,10 +128,10 @@
                                 <field name="last_location_id" groups="leulit.RolIT_developer"/>
                             </group>
                             <group>
-                                <field name="first_move"/>
-                                <field name="date_first_move"/>
-                                <field name="lot_hlp_ica"/>
-                                <field name="id_pieza"/>
+                                <field name="first_move" groups="leulit.RolIT_developer"/>
+                                <field name="date_first_move" groups="leulit.RolIT_developer"/>
+                                <field name="lot_hlp_ica" groups="leulit.RolIT_developer"/>
+                                <field name="id_pieza" groups="leulit.RolIT_developer"/>
                             </group>
                         </group>
                     </page>
