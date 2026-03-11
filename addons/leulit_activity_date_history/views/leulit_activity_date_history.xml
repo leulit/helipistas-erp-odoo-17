@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Vista tree del histórico -->
+        <record id="leulit_activity_date_history_view_tree" model="ir.ui.view">
+            <field name="name">leulit.activity.date.history.view.tree</field>
+            <field name="model">leulit.activity.date.history</field>
+            <field name="arch" type="xml">
+                <tree create="false" edit="false" delete="false">
+                    <field name="fecha_cambio"/>
+                    <field name="res_name" string="Registro"/>
+                    <field name="res_model" string="Modelo"/>
+                    <field name="activity_type_id"/>
+                    <field name="fecha_anterior"/>
+                    <field name="fecha_nueva"/>
+                    <field name="usuario_id"/>
+                    <field name="nota"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista form del histórico -->
+        <record id="leulit_activity_date_history_view_form" model="ir.ui.view">
+            <field name="name">leulit.activity.date.history.view.form</field>
+            <field name="model">leulit.activity.date.history</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="activity_id"/>
+                                <field name="activity_type_id"/>
+                                <field name="res_model" string="Modelo"/>
+                                <field name="res_name" string="Registro"/>
+                            </group>
+                            <group>
+                                <field name="fecha_anterior"/>
+                                <field name="fecha_nueva"/>
+                                <field name="fecha_cambio"/>
+                                <field name="usuario_id"/>
+                            </group>
+                        </group>
+                        <field name="nota" placeholder="Nota..."/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción para ver el histórico -->
+        <record id="leulit_activity_date_history_action" model="ir.actions.act_window">
+            <field name="name">Histórico cambios fecha actividad</field>
+            <field name="res_model">leulit.activity.date.history</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+    </data>
+</odoo>

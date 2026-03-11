@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem
+            id="leulit_activity_date_history_menuitem"
+            name="Histórico cambios fecha actividad"
+            parent="leulit_planificacion.leulit_20200818_1030_menuitem"
+            action="leulit_activity_date_history_action"
+            sequence="95"
+            groups="leulit.RBase"/>
+
+    </data>
+</odoo>
