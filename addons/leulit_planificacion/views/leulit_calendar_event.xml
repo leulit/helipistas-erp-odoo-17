@@ -115,6 +115,12 @@
                     <field name="cancelado" invisible="1"/>
                     <button string="Crear Reunión" icon="fa-plus" type="object" name="create_reunion"  invisible="reunion_id" />
                     <button string="Abrir Reunión" icon="fa-edit" type="object" name="open_reunion"  invisible="not reunion_id" />
+                    <button string="Crear Parte Vuelo" icon="fa-plane" type="object" name="action_create_flight_part_from_calendar" invisible="not can_create_flight_part_from_event" />
+                    <button string="Crear Parte Escuela" icon="fa-graduation-cap" type="object" name="action_create_school_part_from_calendar" invisible="not can_create_school_part_from_event" />
+                    <field name="task_id" invisible="1"/>
+                    <field name="can_create_flight_part_from_event" invisible="1"/>
+                    <field name="can_create_school_part_from_event" invisible="1"/>
+                    <field name="school_part_exists" invisible="1"/>
                     <field name="reunion_id" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='description']" position="before">
