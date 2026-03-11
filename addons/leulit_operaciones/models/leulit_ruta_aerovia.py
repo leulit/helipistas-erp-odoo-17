@@ -83,8 +83,8 @@ class leulit_ruta_aerovia(models.Model):
 
     def _get_aeroviasids(self):
         return self.search(['|',('start_point_id', 'in', self.ids ),('end_point_id', 'in', self.ids )])
-    
-    
+
+
     def _get_doc(self):
         for item in self:
             docs_ids = self.env['ir.attachment'].search([('res_model','=','leulit.ruta_aerovia'),('res_id','=',item.id)])
