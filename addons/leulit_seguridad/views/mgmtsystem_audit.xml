@@ -81,6 +81,7 @@
                                 <field name="user_id" string="Gerente de auditoría" required="1"  readonly="((state == 'done'))" />
                                 <field name="company_id" groups="base.group_multi_company"/>
                                 <field name="department_id"  readonly="((state == 'done'))" />
+                                <field name="department_ids" widget="many2many_tags" readonly="((state == 'done'))" />
                                 <field name="last_revision_norma"  readonly="((state == 'done'))" />
                             </group>
                             <notebook colspan="4">

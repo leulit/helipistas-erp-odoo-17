@@ -68,6 +68,7 @@ class MgmtsystemAudit(models.Model):
     last_revision_norma = fields.Text(string='Última revisión norma')
     procedimiento_id = fields.Many2one(comodel_name="leulit.procedure_audit_question", string="Procedimiento")
     department_id = fields.Many2one(comodel_name="hr.department", string="Área")
+    department_ids = fields.Many2many(comodel_name="hr.department", relation="mgmtsystem_audit_department_rel", column1="audit_id", column2="department_id", string="Áreas")
     close_text = fields.Text(string="Redacción de cierre")
     closing_date = fields.Datetime("Fecha de cierre", readonly=False)
     responsible_department_id = fields.Many2one(comodel_name="hr.employee", string="Responsable de área")
