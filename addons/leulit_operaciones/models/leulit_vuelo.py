@@ -2029,11 +2029,11 @@ class leulit_vuelo(models.Model):
     @api.onchange('nv')
     def onchange_nv(self):
         if self.nv:
-            self.nv_uid = self.env.uid
-            self.nv_date = fields.Datetime.now()
-        else:
             self.nv_uid = False
             self.nv_date = False
+        else:
+            self.nv_uid = self.env.uid
+            self.nv_date = fields.Datetime.now()
 
     @api.depends('fechasalida', 'helicoptero_id')
     def check_first_flight(self):
