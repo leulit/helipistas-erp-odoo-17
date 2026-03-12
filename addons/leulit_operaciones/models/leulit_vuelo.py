@@ -1382,7 +1382,7 @@ class leulit_vuelo(models.Model):
 
 
     def _compute_is_it_developer(self):
-        is_dev = self.env.user.has_group('leulit.RolIT_developer')
+        is_dev = self.env.user.has_group('leulit.RolIT_developer') or self.env.user.has_group('leulit.ROperaciones_gestor')
         for item in self:
             item.is_it_developer = is_dev
 
