@@ -1381,6 +1381,11 @@ class leulit_vuelo(models.Model):
             item.night_hours = tiempo
 
 
+    def _compute_is_it_developer(self):
+        is_dev = self.env.user.has_group('leulit.RolIT_developer')
+        for item in self:
+            item.is_it_developer = is_dev
+
     @api.depends('vuelo_tipo_line')
     def _get_vuelo_tipo_main(self):
         for item in self:
@@ -2118,6 +2123,7 @@ class leulit_vuelo(models.Model):
     notneednotam = fields.Boolean('No necesita NOTAM')
     descnotneednotam = fields.Selection([('vuelo-local', 'Vuelo local'),('otros', 'Otros')], 'Motivo no verificado')
     vuelo_tipo_line = fields.One2many('leulit.vuelo_tipo_line', 'vuelo_id', 'Tipo Vuelo')
+    is_it_developer = fields.Boolean(compute='_compute_is_it_developer')
     vuelo_tipo_main = fields.Char(compute=_get_vuelo_tipo_main,string='Vuelo Tipo Main',search=_search_vuelo_tipo_main)
     numpax = fields.Integer('Nº de pax / AESA', help='Numero de pasajeros')
     numtripulacion = fields.Integer('Nº tripulantes',default=1)

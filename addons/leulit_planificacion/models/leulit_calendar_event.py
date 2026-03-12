@@ -477,8 +477,6 @@ class leulit_calendar_event(models.Model):
                 event.type_event and
                 event.type_event.is_vuelo
             )
-            event.can_create_school_part_from_event = False
-            event.can_create_flight_part_from_event = False
 
     def open_task(self):
         self.ensure_one()

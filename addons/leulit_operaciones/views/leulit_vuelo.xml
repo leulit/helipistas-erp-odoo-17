@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <form string="Vuelo">
                     <field name="wbdata" invisible="1"/>
+                    <field name="is_it_developer" invisible="1"/>
                     <field name="p_corregido" invisible="1"/>
                     <field name="p_corregido_date" invisible="1"/>
                     <field name="wbimage" invisible="1"/>
@@ -196,7 +197,7 @@
                                 </div>
                                 <!-- Visible sólo en PC con bootstrap -->
                                 <div class="card p-2 d-none d-sm-block" style="width: 50%">
-                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
+                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado') and not is_it_developer">
                                         <tree string="Tipos de vuelo" editable="bottom">
                                             <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
@@ -204,7 +205,7 @@
                                 </div>
                                 <!-- Visible sólo el mobil con bootstrap -->
                                 <div class="card p-2 d-block d-sm-none" style="width: 100%">
-                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
+                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado') and not is_it_developer">
                                         <tree string="Tipos de vuelo" editable="bottom">
                                             <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
