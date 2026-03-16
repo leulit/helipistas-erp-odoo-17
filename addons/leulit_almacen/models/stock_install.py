@@ -168,14 +168,14 @@ class StockInstall(models.TransientModel):
     def do_uninstall(self):
         self._check_company()
         for uninstall in self:
-            uninstall.name = self.with_company(2).env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
-            move = self.env['stock.move'].create(uninstall._prepare_move_values())
+            name = self.env['ir.sequence'].next_by_code('stock.uninstall') or _('New')
+            move = self.env['stock.move'].create(uninstall._prepare_move_values_uninstall(name))
             # Confirm and assign the move to create and reserve move lines
             move._action_confirm()
             move._action_assign()
             # Set lot, owner and mark as picked on move lines
             for move_line in move.move_line_ids:
-                move_line.lot_id = uninstall.lot_id.id
+                move_line.lot_id = uninstall.desinstalacion_lot_id.id
                 move_line.owner_id = uninstall.owner_id.id
                 move_line.picked = True
             # Now mark as done
