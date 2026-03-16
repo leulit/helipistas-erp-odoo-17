@@ -13,7 +13,7 @@ class StockMoveLine(models.Model):
     _name = 'stock.move.line'
     _inherit = 'stock.move.line'
 
-    def _action_done_stock_move(self):
+    def action_done_stock_move(self):
         for move_line in self:
             if move_line.move_id:
                 move_line.move_id._action_done()
