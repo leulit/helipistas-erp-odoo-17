@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="report_leulit_checklist" model="ir.actions.report">
+        <field name="name">Informe Checklist</field>
+        <field name="model">leulit.checklist</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit.leulit_20220607_1511_informe</field>
+        <field name="report_file">leulit.leulit_20220607_1511_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Informe Checklist-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_leulit_checklist"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="report_leulit_checklist_template" model="ir.actions.report">
+        <field name="name">Informe Plantilla Checklist</field>
+        <field name="model">leulit.checklist_template</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit.leulit_20221107_1702_informe</field>
+        <field name="report_file">leulit.leulit_20221107_1702_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Informe Plantilla Checklist-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_leulit_checklist_template"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

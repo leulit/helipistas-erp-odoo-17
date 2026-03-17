@@ -41,9 +41,10 @@
         "views/stock.xml",
         "views/sale_order.xml",
         "views/leulit_checklist.xml",
-        "views/leulit_report_checklist.xml",
         "views/leulit_checklist_template.xml",
         "views/leulit_checklist_item.xml",
+        "report/leulit_report_checklist.xml",
+        "report/ir_actions_report.xml",
         "adjuntos.xml",
         "menu.xml",
         "precision.xml"

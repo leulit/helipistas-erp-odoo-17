@@ -2,16 +2,6 @@
 <odoo>
     <data>  
 
-        <report
-            id="report_leulit_checklist"
-            string="Informe checklist"
-            model="leulit.checklist"
-            report_type="qweb-pdf"
-            file="leulit.leulit_20220607_1511_informe"
-            name="leulit.leulit_20220607_1511_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
-
         <template id="leulit_20220607_1511_informe">
             <t t-call="web.html_container">
                 <style type="text/css">
@@ -95,15 +85,6 @@
         </template>
 
 
-        <report
-            id="report_leulit_checklist_template"
-            string="Informe plantilla checklist"
-            model="leulit.checklist_template"
-            report_type="qweb-pdf"
-            file="leulit.leulit_20221107_1702_informe"
-            name="leulit.leulit_20221107_1702_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />
 
         <template id="leulit_20221107_1702_informe">
             <t t-call="web.html_container">
