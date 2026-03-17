@@ -20,6 +20,10 @@ class leulit_checklist(models.Model):
 
     def checklist_print_report(self):
         for rec in self:
+            logo_reports = False
+            company_helipistas = self.env['res.company'].search([('name','like','Helipistas')])
+            if company_helipistas:
+                logo_reports = company_helipistas.logo_reports
             items_checklist = []
             for item in rec.items:
                 items_checklist.append({
@@ -29,6 +33,7 @@ class leulit_checklist(models.Model):
             data = {
                 'items' : items_checklist,
                 'descriptor':  rec.descriptor,
+                'logo': logo_reports,
             }
             return self.env.ref('leulit.report_leulit_checklist').report_action([],data=data)
 
