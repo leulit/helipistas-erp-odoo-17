@@ -18,3 +18,4 @@ class MgmtsystemNonconformity(models.Model):
         readonly=True,
     )
     partner_id = fields.Many2one("res.partner", "Partner", required=False)
+    create_date = fields.Datetime("Creado en", readonly=False)
