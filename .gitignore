@@ -7,3 +7,5 @@
 .vscode
 /venv
 /scripts
+.claude
+claude.md
