@@ -447,13 +447,13 @@ class ParteVuelo(models.Model):
         threaded_calculation.start()
 
     def run_set_account_analytic_lines_recurrent(self):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
             context = dict(self._context)
             hoy = datetime.now().strftime("%Y-%m-%d")
-            for item in self.search([('estado','=','cerrado'),('fechavuelo','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))], order="fechavuelo ASC, horasalida ASC"):
-                account_analytic_lines = self.env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
+            for item in env['leulit.vuelo'].search([('estado','=','cerrado'),('fechavuelo','>=',(datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"))], order="fechavuelo ASC, horasalida ASC"):
+                account_analytic_lines = env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
                 if not account_analytic_lines or len(account_analytic_lines) == 0:
                     item.after_update_create_tiempo_imputado()
                     new_cr.commit()
@@ -467,19 +467,19 @@ class ParteVuelo(models.Model):
         threaded_calculation.start()
 
     def run_set_account_analytic_lines_it(self, fecha, codigo):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
             context = dict(self._context)
             if codigo:
-                for item in self.search([('codigo','like',codigo)]):
-                    account_analytic_lines = self.env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
+                for item in env['leulit.vuelo'].search([('codigo','like',codigo)]):
+                    account_analytic_lines = env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
                     if not account_analytic_lines or len(account_analytic_lines) == 0:
                         item.after_update_create_tiempo_imputado()
                         new_cr.commit()
             else:
-                for item in self.search([('fechavuelo','>=',fecha),('estado','=','cerrado')]):
-                    account_analytic_lines = self.env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
+                for item in env['leulit.vuelo'].search([('fechavuelo','>=',fecha),('estado','=','cerrado')]):
+                    account_analytic_lines = env['account.analytic.line'].search([('idmodelo', '=', item.id),('modelo','=','leulit.vuelo')])
                     if not account_analytic_lines or len(account_analytic_lines) == 0:
                         item.after_update_create_tiempo_imputado()
                         new_cr.commit()
