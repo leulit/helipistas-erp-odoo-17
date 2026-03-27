@@ -1561,7 +1561,8 @@ class leulit_vuelo(models.Model):
                 'aerovia_id' : av.aerovia_id.id,
                 'aerovia_ruta_id' : av.id,
                 'vuelo_id': self.id,
-                'tiempoprevisto': round(tp,2)}))
+                'tiempoprevisto': round(tp,2),
+                'altitudprevista': av.altitudprevista}))
         if (self.ruta_id):
             vals = {
                 'aerovia_ids'                   : new_aerovia_ids,

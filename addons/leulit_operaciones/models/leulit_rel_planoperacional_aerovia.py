@@ -41,7 +41,7 @@ class leulit_rel_planoperacional_aerovia(models.Model):
 	aerovia_ruta_id = fields.Many2one('leulit.rel_ruta_aerovia', 'Aerovía Ruta')
 	distancia = fields.Float(related='aerovia_id.distancia',string='NM',store=True)
 	rumbo = fields.Float(related='aerovia_id.rumbo',string='Rumbo (º)',store=True)
-	altitudprevista = fields.Float(related='aerovia_ruta_id.altitudprevista',string='Altitud prevista (p)',store=True)
+	altitudprevista = fields.Float(string='Altitud prevista (p)',store=True)
 	altitudseguridad = fields.Float(related='aerovia_id.altitudseguridad',string='Altitud seguridad (p)',store=False)
 	tiempoprevisto = fields.Float(string='Tiempo previsto',readonly=False)
 	strtiempoprevisto = fields.Char(compute='_get_str_horas',string='Tiempo previsto (hh:mm)',store=True)
