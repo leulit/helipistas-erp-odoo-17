@@ -5,6 +5,7 @@ from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationE
 import logging
 from datetime import datetime
 from odoo.addons.leulit import utilitylib
+import threading
 
 _logger = logging.getLogger(__name__)
 
@@ -47,3 +48,20 @@ class leulit_rel_planoperacional_aerovia(models.Model):
 	strtiempoprevisto = fields.Char(compute='_get_str_horas',string='Tiempo previsto (hh:mm)',store=True)
 	latorigen = fields.Float(compute='_get_lat_origen',string='Lat. Origen')
 	lngorigen = fields.Float(compute='_get_lng_origen',string='Lng. Origen')
+
+	def fill_altitudprevista(self):
+		_logger.info("################### fill_altitudprevista - iniciando thread")
+		threaded_calculation = threading.Thread(target=self.run_fill_altitudprevista)
+		_logger.info("################### fill_altitudprevista - thread iniciado")
+		threaded_calculation.start()
+
+	def run_fill_altitudprevista(self):
+		db_registry = registry(self.env.cr.dbname)
+		with db_registry.cursor() as new_cr:
+			env = api.Environment(new_cr, self.env.uid, self.env.context)
+			registros = env['leulit.rel_planoperacional_aerovia'].search([])
+			for item in registros:
+				if item.aerovia_ruta_id and item.aerovia_ruta_id.altitudprevista:
+					item.altitudprevista = item.aerovia_ruta_id.altitudprevista
+					new_cr.commit()
+		_logger.info('################### fill_altitudprevista - thread finalizado')
