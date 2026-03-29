@@ -15,7 +15,7 @@
 
         <record model="ir.actions.act_url" id="leulit_20230328_1139_action">
             <field name="name">Open documentación ATO</field>
-            <field name="url">https://drive.google.com/drive/u/0/shared-drives</field>
+            <field name="url">https://drive.google.com/drive/folders/10b4ZqvgcMo2vBLS88VmjbM7Cxt-XIDgi?usp=drive_link</field>
             <field name="target">new</field>
         </record>
 
