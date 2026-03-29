@@ -46,10 +46,10 @@ class MgmtsystemNonconformity(models.Model):
         "Related to", default=lambda self: self._default_reference()
     )
     responsible_user_id = fields.Many2one(
-        "res.users", "Responsible", required=False, tracking=True
+        "res.users", "Responsible", required=True, tracking=True
     )
     manager_user_id = fields.Many2one(
-        "res.users", "Manager", required=False, tracking=True
+        "res.users", "Manager", required=True, tracking=True
     )
     user_id = fields.Many2one(
         "res.users",
@@ -64,7 +64,7 @@ class MgmtsystemNonconformity(models.Model):
         "nonconformity_id",
         "origin_id",
         "Origin",
-        required=False,
+        required=True,
     )
     procedure_ids = fields.Many2many(
         "document.page",

@@ -19,6 +19,20 @@ class MgmtsystemNonconformity(models.Model):
     )
     partner_id = fields.Many2one("res.partner", "Partner", required=False)
     create_date = fields.Datetime("Creado en", readonly=False)
+    responsible_user_id = fields.Many2one(
+        "res.users", "Responsible", required=False, tracking=True
+    )
+    manager_user_id = fields.Many2one(
+        "res.users", "Manager", required=False, tracking=True
+    )
+    origin_ids = fields.Many2many(
+        "mgmtsystem.nonconformity.origin",
+        "mgmtsystem_nonconformity_origin_rel",
+        "nonconformity_id",
+        "origin_id",
+        "Origin",
+        required=False,
+    )
 
     def write(self, vals):
         create_date = vals.pop("create_date", None)
