@@ -28,7 +28,8 @@ class leulit_anomalia(models.Model):
             vals.update({'vuelo_id': item.id })
 
         anomalia = super(leulit_anomalia, self).create(vals)
-         
+        anomalia.wizard_send_email()
+        
         return anomalia
 
 
@@ -85,15 +86,17 @@ class leulit_anomalia(models.Model):
         estado = self.estado
         context = self.env.context.copy()
         if self.baja_helicoptero == False:
+            if estado == "edicion":
+                context.update({'subject': u' Se ha creado una anomalía/defecto en edición({0})'.format(self.codigo)})
             if estado == "pending":
-                context.update({'subject': u' Se ha creado una anomalía/defecto ({0})'.format(self.codigo)})
+                context.update({'subject': u' Se pone en pendiente la anomalía/defecto({0})'.format(self.codigo)})
             if estado == "deferred":
-                context.update({'subject': u' Se ha diferido una anomalía/defecto ({0})'.format(self.codigo)})
+                context.update({'subject': u' Se ha diferido la anomalía/defecto ({0})'.format(self.codigo)})
             if estado == "closed":
-                context.update({'subject': u' Se ha cerrado una anomalía/defecto ({0})'.format(self.codigo)})
+                context.update({'subject': u' Se ha cerrado la anomalía/defecto ({0})'.format(self.codigo)})
             if estado == "flightcanceled":
                 context.update({'subject': u' Se ha cancelado un vuelo debido a una anomalía/defecto ({0})'.format(self.codigo)})
-            emails=['erpanomalias@helipistas.com', 'otecnica@helipistas.com']
+            emails=['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
             for emailto in emails:
                 context.update({'mail_to': emailto})
                 template = self.with_context(context).env.ref("leulit_seguridad.leulit_anomalia_mail_camo_estado")
