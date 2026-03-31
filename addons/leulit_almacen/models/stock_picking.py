@@ -135,15 +135,25 @@ class StockPicking(models.Model):
         }
     
     def view_picking_reparacion(self):
-        return {
-            'name': _('Albarán Reparación'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'stock.picking',
-            'view_id': False,
-            'res_id': self.picking_related.id
-        }
-
+        pickings = self.search([('picking_related','=',self.id)])
+        if len(pickings) > 1:
+            return {
+                'name': _('Albaranes Reparación'),
+                'type': 'ir.actions.act_window',
+                'view_mode': 'tree,form',
+                'res_model': 'stock.picking',
+                'view_id': False,
+                'domain': [('picking_related','=',self.id)]
+            }
+        else:
+            return {
+                'name': _('Albarán Reparación'),
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'stock.picking',
+                'view_id': False,
+                'res_id': self.picking_related.id
+            }
 
     rel_stock_production_lot = fields.One2many(compute="_get_stock_production_lot_from_stock_move_line",comodel_name="stock.lot",inverse_name="rel_stock_picking",string="Piezas", store=False)
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order", domain=[('done','=',False)])
