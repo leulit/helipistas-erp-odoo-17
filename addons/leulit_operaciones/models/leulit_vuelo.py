@@ -1222,11 +1222,19 @@ class leulit_vuelo(models.Model):
             item.strfechasalida = tira
 
 
-    @api.depends('fechavuelo','horallegada')
+    @api.depends('fechavuelo','horallegada','horasalida')
     def _calc_fecha_llegada(self):
         for item in self:
-            date2 = utilitylib.leulit_float_time_to_str( item.horallegada )
-            date1 = item.fechavuelo.strftime("%Y-%m-%d")
+            horallegada = item.horallegada
+            # Normalizar valores >= 24 (datos viejos o suma sin normalizar)
+            if horallegada >= 24.0:
+                horallegada = horallegada - 24.0
+            # Detectar cruce de medianoche: si hora llegada normalizada < hora salida, el aterrizaje es al día siguiente
+            fecha_llegada = item.fechavuelo
+            if horallegada and item.horasalida and horallegada < item.horasalida:
+                fecha_llegada = item.fechavuelo + timedelta(days=1)
+            date2 = utilitylib.leulit_float_time_to_str( horallegada )
+            date1 = fecha_llegada.strftime("%Y-%m-%d")
             try:
                 tira =  date1+" "+date2
                 valor = datetime.strptime(tira,"%Y-%m-%d %H:%M")
@@ -1234,7 +1242,7 @@ class leulit_vuelo(models.Model):
             except ValueError:
                 item.fechallegada = False
 
-            date1 = item.fechavuelo.strftime("%d/%m/%Y")
+            date1 = fecha_llegada.strftime("%d/%m/%Y")
             tira =  date1+" "+date2
             item.strfechallegada = tira
     
@@ -1674,7 +1682,10 @@ class leulit_vuelo(models.Model):
 
         combustibleextra = fuelsalida - combustibleminimo
         
-        vuelo.horallegadaprevista = vuelo.horasalida + vuelo.tiempoprevisto
+        horallegadaprevista = vuelo.horasalida + vuelo.tiempoprevisto
+        if horallegadaprevista >= 24.0:
+            horallegadaprevista = horallegadaprevista - 24.0
+        vuelo.horallegadaprevista = horallegadaprevista
 
         minutosprevistos = utilitylib.leulit_float_time_to_minutes(vuelo.tiempoprevisto)
         fuellanding = fuelsalida - (vuelo.consumomedio_vuelo * minutosprevistos)
@@ -1754,6 +1765,8 @@ class leulit_vuelo(models.Model):
     @api.onchange('tiemposervicio')
     def updateHoraLlegada(self):
         valor = (self.horasalida + self.tiemposervicio)
+        if valor >= 24.0:
+            valor = valor - 24.0
         fuellanding = self._calc_fuelllegada(self.tiemposervicio, self.fuelsalida, self.consumomedio_vuelo)
 
         return {
@@ -1826,13 +1839,19 @@ class leulit_vuelo(models.Model):
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strhorasalida = tira
 
-    @api.depends('horallegada')
+    @api.depends('horallegada','horasalida')
     def _strhorallegada(self):
         tira = ""
         valor = 0
         for item in self:
             valor = item.horallegada
+            # Normalizar valores >= 24 (datos viejos o suma sin normalizar)
+            if valor >= 24.0:
+                valor = valor - 24.0
             tira = utilitylib.hlp_float_time_to_str( valor )
+            # Indicar cruce de medianoche con (+1)
+            if valor and item.horasalida and valor < item.horasalida:
+                tira = tira + " (+1)"
             item.strhorallegada = tira
 
     @api.depends('tiemposervicio')
