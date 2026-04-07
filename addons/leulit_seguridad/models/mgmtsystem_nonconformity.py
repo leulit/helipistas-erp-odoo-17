@@ -1,5 +1,5 @@
 
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, registry
 import logging
 import threading
 
@@ -56,15 +56,14 @@ class MgmtsystemNonconformity(models.Model):
         threaded_calculation.start()
 
     def run_set_default_origin_on_nonconformity(self):
-        with api.Environment.manage():
-            new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
-            context = dict(self._context)
-            origin = self.env['mgmtsystem.nonconformity.origin'].with_context(context).sudo().browse(24)
-            nonconformities = self.env['mgmtsystem.nonconformity'].with_context(context).sudo().search([
+        db_registry = registry(self.env.cr.dbname)
+        with db_registry.cursor() as new_cr:
+            env = api.Environment(new_cr, self.env.uid, self.env.context)
+            origin = env['mgmtsystem.nonconformity.origin'].sudo().browse(24)
+            nonconformities = env['mgmtsystem.nonconformity'].sudo().search([
                 ('origin_ids', '=', False)
             ])
             for nc in nonconformities:
                 nc.write({'origin_ids': [(4, origin.id)]})
-                self.env.cr.commit()
+                new_cr.commit()
         _logger.error('################### set_default_origin_on_nonconformity fin thread')
