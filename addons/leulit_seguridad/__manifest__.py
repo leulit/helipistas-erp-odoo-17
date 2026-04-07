@@ -17,6 +17,7 @@
         "security.xml",
         "sequences.xml",
         "views/leulit_anomalia.xml",
+        "views/leulit_anotacion_techincal_log.xml",
         "report/leulit_informe_anomalia.xml",
         "report/ir_actions_report.xml",
         "views/leulit_vuelo.xml",

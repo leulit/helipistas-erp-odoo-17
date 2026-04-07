@@ -1,4 +1,5 @@
 from . import leulit_anomalia
+from . import leulit_anotacion_technical_log
 from . import leulit_anomalia_scripts
 from . import leulit_vuelo
 from . import maintenance_equipment

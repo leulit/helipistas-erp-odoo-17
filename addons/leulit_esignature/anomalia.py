@@ -209,10 +209,10 @@ class Anomalia(models.Model):
             else:
                 item.semaforo_firma = "N.A."
 
-    
+
     def get_anomalias_unsigned_by_helicoptero(self, helicoptero_id):
         return self.search([('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')])
-    
+
 
     def haveNoGo(self, helicoptero_id, fecha):
         nitems = self.search_count([('fecha','<=',fecha),('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')])

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20260401_1013_tree">
+            <field name="name">leulit_20260401_1013_tree</field>
+            <field name="model">leulit.anotacion_technical_log</field>
+            <field name="arch" type="xml">
+                <tree string="Anotaciones Technical Log">
+                    <field name="codigo" />
+                    <field name="estado" column_invisible="1"/>
+                    <field name="anotacion" />
+                    <field name="fecha" />
+                    <field name="helicoptero_id" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="leulit_20260401_1013_form">
+            <field name="name">leulit_20260401_1013_form</field>
+            <field name="model">leulit.anotacion_technical_log</field>
+            <field name="arch" type="xml">
+                <form string="Anotación Technical Log">
+                    <sheet>
+                        <header>
+                            <button name="wizard_cerrar" type="object" string="Cerrar" invisible="estado in ['ending']"  class="oe_right oe_highlight"/>
+                            <button name="wizard_activar" type="object" string="Activar" invisible="estado in ['active', 'ending']"  class="oe_right oe_highlight"/>
+                            <field name="estado" widget="statusbar" class="oe_right"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="codigo" readonly="1"/>
+                                <field name="fecha" readonly="estado == 'ending'"/>
+                            </group>
+                            <group>
+                                <field name="informado_por" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="helicoptero_id" readonly="estado == 'ending'" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="anotacion" readonly="estado == 'ending'"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="leulit_20260401_1013_action">
+            <field name="name">Anotaciones Technical Log</field>
+            <field name="res_model">leulit.anotacion_technical_log</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="leulit_anotacion_technical_log_mail_camo_estado" model="mail.template">
+            <field name="name">Helipistas mail informa estado anotación technical log CAMO</field>
+            <field name="model_id" ref="model_leulit_anotacion_technical_log" />
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">albert@icarus-manteniment.com,otecnica@helipistas.com</field>
+            <field name="subject">{{ ctx.get('subject') }}</field>
+            <field name="auto_delete" eval="True" />
+            <field name="body_html" type="html">
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            Código:
+                        </td>
+                        <td>
+                            <t t-out="object.codigo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Estado:
+                        </td>
+                        <td>
+                            <t t-out="object.estado"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Máquina:
+                        </td>
+                        <td>
+                            <t t-out="object.helicoptero_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Anotación:
+                        </td>
+                        <td>
+                            <t t-out="object.anotacion"/><br/>
+                        </td>
+                    </tr>
+                </table>
+            </field>
+        </record>
+
+    </data>
+</odoo>

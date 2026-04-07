@@ -53,6 +53,13 @@
         action="leulit_20250730_1513_action" 
         sequence="20"
     />
+    <menuitem 
+        id="leulit_20260401_1013_menuitem" 
+        name="Anotaciones Technical Log" 
+        parent="leulit_20201026_0823_menuitem" 
+        action="leulit_20260401_1013_action" 
+        sequence="20"
+    />
 
 
 

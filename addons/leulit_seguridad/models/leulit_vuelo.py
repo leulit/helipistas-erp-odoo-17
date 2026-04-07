@@ -23,19 +23,19 @@ class leulit_vuelo(models.Model):
         for item in self:
             if item.helicoptero_id:
                 item.diferido_ids = self.env['leulit.anomalia'].get_anomalias_unsigned_by_helicoptero(item.helicoptero_id.id)
-       
-                
-    # @api.depends('fechavuelo')
-    # def _get_anomalias_by_fecha(self):
-    #     for item in self:
-    #          item.print_anomalia_ids = self.env['leulit.anomalia'].get_diferidos_by_fecha(item['fechavuelo'])
 
+    @api.depends('helicoptero_id','fechavuelo')
+    def _get_anotaciones(self):
+        for item in self:
+            if item.helicoptero_id:
+                item.anotacion_ids = self.env['leulit.anotacion_technical_log'].search([('helicoptero_id','=',item.helicoptero_id.id),('estado','=','active')])
+       
 
     @api.onchange('helicoptero_id', 'estado' , 'fechavuelo')
     def onchange_helicoptero_estado_fechavuelo(self):
         for item in self:
             item.diferido_ids = self.env['leulit.anomalia'].get_anomalias_unsigned_by_helicoptero(item.helicoptero_id.id)
-        
+            item.anotacion_ids = self.env['leulit.anotacion_technical_log'].search([('helicoptero_id','=',item.helicoptero_id.id),('estado','=','active')])
 
     def wizard_add_anomalia(self):
         self.ensure_one()
@@ -59,3 +59,4 @@ class leulit_vuelo(models.Model):
     diferido_ids = fields.One2many(compute=_get_anomalias, string='Anomalías/Defeectos', store=False, comodel_name='leulit.anomalia')
     anomalia_ids = fields.One2many('leulit.anomalia', 'vuelo_id', string='Anomalías/Defectos', domain=[('estado', 'in', ['deferred', 'pending', 'flightcanceled'])])
     # print_anomalia_ids = fields.One2many(compute='_get_anomalias_by_fecha',string='Anomalías/Defectos',store=False,comodel_name='leulit.anomalia')
+    anotacion_ids = fields.One2many(compute=_get_anotaciones, comodel_name='leulit.anotacion_technical_log', string='Anotaciones Technical Log', store=False)
