@@ -226,9 +226,9 @@ class leulit_anomalia(models.Model):
     tenerencuentamel = fields.Text('POI / Exceptions',)
     fechalimite = fields.Date('Dead date')
     fechadiferido = fields.Date('Fecha diferido', readonly=True)
-    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic')],'')
-    rol_difiere = fields.Selection([('1', 'Pilot'),('2', 'Mechanic')], '')
-    rol_close = fields.Selection([('1', 'Pilot'), ('2', 'Mechanic')], '')
+    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'')
+    rol_difiere = fields.Selection([('1', 'Pilot'),('2', 'Mechanic'),('3','CAMO'),('4','Others')], '')
+    rol_close = fields.Selection([('1', 'Pilot'), ('2', 'Mechanic'),('3','CAMO'),('4','Others')], '')
     lugaranomalia = fields.Char('Lugar anomalía')
     fecha_crs = fields.Date('Fecha CRS')
 
@@ -294,5 +294,5 @@ class leulit_anomalia(models.Model):
     domain_materiales = fields.One2many('maintenance.equipment','anomalia',string="domain materiales")
     notificacion_sms = fields.Text('Notificación al SMS')
 
-    maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Orden de trabajo")
+    maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order")
 

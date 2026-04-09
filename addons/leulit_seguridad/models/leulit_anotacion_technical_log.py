@@ -30,13 +30,13 @@ class leulit_anotacion_technical_log(models.Model):
     def unlink(self):
         if not self.env.user.has_group("leulit.RBase_hide"): 
             for item in self:
-                if item.estado in ['ending','active']:
+                if item.estado in ['closed','active']:
                     raise UserError('Una anotación cerrada o activa no puede ser eliminada. Pongase en contacto con el responsable de operaciones.')
         return super(leulit_anotacion_technical_log, self).unlink()
 
 
     def wizard_cerrar(self):
-        self.estado = "ending"
+        self.estado = "closed"
         self.wizard_send_email()
 
     def wizard_activar(self):
@@ -50,7 +50,7 @@ class leulit_anotacion_technical_log(models.Model):
             context.update({'subject': u' Se crea la anotación({0})'.format(self.codigo)})
         if self.estado == "active":
             context.update({'subject': u' Se activa la anotación({0})'.format(self.codigo)})
-        if self.estado == "ending":
+        if self.estado == "closed":
             context.update({'subject': u' Se ha cerrado la anotación ({0})'.format(self.codigo)})
         emails=['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
         for emailto in emails:
@@ -62,10 +62,19 @@ class leulit_anotacion_technical_log(models.Model):
                 pass
 
 
-    codigo = fields.Char('Código', readonly=True)
-    estado = fields.Selection([('pending', 'Pendiente'),('active', 'Activo'),('ending', 'Finalizado')], 'Estado',default="pending")
-    anotacion = fields.Text('Anotación', required=True)
-    fecha = fields.Date('Fecha', required=True)
-    informado_por = fields.Many2one('res.partner', 'Informado por', readonly=True)
-    helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicoptero', required=True, domain="[('baja','=',False)]")
-    vuelo_id = fields.Many2one('leulit.vuelo', 'Vuelo')
+    codigo = fields.Char('Code', readonly=True)
+    estado = fields.Selection([('pending', 'Pending'),('active', 'Active'),('closed', 'Closed')], 'State',default="pending")
+    anotacion = fields.Text('Annotation', required=True)
+    fecha = fields.Date('Date', required=True)
+    informado_por = fields.Many2one('res.partner', 'Reported by', readonly=True)
+    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'')
+    lugar = fields.Char('Place')
+    helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicopter', required=True, domain="[('baja','=',False)]")
+
+    fecha_cierre = fields.Date('Closing date')
+    cerrado_por = fields.Many2one('res.partner', 'Cerrado por')
+    rol_close = fields.Selection([('1', 'Pilot'), ('2', 'Mechanic'),('3','CAMO'),('4','Others')], '')
+    lugar_cierre = fields.Char('Place')
+    accion_cierre = fields.Text('Reason')
+    
+
