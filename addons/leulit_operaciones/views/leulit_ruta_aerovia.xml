@@ -34,14 +34,8 @@
                             <field name="water_zone"/>
                             <field name="doc_id" invisible="1"/>
                         </group>
-                        <table>
-                            <tr>
-                                <td style="width:800px; height:600px">
-                                    <div class="o_google_map_view" style="width:800px; height:600px">
-                                    </div>
-                                </td>
-                            </tr>
-                        </table> 
+                        <div id="gmap_aerovia_div" style="width:800px; height:600px;"/>
+
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
