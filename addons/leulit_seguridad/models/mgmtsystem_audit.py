@@ -19,11 +19,9 @@ class MgmtsystemAudit(models.Model):
             line.copy(default={'audit_id': new_auditoria.id})
         return new_auditoria
 
-
     @api.onchange('procedimiento_id')
     def onchange_procedimiento_questions(self):
         if self.procedimiento_id:
-            _logger.error('info estoy pasando por aqui ')
             self.line_ids = [(5, 0, 0)]
             lines = []
             for line in self.procedimiento_id.questions_ids:
@@ -33,7 +31,6 @@ class MgmtsystemAudit(models.Model):
                     'question_id': line.id,
                     'notas': line.notas,
                 }))
-                _logger.error('info estoy pasando por aqui 2')
             self.line_ids = lines
 
     def button_close_informe(self):

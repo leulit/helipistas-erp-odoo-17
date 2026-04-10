@@ -97,6 +97,7 @@
                                     </group>
                                     <field name="line_ids" nolabel="1"  readonly="((state == 'done'))"  context="{'form_view_ref': 'leulit_seguridad.leulit_20240320_1122_form'}">
                                         <tree>
+                                            <field name="question_id" column_invisible="1"/>
                                             <field name="seq"/>
                                             <field name="name" widget="text"/>
                                             <field name="procedure_id"/>
