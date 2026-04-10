@@ -124,7 +124,11 @@ class StockPicking(models.Model):
         picking = self.env['stock.picking'].create({'picking_related': self.id, 'picking_type_id':picking_type.id,'origin':self.origin,'partner_id':self.partner_id.id})
         self.picking_related = picking.id
         for move in self.move_ids_without_package:
-            move.copy(default={'picking_id':picking.id})
+            if self.location_id.name == 'Herramientas':
+                location_dest = self.env['stock.location'].search([('name','=','Herramientas')], limit=1)
+            else:
+                location_dest = picking_type.default_location_dest_id
+            move.copy(default={'picking_id':picking.id, 'location_id':picking_type.default_location_src_id.id, 'location_dest_id':location_dest.id})
         return {
             'name': _('Recepción Reparación'),
             'type': 'ir.actions.act_window',
