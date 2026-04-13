@@ -175,7 +175,7 @@ class Anomalia(models.Model):
                 'notificacion_sms' : item.notificacion_sms if item.notificacion_sms else "N/A",
                 'firmado_por' : firmado_por,
                 'hashcode' : hashcode,
-                'logo_hlp' : company_helipistas.logo_reports
+                'logo_hlp' : company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else False
             }
             report = self.env.ref('leulit_seguridad.leulit_200511_1627_imprimir_anomalia')
             pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]

@@ -32,14 +32,12 @@ class leulit_anomalia(models.Model):
         
         return anomalia
 
-
     def unlink(self):
         if not self.env.user.has_group("leulit.RBase_hide"): 
             for item in self:
                 if item.estado in ['closed','flightcanceled','pending','deferred']:
                     raise UserError('Una anomalía/discrepancia cerrada, pendiente o diferida no puede ser eliminada. Pongase en contacto con el responsable de operaciones.')
         return super(leulit_anomalia, self).unlink()
-
 
     def wizard_diferir(self):
         for item in self:
@@ -60,12 +58,10 @@ class leulit_anomalia(models.Model):
             item.write({ 'estado' : 'deferred', 'fechadiferido': fecha, 'diferido_por':self.env.user.partner_id.id, 'date_deferred':datetime.now() })
             item.wizard_send_email()
 
-
     def wizard_pending(self):
         for item in self:
             item.estado = 'pending'
             item.wizard_send_email()
-
 
     def wizard_cerrar(self):
         for item in self:
@@ -78,10 +74,9 @@ class leulit_anomalia(models.Model):
             else:
                 fecha = item.fecha_accion
             referencia ="{0}-ANOMALIA".format(item.id)
-            item.write({ 'estado' : 'closed', 'fecha_accion': fecha, 'cerrado_por':self.env.user.partner_id.id, 'date_closed':datetime.now() })
+            item.write({ 'estado' : 'closed', 'fecha_accion': fecha, 'cerrado_por':self.env.user.partner_id.id, 'crs_por':self.env.user.partner_id.id, 'date_closed':datetime.now() })
             item.wizard_send_email()
             
-
     def wizard_send_email(self):
         estado = self.estado
         context = self.env.context.copy()
@@ -105,17 +100,14 @@ class leulit_anomalia(models.Model):
                 except Exception as e:
                     pass
                 
-
     def get_diferidos_by_fechas(self, from_date, to_date):
         return self.search([
              ('estado', 'in',['pending', 'deferred', 'flightcanceled', 'closed']),
              ('fecha', '>=', from_date),
              ('fecha', '<=', to_date)])
 
-
     def get_diferidos_by_fecha(self, fecha):
         return self.search([('estado','in',['pending','deferred','flightcanceled','closed']),('fecha','=',fecha)])
-
 
     def calc_fecha_limite(self, categoria, fecha):
         valor = fecha
@@ -133,12 +125,10 @@ class leulit_anomalia(models.Model):
             valor = valor1.strftime("%Y-%m-%d")
         return valor
 
-
     @api.onchange('melref')
     def change_refmel(self):
         items = self.env['leulit.lines_mel'].search([('mel_id','=',self.melref.id)])
         return {'domain':{'linemel_id':[('id','in',items.ids)]}}
-
 
     @api.onchange('categoria','fecha')
     def change_categoria(self):
@@ -146,7 +136,6 @@ class leulit_anomalia(models.Model):
         for item in self:
             res =  item.calc_fecha_limite(item.categoria, item.fecha)
             item.fechalimite = res
-
 
     @api.onchange('linemel_id')
     def change_linemel_id(self):
@@ -157,14 +146,12 @@ class leulit_anomalia(models.Model):
             self.numexpmel = self.linemel_id.numexp
             self.tenerencuentamel = self.linemel_id.tenerencuenta
 
-
     @api.depends('airtime')
     def _get_str_horas(self):
         valor = 0
         for item in self:
             item.strairtime = utilitylib.leulit_float_time_to_str( item.airtime )
             
-
     @api.onchange('helicoptero_id')
     def onchange_helicoptero(self):
         domain_ids = []
@@ -174,19 +161,24 @@ class leulit_anomalia(models.Model):
                     domain_ids.append(id)
         self.write({'domain_materiales' :[(6,0,domain_ids)]})
 
-
     @api.onchange('vuelo_id')
     def onchange_updvuelo(self):
         for item in self:
             if item.vuelo_id:
                 item.helicoptero_id = item.vuelo_id.helicoptero_id
+                item.fecha = item.vuelo_id.fechavuelo
             else:
                 item.helicoptero_id = False
+                item.fecha = datetime.now().date()
+
+    @api.onchange('fecha_accion')
+    def onchange_fecha_accion(self):
+        for item in self:
+            item.fecha_crs = item.fecha_accion
 
     def edit_anomalia(self):
         self.ensure_one()
-        view = self.env.ref('leulit_seguridad.leulit_20201026_0823_form',raise_if_not_found=False)
-        
+        view = self.env.ref('leulit_seguridad.leulit_20201026_0823_form',raise_if_not_found=False)        
         return {
             'type': 'ir.actions.act_window',
             'name': 'Anomalía',
@@ -197,7 +189,6 @@ class leulit_anomalia(models.Model):
             'target': 'current',
         }
 
-    
     @api.depends('fecha','date_deferred')
     def _get_days_between_create_deferred(self):
         for item in self:
@@ -205,14 +196,12 @@ class leulit_anomalia(models.Model):
             if item.create_date and item.date_deferred:
                 item.days_deferred = (item.date_deferred.date()-item.fecha).days
 
-
     @api.depends('fecha','date_closed')
     def _get_days_between_create_close(self):
         for item in self:
             item.days_close = -1
             if item.create_date and item.date_closed:
                 item.days_close = (item.date_closed.date()-item.fecha).days
-
 
     codigo = fields.Char('Código', readonly=True)
     melref = fields.Many2one('leulit.mel', 'Ref. Description')
@@ -231,56 +220,44 @@ class leulit_anomalia(models.Model):
     rol_close = fields.Selection([('1', 'Pilot'), ('2', 'Mechanic'),('3','CAMO'),('4','Others')], '')
     lugaranomalia = fields.Char('Lugar anomalía')
     fecha_crs = fields.Date('Fecha CRS')
-
     discrepancia = fields.Text('Discrepancia/Anomalía', required=True)
     motivodiferir = fields.Text('Acción considerada')
     comentario = fields.Char('Comentario', )
     lugar_crs = fields.Char('Lugar CRS', )
     comentario_crs = fields.Char('Comentario CRS')
     fecha = fields.Date('Fecha', required=True, readonly=True)
-
     crs_por = fields.Many2one('res.partner', 'CRS por', readonly=True)
     firma_crs_por = fields.Binary(related='crs_por.firma',string='Firma CRS por')
     sello_crs_por = fields.Binary(related='crs_por.sello',string='Sello CRS por')
-
     informado_por = fields.Many2one('res.partner', 'Informado por', readonly=True)
     firma_informado_por = fields.Binary(related='informado_por.firma',string='Firma informado por')
     sello_informado_por = fields.Binary(related='informado_por.sello',string='Sello informado por')
-
     diferido_por = fields.Many2one('res.partner', 'Diferido por', readonly=True)
     firma_diferido_por = fields.Binary(related='diferido_por.firma',string='Firma diferido por')
     sello_diferido_por = fields.Binary(related='diferido_por.sello',string='Sello diferido por')
     date_deferred = fields.Datetime(string="Deferred", readonly=False)
     days_deferred = fields.Integer(compute=_get_days_between_create_deferred, string="Days to deferred", store=False)
-
     cerrado_por = fields.Many2one('res.partner', 'Cerrado por', readonly=True)
     cerrado_por_company = fields.Char(related='cerrado_por.company_id.name',string='Compañía')
     firma_cerrado_por = fields.Binary(related='cerrado_por.firma',string='Firma cerrado por')
     sello_cerrado_por = fields.Binary(related='cerrado_por.sello',string='Sello cerrado por')
     date_closed = fields.Datetime(string="Closed", readonly=False)
     days_close = fields.Integer(compute=_get_days_between_create_close, string="Days to Close", store=False)
-
     cancelado_por = fields.Many2one('res.partner', 'Cancelado por', readonly=True)
     firma_cancelado_por = fields.Binary(related='cancelado_por.firma',string='Firma cancelado por')
     sello_cancelado_por = fields.Binary(related='cancelado_por.sello',string='Sello cancelado por')
-
     fecha_cancelado = fields.Date('Fecha cancelado')
     accion = fields.Text('Motivo cierre')
     fecha_accion = fields.Date('Fecha cierre')
     hora_cierre = fields.Float('Hora cierre')
-    cas = fields.Char('CAS', )
-
+    cas = fields.Char('CAS')
     vuelo_id = fields.Many2one('leulit.vuelo','Vuelo origen')
-
     helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicoptero', required=True, domain="[('baja','=',False)]")
     baja_helicoptero = fields.Boolean(related='helicoptero_id.baja',string='Baja helicóptero',store=False)
     fabricante = fields.Selection(related='helicoptero_id.fabricante',string='Fabricante',store=False)
-
     airtime = fields.Float('Airtime')
     strairtime = fields.Char(compute='_get_str_horas',string='StrAirtime')
     estado = fields.Selection([('edicion', 'En edición'),('pending', 'Pendiente'),('deferred', 'Diferido'),('closed', 'Cerrado'),('flightcanceled', 'Vuelo cancelado'),], 'Estado',default="edicion")
-
-    fechavuelo = fields.Date(related='vuelo_id.fechavuelo',string='Fecha',store=False)
     lugarllegada = fields.Many2one(related='vuelo_id.lugarllegada',comodel_name="leulit.helipuerto",string='Lugar llegada',store=False)
     lugarsalida = fields.Many2one(related='vuelo_id.lugarsalida',comodel_name="leulit.helipuerto",string='Lugar salida',store=False)
     horasalida = fields.Float(related='vuelo_id.horasalida',string='Hora salida',store=False)
@@ -289,10 +266,8 @@ class leulit_anomalia(models.Model):
     fuelqty = fields.Float(related='vuelo_id.fuelqty',string='fuel qty',store=False)
     consumomedio_vuelo = fields.Float(related='vuelo_id.consumomedio_vuelo',string='Consumo medio vuelo',store=False)
     fuelsalida_kg = fields.Float(related='vuelo_id.fuelsalida_kg',string='fuel salida (Kg)',store=False)
-
     materiales_equipments = fields.Many2many('maintenance.equipment', 'rel_equipment_anomalia', 'anomalia', 'equipment', 'Materiales')
     domain_materiales = fields.One2many('maintenance.equipment','anomalia',string="domain materiales")
     notificacion_sms = fields.Text('Notificación al SMS')
-
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order")
 
