@@ -23,52 +23,53 @@
             <field name="arch" type="xml">
                 <form string="Anotación Technical Log">
                     <header>
-                        <button name="wizard_cerrar" type="object" string="Cerrar" invisible="estado in ['closed']"  class="oe_right oe_highlight"/>
-                        <button name="wizard_activar" type="object" string="Activar" invisible="estado in ['active', 'closed']"  class="oe_right oe_highlight"/>
+                        <button name="wizard_close" type="object" string="Cerrar" invisible="estado in ['closed']"  class="oe_right oe_highlight"/>
+                        <button name="wizard_pending" type="object" string="En Pendiente" invisible="estado not in ['edition']"  class="oe_right oe_highlight"/>
                         <field name="estado" widget="statusbar" class="oe_right"/>
                     </header>
                     <sheet>
+                        <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
+                        <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
                         <group>
                             <field name="codigo" readonly="1"/>
                         </group>
-                        <group>
-                        <group string="Report">
+                        <group string="Annotation">
                             <group>
-                                <field name="fecha" readonly="estado in ['active', 'closed']"/>
+                                <field name="fecha" readonly="estado in ['closed']"/>
                                 <label for="informado_por" string="Who"/>
                                 <div class="o_row">
                                     <field name="informado_por" nolabel="1" options="{'no_create': True, 'no_open': True}"/>
                                     <span>(</span>
-                                    <field name="rol_informa" nolabel="1" readonly="estado in ['active', 'closed']"/>
+                                    <field name="rol_informa" nolabel="1" readonly="estado in ['pending', 'closed']"/>
                                     <span>)</span>
                                 </div>
                             </group>
                             <group>
-                                <field name="helicoptero_id" readonly="estado in ['active', 'closed']" options="{'no_create': True, 'no_open': True}"/>
-                                <field name="lugar" readonly="estado in ['active', 'closed']"/>
+                                <field name="helicoptero_id" readonly="estado in ['pending', 'closed']" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="lugar" readonly="estado in ['pending', 'closed']"/>
                             </group>
                             <group colspan="2">
-                                <field name="anotacion" readonly="estado in ['active', 'closed']" colspan="2"/>
+                                <field name="anotacion" readonly="estado in ['pending', 'closed']" colspan="2"/>
                             </group>
                         </group>
-                        <group string="Close">
-                            <group>
-                                <field name="fecha_cierre" readonly="estado == 'closed'"/>
+                        <group>
+                            <group string="Close">
+                                <field name="fecha_cierre" readonly="estado in ['edition','closed']"/>
                                 <label for="cerrado_por" string="Who"/>
                                 <div class="o_row">
                                     <field name="cerrado_por" nolabel="1"/>
                                     <span>(</span>
-                                    <field name="rol_close" nolabel="1" readonly="((estado in ['active', 'closed']))"/>
+                                    <field name="rol_close" nolabel="1" readonly="((estado in ['edition', 'closed']))"/>
                                     <span>)</span>
                                 </div>
+                                <field name="accion_cierre" readonly="estado in ['edition','closed']"/>
                             </group>
-                            <group>
-                                <field name="lugar_cierre" readonly="estado == 'closed'"/>
-                                <field name="accion_cierre" readonly="estado == 'closed'"/>
+                            <group string="CRS">
+                                <field name="fecha_crs" readonly="estado in ['edition','closed']"/>
+                                <field name="crs_por"/>
+                                <field name="lugar_crs" readonly="estado in ['edition','closed']"/>
                             </group>
                         </group>
-                        </group>
-                        
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers"/>
@@ -127,6 +128,16 @@
                             <t t-out="object.anotacion"/><br/>
                         </td>
                     </tr>
+                    <t t-if="object.accion_cierre">
+                        <tr>
+                            <td>
+                                Acción tomada:
+                            </td>
+                            <td>
+                                <t t-out="object.accion_cierre"/>
+                            </td>
+                        </tr>
+                    </t>
                 </table>
             </field>
         </record>

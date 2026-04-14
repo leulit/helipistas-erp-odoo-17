@@ -22,34 +22,34 @@ class leulit_anotacion_technical_log(models.Model):
         vals['codigo'] = self.env['ir.sequence'].next_by_code('leulit.seq.anotacion_technical_log')
         vals['informado_por'] = self.env.user.partner_id.id
         anotacion = super(leulit_anotacion_technical_log, self).create(vals)
-        anotacion.wizard_send_email()
-        
         return anotacion
-
 
     def unlink(self):
         if not self.env.user.has_group("leulit.RBase_hide"): 
             for item in self:
-                if item.estado in ['closed','active']:
-                    raise UserError('Una anotación cerrada o activa no puede ser eliminada. Pongase en contacto con el responsable de operaciones.')
+                if item.estado in ['closed','pending']:
+                    raise UserError('Una anotación cerrada o pendiente no puede ser eliminada. Pongase en contacto con el responsable de operaciones.')
         return super(leulit_anotacion_technical_log, self).unlink()
 
+    @api.onchange('fecha_cierre')
+    def onchange_fecha_cierre(self):
+        for item in self:
+            item.fecha_crs = item.fecha_cierre
 
-    def wizard_cerrar(self):
+    def wizard_close(self):
         self.estado = "closed"
+        self.cerrado_por = self.env.user.partner_id.id
+        self.crs_por = self.env.user.partner_id.id
         self.wizard_send_email()
 
-    def wizard_activar(self):
-        self.estado = "active"
+    def wizard_pending(self):
+        self.estado = "pending"
         self.wizard_send_email()
-
 
     def wizard_send_email(self):
         context = self.env.context.copy()
         if self.estado == "pending":
-            context.update({'subject': u' Se crea la anotación({0})'.format(self.codigo)})
-        if self.estado == "active":
-            context.update({'subject': u' Se activa la anotación({0})'.format(self.codigo)})
+            context.update({'subject': u' Se pone en pendiente la anotación({0})'.format(self.codigo)})
         if self.estado == "closed":
             context.update({'subject': u' Se ha cerrado la anotación ({0})'.format(self.codigo)})
         emails=['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
@@ -61,10 +61,10 @@ class leulit_anotacion_technical_log(models.Model):
             except Exception as e:
                 pass
 
-
     codigo = fields.Char('Code', readonly=True)
-    estado = fields.Selection([('pending', 'Pending'),('active', 'Active'),('closed', 'Closed')], 'State',default="pending")
-    anotacion = fields.Text('Annotation', required=True)
+    estado = fields.Selection([('edition', 'En edición'),('pending', 'Pendiente'),('closed', 'Cerrado')], 'State',default="edition")
+
+    anotacion = fields.Text('Comment', required=True)
     fecha = fields.Date('Date', required=True)
     informado_por = fields.Many2one('res.partner', 'Reported by', readonly=True)
     rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'')
@@ -72,9 +72,10 @@ class leulit_anotacion_technical_log(models.Model):
     helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicopter', required=True, domain="[('baja','=',False)]")
 
     fecha_cierre = fields.Date('Closing date')
-    cerrado_por = fields.Many2one('res.partner', 'Cerrado por')
+    cerrado_por = fields.Many2one('res.partner', 'Closed by', readonly=True)
     rol_close = fields.Selection([('1', 'Pilot'), ('2', 'Mechanic'),('3','CAMO'),('4','Others')], '')
-    lugar_cierre = fields.Char('Place')
     accion_cierre = fields.Text('Reason')
-    
 
+    fecha_crs = fields.Date('CRS date')
+    crs_por = fields.Many2one('res.partner', 'CRS by', readonly=True)
+    lugar_crs = fields.Char('Place')
