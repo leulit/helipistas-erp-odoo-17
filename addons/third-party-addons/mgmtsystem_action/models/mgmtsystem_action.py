@@ -111,7 +111,7 @@ class MgmtsystemAction(models.Model):
 
     def write(self, vals):
         result = super().write(vals)
-        _logger.error("records to notify: %s", to_notify)
+        _logger.error("records to notify:")
         if vals.get("stage_id"):
             stage_open = self.env.ref("mgmtsystem_action.stage_open")
             _logger.error("stage_id in vals: %s, stage_open id: %s", vals.get("stage_id"), stage_open.id)
