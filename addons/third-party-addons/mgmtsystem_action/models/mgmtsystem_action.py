@@ -111,11 +111,12 @@ class MgmtsystemAction(models.Model):
 
     def write(self, vals):
         result = super().write(vals)
+        _logger.error("records to notify: %s", to_notify)
         if vals.get("stage_id"):
             stage_open = self.env.ref("mgmtsystem_action.stage_open")
-            _logger.info("stage_id in vals: %s, stage_open id: %s", vals.get("stage_id"), stage_open.id)
+            _logger.error("stage_id in vals: %s, stage_open id: %s", vals.get("stage_id"), stage_open.id)
             to_notify = self.filtered(lambda a: a.stage_id == stage_open)
-            _logger.info("records to notify: %s", to_notify)
+            _logger.error("records to notify: %s", to_notify)
             to_notify.send_mail_for_action()
         return result
 
