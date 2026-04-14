@@ -9,8 +9,21 @@
         <field name="report_name">leulit_seguridad.leulit_2022201900_informe</field>
         <field name="report_file">leulit_seguridad.leulit_2022201900_informe</field>
         <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
-        <field name="print_report_name">'ANOMALIA-%s' % (self.codigo or '')</field>
+        <field name="print_report_name">'ANOMALIA-%s' % (object.codigo or '')</field>
         <field name="binding_model_id" ref="model_leulit_anomalia"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- REPORT ANOTACION TECHNICAL LOG -->
+    <record id="leulit_20260414_1111_imprimir_anotacion_technical_log" model="ir.actions.report">
+        <field name="name">Anotación Technical Log</field>
+        <field name="model">leulit.anotacion_technical_log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_seguridad.leulit_20260414_1111_informe</field>
+        <field name="report_file">leulit_seguridad.leulit_20260414_1111_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'ATLB-%s' % (object.codigo or '')</field>
+        <field name="binding_model_id" ref="model_leulit_anotacion_technical_log"/>
         <field name="binding_type">report</field>
     </record>
 

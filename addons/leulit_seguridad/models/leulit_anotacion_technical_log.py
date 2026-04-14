@@ -79,3 +79,6 @@ class leulit_anotacion_technical_log(models.Model):
     fecha_crs = fields.Date('CRS date')
     crs_por = fields.Many2one('res.partner', 'CRS by', readonly=True)
     lugar_crs = fields.Char('Place')
+    
+    company_id =fields.Many2one('res.company', 'Company', default=1, readonly=True)
+    logo = fields.Binary('Logo', related='company_id.logo_reports', readonly=True)

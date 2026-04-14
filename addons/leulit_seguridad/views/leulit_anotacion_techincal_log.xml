@@ -6,7 +6,7 @@
             <field name="name">leulit_20260401_1013_tree</field>
             <field name="model">leulit.anotacion_technical_log</field>
             <field name="arch" type="xml">
-                <tree string="Anotaciones Technical Log">
+                <tree string="Anotaciones Log Book">
                     <field name="codigo" />
                     <field name="estado" column_invisible="1"/>
                     <field name="anotacion" />
@@ -21,7 +21,7 @@
             <field name="name">leulit_20260401_1013_form</field>
             <field name="model">leulit.anotacion_technical_log</field>
             <field name="arch" type="xml">
-                <form string="Anotación Technical Log">
+                <form string="Anotación Log Book">
                     <header>
                         <button name="wizard_close" type="object" string="Cerrar" invisible="estado in ['closed']"  class="oe_right oe_highlight"/>
                         <button name="wizard_pending" type="object" string="En Pendiente" invisible="estado not in ['edition']"  class="oe_right oe_highlight"/>
@@ -32,6 +32,7 @@
                         <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
                         <group>
                             <field name="codigo" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
                         </group>
                         <group string="Annotation">
                             <group>
@@ -64,7 +65,7 @@
                                 </div>
                                 <field name="accion_cierre" readonly="estado in ['edition','closed']"/>
                             </group>
-                            <group string="CRS">
+                            <group string="CRS" invisible="rol_close != '2'">
                                 <field name="fecha_crs" readonly="estado in ['edition','closed']"/>
                                 <field name="crs_por"/>
                                 <field name="lugar_crs" readonly="estado in ['edition','closed']"/>
@@ -81,14 +82,14 @@
 
 
         <record model="ir.actions.act_window" id="leulit_20260401_1013_action">
-            <field name="name">Anotaciones Technical Log</field>
+            <field name="name">Anotaciones Log Book</field>
             <field name="res_model">leulit.anotacion_technical_log</field>
             <field name="view_mode">tree,form</field>
         </record>
 
 
         <record id="leulit_anotacion_technical_log_mail_camo_estado" model="mail.template">
-            <field name="name">Helipistas mail informa estado anotación technical log CAMO</field>
+            <field name="name">Helipistas mail informa estado Anotación Log Book CAMO</field>
             <field name="model_id" ref="model_leulit_anotacion_technical_log" />
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">albert@icarus-manteniment.com,otecnica@helipistas.com</field>

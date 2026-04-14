@@ -104,7 +104,6 @@ class MgmtsystemAction(models.Model):
                 Sequence = self.env["ir.sequence"]
                 one_vals["reference"] = Sequence.next_by_code("mgmtsystem.action")
         actions = super().create(vals_list)
-        actions.send_mail_for_action()
         return actions
 
     @api.constrains("stage_id")
@@ -121,6 +120,12 @@ class MgmtsystemAction(models.Model):
             # If stage is ending, set closed date
             if not rec.date_closed and rec.stage_id.is_ending:
                 rec.date_closed = fields.Datetime.now()
+
+    @api.onchange("stage_id")
+    def onchange_stage_id(self):
+        for item in self:
+            if item.stage_id.name == "En progreso":
+                item.send_mail_for_action()
 
     def send_mail_for_action(self, force_send=True):
         template = self.env.ref("mgmtsystem_action.email_template_new_action_reminder")
