@@ -109,9 +109,8 @@ class MgmtsystemAction(models.Model):
     def write(self, vals):
         result = super().write(vals)
         if vals.get("stage_id"):
-            for action in self:
-                if action.stage_id.name == "En Progreso":
-                    action.send_mail_for_action()
+            stage_open = self.env.ref("mgmtsystem_action.stage_open")
+            self.filtered(lambda a: a.stage_id == stage_open).send_mail_for_action()
         return result
 
     @api.constrains("stage_id")
