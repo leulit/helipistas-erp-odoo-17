@@ -123,6 +123,7 @@ class leulit_helipuerto(models.Model):
     edicion_revision = fields.Char('Edición y revisión', required=True)
     puntos_ids = fields.One2many(comodel_name="leulit.ruta_punto", inverse_name="helipuerto_id", string="Puntos")
     punto_generado = fields.Boolean(compute=_get_punto_generado, string="¿Punto generado?")
+    seguimiento_comercial = fields.Boolean('Seguimiento comercial')
 
 
 

@@ -55,6 +55,7 @@
                                 <field name="direccion"/>
                                 <field name="superficie"/>
                                 <field name="tz"/>
+                                <field name="seguimiento_comercial"/>
                             </group>
                         </div>
                         <group col="2">
