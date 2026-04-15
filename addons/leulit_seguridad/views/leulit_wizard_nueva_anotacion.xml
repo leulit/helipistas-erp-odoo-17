@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_wizard_nueva_anotacion_form" model="ir.ui.view">
+            <field name="name">leulit_wizard_nueva_anotacion_form</field>
+            <field name="model">leulit.wizard_nueva_anotacion</field>
+            <field name="arch" type="xml">
+                <form string="Nueva Anotación Log Book">
+                    <group>
+                        <field name="helicoptero_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="fecha"/>
+                        <field name="tipo_anotacion"/>
+                    </group>
+                    <group string="Annotation">
+                        <field name="anotacion" nolabel="1" colspan="2" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_crear_anotacion" type="object" string="Crear Anotación" class="oe_highlight"/>
+                        <button special="cancel" string="Cancelar"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

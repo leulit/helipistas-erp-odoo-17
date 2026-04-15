@@ -587,3 +587,21 @@ class leulit_calendar_event(models.Model):
             'target': 'current',
             'context': context,
         }
+    
+    def action_create_annotation_from_calendar(self):
+        self.ensure_one()
+        start_dt, stop_dt = self._get_event_local_datetime_values()
+        helicoptero_id = self._get_event_helicoptero_id_from_resources()
+        view = self.env.ref('leulit_seguridad.leulit_wizard_nueva_anotacion_form', raise_if_not_found=False)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Nueva Anotación Log Book',
+            'res_model': 'leulit.wizard_nueva_anotacion',
+            'view_mode': 'form',
+            'view_id': view.id if view else False,
+            'target': 'new',
+            'context': {
+                'default_fecha': start_dt.date(),
+                'default_helicoptero_id': helicoptero_id
+            }
+        }

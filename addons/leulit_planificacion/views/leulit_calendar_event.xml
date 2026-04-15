@@ -117,13 +117,14 @@
                     <button string="Abrir Reunión" icon="fa-edit" type="object" name="open_reunion"  invisible="not reunion_id" />
                     <button string="Crear Parte Vuelo" icon="fa-plane" type="object" name="action_create_flight_part_from_calendar" invisible="not can_create_flight_part_from_event" />
                     <button string="Crear Parte Escuela" icon="fa-graduation-cap" type="object" name="action_create_school_part_from_calendar" invisible="not can_create_school_part_from_event" />
+                    <button string="Crear Anotación" icon="fa-pencil" type="object" name="action_create_annotation_from_calendar"/>
                     <field name="task_id" invisible="1"/>
                     <field name="can_create_flight_part_from_event" invisible="1"/>
                     <field name="can_create_school_part_from_event" invisible="1"/>
                     <field name="school_part_exists" invisible="1"/>
                     <field name="reunion_id" invisible="1"/>
                 </xpath>
-                <xpath expr="//field[@name='description']" position="before">
+                <xpath expr="//field[@name='user_id']" position="after">
                     <field name="resource_fields"  readonly="(cancelado)" string="Recursos">
                         <tree create="true" edit="true" editable="bottom"> 
                             <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
@@ -131,6 +132,13 @@
                             <field name="availability_hours" widget="float_time" string="H.T." readonly="1"/>
                         </tree>
                     </field>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="replace">
+                </xpath>
+                <xpath expr="//page[@name='page_invitations']" position="before">
+                    <page name="page_description" string="Descripción" >
+                        <field name="description" placeholder="Añadir una descripción" nolabel="1"/>
+                    </page>
                 </xpath>
                 <xpath expr="//div[@invisible='not invalid_email_partner_ids']" position="after">
                     <field name="tipo_vuelo" invisible="1"/>

@@ -55,26 +55,20 @@ class leulit_anotacion_technical_log(models.Model):
             context.update({'subject': u' Se pone en pendiente la anotación({0})'.format(self.codigo)})
         if self.estado == "closed":
             context.update({'subject': u' Se ha cerrado la anotación ({0})'.format(self.codigo)})
-        emails=['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
-        for emailto in emails:
-            context.update({'mail_to': emailto})
-            template = self.with_context(context).env.ref("leulit_seguridad.leulit_anotacion_technical_log_mail_camo_estado")
-            try:
-                template.send_mail(self.id, force_send=True, raise_exception=True)
-            except Exception as e:
-                pass
-
+        template = self.with_context(context).env.ref("leulit_seguridad.leulit_anotacion_technical_log_mail_camo_estado")
+        try:
+            template.send_mail(self.id, force_send=True, raise_exception=True)
+        except Exception as e:
+            pass
+                
     def _send_reminder_email(self):
         context = self.env.context.copy()
         context.update({'subject': u'Aviso: quedan 3 días para la fecha de la anotación ({0})'.format(self.codigo)})
-        emails = ['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
-        for emailto in emails:
-            context.update({'mail_to': emailto})
-            template = self.with_context(context).env.ref("leulit_seguridad.leulit_anotacion_technical_log_mail_camo_estado")
-            try:
-                template.send_mail(self.id, force_send=True, raise_exception=True)
-            except Exception as e:
-                _logger.error("Error enviando email de aviso para anotacion %s: %s", self.codigo, e)
+        template = self.with_context(context).env.ref("leulit_seguridad.leulit_anotacion_technical_log_mail_camo_estado")
+        try:
+            template.send_mail(self.id, force_send=True, raise_exception=True)
+        except Exception as e:
+            _logger.error("Error enviando email de aviso para anotacion %s: %s", self.codigo, e)
 
     @api.model
     def _cron_check_anotacion_technical_log(self):
