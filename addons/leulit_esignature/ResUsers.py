@@ -168,7 +168,7 @@ class ResUsers(models.Model):
     otp_uri = fields.Char(compute=_otp_uri, store=False, string="URI",)
     otp_deviceinfo = fields.Char(string="Dispositivo registrado")
     can_sign_anomalia = fields.Boolean(string='Usuario puede firmar anomalías')
-    can_sign_anotacion = fields.Boolean(string='Usuario puede firmar anotaciones')
+    # can_sign_anotacion = fields.Boolean(string='Usuario puede firmar anotaciones')
     can_sign_crs = fields.Boolean(string='Usuario puede firmar CRS')
     can_sign_formone = fields.Boolean(string='Usuario puede firmar Form One')
     can_sign_boroscopia = fields.Boolean(string='Usuario puede firmar Boroscopias')
