@@ -23,7 +23,7 @@
             <field name="arch" type="xml">
                 <form string="Anotación Log Book">
                     <header>
-                        <button name="wizard_close" type="object" string="Cerrar" invisible="estado in ['edition','closed']"  class="oe_right oe_highlight"/>
+                        <button name="wizard_close" type="object" string="Cerrar" invisible="estado not in ['pending']"  class="oe_right oe_highlight"/>
                         <button name="wizard_pending" type="object" string="En Pendiente" invisible="estado not in ['edition']"  class="oe_right oe_highlight"/>
                         <button name="wizard_edition" type="object" string="En Edición" invisible="estado in ['edition']"  class="oe_right oe_highlight" groups="leulit.RolIT_developer"/>
                         <field name="estado" widget="statusbar" class="oe_right"/>
