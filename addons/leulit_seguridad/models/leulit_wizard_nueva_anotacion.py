@@ -45,7 +45,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
             'helicoptero_id': self.helicoptero_id.id,
             'fecha': self.fecha,
             'anotacion': self.anotacion,
-            'place': 'LEUL',
+            'lugar': 'LEUL',
             'rol_informa': self.rol_informa,
         })
         return {
