@@ -313,10 +313,10 @@
                                                     </t>
                                                 </p>
                                                 <p><span class="campo2">CAS:</span> 
-                                                    <t t-if="hashcode">
-                                                        <span t-esc="hashcode"/>
+                                                    <t t-if="cas">
+                                                        <span t-esc="cas"/>
                                                     </t>
-                                                    <t t-if="not hashcode">
+                                                    <t t-if="not cas">
                                                         <span>N/A</span>
                                                     </t>
                                                 </p>

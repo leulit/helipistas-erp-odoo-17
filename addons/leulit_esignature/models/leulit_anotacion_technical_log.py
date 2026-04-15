@@ -70,7 +70,7 @@ class LeulitAnotacionTechnicalLog(models.Model):
                 'idmodelo': item.id,
                 'otp': "N.A.",
                 'esignature' : esignature,
-                'fecha_firma': item.fecha_accion,
+                'fecha_firma': item.fecha_cierre,
                 'hack_firmado_por' : firmado_por,
                 'hack_firmado_por_id' : firmado_por_id,
                 'hashcode' : hashcode,
@@ -97,9 +97,10 @@ class LeulitAnotacionTechnicalLog(models.Model):
                 'rol_close' : rol_close,
                 'accion_cierre' : item.accion_cierre if item.accion_cierre else "N/A",
 
-                'fecha_crs' : item.fecha_crs if item.fecha_crs else False,
-                'crs_por' : item.crs_por.name if item.crs_por else False,
-                'lugar_crs' : item.lugar_crs if item.lugar_crs else False,
+                'fecha_crs' : item.fecha_crs if item.fecha_crs and rol_close == 'Mechanic' else False,
+                'crs_por' : item.crs_por.name if item.crs_por and rol_close == 'Mechanic' else False,
+                'lugar_crs' : item.lugar_crs if item.lugar_crs and rol_close == 'Mechanic' else False,
+                'cas' : hashcode if hashcode and rol_close == 'Mechanic' else False,
 
                 'helicoptero_id' : item.helicoptero_id.name if item.helicoptero_id else "N/A",
                 'estado' : item.estado,
