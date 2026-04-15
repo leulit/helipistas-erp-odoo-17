@@ -121,6 +121,7 @@ class leulit_helipuerto(models.Model):
     img_3 = fields.Image('Imagen 3')
     img_4 = fields.Image('Imagen 4')
     edicion_revision = fields.Char('Edición y revisión', required=True)
+    fecha_edicion_revision = fields.Date('Fecha edición y revisión', required=True)
     puntos_ids = fields.One2many(comodel_name="leulit.ruta_punto", inverse_name="helipuerto_id", string="Puntos")
     punto_generado = fields.Boolean(compute=_get_punto_generado, string="¿Punto generado?")
     seguimiento_comercial = fields.Boolean('Seguimiento comercial')

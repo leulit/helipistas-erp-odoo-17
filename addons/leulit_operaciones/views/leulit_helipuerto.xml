@@ -34,28 +34,41 @@
                     <sheet>
                         <div id="control_versiones_helipuerto">
                             <separator string="Edición y revisión"/>
-                            <group col="2">
-                                <field name="edicion_revision"/>
+                            <group>
+                                <group>
+                                    <field name="edicion_revision"/>
+                                </group>
+                                <group>
+                                    <field name="fecha_edicion_revision"/>
+                                </group>
                             </group>
                         </div>
                         <div id="datos_geograficos_administracion_helipuerto">
                             <separator string="Datos geográficos y administración del helipuerto/aeródromo"/>
                             <h3>
-                                <group col="4">
-                                    <field name="descripcion"/>
-                                    <field name="name"/>
+                                <group>
+                                    <group>
+                                        <field name="descripcion"/>
+                                    </group>
+                                    <group>
+                                        <field name="name"/>
+                                    </group>
                                 </group>
                             </h3>
-                            <group col="4">
-                                <field name="lat"/>
-                                <field name="telefono"/>
-                                <field name="long"/>
-                                <field name="municipio"/>
-                                <field name="elevacion"/>
-                                <field name="direccion"/>
-                                <field name="superficie"/>
-                                <field name="tz"/>
-                                <field name="seguimiento_comercial"/>
+                            <group>
+                                <group>
+                                    <field name="lat"/>
+                                    <field name="long"/>
+                                    <field name="elevacion"/>
+                                    <field name="superficie"/>
+                                    <field name="seguimiento_comercial"/>
+                                </group>
+                                <group>
+                                    <field name="telefono"/>
+                                    <field name="municipio"/>
+                                    <field name="direccion"/>
+                                    <field name="tz"/>
+                                </group>
                             </group>
                         </div>
                         <group col="2">
