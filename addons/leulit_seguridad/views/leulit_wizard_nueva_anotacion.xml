@@ -10,8 +10,27 @@
                     <group>
                         <field name="helicoptero_id" options="{'no_create': True, 'no_open': True}"/>
                         <field name="fecha"/>
+                        <field name="hora_limite" placeholder="HH:MM"/>
+                        <field name="vuelo_id" options="{'no_create': True, 'no_open': True}"/>
                         <field name="rol_informa"/>
-                        <field name="tipo_anotacion"/>
+                    </group>
+                    <group>
+                        <group string="Install">
+                            <field name="instalar_floats"/>
+                            <field name="instalar_dual_control"/>
+                            <field name="instalar_cargo_hook_mirror"/>
+                            <field name="instalar_life_raft"/>
+                            <field name="instalar_life_vests_qty"/>
+                            <field name="instalar_headsets_qty"/>
+                        </group>
+                        <group string="Remove">
+                            <field name="remover_floats"/>
+                            <field name="remover_dual_control"/>
+                            <field name="remover_cargo_hook_mirror"/>
+                            <field name="remover_life_raft"/>
+                            <field name="remover_life_vests_qty"/>
+                            <field name="remover_headsets_qty"/>
+                        </group>
                     </group>
                     <group string="Annotation">
                         <field name="anotacion" nolabel="1" colspan="2" readonly="1" force_save="1"/>
