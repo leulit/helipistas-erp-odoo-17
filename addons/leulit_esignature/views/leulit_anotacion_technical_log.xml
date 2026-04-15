@@ -22,9 +22,6 @@
                     <field name="id" invisible="1"/>
                     <field name="check_firmado" invisible="1"/>
                 </xpath>
-                <xpath expr="//button[@name='wizard_close']" position="attributes">
-                    <attribute name="invisible">estado in ['closed'] and check_firmado</attribute>
-                </xpath>
                 <xpath expr="//sheet" position="inside">
                     <group string="Documentos firmados">
                         <field name="esignature_docs" colspan="2" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
