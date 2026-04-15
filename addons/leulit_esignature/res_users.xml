@@ -68,7 +68,7 @@
                     <page string="Personalización">
                         <group>
                             <field name="can_sign_anomalia"/>
-                            <field name="can_sign_anotacion"/>
+                            <!-- <field name="can_sign_anotacion"/> -->
                             <field name="can_sign_crs"/>
                             <field name="can_sign_formone"/>
                             <field name="can_sign_boroscopia"/>
