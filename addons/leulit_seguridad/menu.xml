@@ -55,13 +55,11 @@
     />
     <menuitem 
         id="leulit_20260401_1013_menuitem" 
-        name="Anotaciones Technical Log" 
+        name="Anotaciones Log Book" 
         parent="leulit_20201026_0823_menuitem" 
         action="leulit_20260401_1013_action" 
         sequence="20"
     />
-
-
 
     <!-- Menu Taller -->
     <menuitem 
