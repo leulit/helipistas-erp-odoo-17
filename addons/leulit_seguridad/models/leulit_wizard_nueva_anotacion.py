@@ -28,6 +28,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
         ('flotadores', 'Instalación de flotadores'),
     ], string='Annotation type', required=True)
     anotacion = fields.Text('Annotation')
+    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'Who')
 
     @api.onchange('tipo_anotacion', 'helicoptero_id')
     def _onchange_tipo_anotacion(self):
@@ -44,6 +45,8 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
             'helicoptero_id': self.helicoptero_id.id,
             'fecha': self.fecha,
             'anotacion': self.anotacion,
+            'place': 'LEUL',
+            'rol_informa': self.rol_informa,
         })
         return {
             'type': 'ir.actions.act_window',
