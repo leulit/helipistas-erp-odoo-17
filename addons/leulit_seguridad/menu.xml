@@ -33,7 +33,7 @@
     <!-- Menu OPERACIONES -->
     <menuitem 
         id="leulit_20201026_0823_menuitem"
-        name="Anomalías / Defectos"
+        name="Anomalías / Defectos / Anotaciones"
         parent="leulit.leulit_20200618_1104_menuitem"
         sequence="40"
         groups="leulit.ROperaciones_piloto,leulit.RCampaña_piloto"
@@ -63,7 +63,7 @@
     <!-- Menu Taller -->
     <menuitem 
         id="leulit_20201125_1140_menuitem" 
-        name="Anomalías / Defectos" 
+        name="Anomalías / Defectos / Anotaciones" 
         parent="leulit.leulit_20201120_1140_menuitem" 
         sequence="40"
     />
