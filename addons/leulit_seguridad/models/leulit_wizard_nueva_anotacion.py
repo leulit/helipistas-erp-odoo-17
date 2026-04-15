@@ -28,7 +28,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
         ('flotadores', 'Instalación de flotadores'),
     ], string='Annotation type', required=True)
     anotacion = fields.Text('Annotation')
-    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'Who')
+    rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'Who', required=True)
 
     @api.onchange('tipo_anotacion', 'helicoptero_id')
     def _onchange_tipo_anotacion(self):
