@@ -237,7 +237,7 @@
                                                                 <img t-att-src="'data:image/png;base64,%s' % logo" style="width:auto;height:50px;"/>
                                                             </th>
                                                             <th class="literal theadtitle centertext" style="width:100%; font-size:17px" colspan="8">
-                                                                ANOTATION TECHNICAL LOG
+                                                                ANOTATION LOG BOOK
                                                             </th>
                                                             <th class="literal centertext"><div style="text-transform: uppercase; font-size:17px;"><span t-esc="estado"/></div></th>
                                                         </tr>
@@ -286,6 +286,8 @@
                                                     <span t-esc="accion_cierre"/>
                                                 </p>
                                             </td>
+                                        </tr>
+                                        <tr id="datos_fila_5">
                                             <td colspan="6">
                                                 <h3>CRS</h3>
                                                 <p><span class="campo2">Date:</span>

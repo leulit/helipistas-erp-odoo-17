@@ -145,6 +145,12 @@ class LeulitAnotacionTechnicalLog(models.Model):
     def haveNoGo(self, helicoptero_id, fecha):
         nitems = self.search_count([('fecha','<=',fecha),('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edition')])
         return nitems > 0
+    
+    def wizard_edition(self):
+        self.check_firmado = False
+        self.esignature_docs.unlink()
+        return super(LeulitAnotacionTechnicalLog, self).wizard_edition()
+        
 
     esignature_docs = fields.One2many(compute=_esignature_docs, comodel_name='leulit_signaturedoc', string='Documentos firma', store=False)
     semaforo_firma = fields.Char(compute=_semaforo_firma, store=False, string='Semáforo')

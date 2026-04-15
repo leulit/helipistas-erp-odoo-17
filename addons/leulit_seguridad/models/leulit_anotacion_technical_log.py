@@ -46,6 +46,9 @@ class leulit_anotacion_technical_log(models.Model):
         self.estado = "pending"
         self.wizard_send_email()
 
+    def wizard_edition(self):
+        self.estado = "edition"
+
     def wizard_send_email(self):
         context = self.env.context.copy()
         if self.estado == "pending":
@@ -60,6 +63,39 @@ class leulit_anotacion_technical_log(models.Model):
                 template.send_mail(self.id, force_send=True, raise_exception=True)
             except Exception as e:
                 pass
+
+    def _send_reminder_email(self):
+        context = self.env.context.copy()
+        context.update({'subject': u'Aviso: quedan 3 días para la fecha de la anotación ({0})'.format(self.codigo)})
+        emails = ['albert@icarus-manteniment.com', 'otecnica@helipistas.com']
+        for emailto in emails:
+            context.update({'mail_to': emailto})
+            template = self.with_context(context).env.ref("leulit_seguridad.leulit_anotacion_technical_log_mail_camo_estado")
+            try:
+                template.send_mail(self.id, force_send=True, raise_exception=True)
+            except Exception as e:
+                _logger.error("Error enviando email de aviso para anotacion %s: %s", self.codigo, e)
+
+    @api.model
+    def _cron_check_anotacion_technical_log(self):
+        today = fields.Date.today()
+        fecha_aviso = today + timedelta(days=3)
+
+        # Registros cuya fecha es exactamente dentro de 3 días → enviar email de aviso
+        records_aviso = self.search([
+            ('estado', '=', 'edition'),
+            ('fecha', '=', fecha_aviso),
+        ])
+        for record in records_aviso:
+            record._send_reminder_email()
+
+        # Registros cuya fecha ya ha llegado → pasar a pendiente
+        records_vencidos = self.search([
+            ('estado', '=', 'edition'),
+            ('fecha', '=', today),
+        ])
+        for record in records_vencidos:
+            record.wizard_pending()
 
     codigo = fields.Char('Code', readonly=True)
     estado = fields.Selection([('edition', 'En edición'),('pending', 'Pendiente'),('closed', 'Cerrado')], 'State',default="edition")

@@ -16,6 +16,7 @@
         "groups.xml",
         "security.xml",
         "sequences.xml",
+        "data/cron_anotacion_technical_log.xml",
         "views/leulit_anomalia.xml",
         "views/leulit_anotacion_techincal_log.xml",
         "report/leulit_informe_anomalia.xml",

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cron_check_anotacion_technical_log" model="ir.cron">
+        <field name="name">LEULIT - Anotación Log Book: aviso 3 días y paso a pendiente</field>
+        <field name="model_id" ref="model_leulit_anotacion_technical_log"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_anotacion_technical_log()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+</odoo>
