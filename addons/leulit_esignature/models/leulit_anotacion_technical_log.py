@@ -129,15 +129,12 @@ class LeulitAnotacionTechnicalLog(models.Model):
 
     def _semaforo_firma(self):
         for item in self:
-            if item.fecha > datetime(2020, 9, 11).date():            
-                valor = 'red'                
-                docs = self.env['leulit_signaturedoc'].search([('modelo','=','leulit.anotacion_technical_log'),('idmodelo','=',item.id)])
-                for signaturedoc in docs:
-                    if signaturedoc.estado == signaturedoc.COMPLETADO:
-                        valor = 'green'
-                item.semaforo_firma = valor
-            else:
-                item.semaforo_firma = "N.A."
+            valor = 'red'                
+            docs = self.env['leulit_signaturedoc'].search([('modelo','=','leulit.anotacion_technical_log'),('idmodelo','=',item.id)])
+            for signaturedoc in docs:
+                if signaturedoc.estado == signaturedoc.COMPLETADO:
+                    valor = 'green'
+            item.semaforo_firma = valor
 
     def get_anotaciones_unsigned_by_helicoptero(self, helicoptero_id):
         return self.search([('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edition')])
