@@ -27,7 +27,7 @@
                 </xpath>
                 <xpath expr="//sheet" position="inside">
                     <group string="Documentos firmados">
-                        <field name="esignature_docs" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
+                        <field name="esignature_docs" colspan="2" nolabel="1" context="{'form_view_ref' : 'leulit_20210112_1138_form'}">
                             <tree>
                                 <field name="id"/>
                                 <field name="firmado_por" string="Por"/>
