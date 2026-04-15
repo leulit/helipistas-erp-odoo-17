@@ -16,7 +16,6 @@
             </field>
         </record>
 
-
         <record model="ir.ui.view" id="leulit_20260401_1013_form">
             <field name="name">leulit_20260401_1013_form</field>
             <field name="model">leulit.anotacion_technical_log</field>
