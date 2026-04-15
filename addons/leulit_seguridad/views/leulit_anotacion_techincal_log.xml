@@ -32,7 +32,7 @@
                         <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
                         <group>
                             <field name="codigo" readonly="1"/>
-                            <field name="company_id" readonly="1"/>
+                            <field name="company_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                         <group string="Annotation">
                             <group>

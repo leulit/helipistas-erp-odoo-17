@@ -214,6 +214,21 @@ class SignatureDoc(models.Model):
                         'referencia' : "",           
                         'estado_modelo' : item.estado,         
                     })
+        items = self.env['leulit.anotacion_technical_log'].getAllPendientesFirma()
+        if items and len(items) > 0:
+            for item in items:
+                if self.uidCanSign(item, 'leulit.anotacion_technical_log'):
+                    jsonitems.append({
+                        'name' : "{0}".format(item.codigo),
+                        'modelo' : 'leulit.anotacion_technical_log',
+                        'idmodelo' : item.id,
+                        'estado' : '',
+                        'otp' : '',
+                        'notp' : notp,
+                        'fecha' : item.fecha,                
+                        'referencia' : "",           
+                        'estado_modelo' : item.estado,         
+                    })
         items = self.env['leulit.vuelo'].getAllPendientesFirma()
         if items and len(items) > 0:
             for item in items:
