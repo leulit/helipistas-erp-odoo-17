@@ -128,6 +128,8 @@ class SignatureDoc(models.Model):
                 if user.id == uidEnv:
                     return True
         else:
+            if modelo == 'leulit.anotacion_technical_log':
+                return True
             if modelo == 'leulit.anomalia':
                 return True
             if modelo == 'leulit.maintenance_crs':
