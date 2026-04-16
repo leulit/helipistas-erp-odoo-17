@@ -1488,6 +1488,9 @@ class leulit_vuelo(models.Model):
                 meteotext.append("\n\n==============================\n\n")
             except urllib3.exceptions.HTTPError as e:
                 meteotext.append(("{0}\n{1}").format(indicativo, e.read()))
+            except Exception as e:
+                _logger.warning('getMeteo error para indicativo %s: %s', indicativo, e)
+                meteotext.append(("Indicativo {0}\nError al obtener datos meteorologicos: {1}\n\n==============================\n\n").format(indicativo, e))
         meteotext = "".join(meteotext)
         self.meteo = meteotext
 
