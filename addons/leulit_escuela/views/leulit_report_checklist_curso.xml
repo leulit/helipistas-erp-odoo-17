@@ -2,17 +2,9 @@
 <odoo>
     <data>
 
-        <report
-            id="report_checklist_curso"
-            string="Curso checklist"
-            model="leulit.curso"
-            report_type="qweb-pdf"
-            file="leulit_escuela.leulit_2022011_1111_informe"
-            name="leulit_escuela.leulit_2022011_1111_informe"
-            paperformat="leulit.paperformat_A4_portrait_without_cabecera"
-        />      
 
         <template id="ptv_report_css">
+            <meta charset="utf-8"/>
             <style>
                 html {
                     font-family: sans-serif; /* 1 */
