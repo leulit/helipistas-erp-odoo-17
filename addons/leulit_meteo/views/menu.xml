@@ -5,7 +5,7 @@
     <menuitem id="menu_leulit_meteo_root"
               name="Meteorología"
               sequence="60"
-              web_icon="leulit_meteo,static/description/icon.png"
+              web_icon="leulit,static/description/meteorologia_.png"
               groups="leulit.RBase"/>
 
     <!-- Submenú Consultas Clima -->
