@@ -466,8 +466,8 @@ class MaintenanceRequest(models.Model):
             off_pn = str(off_move.product_id.default_code) if off_move.product_id.default_code else 'N/A'
             off_sn = str(off_move.lot_id.sn) if off_move.lot_id.sn else 'N/A'
             off_name = str(off_move.product_id.name) if off_move.product_id.name else 'N/A'
-            off_tsn = str(off_move.lot_id.tsn_actual) if off_move.lot_id.tsn_actual else '0'
-            off_tso = str(off_move.lot_id.tso_actual) if off_move.lot_id.tso_actual else '0'
+            off_tsn = str(round(off_move.lot_id.tsn_actual, 2)) if off_move.lot_id.tsn_actual else '0'
+            off_tso = str(round(off_move.lot_id.tso_actual, 2)) if off_move.lot_id.tso_actual else '0'
             text += '<b>- OFF - P/N </b>' + off_pn + '<b> - S/N </b>' + off_sn + '<b> - Descripción </b>' + off_name + \
                     '<b> - TSN </b>' + off_tsn + '<b> - TSO </b>' + off_tso
             text += '<br/>'
@@ -475,8 +475,8 @@ class MaintenanceRequest(models.Model):
             on_pn = str(move_line.product_id.default_code) if move_line.product_id.default_code else 'N/A'
             on_sn = str(move_line.lot_id.sn) if move_line.lot_id.sn else 'N/A'
             on_name = str(move_line.product_id.name) if move_line.product_id.name else 'N/A'
-            on_tsn = str(move_line.lot_id.tsn_actual) if move_line.lot_id.tsn_actual else '0'
-            on_tso = str(move_line.lot_id.tso_actual) if move_line.lot_id.tso_actual else '0'
+            on_tsn = str(round(move_line.lot_id.tsn_actual, 2)) if move_line.lot_id.tsn_actual else '0'
+            on_tso = str(round(move_line.lot_id.tso_actual, 2)) if move_line.lot_id.tso_actual else '0'
             text += '<b>- ON - P/N </b>' + on_pn + '<b> - S/N </b>' + on_sn + '<b> - Descripción </b>' + on_name + \
                     '<b> - TSN </b>' + on_tsn + '<b> - TSO </b>' + on_tso
             text += '<br/>'

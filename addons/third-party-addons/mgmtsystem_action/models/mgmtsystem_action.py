@@ -1,9 +1,12 @@
 # Copyright (C) 2010 Savoir-faire Linux (<http://www.savoirfairelinux.com>).
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import logging
 from datetime import datetime, timedelta
 
 from odoo import _, api, exceptions, fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class MgmtsystemAction(models.Model):
@@ -104,8 +107,18 @@ class MgmtsystemAction(models.Model):
                 Sequence = self.env["ir.sequence"]
                 one_vals["reference"] = Sequence.next_by_code("mgmtsystem.action")
         actions = super().create(vals_list)
-        actions.send_mail_for_action()
         return actions
+
+    def write(self, vals):
+        result = super().write(vals)
+        _logger.error("records to notify:")
+        if vals.get("stage_id"):
+            stage_open = self.env.ref("mgmtsystem_action.stage_open")
+            _logger.error("stage_id in vals: %s, stage_open id: %s", vals.get("stage_id"), stage_open.id)
+            to_notify = self.filtered(lambda a: a.stage_id == stage_open)
+            _logger.error("records to notify: %s", to_notify)
+            to_notify.send_mail_for_action()
+        return result
 
     @api.constrains("stage_id")
     def _check_stage_id(self):

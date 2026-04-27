@@ -179,9 +179,7 @@ Heliport Teresa Vilà
                                 </t>
                             </td>
                             <td style="border-top:0px;">
-                                <t t-foreach="formone['items']" t-as="item">
-                                    <span t-esc="item['status_work']"/><br/>
-                                </t>
+                                <span t-esc="formone['status_work']"/><br/>
                             </td>
                         </tr>
                     </table>

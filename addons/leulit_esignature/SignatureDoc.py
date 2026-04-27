@@ -128,6 +128,8 @@ class SignatureDoc(models.Model):
                 if user.id == uidEnv:
                     return True
         else:
+            if modelo == 'leulit.anotacion_technical_log':
+                return True
             if modelo == 'leulit.anomalia':
                 return True
             if modelo == 'leulit.maintenance_crs':
@@ -206,6 +208,21 @@ class SignatureDoc(models.Model):
                     jsonitems.append({
                         'name' : "{0}".format(item.codigo),
                         'modelo' : 'leulit.anomalia',
+                        'idmodelo' : item.id,
+                        'estado' : '',
+                        'otp' : '',
+                        'notp' : notp,
+                        'fecha' : item.fecha,                
+                        'referencia' : "",           
+                        'estado_modelo' : item.estado,         
+                    })
+        items = self.env['leulit.anotacion_technical_log'].getAllPendientesFirma()
+        if items and len(items) > 0:
+            for item in items:
+                if self.uidCanSign(item, 'leulit.anotacion_technical_log'):
+                    jsonitems.append({
+                        'name' : "{0}".format(item.codigo),
+                        'modelo' : 'leulit.anotacion_technical_log',
                         'idmodelo' : item.id,
                         'estado' : '',
                         'otp' : '',

@@ -180,6 +180,8 @@ class StockInstall(models.TransientModel):
                 move_line.picked = True
             # Now mark as done
             move._action_done()
+            uninstall.write({'move_id': move.id, 'state': 'done'})
+            uninstall.date_done = fields.Datetime.now()
         return move
 
     def action_get_stock_picking(self):

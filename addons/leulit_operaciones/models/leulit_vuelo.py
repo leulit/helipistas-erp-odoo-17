@@ -13,6 +13,7 @@ import pytz
 import math
 import urllib3
 from itertools import chain
+import threading
 
 from odoo.addons.leulit_operaciones import vuelo_chain_postvuelo
 from odoo.addons.leulit_operaciones import vuelo_chain_cerrado
@@ -1221,11 +1222,19 @@ class leulit_vuelo(models.Model):
             item.strfechasalida = tira
 
 
-    @api.depends('fechavuelo','horallegada')
+    @api.depends('fechavuelo','horallegada','horasalida')
     def _calc_fecha_llegada(self):
         for item in self:
-            date2 = utilitylib.leulit_float_time_to_str( item.horallegada )
-            date1 = item.fechavuelo.strftime("%Y-%m-%d")
+            horallegada = item.horallegada
+            # Normalizar valores >= 24 (datos viejos o suma sin normalizar)
+            if horallegada >= 24.0:
+                horallegada = horallegada - 24.0
+            # Detectar cruce de medianoche: si hora llegada normalizada < hora salida, el aterrizaje es al día siguiente
+            fecha_llegada = item.fechavuelo
+            if horallegada and item.horasalida and horallegada < item.horasalida:
+                fecha_llegada = item.fechavuelo + timedelta(days=1)
+            date2 = utilitylib.leulit_float_time_to_str( horallegada )
+            date1 = fecha_llegada.strftime("%Y-%m-%d")
             try:
                 tira =  date1+" "+date2
                 valor = datetime.strptime(tira,"%Y-%m-%d %H:%M")
@@ -1233,7 +1242,7 @@ class leulit_vuelo(models.Model):
             except ValueError:
                 item.fechallegada = False
 
-            date1 = item.fechavuelo.strftime("%d/%m/%Y")
+            date1 = fecha_llegada.strftime("%d/%m/%Y")
             tira =  date1+" "+date2
             item.strfechallegada = tira
     
@@ -1380,6 +1389,11 @@ class leulit_vuelo(models.Model):
             item.night_hours = tiempo
 
 
+    def _compute_is_it_developer(self):
+        is_dev = self.env.user.has_group('leulit.RolIT_developer') or self.env.user.has_group('leulit.ROperaciones_gestor')
+        for item in self:
+            item.is_it_developer = is_dev
+
     @api.depends('vuelo_tipo_line')
     def _get_vuelo_tipo_main(self):
         for item in self:
@@ -1474,6 +1488,9 @@ class leulit_vuelo(models.Model):
                 meteotext.append("\n\n==============================\n\n")
             except urllib3.exceptions.HTTPError as e:
                 meteotext.append(("{0}\n{1}").format(indicativo, e.read()))
+            except Exception as e:
+                _logger.warning('getMeteo error para indicativo %s: %s', indicativo, e)
+                meteotext.append(("Indicativo {0}\nError al obtener datos meteorologicos: {1}\n\n==============================\n\n").format(indicativo, e))
         meteotext = "".join(meteotext)
         self.meteo = meteotext
 
@@ -1555,7 +1572,8 @@ class leulit_vuelo(models.Model):
                 'aerovia_id' : av.aerovia_id.id,
                 'aerovia_ruta_id' : av.id,
                 'vuelo_id': self.id,
-                'tiempoprevisto': round(tp,2)}))
+                'tiempoprevisto': round(tp,2),
+                'altitudprevista': av.altitudprevista}))
         if (self.ruta_id):
             vals = {
                 'aerovia_ids'                   : new_aerovia_ids,
@@ -1667,7 +1685,10 @@ class leulit_vuelo(models.Model):
 
         combustibleextra = fuelsalida - combustibleminimo
         
-        vuelo.horallegadaprevista = vuelo.horasalida + vuelo.tiempoprevisto
+        horallegadaprevista = vuelo.horasalida + vuelo.tiempoprevisto
+        if horallegadaprevista >= 24.0:
+            horallegadaprevista = horallegadaprevista - 24.0
+        vuelo.horallegadaprevista = horallegadaprevista
 
         minutosprevistos = utilitylib.leulit_float_time_to_minutes(vuelo.tiempoprevisto)
         fuellanding = fuelsalida - (vuelo.consumomedio_vuelo * minutosprevistos)
@@ -1747,6 +1768,8 @@ class leulit_vuelo(models.Model):
     @api.onchange('tiemposervicio')
     def updateHoraLlegada(self):
         valor = (self.horasalida + self.tiemposervicio)
+        if valor >= 24.0:
+            valor = valor - 24.0
         fuellanding = self._calc_fuelllegada(self.tiemposervicio, self.fuelsalida, self.consumomedio_vuelo)
 
         return {
@@ -1792,7 +1815,7 @@ class leulit_vuelo(models.Model):
             ex_type, ex_value, ex_traceback = sys.exc_info()
             s = "ERROR AL DESCARGAR NOTAM : {1}  --- {0}".format(ex_value,ex_traceback)
         return s
-        
+
     def _get_tipo_actividad(self):
         for item in self:
             tipo_actividad = None
@@ -1801,6 +1824,7 @@ class leulit_vuelo(models.Model):
                 tipo_actividad= rel_tipovuelo[0].vuelo_tipo_id.tipo_trabajo
             item.tipo_actividad = tipo_actividad
 
+    @api.depends('vuelo_tipo_line')
     def _get_nombre_actividad(self):
         for item in self:
             nombre_actividad = ''
@@ -1818,13 +1842,19 @@ class leulit_vuelo(models.Model):
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strhorasalida = tira
 
-    @api.depends('horallegada')
+    @api.depends('horallegada','horasalida')
     def _strhorallegada(self):
         tira = ""
         valor = 0
         for item in self:
             valor = item.horallegada
+            # Normalizar valores >= 24 (datos viejos o suma sin normalizar)
+            if valor >= 24.0:
+                valor = valor - 24.0
             tira = utilitylib.hlp_float_time_to_str( valor )
+            # Indicar cruce de medianoche con (+1)
+            if valor and item.horasalida and valor < item.horasalida:
+                tira = tira + " (+1)"
             item.strhorallegada = tira
 
     @api.depends('tiemposervicio')
@@ -1833,14 +1863,14 @@ class leulit_vuelo(models.Model):
             valor = item.tiemposervicio
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strtiemposervicio = tira
-            
+
     @api.depends('tiempoprevisto')
     def _strtiempoprevisto(self):
         for item in self:
             valor = item.tiempoprevisto
             tira = utilitylib.hlp_float_time_to_str( valor )
             item.strtiempoprevisto = tira            
-    
+
     @api.depends('airtime')
     def _strairtime(self):
         tira = ""
@@ -1937,11 +1967,11 @@ class leulit_vuelo(models.Model):
             if item.horallegadaprevista and item.lugarsalida and item.fechavuelo:
                 valor = utilitylib.getStrTimeUTC(item.fechavuelo, item.horallegadaprevista, item.lugarllegada.tz)
             item.utc_horallegadaprevista = valor 
-                   
+     
     def _tiempo_instuctor_actividad(self):
         for item in self:
             item.tiempo_instuctor_actividad = item.tiempo_aoc + item.tiempo_lci + item.tiempo_ato_mo
-    
+
     @api.depends('fechavuelo','helicoptero_id')
     def _calc_delta_landings(self):
         for item in self:
@@ -1993,7 +2023,7 @@ class leulit_vuelo(models.Model):
             return dt_utc.replace(tzinfo=None)
         except Exception as e:
             _logger.error("_date_end_utc %r",e)
-            return None            
+            return None
 
     def _date_start_utc(self):
         try:
@@ -2002,7 +2032,7 @@ class leulit_vuelo(models.Model):
                 item.date_start_utc = valor
         except Exception as e:
             _logger.error("_date_start_utc %r",e)
-            item.date_start_utc = None            
+            item.date_start_utc = None
 
     def _date_end_utc(self):
         try:
@@ -2016,8 +2046,18 @@ class leulit_vuelo(models.Model):
     @api.model
     def wizardSetPrevuelo(self):
         self.p_corregido = True
+        self.p_corregido_date = fields.Datetime.now()
         self.estado = 'prevuelo'
-    
+
+    @api.onchange('nv')
+    def onchange_nv(self):
+        if self.nv:
+            self.nv_uid = False
+            self.nv_date = False
+        else:
+            self.nv_uid = self.env.uid
+            self.nv_date = fields.Datetime.now()
+
     @api.depends('fechasalida', 'helicoptero_id')
     def check_first_flight(self):
         if self.helicoptero_tipo in ('EC120B', 'CABRI G2'):
@@ -2040,15 +2080,14 @@ class leulit_vuelo(models.Model):
             self.checklist_prevuelo_entre_vuelos = False  
         else:
             self.checklist_prevuelo_entre_vuelos = True
-            
+
     @api.onchange('checklist_prevuelo_entre_vuelos')
     def select_BFF(self):
         if self.checklist_prevuelo_entre_vuelos:
             self.checklist_prevuelo_BFF = False
         else:
             self.checklist_prevuelo_BFF = True
-        
-    
+
     @api.onchange('verificado')
     def cambio_numtripulantes_verificado(self):
         if self.verificado: 
@@ -2085,6 +2124,7 @@ class leulit_vuelo(models.Model):
 
 
     p_corregido = fields.Boolean(string="Parte corregido", default=False)
+    p_corregido_date = fields.Datetime(string="Fecha en que se corrigió el parte")
     codigo = fields.Char('Código', )
     fechavuelo = fields.Date('Fecha', required=True, default=fields.Date.context_today)
     fuelqty = fields.Float('Combustible añadido (l.)', help='Cantidad combustible añadida antes de iniciar el vuelo (en litros)')
@@ -2106,6 +2146,7 @@ class leulit_vuelo(models.Model):
     notneednotam = fields.Boolean('No necesita NOTAM')
     descnotneednotam = fields.Selection([('vuelo-local', 'Vuelo local'),('otros', 'Otros')], 'Motivo no verificado')
     vuelo_tipo_line = fields.One2many('leulit.vuelo_tipo_line', 'vuelo_id', 'Tipo Vuelo')
+    is_it_developer = fields.Boolean(compute='_compute_is_it_developer')
     vuelo_tipo_main = fields.Char(compute=_get_vuelo_tipo_main,string='Vuelo Tipo Main',search=_search_vuelo_tipo_main)
     numpax = fields.Integer('Nº de pax / AESA', help='Numero de pasajeros')
     numtripulacion = fields.Integer('Nº tripulantes',default=1)
@@ -2208,6 +2249,8 @@ class leulit_vuelo(models.Model):
     write_uid = fields.Many2one('res.users', 'by User')
     create_uid = fields.Many2one('res.users', 'created by User')
     nv = fields.Boolean('No Volado')
+    nv_uid = fields.Many2one('res.users', 'No volado por')
+    nv_date = fields.Datetime('Fecha no volado')
     # TODO Borrar campo isroldireccion
     isroldireccion = fields.Boolean(compute=_isroldireccion,string='Is rol direccion')
     asiento_pic = fields.Selection([('pic_right', 'PIC Asiento Derecha'),('pic_left', 'PIC Asiento Izquierda')], 'PIC Asiento',default='pic_right')

@@ -50,14 +50,7 @@
                                     <field name="water_zone" column_invisible="1"/>
                                 </tree>
                             </field>
-                            <table class="">
-                                <tr>
-                                    <td style="width:800px; height:600px">
-                                        <div class="o_google_map_view" style="width:800px; height:600px">
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div id="gmap_ruta_div" style="width:800px; height:600px;"/>
                         </div>
                     </sheet>
                 </form>

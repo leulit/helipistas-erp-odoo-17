@@ -191,5 +191,3 @@ class StockMoveScrap(models.TransientModel):
         }
         self = self.create(values)
         self.action_validate()
-
-

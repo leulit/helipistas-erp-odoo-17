@@ -21,6 +21,7 @@
             <field name="arch" type="xml">
                 <form string="Alumno">
                     <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"  invisible="((active))" />
                         <field name="alta_all" invisible="1"/>
                         <field name="is_alta" invisible="1"/>
                         <field name="active" invisible="1"/>

@@ -12,7 +12,12 @@ _logger = logging.getLogger(__name__)
 class StockMoveLine(models.Model):
     _name = 'stock.move.line'
     _inherit = 'stock.move.line'
- 
+
+    def action_done_stock_move(self):
+        for move_line in self:
+            if move_line.move_id:
+                move_line.move_id._action_done()
+        return True
     
     def write(self, vals):
         if 'date' in vals:
@@ -49,6 +54,16 @@ class StockMoveLine(models.Model):
         name_lot = '[{0}]-[{1}]-[{2}]-[{3}]'.format(default_code,self.sn,self.ref_origen,self.lote)
         self.lot_name = name_lot
 
+
+    def _prepare_new_lot_vals(self):
+        self.ensure_one()
+        return {
+            'name': self.lot_name,
+            'product_id': self.product_id.id,
+            'company_id': self.company_id.id,
+            'revision': self.revision,
+            'fecha_caducidad': self.fecha_caducidad
+        }
 
     id_movimiento = fields.Char('id movimiento antiguo')
     sn = fields.Char(string="Serial Number", default="N/A")

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="leulit_activity_date_history_access" model="ir.model.access">
+        <field name="name">Histórico cambios fecha actividad</field>
+        <field name="model_id" ref="model_leulit_activity_date_history"/>
+        <field name="group_id" ref="leulit.RBase"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+</odoo>

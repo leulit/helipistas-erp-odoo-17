@@ -111,10 +111,20 @@
                 </xpath>
                 <xpath expr="//button[@name='action_open_calendar_event']" position="before">
                     <div></div>
-                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="(cancelado)" />
+                    <button string="Cancelar" icon="fa-ban" type="object" name="cancelar_evento_popup"  invisible="cancelado" />
                     <field name="cancelado" invisible="1"/>
+                    <button string="Crear Reunión" icon="fa-plus" type="object" name="create_reunion"  invisible="reunion_id" />
+                    <button string="Abrir Reunión" icon="fa-edit" type="object" name="open_reunion"  invisible="not reunion_id" />
+                    <button string="Crear Parte Vuelo" icon="fa-plane" type="object" name="action_create_flight_part_from_calendar" invisible="not can_create_flight_part_from_event" />
+                    <button string="Crear Parte Escuela" icon="fa-graduation-cap" type="object" name="action_create_school_part_from_calendar" invisible="not can_create_school_part_from_event" />
+                    <button string="Crear Anotación" icon="fa-pencil" type="object" name="action_create_annotation_from_calendar"/>
+                    <field name="task_id" invisible="1"/>
+                    <field name="can_create_flight_part_from_event" invisible="1"/>
+                    <field name="can_create_school_part_from_event" invisible="1"/>
+                    <field name="school_part_exists" invisible="1"/>
+                    <field name="reunion_id" invisible="1"/>
                 </xpath>
-                <xpath expr="//field[@name='description']" position="before">
+                <xpath expr="//field[@name='user_id']" position="after">
                     <field name="resource_fields"  readonly="(cancelado)" string="Recursos">
                         <tree create="true" edit="true" editable="bottom"> 
                             <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
@@ -122,6 +132,13 @@
                             <field name="availability_hours" widget="float_time" string="H.T." readonly="1"/>
                         </tree>
                     </field>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="replace">
+                </xpath>
+                <xpath expr="//page[@name='page_invitations']" position="before">
+                    <page name="page_description" string="Descripción" >
+                        <field name="description" placeholder="Añadir una descripción" nolabel="1"/>
+                    </page>
                 </xpath>
                 <xpath expr="//div[@invisible='not invalid_email_partner_ids']" position="after">
                     <field name="tipo_vuelo" invisible="1"/>
@@ -132,6 +149,7 @@
                     <field name="min_cloud_height"  required="tipo_vuelo" />
                     <field name="no_modificar" invisible="1"/>
                     <field name="task_id" groups="leulit.RolIT_developer"/>
+                    <field name="reunion_id" groups="leulit.RolIT_developer"/>
                 </xpath>
                 <xpath expr="//page[@name='page_invitations']" position="after">
                     <page name="page_leulit_3" string="Documentos" >
@@ -147,6 +165,13 @@
                             </tree>
                         </field>
                     </page>
+                </xpath>
+                <xpath expr="//field[@name='partner_ids']" position="replace">
+                    <field name="partner_ids" widget="many2manyattendee"
+                                placeholder="Agregue asistentes..."
+                                options="{'no_quick_create': True, 'no_create': True}"
+                                class="oe_inline"
+                            />
                 </xpath>
             </field>
         </record>
@@ -195,6 +220,17 @@
                                 class="oe_inline"
                             />
                             <field name="type_event" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="tipo_vuelo" invisible="1"/>
+                            <field name="sale_order_id"  required="tipo_vuelo" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="localizaciones" widget="many2many_tags" options="{'no_create': True, 'create': False, 'edit': False}"  required="tipo_vuelo" />
+                            <field name="min_cloud_height"  required="tipo_vuelo" />
+                            <field name="resource_fields" string="Recursos">
+                                <tree create="true" edit="true" editable="bottom"> 
+                                    <field name="resource"  options="{'no_create': true, 'no_create_edit': true}"/>
+                                    <field name="work_hours" widget="float_time" string="H. V."/>
+                                    <field name="availability_hours" widget="float_time" string="H.T." readonly="1"/>
+                                </tree>
+                            </field>
                             <field name="description" placeholder="Describe el evento"/>
                         </group>
                     </sheet>

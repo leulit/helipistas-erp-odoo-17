@@ -52,13 +52,13 @@ class leulit_perfil_formacion(models.Model):
                 email_values[item.name] = {'cursos': [], 'acciones': []}
             for curso in item.cursos:
                 if curso.next_done_date:
-                    if curso.next_done_date == fields.Datetime.now().date():
+                    if curso.next_done_date == fields.Datetime.now().date() + relativedelta(days=3):
                         data = True
                         if curso.descripcion not in email_values[item.name]['cursos']:
                             email_values[item.name]['cursos'].append(curso.descripcion)
             for accion in item.acciones_new:
                 if accion.next_done_date:
-                    if accion.next_done_date == fields.Datetime.now().date():
+                    if accion.next_done_date == fields.Datetime.now().date() + relativedelta(days=3):
                         data = True
                         if accion.accion.name not in email_values[item.name]['acciones']:
                             email_values[item.name]['acciones'].append(accion.accion.name)

@@ -11,5 +11,14 @@
             <field name="number_increment">1</field>
         </record>
         
+        <record model="ir.sequence" id="leulit_seq_anotacion_technical_log">
+            <field name="name">Leulit Sequencia anotacion technical log</field>
+            <field name="code">leulit.seq.anotacion_technical_log</field>
+            <field name="prefix">LOG-</field>
+            <field name="padding">7</field>
+            <field name="number_next_actual">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
     </data>
 </odoo>

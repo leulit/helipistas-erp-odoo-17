@@ -3,36 +3,26 @@
     <data>
 
         <template id="anomalia_report_css">
-            
+            <meta charset="utf-8"/>
             <style>
                 .footer {
                     position:absolute;
                     bottom:-350px
-                }
-
-                .page {
-                    background: url(https://s3-eu-west-1.amazonaws.com/helimisc/helipistas-marca-agua.jpg) no-repeat 50% 50%;
-                    position: relative;
                 }
                 .noborde {
                     border:0 solid #ffffff;
                     border-collapse: collapse;
                     border-spacing: 0;
                 }
-
                 table.estructura {
                     width:100%
                 }
-
                 table.anomalia {
                     border:thin solid #E3E4EA;
                     text-align:center;
                     border-collapse: collapse;
                     border-spacing: 0;
                 }
-
-                
-
                 table.anomalia th, table.anomalia tbody td, table.anomalia tfoot td {
                     border: 1px solid #E3E4EA;
                     padding-right:3px;
@@ -40,22 +30,17 @@
                     text-align:center;
                     font-size:10px;
                 }
-
                 .campo1{
                     font-weight: bold;
-                    font-size: 13px;
+                    font-size: 13px;º
                 }
-
                 .campo2{
                     font-weight: bold;
                     font-size: 10px;
                 }
-
-
                 .anomalia_tabla{
                     margin-top: 5px;
                 }
-
                 #textos td{
                     width: 50%;
                     padding: 10px;
@@ -64,11 +49,9 @@
                     text-align: left;
                     border: 1px solid white;
                 }
-
                 #textos td p{
                     font-size: 10px;
                 }
-
                 #codigo {
                     height: 25px;
                 }
@@ -81,15 +64,12 @@
                     border-right: 1px solid white;
                     border-bottom: 1px solid #E3E4EA;
                 }
-
                 #codigo td p{
                     font-size: 13px;
                 }
-
                 #datos_fila_1{
                     height: 45px;
                 }
-
                 #datos_fila_1 td{
                     padding: 10px;
                     vertical-align:middle;
@@ -97,36 +77,29 @@
                     border: 1px solid #E3E4EA;
                     width: 25%;
                 }
-
                 #datos_fila_1 td p{
                     font-size: 10px;
                 }
-
                 #datos_fila_2{
                     height: 200px;
                 }
-
                 #datos_fila_2 td{
                     padding: 10px;
                     vertical-align:top;
                     text-align: left;
                     border: 1px solid #E3E4EA;
                 }
-
                 #datos_fila_2 td h3{
                     font-size: 13px;
                     margin-bottom:2px;
                     padding-bottom:10px;
                 }
-
                 #datos_fila_2 td p{
                     font-size: 10px;
                 }
-
                 #datos_fila_3{
                     height: 15px;
                 }
-
                 #datos_fila_3 td{
                     padding: 10px;
                     vertical-align:top;
@@ -134,17 +107,14 @@
                     border: 1px solid #E3E4EA;
                     border-bottom: 1px solid white;
                 }
-
                 #datos_fila_3 td h3{
                     font-size: 13px;
                 }
-
                 #datos_fila_4{
                     height: 40px;
                     border-bottom: 1px solid #E3E4EA;
 
                 }
-
                 #datos_fila_4 td{
                     padding: 10px;
                     padding-top: 0px;
@@ -153,58 +123,47 @@
                     border: 1px solid #E3E4EA;
 
                 }
-
                 #datos_fila_4 td h3{
                     font-size: 13px;
                     margin-bottom:2px;
                 }
-
                 #datos_fila_4 td p{
                     font-size: 10px;
                 }
-
                 #datos_fila_5{
                     height: 200px;
                 }
-
                 #datos_fila_5 td{
                     padding: 10px;
                     vertical-align:top;
                     text-align: left;
                     border: 1px solid #E3E4EA;
                 }
-
                 #datos_fila_5 td h3{
                     padding-bottom:10px;
                     font-size: 13px;
                     margin-bottom:2px;
                 }
-
                 #datos_fila_5 td p{
                     font-size: 10px;
                 }
-
                 .version_doc td{
                     font-size: 12px;
                     padding:5px;
                 }
-
                 #footer_text{
                     width:80%;
                     text-align:left;
                     vertical-align:middle;
                 }
-
                 #footer_text p{
                     margin-top:2px;
                     font-size:10px;
                     padding-left: 10px;
                 }
-
                 #footer_qr{
                     vertical-align:middle;
                 }
-
                 .firma{
                     text-align: right;
                     padding-top:5px;
@@ -256,7 +215,7 @@
                                             <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
                                             <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0003</td>
                                             <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
-                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">3.1.0</td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">4.0.0</td>
                                         </tr>
                                     </table>
                                 </th>
@@ -334,7 +293,7 @@
                                                 <p><span class="campo2">SMS Report:</span> <span t-esc="notificacion_sms"/></p>
                                             </td>
                                             <td colspan="6">
-                                                <h3>ACTION</h3>
+                                                <h3>ACTION TAKEN / DEFERRED</h3>
                                                 <p><span class="campo2">Date: </span>
                                                     <t t-if="estado == 'deferred' or estado == 'closed'">
                                                         <span t-esc="fechadiferido"/>
@@ -363,19 +322,15 @@
                                         <tr id="datos_fila_4">
                                             <td colspan="3" style="border-right: 1px solid white;">
                                                 <p><span class="campo2">Ref. Description:</span> <span t-esc="melref"/> </p>
-                                                <p><span class="campo2">POI / Exceptions:</span> <span t-esc="tenerencuentamel"/></p>
                                             </td>
                                             <td colspan="3" style="border-left: 1px solid white; border-right:1px solid white">
                                                 <p><span class="campo2">Dead date:</span> <span t-esc="fechalimite"/></p>
-                                                <p><span class="campo2">Reference:</span> <span t-esc="linemel_id"/></p>
                                             </td>
                                             <td colspan="3" style="border-left: 1px solid white; border-right:1px solid white">
-                                                <p><span class="campo2">Nº installed:</span> <span t-esc="numinstaladomel"/></p>
-                                                <p><span class="campo2">POM:</span> <span t-esc="pom"/></p>
+                                                <p><span class="campo2">Reference:</span> <span t-esc="linemel_id"/></p>
                                             </td>
                                             <td colspan="3" style="border-left: 1px solid white;">
                                                 <p><span class="campo2">Category:</span> <span t-esc="categoria"/></p>
-                                                <p><span class="campo2">Nº expedition:</span> <span t-esc="numexpmel"/></p>
                                             </td>
                                         </tr>
                                         <tr id="textos">
@@ -389,7 +344,7 @@
                                         </tr>
                                         <tr id="datos_fila_5">
                                             <td colspan="6">
-                                                <h3>CLOSE</h3>
+                                                <h3>ACTION TAKEN / CLOSE</h3>
                                                 <p><span class="campo2">Date:</span> 
                                                     <span t-esc="fecha_accion"/>
                                                 </p>
@@ -400,20 +355,19 @@
                                                     <span t-esc="accion"/>
                                                 </p>
                                                 <p><span class="campo2">CAS:</span> 
-                                                    <span t-esc="cas"/>
-                                                </p>
-                                                <p><span class="campo2">Comment:</span> 
-                                                    <span t-esc="comentario"/>
+                                                    <t t-if="hashcode">
+                                                        <span t-esc="hashcode"/>
+                                                    </t>
+                                                    <t t-if="not hashcode">
+                                                        <span>N/A</span>
+                                                    </t>
                                                 </p>
                                             </td>
                                             <td colspan="6">
                                                 <h3>CRS</h3>
-                                                <p><span class="campo2">Date:</span> 
-                                                    <span t-esc="fecha_crs"/>
-                                                </p>
+                                                <p><span class="campo2">Date:</span> <span t-esc="fecha_crs"/></p>
                                                 <p><span class="campo2">Who:</span> <span t-esc="crs_por"/></p>
                                                 <p><span class="campo2">Place:</span> <span t-esc="lugar_crs"/></p>
-                                                <p><span class="campo2">Comment:</span> <span t-esc="comentario_crs"/></p>
                                             </td>
                                         </tr>
                                         <tr id="textos">

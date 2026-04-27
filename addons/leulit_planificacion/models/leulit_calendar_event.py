@@ -365,6 +365,44 @@ class leulit_calendar_event(models.Model):
                 editor_candidates.add(self.env.user)
             event.user_can_edit = self.env.user in editor_candidates
 
+    def create_reunion(self):
+        self.ensure_one()
+        if self.reunion_id:
+            raise UserError('El evento ya tiene una reunión asociada.')
+        reunion = self.env['leulit.reunion'].create({
+            'asunto': self.name,
+            'event_id': self.id,
+            'fecha_ini': self.start.date(),
+            'hora_inicio_evento': utilitylib.leulit_time_to_float(self.start.time()) if self.allday == False else 9,
+            'duration': self.duration if self.allday == False else 1,
+            'location': 'Ullastrell',
+            'company_id': self.env.company.id,
+            'descripcion': self.description if self.description else ' ',
+            'asistentes': [(0, 0, {'partner_id': partner.id}) for partner in self.partner_ids]
+        })
+        self.reunion_id = reunion.id
+        return {
+            'name': 'Reunión',
+            'type': 'ir.actions.act_window',
+            'res_model': 'leulit.reunion',
+            'view_mode': 'form',
+            'res_id': reunion.id,
+            'target': 'new',
+        }
+
+    def open_reunion(self):
+        self.ensure_one()
+        if not self.reunion_id:
+            raise UserError('El evento no tiene una reunión asociada.')
+        return {
+            'name': 'Reunión',
+            'type': 'ir.actions.act_window',
+            'res_model': 'leulit.reunion',
+            'view_mode': 'form',
+            'res_id': self.reunion_id.id,
+            'target': 'current',
+        }
+
 
     partner_ids = fields.Many2many('res.partner', 'calendar_event_res_partner_rel', string='Attendees', default=_default_partners, domain="[('user_ids', '!=', False)]")
     resource_fields = fields.One2many(comodel_name='leulit.event_resource', inverse_name='event', string='Recurso')
@@ -374,10 +412,10 @@ class leulit_calendar_event(models.Model):
     type_event = fields.Many2one(comodel_name='leulit.tipo_planificacion', string='Tipo', required=True)
     tipo_vuelo = fields.Boolean(related='type_event.is_vuelo', string='Tipo vuelo')
     equipamientos_ids = fields.Many2many(comodel_name='leulit.equipamientos_planificacion', relation='leulit_equipamientos_evento', column1='evento_id', column2='equipamiento_id', string='Equipamientos')
-    sale_order_id = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('state','=','sale')])
+    sale_order_id = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('task_done','=',False)])
     uid_in_resources = fields.Boolean(compute="_uid_in_resources", string="User in evento", search="_uid_in_resources_search")
     documentos = fields.Many2many('ir.attachment', 'leulit_calendar_rel', 'calendar_rel', 'doc_rel','Documentos')
-    localizaciones = fields.Many2many('leulit.ruta_punto','leulit_evento_punto_rel','evento_id','punto_id','Localizaciones')
+    localizaciones = fields.Many2many('leulit.ruta_punto','leulit_evento_punto_rel','evento_id','punto_id','Localizaciones', default=lambda self: self.env['leulit.ruta_punto'].search([('indicativo', '=', 'LEUL')]))
     min_cloud_height = fields.Float(string='Base de nubes (ft)', default=1000)
     # TAREA
     no_modificar = fields.Boolean(string='Prioritario',default=False)
@@ -395,7 +433,50 @@ class leulit_calendar_event(models.Model):
     ## Audit Log
     historic_lines = fields.One2many(compute=_get_historic_lines, comodel_name='auditlog.log', string='Lineas historico', readonly=True)
     task_id = fields.Many2one(comodel_name='project.task', string='Tarea')
+    reunion_id = fields.Many2one(comodel_name='leulit.reunion', string='Reunión')
+    school_part_exists = fields.Boolean(
+        string='Existe parte escuela asociado',
+        compute='_compute_part_actions_visibility',
+    )
+    can_create_school_part_from_event = fields.Boolean(
+        string='Puede crear parte escuela',
+        compute='_compute_part_actions_visibility',
+    )
+    can_create_flight_part_from_event = fields.Boolean(
+        string='Puede crear parte vuelo',
+        compute='_compute_part_actions_visibility',
+    )
 
+    def _is_school_event_type(self):
+        self.ensure_one()
+        if not self.type_event:
+            return False
+        if self.type_event.tipo_actividad in ('FI', 'ATO'):
+            return True
+        normalized_name = (self.type_event.name or '').strip().lower()
+        return normalized_name in {'entrenamiento compañia', 'entrenamiento compania', 'escuela teorica'}
+
+    def _compute_part_actions_visibility(self):
+        school_model = self.env.registry.get('leulit.parte_escuela')
+        for event in self:
+            school_part = False
+            if school_model:
+                school_part = self.env['leulit.parte_escuela'].with_context(active_test=False).search(
+                    [('event', '=', event.id)],
+                    limit=1,
+                    order='id desc',
+                )
+            event.school_part_exists = bool(school_part)
+            event.can_create_school_part_from_event = bool(
+                event.task_id and
+                event._is_school_event_type() and
+                not school_part
+            )
+            event.can_create_flight_part_from_event = bool(
+                event.task_id and
+                event.type_event and
+                event.type_event.is_vuelo
+            )
 
     def open_task(self):
         self.ensure_one()
@@ -410,3 +491,117 @@ class leulit_calendar_event(models.Model):
             'target': 'current',
         }
 
+    def _get_event_local_datetime_values(self):
+        self.ensure_one()
+        start_dt = fields.Datetime.context_timestamp(self, self.start) if self.start else False
+        stop_dt = fields.Datetime.context_timestamp(self, self.stop) if self.stop else False
+        if not start_dt:
+            start_dt = fields.Datetime.context_timestamp(self, fields.Datetime.now())
+        if not stop_dt:
+            stop_dt = start_dt
+        return start_dt, stop_dt
+
+    def _get_event_helicoptero_id_from_resources(self):
+        self.ensure_one()
+        helicopter_resource = self.resource_fields.filtered(
+            lambda r: r.resource and r.resource.aeronave and r.rol == '1'
+        )[:1]
+        if not helicopter_resource:
+            helicopter_resource = self.resource_fields.filtered(
+                lambda r: r.resource and r.resource.aeronave
+            )[:1]
+        return helicopter_resource.resource.aeronave.id if helicopter_resource else False
+
+    def action_create_flight_part_from_calendar(self):
+        self.ensure_one()
+        if not self.task_id:
+            raise UserError('El evento no tiene asociada ninguna tarea.')
+        if not self.env.registry.get('leulit.vuelo'):
+            raise UserError('El módulo de partes de vuelo no está disponible.')
+        if not (self.type_event and self.type_event.is_vuelo):
+            raise UserError('Solo se pueden crear partes de vuelo en eventos cuyo tipo tenga el check de vuelo activo.')
+
+        start_dt, stop_dt = self._get_event_local_datetime_values()
+        hora_salida = start_dt.hour + (start_dt.minute / 60.0)
+        hora_llegada_prevista = stop_dt.hour + (stop_dt.minute / 60.0)
+        tiempo_previsto = self.duration if self.duration and self.duration > 0 else max(hora_llegada_prevista - hora_salida, 1.0)
+        helicoptero_id = self._get_event_helicoptero_id_from_resources()
+
+        context = dict(self.env.context)
+        context.update({
+            'default_fechavuelo': start_dt.date(),
+            'default_horasalida': hora_salida,
+            'default_horallegadaprevista': hora_llegada_prevista,
+            'default_tiempoprevisto': tiempo_previsto,
+            'default_helicoptero_id': helicoptero_id,
+            'default_presupuesto_vuelo': self.sale_order_id.id if self.sale_order_id else False,
+            'default_comentarios': self.name,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Nuevo Parte de Vuelo',
+            'res_model': 'leulit.vuelo',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': context,
+        }
+
+    def action_create_school_part_from_calendar(self):
+        self.ensure_one()
+        if not self.task_id:
+            raise UserError('El evento no tiene asociada ninguna tarea.')
+        if not self.env.registry.get('leulit.parte_escuela'):
+            raise UserError('El módulo de partes de escuela no está disponible.')
+        if not self._is_school_event_type():
+            raise UserError('Solo se puede crear parte de escuela en eventos de Entrenamiento Compañía o Escuela Teórica.')
+        existing_school_part = self.env['leulit.parte_escuela'].with_context(active_test=False).search(
+            [('event', '=', self.id)],
+            limit=1,
+            order='id desc',
+        )
+        if existing_school_part:
+            raise UserError('Este evento ya tiene un parte de escuela asociado (ID: %s).' % existing_school_part.id)
+
+        start_dt, stop_dt = self._get_event_local_datetime_values()
+        hora_inicio = start_dt.hour + (start_dt.minute / 60.0)
+        hora_fin = stop_dt.hour + (stop_dt.minute / 60.0)
+        tiempo = self.duration if self.duration and self.duration > 0 else max(hora_fin - hora_inicio, 1.0)
+
+        context = dict(self.env.context)
+        context.update({
+            'default_name': self.name,
+            'default_event': self.id,
+            'default_fecha': start_dt.date(),
+            'default_hora_start': hora_inicio,
+            'default_hora_end': hora_fin,
+            'default_tiempo': tiempo,
+            'default_presupuestos': [(6, 0, [self.sale_order_id.id])] if self.sale_order_id else False,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Nuevo Parte de Escuela',
+            'res_model': 'leulit.parte_escuela',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': context,
+        }
+    
+    def action_create_annotation_from_calendar(self):
+        self.ensure_one()
+        start_dt, stop_dt = self._get_event_local_datetime_values()
+        helicoptero_id = self._get_event_helicoptero_id_from_resources()
+        view = self.env.ref('leulit_seguridad.leulit_wizard_nueva_anotacion_form', raise_if_not_found=False)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Nueva Anotación Log Book',
+            'res_model': 'leulit.wizard_nueva_anotacion',
+            'view_mode': 'form',
+            'view_id': view.id if view else False,
+            'target': 'new',
+            'context': {
+                'default_fecha': start_dt.date(),
+                'default_helicoptero_id': helicoptero_id
+            }
+        }

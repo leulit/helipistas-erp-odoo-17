@@ -77,8 +77,8 @@
                             <page name="rel_curso_alumno" string="Silabus">
                                 <separator string="Curso-Silabus-Alumnos (1)"/>
                                 <button name="metodo_a_ejecutar" style="margin-right:10px" type="object" string="Añadir" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_edit_only oe_highlight"  invisible="vuelo_id or isreadonly" />
-                                <button name="verficar_por_orden" style="margin-right:10px" type="object" string="Verificar por orden" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"/>
-                                <button name="wizard_change_data" style="margin-right:10px" type="object" string="Cambiar Datos Silabus" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
+                                <button name="verficar_por_orden" style="margin-right:10px" type="object" string="Verificar" context="{'default_parte_escuela_id': id, 'parte_escuela': True}" class="oe_highlight" groups="leulit_escuela.REscuela_responsable"/>
+                                <button name="wizard_change_data" style="margin-right:10px" type="object" string="Datos Silabus" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                 <button name="updateTiempos" type="object" string="Recalcular Tiempos" class="oe_highlight" groups="leulit.ROperaciones_gestor"/>
                                 <field name="rel_curso_alumno" nolabel="1"  readonly="isreadonly" >
                                     <tree create="false" editable="bottom" decoration-success="todo_cerrar==False" decoration-warning="todo_cerrar==True">

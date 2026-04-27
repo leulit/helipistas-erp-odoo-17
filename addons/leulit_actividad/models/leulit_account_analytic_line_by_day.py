@@ -179,7 +179,7 @@ class LeulitAccounAnalyticLineByDay(models.Model):
         _logger.error("################### actualizar datos actividad laboral start thread")
         threaded_calculation.start()
 
-    def run_set_in_byday_acc_an_line_with_fecha(self, fecha='2025-01-01'):
+    def run_set_in_byday_acc_an_line_with_fecha(self, fecha='2026-01-01'):
         db_registry = registry(self.env.cr.dbname)
         with db_registry.cursor() as new_cr:
             env = api.Environment(new_cr, self.env.uid, self.env.context)

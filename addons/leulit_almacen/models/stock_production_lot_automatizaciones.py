@@ -26,7 +26,7 @@ class StockLot(models.Model):
         email_values = {}
         if template:
             now = datetime.now().date()
-            for item in self.search([('fecha_caducidad','<=',now),('product_qty','>',0)]):
+            for item in self.search([('fecha_caducidad','<=',now),('product_qty','>',0),('location_etiqueta','in',['MATERIAL ÚTIL','MATERIAL NUEVO'])]):
                 email_values[item.name] = {
                     'qty': item.product_qty,
                     'fecha_caducidad': item.fecha_caducidad,

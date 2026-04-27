@@ -60,4 +60,16 @@
         <field name="binding_model_id" ref="model_leulit_helipuerto"/>
         <field name="binding_type">report</field>
     </record>
+    <!-- REPORT ACTIVIDAD AEREA FREELANCE -->
+    <record id="leulit_20260417_1006_report" model="ir.actions.report">
+        <field name="name">Informe Actividad Aerea</field>
+        <field name="model">leulit.freelance_actividad_aerea</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_operaciones.leulit_20250318_1638_informe</field>
+        <field name="report_file">leulit_operaciones.leulit_20250318_1638_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Informe Actividad Aerea'</field>
+        <field name="binding_model_id" ref="model_leulit_freelance_actividad_aerea"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

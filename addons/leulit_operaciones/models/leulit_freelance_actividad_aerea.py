@@ -14,7 +14,7 @@ class leulitFreelanceActividadAerea(models.Model):
     def print_certificate_actividad_aerea(self):
         """Prints the certificate of the activity."""
         self.ensure_one()
-        return self.env.ref('leulit_operaciones.leulit_20250318_1638_report').report_action(self)
+        return self.env.ref('leulit_operaciones.leulit_20260417_1006_report').report_action(self)
 
     user = fields.Many2one(comodel_name="res.users", string="Usuario", required=True)
     date = fields.Date(string="Fecha", default=fields.Date.context_today, required=True)

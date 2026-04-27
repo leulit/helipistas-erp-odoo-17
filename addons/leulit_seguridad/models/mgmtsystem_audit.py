@@ -19,11 +19,9 @@ class MgmtsystemAudit(models.Model):
             line.copy(default={'audit_id': new_auditoria.id})
         return new_auditoria
 
-
     @api.onchange('procedimiento_id')
     def onchange_procedimiento_questions(self):
         if self.procedimiento_id:
-            _logger.error('info estoy pasando por aqui ')
             self.line_ids = [(5, 0, 0)]
             lines = []
             for line in self.procedimiento_id.questions_ids:
@@ -33,7 +31,6 @@ class MgmtsystemAudit(models.Model):
                     'question_id': line.id,
                     'notas': line.notas,
                 }))
-                _logger.error('info estoy pasando por aqui 2')
             self.line_ids = lines
 
     def button_close_informe(self):
@@ -68,6 +65,7 @@ class MgmtsystemAudit(models.Model):
     last_revision_norma = fields.Text(string='Última revisión norma')
     procedimiento_id = fields.Many2one(comodel_name="leulit.procedure_audit_question", string="Procedimiento")
     department_id = fields.Many2one(comodel_name="hr.department", string="Área")
+    department_ids = fields.Many2many(comodel_name="hr.department", relation="mgmtsystem_audit_department_rel", column1="audit_id", column2="department_id", string="Áreas")
     close_text = fields.Text(string="Redacción de cierre")
     closing_date = fields.Datetime("Fecha de cierre", readonly=False)
     responsible_department_id = fields.Many2one(comodel_name="hr.employee", string="Responsable de área")

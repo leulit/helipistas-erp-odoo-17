@@ -108,7 +108,6 @@ class LeulitMaintenanceFormOne(models.Model):
                         'pn': item_id.pn,
                         'sn': item_id.sn,
                         'qty': item_id.qty,
-                        'status_work': item.status_work,
                     }
                     items_list.append(item_dict)
                 formone = {
@@ -122,6 +121,7 @@ class LeulitMaintenanceFormOne(models.Model):
                     'firma': item.certificador.firma.decode() if item.certificador else False,
                     'sello': item.certificador.sello.decode() if item.certificador else False,
                     'fecha': item.fecha.strftime("%d/%m/%Y"),
+                    'status_work': item.status_work,
                     }
                 docref = datetime.now().strftime("%Y%m%d")
                 hashcode_interno = utilitylib.getHashOfData(docref)

@@ -13,5 +13,16 @@
         <field name="binding_model_id" ref="model_leulit_perfil_formacion_curso_last_done"/>
         <field name="binding_type">report</field>
     </record>
-    
+    <!-- REPORT INFORME CURSO CHECKLIST -->
+    <record id="report_checklist_curso" model="ir.actions.report">
+        <field name="name">Curso checklist</field>
+        <field name="model">leulit.curso</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_escuela.leulit_2022011_1111_informe</field>
+        <field name="report_file">leulit_escuela.leulit_2022011_1111_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_A4_portrait_without_cabecera"/>
+        <field name="print_report_name">'Curso checklist'</field>
+        <field name="binding_model_id" ref="model_leulit_curso"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

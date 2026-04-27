@@ -378,6 +378,7 @@ class leulit_piloto(models.Model):
     plus_activacion = fields.Float(string="Plus Festivo/Nacional")
     n_licencia = fields.Char(string="Nº Licencia")
     freelance = fields.Boolean(string="Freelance")
+    supervisor_privados = fields.Boolean(string="Supervisor Privados")
 
 
     ###    CALCULO HORAS TOTALES DE PILOTO AL MANDO

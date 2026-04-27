@@ -20,23 +20,16 @@ class Anomalia(models.Model):
         if self.env.user.can_sign_anomalia:
             for item in self.env['leulit.anomalia'].search([('fecha','>=','2020-09-11'),('check_firmado','=',False),('estado','not in',['pending','edicion'])], order= "fecha DESC"):
                 items.append(item)
-            # for item in self.env['leulit.anomalia'].search([('fecha','>=','2020-09-11')], order= "fecha DESC"):
-            #     if item.semaforo_firma == 'red':
-            #         items.append(item)
         return items
-
 
     def prepareSignature(self, descripcion, referencia, modelo, idmodelo, fecha_firma):
         return self.env['leulit_signaturedoc'].prepareSignature( idmodelo, modelo, descripcion, referencia, fecha_firma)
-
 
     def buildFirmarDocsOdoo(self, esignature, hack_firmado_por):
         _logger.error('##############################    buildFirmarDocsOdoo   -->  firmando anomalia')
         for item in self:
             referencia = 'ANO-[{0}]-{1}'.format(item.id, item.estado)
             self.env['leulit_signaturedoc'].prepareSignature(item.id, 'leulit.anomalia', item.codigo, referencia, item.fecha)
-
-
             datospdf = self.generarPdfFirmado( esignature, hack_firmado_por )
             for item2 in self.env['leulit_signaturedoc'].search([('referencia', '=', referencia)]):
                 attach_id = self.env['ir.attachment'].create({
@@ -55,13 +48,11 @@ class Anomalia(models.Model):
                 }
                 item2.write(datosdb)
 
-
     def buildPdfSigned(self, datos, esignature):
         _logger.error('##############################    buildPdfSigned   -->  firmando anomalia')
         for item in self:
             item.buildFirmarDocsOdoo(esignature, False)
             item.check_firmado = True
-
 
     def generarPdfFirmado(self, esignature, hack_firmado_por):
         for item in self:
@@ -88,15 +79,10 @@ class Anomalia(models.Model):
                 'filename': 'ANO-[{0}]-{1}.pdf'.format(item.id, item.estado),
                 'prefijo_hashcode': "ANO",
             }
-            rol_informa = ''
-            rol_difiere = ''
-            rol_close = ''
-            if item.rol_informa:
-                rol_informa = 'Pilot' if item.rol_informa == 1 else 'Mechanic'
-            if item.rol_difiere:
-                rol_difiere = 'Pilot' if item.rol_difiere == 1 else 'Mechanic'
-            if item.rol_close:
-                rol_close = 'Pilot' if item.rol_close == 1 else 'Mechanic'
+            _ROL_MAP = {'1': 'Pilot', '2': 'Mechanic', '3': 'CAMO', '4': 'Others'}
+            rol_informa = _ROL_MAP.get(item.rol_informa, '')
+            rol_difiere = _ROL_MAP.get(item.rol_difiere, '')
+            rol_close = _ROL_MAP.get(item.rol_close, '')
 
             data = {
                 'fecha_firma' : item.fecha_accion,
@@ -175,7 +161,7 @@ class Anomalia(models.Model):
                 'notificacion_sms' : item.notificacion_sms if item.notificacion_sms else "N/A",
                 'firmado_por' : firmado_por,
                 'hashcode' : hashcode,
-                'logo_hlp' : company_helipistas.logo_reports
+                'logo_hlp' : company_helipistas.logo_reports.decode() if company_helipistas.logo_reports else False
             }
             report = self.env.ref('leulit_seguridad.leulit_200511_1627_imprimir_anomalia')
             pdf = self.env['ir.actions.report']._render_qweb_pdf(report,[],data=data)[0]
@@ -187,7 +173,6 @@ class Anomalia(models.Model):
         self.ensure_one()
         return 'ANOMALIA-%s' % (self.codigo)
 
-
     def _esignature_docs(self):
         for item in self:
             docs = self.env['leulit_signaturedoc'].search([('modelo','=','leulit.anomalia'),('idmodelo','=',item.id)])
@@ -195,7 +180,6 @@ class Anomalia(models.Model):
                 item.esignature_docs = docs.ids
             else:
                 item.esignature_docs = None
-
 
     def _semaforo_firma(self):
         for item in self:
@@ -209,15 +193,12 @@ class Anomalia(models.Model):
             else:
                 item.semaforo_firma = "N.A."
 
-    
     def get_anomalias_unsigned_by_helicoptero(self, helicoptero_id):
         return self.search([('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')])
-    
 
     def haveNoGo(self, helicoptero_id, fecha):
         nitems = self.search_count([('fecha','<=',fecha),('helicoptero_id','=',helicoptero_id),('check_firmado','=',False),('estado', '!=', 'edicion')])
         return nitems > 0
-
 
     esignature_docs = fields.One2many(compute=_esignature_docs, comodel_name='leulit_signaturedoc', string='Documentos firma', store=False)
     semaforo_firma = fields.Char(compute=_semaforo_firma, store=False, string='Semáforo')

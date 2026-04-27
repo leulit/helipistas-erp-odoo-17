@@ -8,7 +8,9 @@
             <field name="arch" type="xml">
                 <form string="Vuelo">
                     <field name="wbdata" invisible="1"/>
+                    <field name="is_it_developer" invisible="1"/>
                     <field name="p_corregido" invisible="1"/>
+                    <field name="p_corregido_date" invisible="1"/>
                     <field name="wbimage" invisible="1"/>
                     <field name="wbokey" invisible="1"/>
                     <field name="id" invisible="1"/>
@@ -23,6 +25,7 @@
                     <field name="night_hours" invisible="1" />
                     <field name="peso_piloto" invisible="1" />
                     <field name="is_comercial_uid" invisible="1" />
+                    <field name="nombre_actividad" invisible="1" />
                     <field name="active" invisible="1" />
                     <header class=" d-flex justify-content-between " style="z-index: 50; width: -webkit-fill-available;">
                         <field name="is_comercial_uid" invisible="1"/>
@@ -194,7 +197,7 @@
                                 </div>
                                 <!-- Visible sólo en PC con bootstrap -->
                                 <div class="card p-2 d-none d-sm-block" style="width: 50%">
-                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
+                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado') and not is_it_developer">
                                         <tree string="Tipos de vuelo" editable="bottom">
                                             <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
@@ -202,7 +205,7 @@
                                 </div>
                                 <!-- Visible sólo el mobil con bootstrap -->
                                 <div class="card p-2 d-block d-sm-none" style="width: 100%">
-                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')">
+                                    <field name="vuelo_tipo_line" nolabel="1" string="Tipo Vuelo"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado') and not is_it_developer">
                                         <tree string="Tipos de vuelo" editable="bottom">
                                             <field name="vuelo_tipo_id" string="Tipo Vuelo" options="{'no_create': True, 'create': False, 'edit': False}"/>
                                         </tree>
@@ -789,7 +792,9 @@
                     <div class="card my-2">
                         <div class="card-body d-flex">
                             <div><group><field name="nv" string="N.F."/></group></div>
+                            <div invisible="nv"><group><field name="nv_uid" string="N.F. UID"/></group></div>
                             <div><group><field name="ifr" string="IFR"/></group></div>
+                            <fields name="nv_date" invisible="1"/>
                         </div>
                     </div>
                     <div class="oe_chatter" name="fin de pag">
@@ -1589,6 +1594,7 @@
                     <field name="foto_piloto" widget="image" class="foto_piloto_tree" optional="show"/>
                     <field name="piloto_id" />
                     <field name="estado" column_invisible="1"/>
+                    <field name="nombre_actividad" column_invisible="1"/>
                     <field name="presupuesto_vuelo" optional="show"/>
                     <field name="strfechasalida" string="Fecha Salida" optional="show"/>       
                     <field name="strfechallegada" string="Fecha Llegada" optional="show"/>

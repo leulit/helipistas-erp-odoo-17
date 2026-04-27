@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extensión de la vista form de mail.activity para añadir histórico de fechas -->
+        <record id="leulit_activity_date_history_mail_activity_form" model="ir.ui.view">
+            <field name="name">mail.activity.view.form.date.history</field>
+            <field name="model">mail.activity</field>
+            <field name="inherit_id" ref="mail.mail_activity_view_form_popup"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='note']" position="after">
+                    <group string="Histórico de fechas de vencimiento" invisible="((not id) or (not date_history_ids))" col="1">
+                        <field name="date_history_ids" nolabel="1" readonly="1">
+                            <tree create="false" edit="false" delete="false">
+                                <field name="fecha_cambio" string="Fecha cambio"/>
+                                <field name="fecha_anterior" string="Fecha anterior"/>
+                                <field name="fecha_nueva" string="Fecha nueva"/>
+                                <field name="usuario_id" string="Modificado por"/>
+                                <field name="nota" string="Nota"/>
+                            </tree>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

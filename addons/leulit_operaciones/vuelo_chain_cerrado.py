@@ -283,7 +283,7 @@ class ComprobacionDatosGeneralesHandler(vuelo.AbstractHandler):
                     raise UserError('Valor NG no válido')
                 if vuelo.nfvuelo <= 0:
                     raise UserError('Valor NF no válido')
-            if not vuelo.helicoptero_id.horas_remanente > vuelo.airtime:
+            if vuelo.helicoptero_id.horas_remanente < vuelo.airtime:
                 raise UserError('El tiempo de vuelo previsto (%s) excede el número de horas disponibles (%s) para esta máquina' % (utilitylib.leulit_float_time_to_str(vuelo.airtime),utilitylib.leulit_float_time_to_str(vuelo.helicoptero_id.horas_remanente)))
 
         return super().handle(request)

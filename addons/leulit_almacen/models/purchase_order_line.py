@@ -63,3 +63,4 @@ class PurchaseOrderLine(models.Model):
         if order.is_locked and not self.env.user.has_group('leulit_almacen.RResponsable_almacen'):
             raise UserError("No se pueden añadir líneas mientras el pedido está bloqueado.")
         return super().create(vals)
+

@@ -83,15 +83,15 @@ class leulit_ruta_aerovia(models.Model):
 
     def _get_aeroviasids(self):
         return self.search(['|',('start_point_id', 'in', self.ids ),('end_point_id', 'in', self.ids )])
-    
-    
+
+
     def _get_doc(self):
         for item in self:
             docs_ids = self.env['ir.attachment'].search([('res_model','=','leulit.ruta_aerovia'),('res_id','=',item.id)])
             if docs_ids:
-                item.doc_id = docs_ids[0]
+                item.doc_id = docs_ids.ids[0]
             else:
-                item.doc_id = 0
+                item.doc_id = False
 
 
     def _search_doc_id(self, operator, value):
@@ -139,7 +139,7 @@ class leulit_ruta_aerovia(models.Model):
     ep_lat = fields.Float(related='end_point_id.latitud', string='', store=False)
     ep_lng = fields.Float(related='end_point_id.longitud', string='', store=False)
     activo = fields.Boolean('Activo')
-    doc_id = fields.Many2one(compute='_get_doc', comodel_name="ir.attachment", string='Documento', store=False, search=_search_doc_id)
+    doc_id = fields.Many2one(compute='_get_doc', comodel_name="ir.attachment", string='Documento', store=False, search=_search_doc_id, readonly=True)
     water_zone = fields.Boolean(string="Zona autorotativa sobre el agua",default=False)
 
     

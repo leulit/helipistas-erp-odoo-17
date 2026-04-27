@@ -13,7 +13,7 @@
             <field name="header_line" eval="False"/>
             <field name="header_spacing">35</field>
             <field name="dpi">90</field>
-        </record>        
+        </record>
 
         <record id="paperformat_A4_landscape_2" model="report.paperformat">
             <field name="name">A4 Landscape</field>

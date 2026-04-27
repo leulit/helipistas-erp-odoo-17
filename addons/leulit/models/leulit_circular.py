@@ -267,5 +267,5 @@ class leulit_circular(models.Model):
     pendiente = fields.Boolean(compute='_pendiente_mine',string='Pendiente',store=False,search=_search_pendiente)
     pendiente_todos = fields.Boolean(compute='_pendiente',string='',store=False)
     caducada = fields.Boolean(compute='_caducada',string='Caducada',store=False,search=_search_caducada)
-    tipo = fields.Selection([('1', 'Genérica'),('2','Seguridad'),('3','Informativa')],'Tipo')
+    tipo = fields.Selection([('1', 'Genérica'),('2','Seguridad'),('3','Informativa'),('4','Seguridad de la información')],'Tipo')
     

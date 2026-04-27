@@ -155,6 +155,7 @@ class StockUninstall(models.TransientModel):
                 move_line.lot_id = uninstall.lot_id.id
                 move_line.owner_id = uninstall.owner_id.id
                 move_line.picked = True
+                move_line.quantity = uninstall.uninstall_qty
             # Now mark as done
             move._action_done()
             uninstall.write({'move_id': move.id, 'state': 'done'})

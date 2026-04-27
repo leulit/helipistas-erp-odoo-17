@@ -100,9 +100,11 @@ class ComprobacionHelicopteroHandler(vuelo.AbstractHandler):
             o_vuelo = request.env['leulit.vuelo']
             vuelo = o_vuelo.browse(request.vuelo_id)
             if vuelo.helicoptero_id.statemachine == 'En taller':
-                raise UserError ('Este helicoptero está en Taller')
+                raise UserError ('Este helicóptero está en Taller')
             if vuelo.isHelicopterBlocked(vuelo.helicoptero_id.id, vuelo.fechavuelo):
-                raise UserError ('Este helicoptero tiene una anomalía/discrepancia sin firmar y no puede ser utilizado')
+                raise UserError ('Este helicóptero tiene una anomalía/discrepancia sin firmar y no puede ser utilizado')
+            if vuelo.anotacion_ids:
+                raise UserError ('Este helicóptero tiene una anotación activa y no puede ser utilizado')
         return super().handle(request)
 
 
@@ -281,7 +283,7 @@ class ComprobacionPerfilesFormacionHandler(vuelo.AbstractHandler):
             o_alumno = request.env['leulit.alumno']
             vuelo = o_vuelo.browse(request.vuelo_id)
             exists_pf = False
-            if vuelo.piloto_supervisor_id:
+            if vuelo.piloto_supervisor_id and not vuelo.piloto_supervisor_id.supervisor_privados:
                 tripulante_alumno = o_alumno.search([('partner_id','=',vuelo.piloto_supervisor_id.getPartnerId())])
             else:
                 tripulante_alumno = o_alumno.search([('partner_id','=',vuelo.piloto_id.getPartnerId())])

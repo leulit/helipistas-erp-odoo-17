@@ -404,7 +404,12 @@ class StockLot(models.Model):
     rotable_lifelimit = fields.Boolean(related="product_id.rotable_lifelimit",string="Rotable/Life Limit")
     plan_id = fields.Many2one(comodel_name="maintenance.plan", string="Plan")
     equipment_id = fields.Many2one(compute=_get_equipment, comodel_name="maintenance.equipment", string="Componente")
-
+    potencial_consumido_hr = fields.Float(string="Potencial consumido horas")
+    potencial_consumido_date = fields.Integer(string="Potencial consumido dias")
+    limit_hours = fields.Float(string="Vida límite horas")
+    limit_date = fields.Integer(string="Vida límite dias")
+    tbo_hours = fields.Float(string="TBO horas")
+    tbo_date = fields.Integer(string="TBO dias")
 
     def create_form_one(self):
         self.ensure_one()
@@ -578,7 +583,7 @@ class StockLot(models.Model):
                 raise UserError(_('No hay suficiente cantidad en stock para ajustar.'))
         move = self.env['stock.move'].sudo().create({'name':datos['name_move'],'product_id':datos['product_id'],'location_id':datos['location_id'],'location_dest_id':datos['location_dest_id'],'product_uom_qty':datos['quantity'],'company_id':datos['company_id'],'product_uom':datos['product_uom'],'origin':datos['origin'],'reference':datos['reference'],'date':datos['date']})
         move.reference = datos['reference']
-        self.env['stock.move.line'].sudo().create({'move_id':move.id,'product_id':datos['product_id'],'date':datos['date'],'reference':datos['reference'],'location_id':datos['location_id'],'location_dest_id':datos['location_dest_id'],'quantity':datos['quantity'],'product_uom_qty':datos['quantity'],'lot_id':datos['lote_id'], 'company_id':datos['company_id'], 'product_uom_id':datos['product_uom']}) 
+        self.env['stock.move.line'].sudo().create({'move_id':move.id,'product_id':datos['product_id'],'date':datos['date'],'reference':datos['reference'],'location_id':datos['location_id'],'location_dest_id':datos['location_dest_id'],'quantity':datos['quantity'],'quantity_product_uom':datos['quantity'],'lot_id':datos['lote_id'], 'company_id':datos['company_id'], 'product_uom_id':datos['product_uom']}) 
         move.state = 'done'
         producto = self.env['product.product'].search([('id','=',datos['product_id'])])
         if producto.type == 'product':

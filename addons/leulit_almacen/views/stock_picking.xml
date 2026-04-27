@@ -17,6 +17,13 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <field name="is_reparacion" invisible="1"/>
+                    <field name="picking_related" invisible="1"/>
+                    <button name="create_picking_in_from_reparacion" string="Crear Entrada Reparación" type="object" class="oe_highlight" groups="leulit_almacen.RBase_almacen"  invisible="(not is_reparacion) or (state != 'done') or (picking_related)"/>
+                    <button name="view_picking_reparacion" string="Ver Entrada Reparación" type="object" class="oe_highlight" groups="leulit_almacen.RBase_almacen"  invisible="(not is_reparacion) or (not picking_related)"/>
+                    <button name="view_picking_reparacion" string="Ver Salida Reparación" type="object" class="oe_highlight" groups="leulit_almacen.RBase_almacen"  invisible="(is_reparacion) or (not picking_related)"/>
+                </xpath>
                 <xpath expr="//field[@name='location_dest_id']" position="after">
                     <field name="is_instalacion" invisible="1"/>
                     <field name="maintenance_request_id"  invisible="((not is_instalacion))" />

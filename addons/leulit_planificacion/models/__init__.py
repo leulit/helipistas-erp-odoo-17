@@ -16,4 +16,5 @@ from . import leulit_tipo_meeting
 from . import leulit_reunion_asistente
 from . import leulit_calendar_event_automatizaciones
 from . import leulit_wizard_create_event_from_task
+from . import sale_order_line
 # from . import res_users

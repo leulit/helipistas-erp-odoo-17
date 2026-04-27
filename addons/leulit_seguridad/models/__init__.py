@@ -1,4 +1,5 @@
 from . import leulit_anomalia
+from . import leulit_anotacion_technical_log
 from . import leulit_anomalia_scripts
 from . import leulit_vuelo
 from . import maintenance_equipment
@@ -12,3 +13,4 @@ from . import leulit_procedure_audit_question
 from . import leulit_audit_template_list_questions
 from . import mgmtsystem_verification_line
 from . import mgmtsystem_nonconformity
+from . import leulit_wizard_nueva_anotacion

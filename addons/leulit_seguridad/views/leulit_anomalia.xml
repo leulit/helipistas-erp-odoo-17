@@ -33,18 +33,15 @@
                         <button name="wizard_cerrar" type="object" string="Cerrar" invisible="estado in ['closed']"  class="oe_right oe_highlight"/>
                     </header>
                     <sheet>
-                            <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
-                            <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
-                        
+                        <h4>Certifies that the work specified except as otherwise specified was carried out in accordance with Part 145 and in respect to that work the aircraft is considered ready for Release to Service</h4>
+                        <h4>If you have mechanical issues contact with: Helipistas Operaciones or CAMO. Telf: 0034 937 304 911</h4>
                         <group col="2">
                             <field name="codigo" string="Code"/>
                         </group>
-                        
                         <group col="6">
                             <group colspan="2">
                                 <field name="vuelo_id" string="Flight"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <field name="fechavuelo" string="Date" readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" />
                                 <field name="maintenance_request_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
                             <group colspan="2">
@@ -60,10 +57,9 @@
                                 <field name="fuelsalida_kg" string="Fuel on landing" readonly="1"/>
                             </group>
                         </group>
-                        
                         <group string="Report">
                             <group>
-                                <field name="fecha" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="fecha" string="Date" readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" />
                                 <label for="informado_por" string="Who"/>
                                 <div class="o_row">
                                     <field name="informado_por" nolabel="1"/>
@@ -78,9 +74,8 @@
                                 <field name="notificacion_sms" string="SMS Report" />
                             </group>
                         </group>
-                        
-                        <group string="Action">
-                            <group>
+                        <group col="2">
+                            <group string="Action taken / Deferred">
                                 <field name="fechadiferido" string="Date"/>
                                 <field name="date_deferred" invisible="1"/>
                                 <field name="days_deferred" invisible="1"/>
@@ -91,31 +86,17 @@
                                     <field name="rol_difiere" nolabel="1"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                                     <span>)</span>
                                 </div>
-                            </group>
-                            <group>
                                 <field name="motivodiferir" string="Reason"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                        </group>
-                        
-                        <group string="Mel" col="6">
-                            <group colspan="2">
+                            <group string="Mel">
                                 <field name="melref" domain="[('helicoptero_ids','in',[helicoptero_id])]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                                <field name="tenerencuentamel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
+                                <field name="linemel_id" domain="[('mel_id','=',melref)]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                                <field name="categoria"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                                 <field name="fechalimite"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
-                            <group colspan="2">
-                                <field name="linemel_id" domain="[('mel_id','=',melref)]"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  options="{'no_create': True, 'edit': False, 'no_open':true}"/>
-                                <field name="numinstaladomel"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <field name="pom"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                            </group>
-                            <group colspan="2">
-                                <field name="categoria"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <field name="numexpmel" />
-                            </group>
                         </group>
-                        
                         <group col="2">
-                            <group string="Close">
+                            <group string="Action taken / Close">
                                 <field name="fecha_accion" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                                 <field name="date_closed" invisible="1"/>
                                 <field name="days_close" invisible="1"/>
@@ -128,17 +109,13 @@
                                 </div>
                                 <field name="cerrado_por_company" string="Company" />
                                 <field name="accion" string="Reason"  readonly="((estado in ['closed']))" />
-                                <field name="cas" string="CAS"  readonly="((estado in ['closed']))" />
-                                <field name="comentario" string="Comment"  readonly="((estado in ['closed']))" />
                             </group>
                             <group string="CRS">
                                 <field name="fecha_crs" string="Date"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                                 <field name="crs_por" string="Who"/>
                                 <field name="lugar_crs" string="Place"  readonly="((estado in ['closed']))" />
-                                <field name="comentario_crs" string="Comment"  readonly="((estado in ['closed']))" />
                             </group>
                         </group>
-                        
                         <separator string="Materials"/>
                         <field name="domain_materiales" invisible="1"/>
                         <field name="materiales_equipments"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))"  domain="[('id','in',domain_materiales)]" nolabel="1">
@@ -178,7 +155,6 @@
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">{{ ctx.get('mail_to') }}</field>
             <field name="subject">{{ ctx.get('subject') }}</field>
-            <field name="lang">{{ object.partner_id.lang }}</field>
             <field name="auto_delete" eval="True" />
             <field name="body_html" type="html">
                 <table border="0" cellpadding="0" cellspacing="0">

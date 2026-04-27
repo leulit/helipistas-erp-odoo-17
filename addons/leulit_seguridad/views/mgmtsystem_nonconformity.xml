@@ -63,9 +63,9 @@
                     <field name="kanban_state" widget="kanban_state_selection" />
                     <group name="main">
                         <group name="config">
-                            <field name="name" readonly="state not in 'draft'" />
+                            <field name="name" readonly="state not in 'draft'" required="True"/>
                             <field name="ref" readonly="state not in 'draft'" />
-                            <field name="create_date" readonly="1" />
+                            <field name="create_date"/>
                             <field name="partner_id" readonly="state not in ('draft', 'analysis')" invisible="1"/>
                             <field name="reference" readonly="state not in 'draft'" />
                             <field name="origin_ids" widget="many2many_tags" readonly="state not in ('draft', 'analysis')" />
