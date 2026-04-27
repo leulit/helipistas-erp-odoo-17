@@ -101,12 +101,25 @@ class AemetMetarProvider(MetarProvider):
             if fir else None
         )
 
-        # Fallback CheckWX si AEMET no tiene datos (aeródromos sin servicio MET AEMET)
+        # AEMET sin datos → buscar el aeródromo MET más próximo via OpenAIP + CheckWX
         if not (raw_metar or raw_taf):
-            checkwx_key = self._get_checkwx_key(env)
-            if checkwx_key:
-                raw_metar = CheckWXService.get_metar(icao_consultar, checkwx_key)
-                raw_taf = CheckWXService.get_taf(icao_consultar, checkwx_key)
+            enrich = env['leulit.meteo.icao.reference'].sudo()._enrich_ref_icao(icao_consultar)
+            if enrich and enrich.get('ref_icao'):
+                new_icao = enrich['ref_icao']
+                new_proveedor = enrich.get('proveedor_oficial', 'aemet')
+                # Aeródromos españoles: AEMET primero; internacionales: CheckWX directamente
+                if new_proveedor != 'checkwx':
+                    raw_metar = AemetOpenDataService.get_message('METAR', new_icao, api_key)
+                    raw_taf = AemetOpenDataService.get_message('TAF', new_icao, api_key)
+                if not (raw_metar or raw_taf):
+                    checkwx_key = self._get_checkwx_key(env)
+                    if checkwx_key:
+                        raw_metar = CheckWXService.get_metar(new_icao, checkwx_key)
+                        raw_taf = CheckWXService.get_taf(new_icao, checkwx_key)
+                if raw_metar or raw_taf:
+                    icao_consultar = new_icao
+                    usa_referencia = True
+                    ref_nombre = enrich.get('ref_nombre') or new_icao
 
         derived = parse_metar(raw_metar) if raw_metar else {}
 

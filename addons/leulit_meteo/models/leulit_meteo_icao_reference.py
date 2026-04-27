@@ -237,3 +237,116 @@ class LeulitMeteoIcaoReference(models.Model):
                 "Auto-resolve %s: no se pudo crear registro (%s). "
                 "Reintentando búsqueda.", icao, exc)
             return self.search([('icao', '=', icao)], limit=1) or None
+
+    @api.model
+    def _enrich_ref_icao(self, icao):
+        """Busca el aeródromo MET más próximo y actualiza el registro cuando AEMET no tiene datos.
+
+        Se llama desde el proveedor cuando AEMET no devuelve METAR/TAF para un OACI
+        (registro existente pero marcado incorrectamente como tiene_metar_propio=True,
+        o sin ref_icao configurado). Usa OpenAIP para coordenadas y CheckWX para
+        encontrar el aeródromo con METAR oficial más cercano.
+
+        Returns dict con ref_icao, ref_nombre, proveedor_oficial; o None si falla.
+        """
+        from .leulit_meteo_openaip_service import OpenAIPService
+        from .leulit_meteo_checkwx_service import CheckWXService
+        from .leulit_meteo_aemet_service import AemetOpenDataService
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        openaip_key = ICP.get_param('leulit_meteo.openaip_api_key', '')
+        checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
+        aemet_key = ICP.get_param('leulit_meteo.aemet_api_key', '')
+
+        rec = self.search([('icao', '=', icao)], limit=1)
+        if not rec:
+            return None
+
+        lat = rec.latitud if rec.latitud else None
+        lon = rec.longitud if rec.longitud else None
+
+        # Coordenadas del OACI via OpenAIP si no están en el registro
+        if not lat and openaip_key:
+            airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
+            if airport_info:
+                lat = airport_info.get('lat')
+                lon = airport_info.get('lon')
+
+        if not lat:
+            _logger.warning("_enrich_ref_icao %s: no se obtuvieron coordenadas", icao)
+            return None
+
+        # Buscar el aeródromo con METAR oficial más próximo
+        ref_icao = None
+        ref_nombre = None
+        ref_dist_km = 0.0
+        proveedor = 'aemet'
+
+        if checkwx_key and openaip_key:
+            nearby = OpenAIPService.get_airports_near(
+                lat, lon, _SEARCH_RADIUS_KM, openaip_key, limit=15)
+            for candidate in nearby:
+                cand_icao = candidate.get('icao', '')
+                if not cand_icao or cand_icao == icao:
+                    continue
+                cand_metar = CheckWXService.get_metar(cand_icao, checkwx_key)
+                if cand_metar:
+                    cand_station = CheckWXService.get_station(cand_icao, checkwx_key)
+                    ref_icao = cand_icao
+                    ref_nombre = (
+                        (cand_station.get('name') if cand_station else None)
+                        or candidate.get('name') or cand_icao
+                    )
+                    ref_dist_km = candidate.get('dist_km', 0.0)
+                    country = (cand_station.get('country_code', '') if cand_station else '')
+                    proveedor = 'aemet' if country == 'ES' else 'checkwx'
+                    break
+
+        if not ref_icao:
+            _logger.warning(
+                "_enrich_ref_icao %s: no se encontró aeródromo MET en %d km",
+                icao, _SEARCH_RADIUS_KM)
+            return None
+
+        # Estación AEMET más próxima (si no estaba ya configurada)
+        station_code = rec.station_code or None
+        station_nombre = rec.station_nombre or None
+        station_dist = rec.station_distancia_km or None
+
+        if not station_code and lat and aemet_key:
+            inventario = AemetOpenDataService.get_inventario_estaciones(aemet_key)
+            if inventario:
+                nearest, dist_km = AemetOpenDataService.find_nearest_station(
+                    lat, lon, inventario)
+                if nearest:
+                    station_code = nearest.get('indicativo')
+                    station_nombre = nearest.get('nombre')
+                    station_dist = dist_km
+
+        # Actualizar el registro para que la próxima consulta sea directa
+        try:
+            rec.sudo().write({
+                'tiene_metar_propio': False,
+                'ref_icao': ref_icao,
+                'ref_nombre': ref_nombre,
+                'ref_distancia_km': ref_dist_km,
+                'latitud': lat,
+                'longitud': lon or 0.0,
+                'proveedor_oficial': proveedor,
+                'station_code': station_code,
+                'station_nombre': station_nombre,
+                'station_distancia_km': station_dist or 0.0,
+            })
+            _logger.info(
+                "_enrich_ref_icao: %s → ref=%s (%.1f km, proveedor=%s)",
+                icao, ref_icao, ref_dist_km, proveedor)
+        except Exception as exc:
+            _logger.warning("_enrich_ref_icao %s: error al actualizar: %s", icao, exc)
+            return None
+
+        return {
+            'ref_icao': ref_icao,
+            'ref_nombre': ref_nombre,
+            'ref_distancia_km': ref_dist_km,
+            'proveedor_oficial': proveedor,
+        }
