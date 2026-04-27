@@ -37,6 +37,7 @@
                     </header>
                     <sheet>
                         <field name="res_model" invisible="1"/>
+                        <field name="res_id" invisible="1"/>
                         <group string="Actividad">
                             <group>
                                 <field name="activity_type_id" string="Tipo de actividad"/>
