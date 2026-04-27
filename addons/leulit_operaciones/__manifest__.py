@@ -14,6 +14,7 @@
     "data": [
         "security.xml",
         "sequences.xml",
+        "data/leulit_vuelo_alerta_tripulacion.xml",
         "views/leulit_vuelo.xml",
         "views/leulit_vuelo_taller.xml",
         "views/leulit_operaciones_performance.xml",
