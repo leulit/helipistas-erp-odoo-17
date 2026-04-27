@@ -3,10 +3,14 @@
 ## Tabla de Contenidos
 
 1. [Inicio Rápido](#inicio-rápido)
-2. [Consultas Manuales](#consultas-manuales)
-3. [Integración Programática](#integración-programática)
-4. [Casos de Uso Comunes](#casos-de-uso-comunes)
-5. [Mejores Prácticas](#mejores-prácticas)
+2. [Configuración](#configuración)
+3. [Widget de Mapa Interactivo](#widget-de-mapa-interactivo)
+4. [Consultas con Windy API](#consultas-con-windy-api)
+5. [Polilíneas y Rutas](#polilíneas-y-rutas)
+6. [Consultas Manuales](#consultas-manuales)
+7. [Integración Programática](#integración-programática)
+8. [Casos de Uso Comunes](#casos-de-uso-comunes)
+9. [Mejores Prácticas](#mejores-prácticas)
 
 ---
 
@@ -34,6 +38,259 @@
 
 5. **Ver resultados**
    - Los campos se rellenan automáticamente con los datos meteorológicos
+
+---
+
+## Configuración
+
+### Configurar Windy API (Recomendado)
+
+Para acceder a modelos meteorológicos avanzados (GFS, ECMWF), configure Windy:
+
+1. **Obtener API Key**
+   - Visitar https://api.windy.com/keys
+   - Registrarse (gratuito)
+   - Copiar la API Key
+
+2. **Configurar en Odoo**
+   ```
+   Navegación → Ajustes → Meteorología
+   ```
+   - Pegar la API Key en el campo "Windy API Key"
+   - Seleccionar modelo por defecto (GFS recomendado)
+   - Clic en "Validar API Key" para verificar
+
+3. **Modelos Disponibles**
+   - **GFS**: Global Forecast System (16 días, actualización cada 6h)
+   - **ECMWF**: European Centre (más preciso, 10 días)
+   - **ICON**: DWD alemán (7 días)
+   - **ICON-EU**: Europea de alta resolución (5 días)
+   - **NAM**: North American Model (3 días)
+
+---
+
+## Widget de Mapa Interactivo
+
+### Uso Básico del Mapa
+
+El widget de mapa interactivo permite seleccionar ubicaciones visualmente:
+
+**Características:**
+- 🗺️ Mapa interactivo con OpenStreetMap
+- 📍 Click para establecer ubicación
+- 🖱️ Arrastrar markers para mover
+- 🔍 Zoom y navegación
+- 📐 Modos: Punto único o Polilínea (ruta)
+
+### Modo Punto Único
+
+**Uso:**
+1. Crear nueva consulta
+2. En el mapa, click en la ubicación deseada
+3. Las coordenadas se actualizan automáticamente
+4. Arrastra el marker para ajustar
+5. Click en "Consultar" para obtener datos
+
+**Controles:**
+- **Centrar**: Centra el mapa en tu ubicación actual
+- **Limpiar**: Elimina el marker actual
+- **Pantalla completa**: Amplía el mapa (navegadores compatibles)
+
+### Modo Polilínea (Ruta)
+
+Ideal para planificación de rutas de vuelo:
+
+**Activar modo ruta:**
+1. En la consulta, marcar checkbox "¿Es Polilínea?"
+2. O clic en botón "Modo: Ruta" en la barra del mapa
+
+**Agregar puntos:**
+1. Click en el mapa para agregar puntos secuencialmente
+2. Cada click agrega un nuevo waypoint
+3. Los puntos se numeran automáticamente
+4. Se dibuja una línea conectando los puntos
+
+**Gestionar puntos:**
+- **Mover**: Arrastra un marker para reposicionarlo
+- **Eliminar**: Click derecho en un marker
+- **Reordenar**: Edita en la pestaña "Puntos de Ruta"
+
+**Guardar ruta:**
+1. Click en "Guardar Ruta" en la barra del mapa
+2. Los puntos se guardan en la base de datos
+3. Puedes editar nombre/altitud de cada punto
+
+---
+
+## Consultas con Windy API
+
+### Datos de Windy: Cómo se Obtienen y Muestran
+
+**Importante**: Windy tiene **dos componentes separados**:
+
+#### 1. **Windy API REST** (Datos Numéricos)
+- Llamas a `https://api.windy.com/api/point-forecast/v2`
+- Obtienes JSON con temperatura, viento, presión, etc.
+- **Requiere API Key**
+- Los valores se guardan en la base de datos
+- Se muestran en la pestaña "Puntos de Ruta" (tabla)
+
+#### 2. **Windy Embed** (Visualización)
+- Iframe con `https://embed.windy.com/embed2.html`
+- Overlay meteorológico animado (viento, nubes, temperatura)
+- **NO requiere API Key** (embed público)
+- Se muestra en la pestaña "Mapa Windy Visual"
+- Es solo visualización (no se obtienen datos del iframe)
+
+### Consulta Simple con Windy
+
+**Requisito:** API Key de Windy configurada
+
+**Pasos:**
+1. Crear consulta meteorológica
+2. Seleccionar "Fuente de Datos: Windy"
+3. Establecer ubicación (mapa o coordenadas)
+4. Click en "Consultar Windy"
+
+**Datos obtenidos:**
+- Temperatura (°C)
+- Punto de rocío
+- Humedad relativa (%)
+- Presión atmosférica (hPa)
+- Cobertura de nubes (%)
+- Precipitación (mm)
+- Viento: velocidad, dirección, rachas
+- Modelo utilizado (GFS, ECMWF, etc.)
+
+**Ventajas de Windy vs Open-Meteo:**
+- ✅ Múltiples modelos meteorológicos profesionales
+- ✅ Mayor precisión en vientos
+- ✅ Datos de presión atmosférica
+- ✅ Punto de rocío
+- ⚠️ Requiere API Key
+- ⚠️ Límite de consultas (depende del plan)
+
+---
+
+## Polilíneas y Rutas
+
+### ¿Qué es una Polilínea en este Contexto?
+
+Una **polilínea** es una **ruta de vuelo** definida por múltiples waypoints (puntos).
+Por ejemplo: LEMD → Waypoint1 → Waypoint2 → LEBL
+
+**Casos de uso**:
+- Planificar vuelo cross-country
+- Patrulla de vigilancia
+- Ruta comercial frecuente
+
+### Selector de Rutas: Cómo Funciona
+
+El módulo incluye un **sistema de plantillas de rutas** para reutilizar:
+
+**Crear Plantilla**:
+1. Ir a Meteorología → Rutas Predefinidas
+2. Crear nueva ruta: nombre "LEMD-LEBL"
+3. Agregar waypoints con coordenadas
+4. Guardar
+
+**Usar Plantilla en Consulta**:
+1. Nueva consulta meteorológica
+2. Campo "Cargar Ruta Predefinida" → seleccionar "LEMD-LEBL"
+3. Los puntos se cargan automáticamente
+4. También puedes usar `@onchange` automático al seleccionar
+
+**Guardar Consulta Actual como Plantilla**:
+1. Después de crear una ruta manualmente en el mapa
+2. Click botón "Guardar como Plantilla"
+
+**En Tabla "Puntos de Ruta"**:
+- Cada fila = 1 waypoint con sus datos meteorológicos
+- Temperatura por punto para calcular densidad de aire
+- Viento en ruta para estimar derive y tiempo
+- Cobertura de nubes para decisión VFR/IFR
+- Precipitación para evitar zonas peligrosas
+
+**En "Resumen de Condiciones"** (campos computados):
+- Temperatura Mínima/Máxima: rango térmico en toda la ruta
+- Viento Máximo: peor condición de viento esperada
+- Condiciones Críticas: ⚠️ alerta si viento > 50 km/h o temp < 0°C
+
+**En "Mapa Windy Visual"** (pestaña):
+- Iframe embebido que muestra overlay meteorológico animado
+- Cambia capas con controles de Windy (viento, temperatura, nubes)
+- Útil para ver patterns generales y evolución temporal
+- NO extrae datos (solo visualización)
+
+### Visualización de Datos de Windy
+
+Una vez consultada la API, los datos se muestran en **3 lugares**:
+
+#### 1. Pestaña "Mapa Windy Visual"
+```
+┌────────────────────────────────────────┐
+│  [Iframe de Windy Embed]              │
+│                                        │
+│  🗺️ Mapa animado con overlay         │
+│  🌬️ Viento visible en movimiento     │
+│  🌡️ Cambiar a capa temperatura        │
+│  ☁️ Cambiar a capa nubes              │
+│  ⏱️ Timeline para ver evolución       │
+│                                        │
+└────────────────────────────────────────┘
+```
+**NO requiere API Key** - es visualización pública
+
+#### 2. Pestaña "Puntos de Ruta"
+```
+| # | Nombre    | Lat    | Lon    | Temp | Viento | Nubes |
+|---|-----------|--------|--------|------|--------|-------|
+| 1 | LEMD      | 40.47  | -3.56  | 18°C | 15km/h | 30%   |
+| 2 | Waypoint1 | 40.85  | -2.45  | 17°C | 20km/h | 45%   |
+| 3 | Waypoint2 | 41.23  | -1.12  | 16°C | 18km/h | 35%   |
+| 4 | LEBL      | 41.30  | 2.08   | 19°C | 12km/h | 20%   |
+```
+**Datos numéricos de la API REST** - requiere API Key
+
+#### 3. Resumen de Condiciones
+```
+Temperatura Mínima: 16°C
+Temperatura Máxima: 19°C
+Viento Máximo: 20 km/h
+⚠️ Condiciones Críticas: No
+```
+**Calculado** desde los datos de los punto
+Ejemplo: Vuelo Madrid (LEMD) → Barcelona (LEBL)
+
+**Paso 1: Crear ruta**
+1. Nueva consulta meteorológica
+2. Nombre: "Ruta LEMD-LEBL"
+3. Marcar "¿Es Polilínea?"
+4. Fuente de datos: "Windy"
+
+**Paso 2: Definir waypoints**
+En el mapa, click en:
+1. Madrid-Barajas (40.4936, -3.5668)
+2. Calatayud (41.3561, -1.6408)
+3. Lleida (41.6168, 0.6208)
+4. Barcelona-El Prat (41.2974, 2.0833)
+
+**Paso 3: Ajustar puntos**
+En pestaña "Puntos de Ruta":
+- Renombrar: "LEMD", "Waypoint 1", "Waypoint 2", "LEBL"
+- Agregar altitud si es relevante
+- Reordenar arrastrando el handle
+
+**Paso 4: Obtener meteorología**
+1. Click en "Consultar Windy"
+2. Esperar (puede tardar según número de puntos)
+3. Ver datos en cada punto de la tabla
+
+**Interpretar resultados:**
+- Temperatura por punto para calcular densidad de aire
+- Viento en ruta para estimar derive y tiempo
+- Cobertura de nubes para decisión VFR/IFR
+- Precipitación para evitar zonas peligrosas
 
 ---
 

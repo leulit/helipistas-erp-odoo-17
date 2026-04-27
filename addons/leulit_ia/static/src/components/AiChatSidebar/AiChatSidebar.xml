@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="leulit_ia.AiChatSidebar">
+    <!-- Botón en el systray -->
+    <div class="o_systray_item leulit_ia_systray_btn"
+         t-on-click="toggleSidebar"
+         t-att-class="{ 'active': state.isOpen }"
+         title="Asistente IA">
+        <i class="fa fa-robot" aria-hidden="true"/>
+        <span class="leulit_ia_systray_label">IA</span>
+    </div>
+
+    <!-- Panel lateral -->
+    <div t-if="state.isOpen" class="leulit_ia_sidebar">
+
+        <!-- Cabecera -->
+        <div class="leulit_ia_header">
+            <div class="leulit_ia_header_title">
+                <i class="fa fa-robot me-2"/>
+                <span>Asistente IA</span>
+            </div>
+            <div class="leulit_ia_header_actions">
+                <button class="btn btn-sm btn-link leulit_ia_btn_clear"
+                        t-on-click="clearChat"
+                        title="Limpiar conversación">
+                    <i class="fa fa-trash-o"/>
+                </button>
+                <button class="btn btn-sm btn-link leulit_ia_btn_close"
+                        t-on-click="toggleSidebar"
+                        title="Cerrar">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+        </div>
+
+        <!-- Área de mensajes -->
+        <div class="leulit_ia_messages">
+
+            <!-- Mensaje de bienvenida cuando no hay historial -->
+            <t t-if="state.messages.length === 0">
+                <div class="leulit_ia_welcome">
+                    <i class="fa fa-robot fa-2x mb-3"/>
+                    <p><strong>¡Hola! Soy tu asistente IA.</strong></p>
+                    <p class="text-muted small">
+                        Puedo ayudarte con información sobre proyectos, tareas, cursos y empleados.
+                    </p>
+                    <div class="leulit_ia_quick_actions">
+                        <button class="btn btn-outline-secondary btn-sm"
+                                t-on-click="() => { state.inputText = '¿Qué tareas tengo atrasadas?'; sendMessage(); }">
+                            Tareas atrasadas
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm"
+                                t-on-click="() => { state.inputText = '¿Qué cursos hay en progreso?'; sendMessage(); }">
+                            Estado de cursos
+                        </button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Lista de mensajes -->
+            <t t-foreach="state.messages" t-as="message" t-key="message_index">
+                <div t-att-class="'leulit_ia_message ' + (message.role === 'user' ? 'leulit_ia_message_user' : 'leulit_ia_message_assistant')">
+                    <div class="leulit_ia_message_avatar">
+                        <i t-att-class="message.role === 'user' ? 'fa fa-user' : 'fa fa-robot'"/>
+                    </div>
+                    <div class="leulit_ia_message_bubble">
+                        <t t-if="message.role === 'assistant'">
+                            <!-- Renderizar Markdown en respuestas del asistente -->
+                            <t t-out="renderMarkdown(message.content)"/>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="message.content"/>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Indicador de carga -->
+            <t t-if="state.isLoading">
+                <div class="leulit_ia_message leulit_ia_message_assistant">
+                    <div class="leulit_ia_message_avatar">
+                        <i class="fa fa-robot"/>
+                    </div>
+                    <div class="leulit_ia_message_bubble leulit_ia_loading">
+                        <span class="leulit_ia_dot"/>
+                        <span class="leulit_ia_dot"/>
+                        <span class="leulit_ia_dot"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Ancla para scroll automático al fondo -->
+            <div t-ref="messagesEnd"/>
+        </div>
+
+        <!-- Área de input -->
+        <div class="leulit_ia_input_area">
+            <textarea
+                t-ref="chatInput"
+                class="leulit_ia_input"
+                t-model="state.inputText"
+                t-on-keydown="onInputKeydown"
+                placeholder="Escribe tu pregunta... (Enter para enviar)"
+                rows="2"
+                t-att-disabled="state.isLoading"/>
+            <button class="btn btn-primary leulit_ia_send_btn"
+                    t-on-click="sendMessage"
+                    t-att-disabled="state.isLoading or !state.inputText.trim()">
+                <i class="fa fa-paper-plane"/>
+            </button>
+        </div>
+
+    </div>
+</t>
+
+</templates>

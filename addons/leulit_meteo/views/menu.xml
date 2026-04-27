@@ -15,6 +15,13 @@
               action="action_leulit_meteo_consulta"
               sequence="10"/>
     
+    <!-- Submenú Rutas Predefinidas -->
+    <menuitem id="menu_leulit_meteo_rutas"
+              name="Rutas Predefinidas"
+              parent="menu_leulit_meteo_root"
+              action="action_leulit_meteo_ruta_template"
+              sequence="15"/>
+    
     <!-- Submenú METAR -->
     <menuitem id="menu_leulit_meteo_metar"
               name="Reportes METAR"

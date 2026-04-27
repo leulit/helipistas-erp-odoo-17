@@ -1,0 +1,93 @@
+/* Estilos para el Widget de Mapa Meteorológico */
+
+.o_meteo_map_widget {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 500px;
+}
+
+.o_meteo_map_toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.o_meteo_map_toolbar .btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.o_meteo_map_info {
+    display: flex;
+    gap: 10px;
+}
+
+.o_meteo_map_help {
+    padding: 8px 12px;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.o_meteo_map_container {
+    flex: 1;
+    min-height: 400px;
+    height: 100%;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Asegurar que el mapa ocupe todo el contenedor */
+.o_meteo_map_container .leaflet-container {
+    height: 100%;
+    width: 100%;
+}
+
+/* Estilos para los popups de Leaflet */
+.leaflet-popup-content {
+    margin: 8px 12px;
+    line-height: 1.4;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .o_meteo_map_toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .o_meteo_map_toolbar .btn-group {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .o_meteo_map_toolbar .btn {
+        flex: 1;
+    }
+}
+
+/* Cursor personalizado en modo de edición */
+.o_meteo_map_container:not(.readonly) {
+    cursor: crosshair;
+}
+
+/* Loading spinner */
+.o_meteo_map_loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

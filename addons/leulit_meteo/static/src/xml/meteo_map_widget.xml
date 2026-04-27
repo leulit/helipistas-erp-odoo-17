@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Template para el Widget de Mapa Meteorológico -->
+    <t t-name="leulit_meteo.MeteoMapWidget">
+        <div class="o_meteo_map_widget">
+            <!-- Barra de herramientas -->
+            <div class="o_meteo_map_toolbar" t-if="!props.readonly">
+                <div class="btn-group" role="group">
+                    <button 
+                        type="button" 
+                        class="btn btn-sm"
+                        t-att-class="state.isPolylineMode ? 'btn-primary' : 'btn-secondary'"
+                        t-on-click="togglePolylineMode"
+                        title="Alternar modo polilínea">
+                        <i class="fa fa-route"/> 
+                        <t t-if="state.isPolylineMode">Modo: Ruta</t>
+                        <t t-else="">Modo: Punto</t>
+                    </button>
+                    
+                    <button 
+                        type="button" 
+                        class="btn btn-sm btn-secondary"
+                        t-on-click="clearMarkers"
+                        title="Limpiar puntos">
+                        <i class="fa fa-trash"/> Limpiar
+                    </button>
+                    
+                    <button 
+                        type="button" 
+                        class="btn btn-sm btn-secondary"
+                        t-on-click="centerMap"
+                        title="Centrar mapa">
+                        <i class="fa fa-crosshairs"/> Centrar
+                    </button>
+                    
+                    <button 
+                        t-if="state.isPolylineMode"
+                        type="button" 
+                        class="btn btn-sm btn-success"
+                        t-on-click="savePolyline"
+                        t-att-disabled="state.loading"
+                        title="Guardar polilínea">
+                        <i class="fa fa-save"/> 
+                        <t t-if="state.loading">Guardando...</t>
+                        <t t-else="">Guardar Ruta</t>
+                    </button>
+                </div>
+                
+                <!-- Contador de puntos -->
+                <div class="o_meteo_map_info" t-if="state.isPolylineMode">
+                    <span class="badge bg-info">
+                        <i class="fa fa-map-marker"/> 
+                        <t t-esc="state.points.length"/> puntos
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Ayuda contextual -->
+            <div class="o_meteo_map_help alert alert-info" t-if="!props.readonly">
+                <t t-if="state.isPolylineMode">
+                    <strong>Modo Ruta:</strong> Click en el mapa para agregar puntos. Click derecho en un punto para eliminarlo. Arrastra los puntos para moverlos.
+                </t>
+                <t t-else="">
+                    <strong>Modo Punto:</strong> Click en el mapa para establecer la ubicación. Arrastra el marker para moverlo.
+                </t>
+            </div>
+            
+            <!-- Contenedor del mapa -->
+            <div 
+                class="o_meteo_map_container" 
+                t-ref="mapContainer">
+            </div>
+        </div>
+    </t>
+    
+</templates>

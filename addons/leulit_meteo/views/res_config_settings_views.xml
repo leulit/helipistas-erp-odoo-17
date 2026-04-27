@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de Configuración para Meteorología -->
+    <record id="res_config_settings_view_form_inherit_meteo" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.meteo</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority">90</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" 
+                     data-string="Meteorología" 
+                     string="Meteorología" 
+                     data-key="leulit_meteo"
+                     groups="base.group_system">
+                    <h2>Configuración de APIs Meteorológicas</h2>
+                    
+                    <!-- Windy API Configuration -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="windy_api_key"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="windy_api_key" string="Windy API Key"/>
+                                <div class="text-muted">
+                                    API Key para acceder a Windy. 
+                                    Regístrate en <a href="https://api.windy.com/keys" target="_blank">api.windy.com/keys</a>
+                                </div>
+                                <div class="content-group mt16">
+                                    <field name="windy_api_key" password="True" placeholder="Tu API Key de Windy"/>
+                                </div>
+                                <div class="mt8">
+                                    <button name="action_validate_windy_key" 
+                                            string="Validar API Key" 
+                                            type="object" 
+                                            class="btn-link"
+                                            icon="fa-check-circle"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="windy_model"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="windy_model" string="Modelo Meteorológico Windy"/>
+                                <div class="text-muted">
+                                    Modelo de predicción meteorológica a usar por defecto
+                                </div>
+                                <div class="content-group mt16">
+                                    <field name="windy_model" class="o_light_label" widget="radio"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información sobre las APIs -->
+                    <div class="row mt32">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <h4 class="alert-heading">
+                                    <i class="fa fa-info-circle"/> Información sobre APIs Meteorológicas
+                                </h4>
+                                <hr/>
+                                <p><strong>Open-Meteo:</strong> API gratuita sin necesidad de registro. Proporciona datos meteorológicos globales y pronósticos.</p>
+                                <p><strong>Windy:</strong> Requiere API Key gratuita. Proporciona modelos meteorológicos avanzados (GFS, ECMWF) con datos de viento detallados.</p>
+                                <p><strong>Aviation Weather:</strong> API gratuita de la FAA (EE.UU.). Proporciona reportes METAR y TAF oficiales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    
+</odoo>

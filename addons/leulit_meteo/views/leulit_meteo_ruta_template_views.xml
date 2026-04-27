@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista Tree de Plantillas de Ruta -->
+    <record id="view_leulit_meteo_ruta_template_tree" model="ir.ui.view">
+        <field name="name">leulit.meteo.ruta.template.tree</field>
+        <field name="model">leulit.meteo.ruta.template</field>
+        <field name="arch" type="xml">
+            <tree string="Rutas Predefinidas">
+                <field name="name"/>
+                <field name="numero_puntos"/>
+                <field name="veces_utilizada"/>
+                <field name="ultima_consulta"/>
+                <field name="activa"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Vista Form de Plantillas de Ruta -->
+    <record id="view_leulit_meteo_ruta_template_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.ruta.template.form</field>
+        <field name="model">leulit.meteo.ruta.template</field>
+        <field name="arch" type="xml">
+            <form string="Ruta Predefinida">
+                <header>
+                    <button name="action_aplicar_a_consulta" 
+                            string="Aplicar a Nueva Consulta" 
+                            type="object" 
+                            class="oe_highlight"
+                            icon="fa-paper-plane"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" 
+                                name="action_vista_previa_mapa" 
+                                type="object" 
+                                icon="fa-map">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Vista Previa</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Inactiva" 
+                            bg_color="bg-danger" 
+                            attrs="{'invisible': [('activa', '=', True)]}"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre de la ruta..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group name="info" string="Información">
+                            <field name="numero_puntos"/>
+                            <field name="activa"/>
+                            <field name="color" widget="color"/>
+                        </group>
+                        <group name="stats" string="Estadísticas">
+                            <field name="veces_utilizada"/>
+                            <field name="ultima_consulta"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Descripción">
+                        <field name="descripcion" nolabel="1" placeholder="Descripción de la ruta..."/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Puntos de Ruta" name="puntos">
+                            <field name="puntos_template_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="secuencia" widget="handle"/>
+                                    <field name="nombre"/>
+                                    <field name="latitud"/>
+                                    <field name="longitud"/>
+                                    <field name="altitud"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group name="identificacion">
+                                            <field name="secuencia"/>
+                                            <field name="nombre"/>
+                                        </group>
+                                        <group name="coordenadas">
+                                            <field name="latitud"/>
+                                            <field name="longitud"/>
+                                            <field name="altitud"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <field name="notas" placeholder="Notas sobre este waypoint..."/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Vista Search -->
+    <record id="view_leulit_meteo_ruta_template_search" model="ir.ui.view">
+        <field name="name">leulit.meteo.ruta.template.search</field>
+        <field name="model">leulit.meteo.ruta.template</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Rutas">
+                <field name="name"/>
+                <field name="descripcion"/>
+                
+                <filter string="Activas" name="filter_activas" 
+                        domain="[('activa', '=', True)]"/>
+                <filter string="Inactivas" name="filter_inactivas" 
+                        domain="[('activa', '=', False)]"/>
+                
+                <separator/>
+                <filter string="Más Utilizadas" name="filter_mas_utilizadas" 
+                        domain="[('veces_utilizada', '&gt;', 0)]"/>
+                
+                <group expand="0" string="Agrupar por">
+                    <filter string="Estado" name="group_activa" context="{'group_by': 'activa'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Acción de Ventana -->
+    <record id="action_leulit_meteo_ruta_template" model="ir.actions.act_window">
+        <field name="name">Rutas Predefinidas</field>
+        <field name="res_model">leulit.meteo.ruta.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_activas': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear una nueva ruta predefinida
+            </p>
+            <p>
+                Defina rutas de vuelo comunes (ej: LEMD-LEBL) con waypoints específicos
+                para reutilizarlas en consultas meteorológicas.
+            </p>
+        </field>
+    </record>
+    
+</odoo>

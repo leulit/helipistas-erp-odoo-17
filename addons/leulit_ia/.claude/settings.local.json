@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{print $NF}')",
+      "Bash(find /Users/emiloalvarez/Work/PROYECTOS/HELIPISTAS/ODOO-17-2025/ERP-ODOO/addons/leulit_* -name \"res_config_settings.py\" -type f)",
+      "Bash(find /Users/emiloalvarez/Work/PROYECTOS/HELIPISTAS/ODOO-17-2025/ERP-ODOO/addons/third-party-addons -name \"__manifest__.py\" -exec grep -l \"systray\\\\|chat_window\\\\|overlay\" {} \\\\;)",
+      "Bash(find /Users/emiloalvarez/Work/PROYECTOS/HELIPISTAS/ODOO-17-2025/ERP-ODOO/addons -name \"*.js\" -exec grep -l \"registry.category.*systray\" {} \\\\;)",
+      "WebSearch"
+    ]
+  }
+}
