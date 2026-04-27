@@ -33,7 +33,7 @@
                                 string="Abrir documento fuente"
                                 type="object"
                                 class="btn-primary"
-                                attrs="{'invisible': [('res_id', '=', False)]}"/>
+                                invisible="not res_id"/>
                     </header>
                     <sheet>
                         <field name="res_model" invisible="1"/>
