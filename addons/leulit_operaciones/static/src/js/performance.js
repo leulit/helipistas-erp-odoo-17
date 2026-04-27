@@ -93,76 +93,57 @@ function paintPoint(canvasId, bgSrc, x0, y0, imgH, peso, altura) {
     };
 }
 
-function calc_peso(peso, inicio, proporcion, pasarLibras, dividir) {
+function calc_peso(peso, inicio, proporcion, pasarLibras) {
     if (pasarLibras) peso = peso * 2.2046227;
-    peso = peso - inicio;
-    return dividir ? (peso / proporcion) : (peso * proporcion);
+    return (peso - inicio) * proporcion;
 }
-function obtener_altura(y_low, y_high, distancia) {
-    const dis = (y_high - y_low) / 10;
-    return y_low + distancia * dis;
+// Interpola Y en X dado un array de puntos [[x,y],...] ordenados por X
+function interpAtX(pts, x) {
+    if (pts.length === 1) return pts[0][1];
+    const n = pts.length;
+    if (x <= pts[0][0]) {
+        const dx = pts[1][0] - pts[0][0];
+        if (dx === 0) return pts[0][1];
+        return pts[0][1] + (x - pts[0][0]) * (pts[1][1] - pts[0][1]) / dx;
+    }
+    if (x >= pts[n - 1][0]) {
+        const dx = pts[n - 1][0] - pts[n - 2][0];
+        if (dx === 0) return pts[n - 1][1];
+        return pts[n - 2][1] + (x - pts[n - 2][0]) * (pts[n - 1][1] - pts[n - 2][1]) / dx;
+    }
+    for (let i = 0; i < n - 1; i++) {
+        if (x >= pts[i][0] && x <= pts[i + 1][0]) {
+            const dx = pts[i + 1][0] - pts[i][0];
+            if (dx === 0) return pts[i][1];
+            return pts[i][1] + (x - pts[i][0]) * (pts[i + 1][1] - pts[i][1]) / dx;
+        }
+    }
+    return pts[n - 1][1];
 }
-function buscar_altura(x, temperaturas, temperatura, i, max) {
-    let altura;
-    const seg = temperaturas[i];
-    const L = seg.length - 1;
-    const interp = (x1, y1, x2, y2) => (x * (y2 - y1) + y1 * (x2 - x1) - x1 * (y2 - y1)) / (x2 - x1);
 
-    if (!max) {
-        let distancia;
-        const last = seg.length - 1;
-        if (temperatura === seg[last][0]) distancia = 0;
-        else {
-            distancia = temperatura - seg[last][1];
-            if (distancia < 0) distancia = 10 + distancia;
-        }
-        let y_low, y_high;
-        if (L === 4) {
-            y_low  = interp(seg[0][0], seg[0][1], seg[1][0], seg[1][1]);
-            y_high = interp(seg[2][0], seg[2][1], seg[3][0], seg[3][1]);
-        } else if (L === 5) {
-            y_low  = interp(seg[0][0], seg[0][1], seg[1][0], seg[1][1]);
-            const hi = x > seg[2][0] ? seg[4] : seg[3];
-            y_high = interp(seg[2][0], seg[2][1], hi[0], hi[1]);
-        } else if (L === 6) {
-            const lo = x > seg[1][0] ? seg[4] : seg[1];
-            y_low  = interp(lo[0], lo[1], lo === seg[1] ? seg[1][0] : seg[0][0], lo === seg[1] ? seg[1][1] : seg[0][1]);
-            const hi = x > seg[2][0] ? seg[5] : seg[3];
-            y_high = interp(seg[2][0], seg[2][1], hi[0], hi[1]);
-        } else if (L === 7) {
-            const lo = x > seg[6][0] ? seg[1] : (x > seg[1][0] ? seg[4] : seg[6]);
-            y_low  = interp(lo[0], lo[1], lo === seg[1] ? seg[1][0] : seg[0][0], lo === seg[1] ? seg[1][1] : seg[0][1]);
-            const hi = x > seg[2][0] ? seg[5] : seg[3];
-            y_high = interp(seg[2][0], seg[2][1], hi[0], hi[1]);
-        } else if (L === 8) {
-            const lo = x > seg[4][0] ? seg[6] : (x > seg[1][0] ? seg[4] : seg[1]);
-            y_low  = interp(lo[0], lo[1], lo === seg[1] ? seg[1][0] : seg[0][0], lo === seg[1] ? seg[1][1] : seg[0][1]);
-            const hi = x > seg[5][0] ? seg[7] : (x > seg[2][0] ? seg[5] : seg[3]);
-            y_high = interp(seg[2][0], seg[2][1], hi[0], hi[1]);
-        }
-        altura = obtener_altura(y_low, y_high, distancia);
-    } else {
-        let x1, y1, x2, y2;
-        if (L === 6)      [x1, y1, x2, y2] = x > seg[2][0] ? [seg[2][0], seg[2][1], seg[5][0], seg[5][1]] : [seg[2][0], seg[2][1], seg[3][0], seg[3][1]];
-        else if (L === 5) [x1, y1, x2, y2] = x > seg[2][0] ? [seg[2][0], seg[2][1], seg[4][0], seg[4][1]] : [seg[2][0], seg[2][1], seg[3][0], seg[3][1]];
-        else if (L === 8) {
-            if (x > seg[5][0] && x <= seg[7][0]) [x1, y1, x2, y2] = [seg[5][0], seg[5][1], seg[7][0], seg[7][1]];
-            else if (x > seg[2][0])              [x1, y1, x2, y2] = [seg[2][0], seg[2][1], seg[5][0], seg[5][1]];
-            else                                  [x1, y1, x2, y2] = [seg[2][0], seg[2][1], seg[3][0], seg[3][1]];
-        } else             [x1, y1, x2, y2] = [seg[2][0], seg[2][1], seg[3][0], seg[3][1]];
-        altura = (x * (y2 - y1) + y1 * (x2 - x1) - x1 * (y2 - y1)) / (x2 - x1);
-    }
-    return altura;
-}
+// Nuevo formato: cada fila = [[x1,y1],[x2,y2],..., temperatura_number]
+// El último elemento es un número (temperatura exacta de esa curva)
 function calc_altura(temperaturas, temperatura, peso) {
-    const lastI = temperaturas.length - 1;
-    const topMax = temperaturas[lastI][temperaturas[lastI].length - 1][1];
-    if (temperatura >= topMax) return buscar_altura(peso, temperaturas, temperatura, lastI, true);
-    for (let i = 0; i < temperaturas.length; i++) {
-        const row = temperaturas[i];
-        const lo = row[row.length - 1][0], hi = row[row.length - 1][1];
-        if (temperatura >= lo && temperatura < hi) return buscar_altura(peso, temperaturas, temperatura, i, false);
+    const bands = temperaturas.map(row => ({
+        temp: row[row.length - 1],
+        pts: row.slice(0, -1).slice().sort((a, b) => a[0] - b[0]),
+    })).sort((a, b) => a.temp - b.temp);
+
+    const n = bands.length;
+    if (n === 0) return 0;
+    if (n === 1) return interpAtX(bands[0].pts, peso);
+    if (temperatura <= bands[0].temp) return interpAtX(bands[0].pts, peso);
+    if (temperatura >= bands[n - 1].temp) return interpAtX(bands[n - 1].pts, peso);
+
+    for (let i = 0; i < n - 1; i++) {
+        if (temperatura >= bands[i].temp && temperatura < bands[i + 1].temp) {
+            const y1 = interpAtX(bands[i].pts, peso);
+            const y2 = interpAtX(bands[i + 1].pts, peso);
+            const ratio = (temperatura - bands[i].temp) / (bands[i + 1].temp - bands[i].temp);
+            return y1 + ratio * (y2 - y1);
+        }
     }
+    return interpAtX(bands[n - 1].pts, peso);
 }
 
 /* ---- Patch FormRenderer con OWL hooks ---- */
@@ -320,54 +301,56 @@ patch(FormController.prototype, {
                 const p = d.peso;
 
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
-                    const p_out = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_out, true, false);
-                    const p_in  = calc_peso(p, K.inicio_eje_r22, K.proporcion_beta_in,  true, false);
-                    const a_out = calc_altura(K.temperaturas_beta_out, t, p_out);
-                    const a_in  = calc_altura(K.temperaturas_beta_in,  t, p_in);
-                    paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_beta_in,  K.inicio_eje_y_beta_in,  K.altura_imagen_beta_in,  p_in,  a_in);
-                    paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_beta_out, K.inicio_eje_y_beta_out, K.altura_imagen_beta_out, p_out, a_out);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22_in,  K.proporcion_r22_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_r22_out, K.proporcion_r22_out, false);
+                    const a_in  = calc_altura(K.temperaturas_r22_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_r22_out, t, p_out);
+                    paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_r22_in,  K.inicio_eje_y_r22_in,  K.altura_imagen_r22_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_r22_out, K.inicio_eje_y_r22_out, K.altura_imagen_r22_out, p_out, a_out);
                 }
                 if (el(K.canvas_r22_2_in) && el(K.canvas_r22_2_out)) {
-                    const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_beta_2_out, true, false);
-                    const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_beta_2_in,  true, true);
-                    const a_out = calc_altura(K.temperaturas_beta_2_out, t, p_out);
-                    const a_in  = calc_altura(K.temperaturas_beta_2_in,  t, p_in);
-                    paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_beta_2_in,  K.inicio_eje_y_beta_2_in,  K.altura_imagen_beta_2_in,  p_in,  a_in);
-                    paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_beta_2_out, K.inicio_eje_y_beta_2_out, K.altura_imagen_beta_2_out, p_out, a_out);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_r22_2_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_r22_2_out, false);
+                    const a_in  = calc_altura(K.temperaturas_r22_2_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_r22_2_out, t, p_out);
+                    paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_r22_2_in,  K.inicio_eje_y_r22_2_in,  K.altura_imagen_r22_2_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_r22_2_out, K.inicio_eje_y_r22_2_out, K.altura_imagen_r22_2_out, p_out, a_out);
                 }
                 if (el(K.canvas_cabri_in) && el(K.canvas_cabri_out)) {
-                    const p_cabri = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri, false, true);
-                    const a_in  = calc_altura(K.temperaturas_cabri_in,  t, p_cabri);
-                    const a_out = calc_altura(K.temperaturas_cabri_out, t, p_cabri);
-                    paintPoint(K.canvas_cabri_in,  K.src_cabri_in,  K.inicio_eje_x_cabri_in,  K.inicio_eje_y_cabri_in,  K.altura_imagen_cabri_in,  p_cabri, a_in);
-                    paintPoint(K.canvas_cabri_out, K.src_cabri_out, K.inicio_eje_x_cabri_out, K.inicio_eje_y_cabri_out, K.altura_imagen_cabri_out, p_cabri, a_out);
+                    const p_in  = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_out, false);
+                    const a_in  = calc_altura(K.temperaturas_cabri_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_cabri_out, t, p_out);
+                    paintPoint(K.canvas_cabri_in,  K.src_cabri_in,  K.inicio_eje_x_cabri_in,  K.inicio_eje_y_cabri_in,  K.altura_imagen_cabri_in,  p_in,  a_in);
+                    paintPoint(K.canvas_cabri_out, K.src_cabri_out, K.inicio_eje_x_cabri_out, K.inicio_eje_y_cabri_out, K.altura_imagen_cabri_out, p_out, a_out);
                 }
                 if (el(K.canvas_r44_2_in) && el(K.canvas_r44_2_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  true, false);
-                    const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, true, false);
-                    const a_in  = calc_altura(K.temperaturas_r44_2_ige, t, p_in);
-                    const a_out = calc_altura(K.temperaturas_r44_2_oge, t, p_out);
-                    paintPoint(K.canvas_r44_2_in,  K.src_r44_2_in,  K.inicio_eje_x_r44_2_in,  K.inicio_eje_y_r44_2_in,  K.altura_imagen_r44, p_in,  a_in);
-                    paintPoint(K.canvas_r44_2_out, K.src_r44_2_out, K.inicio_eje_x_r44_2_out, K.inicio_eje_y_r44_2_out, K.altura_imagen_r44, p_out, a_out);
+                    const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, false);
+                    const a_in  = calc_altura(K.temperaturas_r44_2_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_r44_2_out, t, p_out);
+                    paintPoint(K.canvas_r44_2_in,  K.src_r44_2_in,  K.inicio_eje_x_r44_2_in,  K.inicio_eje_y_r44_2_in,  K.altura_imagen_r44_2_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r44_2_out, K.src_r44_2_out, K.inicio_eje_x_r44_2_out, K.inicio_eje_y_r44_2_out, K.altura_imagen_r44_2_out, p_out, a_out);
                 }
                 if (el(K.canvas_r44_in) && el(K.canvas_r44_out)) {
-                    const p_r44 = calc_peso(p, K.inicio_eje_r44, K.proporcion_r44, true, false);
-                    const a_in  = calc_altura(K.temperaturas_r44_ige, t, p_r44);
-                    const a_out = calc_altura(K.temperaturas_r44_oge, t, p_r44);
-                    paintPoint(K.canvas_r44_in,  K.src_r44_in,  K.inicio_eje_x_r44_in,  K.inicio_eje_y_r44_in,  K.altura_imagen_r44, p_r44, a_in);
-                    paintPoint(K.canvas_r44_out, K.src_r44_out, K.inicio_eje_x_r44_out, K.inicio_eje_y_r44_out, K.altura_imagen_r44, p_r44, a_out);
+                    const p_in  = calc_peso(p, K.inicio_eje_r44_in,  K.proporcion_r44_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_r44_out, K.proporcion_r44_out, false);
+                    const a_in  = calc_altura(K.temperaturas_r44_in,  t, p_in);
+                    const a_out = calc_altura(K.temperaturas_r44_out, t, p_out);
+                    paintPoint(K.canvas_r44_in,  K.src_r44_in,  K.inicio_eje_x_r44_in,  K.inicio_eje_y_r44_in,  K.altura_imagen_r44_in,  p_in,  a_in);
+                    paintPoint(K.canvas_r44_out, K.src_r44_out, K.inicio_eje_x_r44_out, K.inicio_eje_y_r44_out, K.altura_imagen_r44_out, p_out, a_out);
                 }
                 if (el(K.canvas_ec_in) && el(K.canvas_ec_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_in,  false, false);
-                    const p_out = calc_peso(p, K.inicio_eje_ec, K.proporcion_ec_out, false, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_ec_in,  K.proporcion_ec_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_ec_out, K.proporcion_ec_out, false);
                     const a_in  = calc_altura(K.temperaturas_ec_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_ec_out, t, p_out);
                     paintPoint(K.canvas_ec_in,  K.src_ec_in,  K.inicio_eje_x_ec_in,  K.inicio_eje_y_ec_in,  K.altura_imagen_ec_in,  p_in,  a_in);
                     paintPoint(K.canvas_ec_out, K.src_ec_out, K.inicio_eje_x_ec_out, K.inicio_eje_y_ec_out, K.altura_imagen_ec_out, p_out, a_out);
                 }
                 if (el(K.canvas_hil_in) && el(K.canvas_hil_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_in,  false, false);
-                    const p_out = calc_peso(p, K.inicio_eje_hil, K.proporcion_hil_out, false, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_hil_in,  K.proporcion_hil_in,  false);
+                    const p_out = calc_peso(p, K.inicio_eje_hil_out, K.proporcion_hil_out, false);
                     const a_in  = calc_altura(K.temperaturas_hil_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_hil_out, t, p_out);
                     paintPoint(K.canvas_hil_in,  K.src_hil_in,  K.inicio_eje_x_hil_in,  K.inicio_eje_y_hil_in,  K.altura_imagen_hil_in,  p_in,  a_in);

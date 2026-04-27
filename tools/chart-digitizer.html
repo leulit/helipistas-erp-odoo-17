@@ -257,8 +257,8 @@ kbd {
                 <strong>2. Modo Origen</strong> (<kbd>O</kbd>) — clic en el punto donde se cruzan los ejes (0,0 de la gráfica)<br>
                 <strong>3. Modo Calibrar</strong> (<kbd>C</kbd>) — (opcional) clic en 2 pesos conocidos del eje X para calcular la proporción automáticamente<br>
                 <strong>4. Configurar</strong> pestaña ⚙️ — nombre de variable, rutas de imagen, etc.<br>
-                <strong>5. Añadir bandas</strong> en pestaña 🌡️ — una por rango de temperatura<br>
-                <strong>6. Modo Puntos</strong> (<kbd>P</kbd>) — selecciona banda y haz clic sobre la gráfica<br>
+                <strong>5. Añadir curvas</strong> en pestaña 🌡️ — una por cada línea de temperatura de la gráfica (ej: −20°C, −10°C, 0°C…)<br>
+                <strong>6. Modo Puntos</strong> (<kbd>P</kbd>) — selecciona una curva y haz clic sobre ella de <strong>izquierda a derecha</strong> con tantos puntos como necesites para capturar su forma<br>
                 <strong>7. Exportar</strong> (<kbd>E</kbd>) — genera el código JS listo para copiar
             </div>
             <div class="section-title">Atajos de teclado</div>
@@ -297,21 +297,12 @@ kbd {
                 <div class="field"><label>Peso inicio eje</label><input type="number" id="cfg-peso-inicio" value="900" step="1"></div>
                 <div class="field"><label>Proporción</label><input type="number" id="cfg-proporcion" value="0.818" step="0.0001"></div>
             </div>
-            <div class="field-row">
-                <div class="field">
-                    <label>Unidad de peso de entrada</label>
-                    <select id="cfg-peso-unidad">
-                        <option value="lbs">Libras (lbs)</option>
-                        <option value="kg">Kilogramos → convertir a lbs</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label>División del peso</label>
-                    <select id="cfg-dividir">
-                        <option value="false">false (multiplicar)</option>
-                        <option value="true">true (dividir)</option>
-                    </select>
-                </div>
+            <div class="field">
+                <label>Unidad de peso de entrada</label>
+                <select id="cfg-peso-unidad">
+                    <option value="lbs">Libras (lbs)</option>
+                    <option value="kg">Kilogramos → convertir a lbs</option>
+                </select>
             </div>
 
             <div class="section-title">Calibración automática de peso</div>
@@ -341,11 +332,11 @@ kbd {
         <!-- BANDS TAB -->
         <div class="tab-body" id="tab-bands">
             <div style="display:flex;justify-content:space-between;align-items:center">
-                <div class="section-title" style="border:none;padding:0">Bandas de temperatura</div>
+                <div class="section-title" style="border:none;padding:0">Curvas de temperatura</div>
                 <button class="btn primary" style="padding:4px 10px;font-size:11px" onclick="addBand()">+ Añadir</button>
             </div>
             <div class="help-box">
-                Selecciona una banda → cambia a <strong>Modo Puntos</strong> → haz clic en la gráfica. <strong>Clic derecho</strong> deshace el último punto.
+                Una curva por cada línea isotérmica de la gráfica. Selecciona una curva → <strong>Modo Puntos</strong> (<kbd>P</kbd>) → haz clic sobre ella <strong>de izquierda a derecha</strong> con tantos puntos como necesites. <strong>Clic derecho</strong> deshace el último punto.
             </div>
             <div id="bands-list" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
@@ -387,7 +378,7 @@ const S = {
     mode: 'origin',        // 'origin' | 'calibrate' | 'points'
     origin: null,          // { x, y } in image pixels
     calPts: [],            // [{ imgX, imgY, weight }]
-    bands: [],             // [{ tempLow, tempHigh, color, points:[{imgX,imgY,sx,sy}] }]
+    bands: [],             // [{ temp, color, points:[{imgX,imgY,sx,sy}] }]
     currentBand: -1,
     dragging: false,
     dragStart: { x: 0, y: 0 },
@@ -574,8 +565,8 @@ function clearCalibration() {
    ============================================================ */
 function addBand() {
     const n = S.bands.length;
-    const prevHigh = n > 0 ? S.bands[n - 1].tempHigh : -20;
-    S.bands.push({ tempLow: prevHigh, tempHigh: prevHigh + 10, color: COLORS[n % COLORS.length], points: [] });
+    const prevTemp = n > 0 ? S.bands[n - 1].temp : -20;
+    S.bands.push({ temp: prevTemp + 10, color: COLORS[n % COLORS.length], points: [] });
     S.currentBand = n;
     showTab('bands');
     renderBands();
@@ -603,34 +594,25 @@ function renderBands() {
           <div class="band-card-header">
             <div class="band-card-title">
               <div class="dot" style="background:${band.color}"></div>
-              Banda ${idx + 1}: [<span style="color:${band.color}">${band.tempLow}°C, ${band.tempHigh}°C</span>)
+              Curva <span style="color:${band.color}">${band.temp}°C</span>
             </div>
             <div class="band-card-actions">
               <button class="btn-xs" onclick="event.stopPropagation();clearBandPts(${idx})">🗑</button>
               <button class="btn-xs red" onclick="event.stopPropagation();removeBand(${idx})">✕</button>
             </div>
           </div>
-          <div style="display:flex;gap:6px;margin-bottom:6px">
-            <div style="flex:1">
-              <div style="font-size:9px;color:#666;margin-bottom:2px">TEMP MÍN °C</div>
-              <input type="number" value="${band.tempLow}" step="5"
-                style="width:100%;padding:3px 5px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:3px;color:#eee;font-size:11px"
-                onclick="event.stopPropagation()"
-                onchange="S.bands[${idx}].tempLow=parseFloat(this.value);renderBands()">
-            </div>
-            <div style="flex:1">
-              <div style="font-size:9px;color:#666;margin-bottom:2px">TEMP MÁX °C</div>
-              <input type="number" value="${band.tempHigh}" step="5"
-                style="width:100%;padding:3px 5px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:3px;color:#eee;font-size:11px"
-                onclick="event.stopPropagation()"
-                onchange="S.bands[${idx}].tempHigh=parseFloat(this.value);renderBands()">
-            </div>
+          <div style="margin-bottom:6px">
+            <div style="font-size:9px;color:#666;margin-bottom:2px">TEMPERATURA °C</div>
+            <input type="number" value="${band.temp}" step="5"
+              style="width:100%;padding:3px 5px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:3px;color:#eee;font-size:11px"
+              onclick="event.stopPropagation()"
+              onchange="S.bands[${idx}].temp=parseFloat(this.value);renderBands()">
           </div>
-          <div style="font-size:10px;color:#666;margin-bottom:3px">${band.points.length} punto(s)</div>
+          <div style="font-size:10px;color:#666;margin-bottom:3px">${band.points.length} punto(s) — haz clic de izquierda a derecha sobre la curva</div>
           <div class="points-list">
             ${band.points.map((p, pi) => `
               <div class="pt-row">
-                <span>[${p.sx}, ${p.sy}]</span>
+                <span>${pi + 1}. [${p.sx}, ${p.sy}]</span>
                 <span class="pt-del" onclick="event.stopPropagation();removePoint(${idx},${pi})">✕</span>
               </div>
             `).join('')}
@@ -640,7 +622,7 @@ function renderBands() {
     });
     const b = S.bands[S.currentBand];
     document.getElementById('st-band').textContent = b
-        ? `Banda ${S.currentBand + 1}: ${b.tempLow}→${b.tempHigh}°C (${b.points.length} pts)`
+        ? `Curva ${b.temp}°C (${b.points.length} pts)`
         : 'Banda: −';
 }
 
@@ -768,7 +750,6 @@ function generateCode() {
     const srcOut    = document.getElementById('cfg-src-out').value;
     const pesoIn    = document.getElementById('cfg-peso-inicio').value;
     const prop      = document.getElementById('cfg-proporcion').value;
-    const dividir   = document.getElementById('cfg-dividir').value;
     const unidad    = document.getElementById('cfg-peso-unidad').value;
     const pasarLibras = unidad === 'kg' ? 'true' : 'false';
 
@@ -777,10 +758,12 @@ function generateCode() {
     const origY = S.origin ? Math.round(S.origin.y) : 0;
     const inicioY = origY - imgH;
 
-    const rows = S.bands.map(band => {
-        const pts   = band.points.map(p => `new Array(${p.sx},${p.sy})`).join(',');
-        const range = `new Array(${band.tempLow},${band.tempHigh})`;
-        return `    new Array(${pts},${range})`;
+    // Ordenar bandas por temperatura y puntos por x (peso) antes de exportar
+    const sortedBands = [...S.bands].sort((a, b) => a.temp - b.temp);
+    const rows = sortedBands.map(band => {
+        const sortedPts = [...band.points].sort((a, b) => a.sx - b.sx);
+        const pts = sortedPts.map(p => `new Array(${p.sx},${p.sy})`).join(',');
+        return `    new Array(${pts},${band.temp})`;
     }).join(',\n');
 
     const canvasName = tipo === 'in' ? canvasIn : canvasOut;
@@ -794,14 +777,15 @@ export const src_${varname}${suffix} = "${srcPath}";
 // Eje de peso
 export const inicio_eje_${varname} = ${pesoIn};
 export const proporcion_${varname}${suffix} = ${prop};
-// Uso: calc_peso(peso, inicio_eje_${varname}, proporcion_${varname}${suffix}, ${pasarLibras}, ${dividir})
+// Uso: calc_peso(peso, inicio_eje_${varname}, proporcion_${varname}${suffix}, ${pasarLibras})
 
 // Coordenadas de imagen (pixels)
 export const altura_imagen_${varname}${suffix} = ${imgH};
 export const inicio_eje_x_${varname}${suffix} = ${origX};
 export const inicio_eje_y_${varname}${suffix} = ${inicioY};  // = ${origY} - ${imgH}
 
-// Matrices de temperatura (${S.bands.length} banda${S.bands.length !== 1 ? 's' : ''})
+// Curvas de temperatura (${sortedBands.length} curva${sortedBands.length !== 1 ? 's' : ''})
+// Formato: cada fila = [...puntos [x,y] ordenados por x..., temperatura_exacta]
 export const temperaturas_${varname}${suffix} = new Array(
 ${rows}
 );
@@ -830,7 +814,7 @@ function saveState() {
         version: 1,
         origin: S.origin,
         bands: S.bands.map(b => ({
-            tempLow: b.tempLow, tempHigh: b.tempHigh, color: b.color,
+            temp: b.temp, color: b.color,
             points: b.points.map(p => ({ sx: p.sx, sy: p.sy }))
         })),
         config: {
@@ -840,7 +824,6 @@ function saveState() {
             srcOut:     g('cfg-src-out'),
             pesoInicio: g('cfg-peso-inicio'),
             proporcion: g('cfg-proporcion'),
-            dividir:    g('cfg-dividir'),
             unidad:     g('cfg-peso-unidad'),
             tipo:       g('cfg-tipo'),
             varname:    g('cfg-varname'),
@@ -862,7 +845,8 @@ document.getElementById('state-input').addEventListener('change', e => {
             const st = JSON.parse(ev.target.result);
             S.origin = st.origin || null;
             S.bands = (st.bands || []).map(b => ({
-                ...b,
+                temp: b.temp ?? b.tempLow ?? 0,
+                color: b.color,
                 points: (b.points || []).map(p => ({ imgX: 0, imgY: 0, sx: p.sx, sy: p.sy }))
             }));
             S.currentBand = S.bands.length > 0 ? 0 : -1;
@@ -872,7 +856,7 @@ document.getElementById('state-input').addEventListener('change', e => {
                 s('cfg-canvas-in', c.canvasIn); s('cfg-canvas-out', c.canvasOut);
                 s('cfg-src-in', c.srcIn);       s('cfg-src-out', c.srcOut);
                 s('cfg-peso-inicio', c.pesoInicio); s('cfg-proporcion', c.proporcion);
-                s('cfg-dividir', c.dividir);    s('cfg-peso-unidad', c.unidad);
+                s('cfg-peso-unidad', c.unidad);
                 s('cfg-tipo', c.tipo);           s('cfg-varname', c.varname);
             }
             updateStatus(); renderBands(); render();
