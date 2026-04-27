@@ -18,6 +18,16 @@
                             type="object"
                             class="btn-secondary"
                             icon="fa-check-circle"/>
+                    <button name="action_validate_openaip_key"
+                            string="Validar OpenAIP"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-check-circle"/>
+                    <button name="action_validate_checkwx_key"
+                            string="Validar CheckWX"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-check-circle"/>
                 </header>
                 <sheet>
                     <group string="Windy">
@@ -37,6 +47,22 @@
                             <a href="https://opendata.aemet.es/centrodedescargas/altaUsuario" target="_blank">opendata.aemet.es</a>.
                         </div>
                         <field name="aemet_api_key" password="True" placeholder="Tu API Key de AEMET"/>
+                    </group>
+                    <group string="OpenAIP">
+                        <div colspan="2" class="text-muted">
+                            Resolución de aeródromos por OACI y búsqueda por proximidad.
+                            Necesario para la auto-resolución de OACIs desconocidos.
+                            Regístrate en <a href="https://www.openaip.net/" target="_blank">openaip.net</a>.
+                        </div>
+                        <field name="openaip_api_key" password="True" placeholder="Tu API Key de OpenAIP"/>
+                    </group>
+                    <group string="CheckWX">
+                        <div colspan="2" class="text-muted">
+                            METAR/TAF/Station de aeródromos internacionales.
+                            Necesario para validar si un OACI emite METAR oficial.
+                            Regístrate en <a href="https://www.checkwxapi.com/" target="_blank">checkwxapi.com</a>.
+                        </div>
+                        <field name="checkwx_api_key" password="True" placeholder="Tu API Key de CheckWX"/>
                     </group>
                 </sheet>
                 <footer>

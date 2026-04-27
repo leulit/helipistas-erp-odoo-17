@@ -6,6 +6,8 @@ from . import leulit_meteo_ruta_template
 from . import leulit_meteo_service
 from . import leulit_meteo_windy_service
 from . import leulit_meteo_aemet_service
+from . import leulit_meteo_openaip_service
+from . import leulit_meteo_checkwx_service
 
 # Aeródromos de referencia (necesario antes del proveedor AEMET, que
 # llama a env['leulit.meteo.icao.reference'].resolve()).

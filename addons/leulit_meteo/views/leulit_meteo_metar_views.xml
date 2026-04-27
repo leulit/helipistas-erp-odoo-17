@@ -88,6 +88,8 @@
                                    invisible="not usa_referencia"/>
                             <field name="ref_nombre" readonly="1"
                                    invisible="not usa_referencia"/>
+                            <field name="ref_distancia_km" readonly="1"
+                                   invisible="not usa_referencia"/>
                         </group>
                         <group string="Tiempos">
                             <field name="observation_time"/>
@@ -167,6 +169,21 @@
                                     <field name="elevation" readonly="1"/>
                                 </group>
                             </group>
+                        </page>
+
+                        <page string="Estación AEMET" name="metar_est"
+                              invisible="not raw_metar_est">
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fa fa-exclamation-triangle"/>
+                                Datos NO oficiales. Generados a partir de observación horaria de
+                                estación convencional AEMET. No válido para briefing aeronáutico oficial.
+                            </div>
+                            <group>
+                                <field name="station_est_nombre" readonly="1"/>
+                                <field name="station_est_code" readonly="1"/>
+                                <field name="station_est_distancia_km" readonly="1"/>
+                            </group>
+                            <field name="raw_metar_est" nolabel="1" widget="text"/>
                         </page>
 
                         <page string="Notas" name="notas">

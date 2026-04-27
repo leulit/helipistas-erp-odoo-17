@@ -1,19 +1,31 @@
 # -*- coding: utf-8 -*-
-"""Tabla de aeródromos / helipuertos de referencia OACI <-> FIR.
-
-Sirve para dos cosas:
-
-1. Saber a qué FIR consultar SIGMET (LECM Madrid, LECB Barcelona,
-   GCCC Canarias).
-2. Mapear aeródromos sin METAR propio (helipuertos pequeños) al
-   aeródromo de referencia con METAR/TAF más cercano.
-
-El registro contiene los puntos operados por la organización; el
-administrador los mantiene desde el menú **Meteorología -> Aeródromos
-de Referencia**.
-"""
+import logging
+import math
 
 from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
+
+# Radio máximo en km para buscar aeródromo con METAR cerca de un OACI desconocido
+_SEARCH_RADIUS_KM = 150
+
+
+def _haversine(lat1, lon1, lat2, lon2):
+    R = 6371.0
+    φ1, φ2 = math.radians(lat1), math.radians(lat2)
+    dφ = math.radians(lat2 - lat1)
+    dλ = math.radians(lon2 - lon1)
+    a = math.sin(dφ/2)**2 + math.cos(φ1)*math.cos(φ2)*math.sin(dλ/2)**2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def _fir_heuristic(lat, lon):
+    """FIR por heurística de coordenadas cuando no hay registro en tabla."""
+    if lat is not None and lat <= 30:
+        return 'GCCC'
+    if lat is not None and lon is not None and lon >= -1.5 and lat >= 40:
+        return 'LECB'
+    return 'LECM'
 
 
 class LeulitMeteoIcaoReference(models.Model):
@@ -35,35 +47,60 @@ class LeulitMeteoIcaoReference(models.Model):
              'para METAR/TAF.')
     ref_icao = fields.Char(
         'OACI de referencia', size=4,
-        help='Aeródromo con METAR/TAF que usaremos cuando este punto no '
-             'emita.')
+        help='Aeródromo con METAR/TAF que usaremos cuando este punto no emita.')
     ref_nombre = fields.Char('Nombre del aeródromo de referencia')
+    ref_distancia_km = fields.Float(
+        'Distancia al aeródromo ref. (km)', digits=(6, 1))
+
+    # Coordenadas del OACI (rellenas en auto-resolución)
+    latitud = fields.Float('Latitud', digits=(10, 6))
+    longitud = fields.Float('Longitud', digits=(10, 6))
+
+    # Estación AEMET convencional más próxima
+    station_code = fields.Char('Cód. Estación AEMET', size=10)
+    station_nombre = fields.Char('Estación AEMET')
+    station_distancia_km = fields.Float(
+        'Distancia estación (km)', digits=(6, 1))
+
+    # Proveedor del METAR oficial
+    proveedor_oficial = fields.Selection([
+        ('aemet', 'AEMET'),
+        ('checkwx', 'CheckWX'),
+        ('ninguno', 'Ninguno'),
+    ], string='Proveedor METAR oficial', default='aemet')
+
+    auto_resolved = fields.Boolean(
+        'Auto-resuelto', default=False, readonly=True,
+        help='True si este registro fue creado automáticamente por el '
+             'sistema al encontrar un OACI desconocido.')
+
     notas = fields.Text()
 
     _sql_constraints = [
-        ('icao_uniq', 'UNIQUE(icao)',
-         'Ya existe un mapeo para este OACI.'),
+        ('icao_uniq', 'UNIQUE(icao)', 'Ya existe un mapeo para este OACI.'),
     ]
+
+    # ---------- API pública ----------
 
     @api.model
     def resolve(self, icao):
-        """Devuelve dict de resolución, o ``None`` si no hay match.
-
-        Claves del dict:
-            * ``icao_consultar`` (str): OACI a usar contra AEMET para
-              METAR/TAF (puede ser el propio o el de referencia).
-            * ``fir`` (str): código de FIR.
-            * ``usa_referencia`` (bool): True si se usa el aeródromo de
-              referencia.
-            * ``nombre`` (str): nombre del punto original.
-            * ``ref_nombre`` (str|None): nombre del aeródromo de
-              referencia, o ``None``.
-        """
+        """Devuelve dict de resolución para icao, auto-creando el registro si no existe."""
         if not icao:
             return None
-        rec = self.search([('icao', '=', icao.upper())], limit=1)
+        icao_up = icao.upper().strip()
+        rec = self.search([('icao', '=', icao_up)], limit=1)
+        if not rec:
+            rec = self._auto_resolve(icao_up)
         if not rec:
             return None
+
+        ref_entry = {
+            'station_code': rec.station_code or None,
+            'station_nombre': rec.station_nombre or None,
+            'station_distancia_km': rec.station_distancia_km or None,
+            'ref_distancia_km': rec.ref_distancia_km or None,
+        }
+
         if not rec.tiene_metar_propio and rec.ref_icao:
             return {
                 'icao_consultar': rec.ref_icao.upper(),
@@ -71,6 +108,8 @@ class LeulitMeteoIcaoReference(models.Model):
                 'usa_referencia': True,
                 'nombre': rec.nombre,
                 'ref_nombre': rec.ref_nombre or rec.ref_icao,
+                'proveedor_oficial': rec.proveedor_oficial or 'aemet',
+                **ref_entry,
             }
         return {
             'icao_consultar': rec.icao,
@@ -78,4 +117,123 @@ class LeulitMeteoIcaoReference(models.Model):
             'usa_referencia': False,
             'nombre': rec.nombre,
             'ref_nombre': None,
+            'proveedor_oficial': rec.proveedor_oficial or 'aemet',
+            **ref_entry,
         }
+
+    # ---------- Auto-resolución ----------
+
+    @api.model
+    def _auto_resolve(self, icao):
+        """Intenta crear un registro para icao consultando OpenAIP + CheckWX + AEMET."""
+        from .leulit_meteo_openaip_service import OpenAIPService
+        from .leulit_meteo_checkwx_service import CheckWXService
+        from .leulit_meteo_aemet_service import AemetOpenDataService
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        openaip_key = ICP.get_param('leulit_meteo.openaip_api_key', '')
+        checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
+        aemet_key = ICP.get_param('leulit_meteo.aemet_api_key', '')
+
+        # 1. Coordenadas del OACI via OpenAIP
+        airport_info = None
+        lat = lon = None
+        if openaip_key:
+            airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
+            if airport_info:
+                lat = airport_info.get('lat')
+                lon = airport_info.get('lon')
+
+        # 2. ¿El propio OACI tiene METAR en CheckWX?
+        ref_icao = None
+        ref_nombre = None
+        ref_dist_km = 0.0
+        proveedor = 'aemet'
+        tiene_metar = False
+        station_info = None
+
+        if checkwx_key:
+            station_info = CheckWXService.get_station(icao, checkwx_key)
+            if station_info:
+                # Rellenar coordenadas si OpenAIP no las dio
+                if lat is None:
+                    lat = station_info.get('lat')
+                    lon = station_info.get('lon')
+                # Verificar si realmente tiene METAR
+                test_metar = CheckWXService.get_metar(icao, checkwx_key)
+                if test_metar:
+                    tiene_metar = True
+                    ref_icao = icao
+                    ref_nombre = station_info.get('name', icao)
+                    ref_dist_km = 0.0
+                    country = station_info.get('country_code', '')
+                    proveedor = 'aemet' if country == 'ES' else 'checkwx'
+
+        # 3. Si no tiene METAR propio → buscar aeródromo con METAR cercano
+        if not tiene_metar and lat is not None and checkwx_key and openaip_key:
+            nearby = OpenAIPService.get_airports_near(
+                lat, lon, _SEARCH_RADIUS_KM, openaip_key, limit=15)
+            for candidate in nearby:
+                cand_icao = candidate.get('icao', '')
+                if not cand_icao or cand_icao == icao:
+                    continue
+                cand_metar = CheckWXService.get_metar(cand_icao, checkwx_key)
+                if cand_metar:
+                    cand_station = CheckWXService.get_station(cand_icao, checkwx_key)
+                    ref_icao = cand_icao
+                    ref_nombre = (cand_station.get('name') if cand_station else None) or candidate.get('name') or cand_icao
+                    ref_dist_km = candidate.get('dist_km', 0.0)
+                    country = (cand_station.get('country_code', '') if cand_station else '')
+                    proveedor = 'aemet' if country == 'ES' else 'checkwx'
+                    break
+
+        # 4. FIR por heurística (el registro en tabla se gestiona en resolve())
+        fir = _fir_heuristic(lat, lon)
+
+        # 5. Estación AEMET más próxima (solo si tenemos coordenadas)
+        station_code = None
+        station_nombre_str = None
+        station_dist = None
+        if lat is not None and aemet_key:
+            inventario = AemetOpenDataService.get_inventario_estaciones(aemet_key)
+            if inventario:
+                nearest, dist_km = AemetOpenDataService.find_nearest_station(
+                    lat, lon, inventario)
+                if nearest:
+                    station_code = nearest.get('indicativo')
+                    station_nombre_str = nearest.get('nombre')
+                    station_dist = dist_km
+
+        # 6. Determinar nombre del punto
+        nombre = (airport_info.get('name') if airport_info else None) or \
+                 (station_info.get('name') if station_info else None) or icao
+
+        # 7. Crear registro
+        vals = {
+            'icao': icao,
+            'nombre': nombre,
+            'fir': fir,
+            'tiene_metar_propio': tiene_metar,
+            'ref_icao': ref_icao if not tiene_metar else None,
+            'ref_nombre': ref_nombre if not tiene_metar else None,
+            'ref_distancia_km': ref_dist_km if not tiene_metar else 0.0,
+            'latitud': lat or 0.0,
+            'longitud': lon or 0.0,
+            'station_code': station_code,
+            'station_nombre': station_nombre_str,
+            'station_distancia_km': station_dist or 0.0,
+            'proveedor_oficial': proveedor,
+            'auto_resolved': True,
+        }
+        try:
+            rec = self.sudo().with_context(no_recompute=True).create(vals)
+            _logger.info(
+                "leulit.meteo.icao.reference: auto-resuelto %s -> ref=%s fir=%s",
+                icao, ref_icao or 'propio', fir)
+            return rec
+        except Exception as exc:
+            # Concurrencia: otro hilo ya lo creó
+            _logger.warning(
+                "Auto-resolve %s: no se pudo crear registro (%s). "
+                "Reintentando búsqueda.", icao, exc)
+            return self.search([('icao', '=', icao)], limit=1) or None

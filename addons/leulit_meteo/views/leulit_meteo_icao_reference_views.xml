@@ -6,13 +6,19 @@
         <field name="model">leulit.meteo.icao.reference</field>
         <field name="arch" type="xml">
             <tree string="Aeródromos de Referencia"
-                  decoration-info="not tiene_metar_propio">
+                  decoration-info="not tiene_metar_propio"
+                  decoration-muted="auto_resolved">
                 <field name="icao"/>
                 <field name="nombre"/>
                 <field name="fir"/>
                 <field name="tiene_metar_propio" widget="boolean_toggle"/>
                 <field name="ref_icao"/>
                 <field name="ref_nombre" optional="hide"/>
+                <field name="ref_distancia_km" optional="show"/>
+                <field name="proveedor_oficial" widget="badge" optional="show"/>
+                <field name="station_code" optional="show"/>
+                <field name="station_distancia_km" optional="hide"/>
+                <field name="auto_resolved" widget="boolean_toggle" readonly="1"/>
             </tree>
         </field>
     </record>
@@ -35,13 +41,27 @@
                         <group string="Identificación">
                             <field name="fir"/>
                             <field name="tiene_metar_propio"/>
+                            <field name="proveedor_oficial" readonly="1"/>
+                            <field name="auto_resolved" readonly="1"/>
                         </group>
+                        <group string="Coordenadas">
+                            <field name="latitud" readonly="1"/>
+                            <field name="longitud" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
                         <group string="Aeródromo de referencia"
                                invisible="tiene_metar_propio">
                             <field name="ref_icao"
                                    required="not tiene_metar_propio"
                                    style="text-transform:uppercase"/>
                             <field name="ref_nombre"/>
+                            <field name="ref_distancia_km" readonly="1"/>
+                        </group>
+                        <group string="Estación AEMET (sintético)">
+                            <field name="station_code"/>
+                            <field name="station_nombre"/>
+                            <field name="station_distancia_km" readonly="1"/>
                         </group>
                     </group>
                     <group string="Notas">
@@ -65,6 +85,8 @@
                         domain="[('tiene_metar_propio','=',True)]"/>
                 <filter string="Usa referencia" name="filter_referencia"
                         domain="[('tiene_metar_propio','=',False)]"/>
+                <filter string="Auto-resueltos" name="filter_auto"
+                        domain="[('auto_resolved','=',True)]"/>
                 <separator/>
                 <filter string="FIR Madrid (LECM)" name="filter_lecm"
                         domain="[('fir','=','LECM')]"/>
@@ -77,6 +99,8 @@
                             context="{'group_by': 'fir'}"/>
                     <filter string="Tiene METAR propio" name="group_metar"
                             context="{'group_by': 'tiene_metar_propio'}"/>
+                    <filter string="Proveedor" name="group_proveedor"
+                            context="{'group_by': 'proveedor_oficial'}"/>
                 </group>
             </search>
         </field>
@@ -98,6 +122,8 @@
                 METAR/TAF/SIGMET. Permite asignar la FIR (LECM/LECB/GCCC)
                 y, opcionalmente, redirigir un punto sin METAR propio
                 (helipuerto) al aeródromo cercano que sí emita METAR.
+                Los registros marcados como "Auto-resuelto" fueron creados
+                automáticamente por el sistema al encontrar un OACI desconocido.
             </p>
         </field>
     </record>
