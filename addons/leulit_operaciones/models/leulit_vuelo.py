@@ -2402,44 +2402,22 @@ class leulit_vuelo(models.Model):
         ops@helipistas.com para que localicen a la tripulación."""
         ahora_utc = datetime.now(timezone.utc).replace(tzinfo=None)
         limite_utc = ahora_utc - timedelta(hours=1)
-        _logger.info("[ALERTA TRIPULACION] Inicio. Ahora UTC: %s | Límite UTC (ahora-1h): %s", ahora_utc, limite_utc)
 
         vuelos_postvuelo = self.search([('estado', '=', 'postvuelo'), ('alerta_tripulacion_enviada', '=', False)])
-        _logger.info("[ALERTA TRIPULACION] Vuelos en postvuelo sin alerta enviada: %s", vuelos_postvuelo.mapped('codigo'))
-
         resultado = self.env['leulit.vuelo']
 
         for vuelo in vuelos_postvuelo:
-            _logger.info("[ALERTA TRIPULACION] Evaluando vuelo %s | fechavuelo=%s | horallegadaprevista=%s | lugarllegada=%s | tz=%s",
-                vuelo.codigo, vuelo.fechavuelo, vuelo.horallegadaprevista,
-                vuelo.lugarllegada.name if vuelo.lugarllegada else None,
-                vuelo.lugarllegada.tz if vuelo.lugarllegada else None,
-            )
-
             if not vuelo.horallegadaprevista or not vuelo.fechavuelo or not vuelo.lugarllegada or not vuelo.lugarllegada.tz:
-                _logger.warning("[ALERTA TRIPULACION] Vuelo %s descartado: faltan datos obligatorios", vuelo.codigo)
                 continue
-
             datetime_llegada_utc = vuelo.getDateTimeUTC(vuelo.fechavuelo, vuelo.horallegadaprevista, vuelo.lugarllegada.tz)
-            _logger.info("[ALERTA TRIPULACION] Vuelo %s | llegada prevista UTC calculada: %s", vuelo.codigo, datetime_llegada_utc)
-
-            if not datetime_llegada_utc:
-                _logger.warning("[ALERTA TRIPULACION] Vuelo %s descartado: getDateTimeUTC devolvió None", vuelo.codigo)
-                continue
-
-            if datetime_llegada_utc <= limite_utc:
-                _logger.info("[ALERTA TRIPULACION] Vuelo %s CUMPLE condición (llegada %s <= límite %s). Enviando alerta.", vuelo.codigo, datetime_llegada_utc, limite_utc)
+            if datetime_llegada_utc and datetime_llegada_utc <= limite_utc:
                 resultado |= vuelo
                 self._enviar_alerta_tripulacion(vuelo, datetime_llegada_utc, ahora_utc)
-            else:
-                _logger.info("[ALERTA TRIPULACION] Vuelo %s NO cumple condición (llegada %s > límite %s). Ignorado.", vuelo.codigo, datetime_llegada_utc, limite_utc)
 
-        _logger.info("[ALERTA TRIPULACION] Fin. Vuelos con alerta enviada en esta ejecución: %s", resultado.mapped('codigo'))
         return resultado
 
     def _enviar_alerta_tripulacion(self, vuelo, datetime_llegada_utc, ahora_utc):
         minutos_retraso = int((ahora_utc - datetime_llegada_utc).total_seconds() / 60)
-        _logger.info("[ALERTA TRIPULACION] Enviando mail para vuelo %s (%s min de retraso)", vuelo.codigo, minutos_retraso)
         template = self.env.ref('leulit_operaciones.leulit_vuelo_alerta_tripulacion')
         template.with_context(
             subject='[ALERTA OPS] Vuelo {} — tripulación pendiente de localizar ({} min de retraso)'.format(
@@ -2450,4 +2428,3 @@ class leulit_vuelo(models.Model):
             hora_llegada_utc=datetime_llegada_utc.strftime('%H:%M') + ' UTC',
         ).send_mail(vuelo.id, force_send=True)
         vuelo.sudo().write({'alerta_tripulacion_enviada': True})
-        _logger.info("[ALERTA TRIPULACION] Mail enviado y flag marcado para vuelo %s", vuelo.codigo)
