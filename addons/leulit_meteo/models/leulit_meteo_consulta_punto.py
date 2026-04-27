@@ -104,7 +104,9 @@ class LeulitMeteoConsultaPunto(models.Model):
     
     # Metadata
     notas = fields.Text(string='Notas')
-    
+
+    display_name = fields.Char(compute='_compute_display_name', store=False)
+
     _sql_constraints = [
         ('secuencia_consulta_unique', 'unique(consulta_id, secuencia)',
          'La secuencia debe ser única dentro de cada consulta.')
@@ -124,13 +126,11 @@ class LeulitMeteoConsultaPunto(models.Model):
                     vals['secuencia'] = (max_seq.secuencia + 1) if max_seq else 1
         return super().create(vals_list)
     
-    def name_get(self):
+    @api.depends('secuencia', 'nombre', 'latitud', 'longitud')
+    def _compute_display_name(self):
         """Nombre descriptivo del punto"""
-        result = []
         for punto in self:
             if punto.nombre:
-                name = f"Punto {punto.secuencia}: {punto.nombre}"
+                punto.display_name = f"Punto {punto.secuencia}: {punto.nombre}"
             else:
-                name = f"Punto {punto.secuencia} ({punto.latitud}, {punto.longitud})"
-            result.append((punto.id, name))
-        return result
+                punto.display_name = f"Punto {punto.secuencia} ({punto.latitud}, {punto.longitud})"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <!-- Vista Tree (Lista) -->
     <record id="view_leulit_meteo_consulta_tree" model="ir.ui.view">
         <field name="name">leulit.meteo.consulta.tree</field>
@@ -19,7 +19,7 @@
             </tree>
         </field>
     </record>
-    
+
     <!-- Vista Form -->
     <record id="view_leulit_meteo_consulta_form" model="ir.ui.view">
         <field name="name">leulit.meteo.consulta.form</field>
@@ -27,34 +27,34 @@
         <field name="arch" type="xml">
             <form string="Consulta Meteorológica">
                 <header>
-                    <button name="action_consultar_clima_actual" 
-                            string="Consultar Clima Actual" 
-                            type="object" 
+                    <button name="action_consultar_clima_actual"
+                            string="Consultar Clima Actual"
+                            type="object"
                             class="oe_highlight"
                             icon="fa-cloud-download"
-                            attrs="{'invisible': [('fuente_datos', '!=', 'openmeteo')]}"/>
-                    <button name="action_consultar_pronostico" 
-                            string="Obtener Pronóstico" 
-                            type="object" 
+                            invisible="fuente_datos != 'openmeteo'"/>
+                    <button name="action_consultar_pronostico"
+                            string="Obtener Pronóstico"
+                            type="object"
                             class="oe_highlight"
                             icon="fa-calendar"
-                            attrs="{'invisible': [('fuente_datos', '!=', 'openmeteo')]}"/>
-                    <button name="action_consultar_windy" 
-                            string="Consultar Windy" 
-                            type="object" 
+                            invisible="fuente_datos != 'openmeteo'"/>
+                    <button name="action_consultar_windy"
+                            string="Consultar Windy"
+                            type="object"
                             class="oe_highlight"
                             icon="fa-wind"
-                            attrs="{'invisible': [('fuente_datos', '!=', 'windy')]}"/>
-                    <button name="action_cargar_ruta_template" 
-                            string="Cargar Ruta" 
-                            type="object" 
+                            invisible="fuente_datos != 'windy'"/>
+                    <button name="action_cargar_ruta_template"
+                            string="Cargar Ruta"
+                            type="object"
                             icon="fa-download"
-                            attrs="{'invisible': ['|', ('es_polilinea', '=', False), ('ruta_template_id', '=', False)]}"/>
-                    <button name="action_guardar_como_template" 
-                            string="Guardar como Plantilla" 
-                            type="object" 
+                            invisible="not es_polilinea or not ruta_template_id"/>
+                    <button name="action_guardar_como_template"
+                            string="Guardar como Plantilla"
+                            type="object"
                             icon="fa-save"
-                            attrs="{'invisible': ['|', ('es_polilinea', '=', False), ('numero_puntos', '=', 0)]}"/>
+                            invisible="not es_polilinea or numero_puntos == 0"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -68,63 +68,57 @@
                             <field name="fuente_datos" widget="radio"/>
                             <field name="tipo_consulta"/>
                             <field name="es_polilinea"/>
-                            <field name="ruta_template_id" 
-                                   attrs="{'invisible': [('es_polilinea', '=', False)]}"/>
-                            <field name="numero_puntos" 
-                                   attrs="{'invisible': [('es_polilinea', '=', False)]}"/>
+                            <field name="ruta_template_id"
+                                   invisible="not es_polilinea"/>
+                            <field name="numero_puntos"
+                                   invisible="not es_polilinea"/>
                         </group>
-                        <group name="coordenadas" string="Coordenadas" 
-                               attrs="{'invisible': [('es_polilinea', '=', True)]}">
+                        <group name="coordenadas" string="Coordenadas"
+                               invisible="es_polilinea">
                             <field name="latitud"/>
                             <field name="longitud"/>
                         </group>
                         <group name="metadata" string="Información">
                             <field name="fecha_consulta"/>
                             <field name="user_id"/>
-                            <field name="vuelo_id" attrs="{'invisible': [('vuelo_id', '=', False)]}"/>
+                            <field name="vuelo_id" invisible="not vuelo_id"/>
                             <field name="active"/>
                         </group>
                     </group>
-                    
+
                     <!-- Resumen de condiciones de la ruta -->
-                    <group string="Resumen de Condiciones" 
-                           attrs="{'invisible': ['|', ('es_polilinea', '=', False), ('numero_puntos', '=', 0)]}">
+                    <group string="Resumen de Condiciones"
+                           invisible="not es_polilinea or numero_puntos == 0">
                         <group>
                             <field name="temperatura_min" widget="float"/>
                             <field name="temperatura_max" widget="float"/>
                         </group>
                         <group>
                             <field name="viento_max" widget="float"/>
-                            <field name="condiciones_criticas" 
+                            <field name="condiciones_criticas"
                                    widget="boolean"
                                    string="⚠️ Condiciones Críticas"/>
                         </group>
                     </group>
-                    
+
                     <!-- Widget de Mapa -->
                     <group string="Mapa Interactivo">
                         <field name="puntos_geojson" widget="meteo_map" nolabel="1"/>
                     </group>
-                    
+
                     <notebook>
-                        <page string="Mapa Windy Visual" name="windy_map" 
-                              attrs="{'invisible': [('fuente_datos', '!=', 'windy')]}">
+                        <page string="Mapa Windy Visual" name="windy_map"
+                              invisible="fuente_datos != 'windy'">
                             <div class="alert alert-info" role="alert">
                                 <strong>Mapa Interactivo de Windy:</strong> Visualiza condiciones meteorológicas en tiempo real.
                                 Usa los controles del mapa para cambiar capas (viento, temperatura, nubes, etc.)
                             </div>
                             <div class="o_windy_embed_container" style="width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
-                                <iframe 
-                                    t-att-src="record.get_windy_embed_url()"
-                                    width="100%" 
-                                    height="100%" 
-                                    frameborder="0"
-                                    style="border: none;">
-                                </iframe>
+                                <field name="windy_embed_html" widget="html" nolabel="1"/>
                             </div>
                         </page>
-                        
-                        <page string="Datos Actuales" name="actual" attrs="{'invisible': [('tipo_consulta', '=', 'pronostico')]}">
+
+                        <page string="Datos Actuales" name="actual" invisible="tipo_consulta == 'pronostico'">
                             <group>
                                 <group name="temperatura" string="Temperatura">
                                     <field name="temperatura" widget="float"/>
@@ -143,7 +137,11 @@
                                     <field name="velocidad_viento" widget="float"/>
                                     <field name="direccion_viento" widget="float"/>
                                     <field name="rachas_viento" widget="float"/>
-                                </grouPuntos de Ruta" name="puntos_ruta" attrs="{'invisible': [('es_polilinea', '=', False)]}">
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Puntos de Ruta" name="puntos_ruta" invisible="not es_polilinea">
                             <field name="puntos_ids" nolabel="1">
                                 <tree editable="bottom">
                                     <field name="secuencia" widget="handle"/>
@@ -196,17 +194,13 @@
                                 </form>
                             </field>
                         </page>
-                        
-                        <page string="p>
-                            </group>
-                        </page>
-                        
-                        <page string="Pronóstico" name="pronostico" attrs="{'invisible': [('tipo_consulta', '=', 'actual')]}">
+
+                        <page string="Pronóstico" name="pronostico" invisible="tipo_consulta == 'actual'">
                             <group>
                                 <field name="datos_pronostico" widget="ace" options="{'mode': 'json'}"/>
                             </group>
                         </page>
-                        
+
                         <page string="Notas" name="notas">
                             <field name="notas" placeholder="Notas adicionales sobre la consulta meteorológica..."/>
                         </page>
@@ -219,7 +213,7 @@
             </form>
         </field>
     </record>
-    
+
     <!-- Vista Search -->
     <record id="view_leulit_meteo_consulta_search" model="ir.ui.view">
         <field name="name">leulit.meteo.consulta.search</field>
@@ -230,27 +224,27 @@
                 <field name="ubicacion"/>
                 <field name="user_id"/>
                 <field name="fecha_consulta"/>
-                
-                <filter string="Clima Actual" name="filter_actual" 
+
+                <filter string="Clima Actual" name="filter_actual"
                         domain="[('tipo_consulta', '=', 'actual')]"/>
-                <filter string="Pronóstico" name="filter_pronostico" 
+                <filter string="Pronóstico" name="filter_pronostico"
                         domain="[('tipo_consulta', '=', 'pronostico')]"/>
-                
+
                 <separator/>
-                <filter string="Hoy" name="filter_today" 
-                        domain="[('fecha_consulta', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), 
+                <filter string="Hoy" name="filter_today"
+                        domain="[('fecha_consulta', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
                                  ('fecha_consulta', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
-                <filter string="Esta Semana" name="filter_this_week" 
+                <filter string="Esta Semana" name="filter_this_week"
                         domain="[('fecha_consulta', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
                                  ('fecha_consulta', '&lt;=', (context_today() + datetime.timedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
-                
+
                 <separator/>
-                <filter string="Mis Consultas" name="filter_my_consultas" 
+                <filter string="Mis Consultas" name="filter_my_consultas"
                         domain="[('user_id', '=', uid)]"/>
-                
+
                 <separator/>
                 <filter string="Archivado" name="inactive" domain="[('active', '=', False)]"/>
-                
+
                 <group expand="0" string="Agrupar por">
                     <filter string="Ubicación" name="group_ubicacion" context="{'group_by': 'ubicacion'}"/>
                     <filter string="Tipo" name="group_tipo" context="{'group_by': 'tipo_consulta'}"/>
@@ -260,7 +254,7 @@
             </search>
         </field>
     </record>
-    
+
     <!-- Acción de Ventana -->
     <record id="action_leulit_meteo_consulta" model="ir.actions.act_window">
         <field name="name">Consultas Meteorológicas</field>
@@ -277,5 +271,5 @@
             </p>
         </field>
     </record>
-    
+
 </odoo>

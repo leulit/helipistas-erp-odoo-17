@@ -41,9 +41,9 @@
                         </button>
                     </div>
                     
-                    <widget name="web_ribbon" title="Inactiva" 
-                            bg_color="bg-danger" 
-                            attrs="{'invisible': [('activa', '=', True)]}"/>
+                    <widget name="web_ribbon" title="Inactiva"
+                            bg_color="bg-danger"
+                            invisible="activa"/>
                     
                     <div class="oe_title">
                         <h1>

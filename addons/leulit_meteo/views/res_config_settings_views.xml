@@ -55,6 +55,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- AEMET API Configuration -->
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="aemet_api_key"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="aemet_api_key" string="AEMET OpenData API Key"/>
+                                <div class="text-muted">
+                                    API Key (JWT) para acceder a AEMET OpenData.
+                                    Solicítala en
+                                    <a href="https://opendata.aemet.es/centrodedescargas/altaUsuario" target="_blank">opendata.aemet.es</a>.
+                                    Se utiliza para los reportes METAR (España) sintetizados a partir de observaciones AEMET.
+                                </div>
+                                <div class="content-group mt16">
+                                    <field name="aemet_api_key" password="True" placeholder="Tu API Key de AEMET"/>
+                                </div>
+                                <div class="mt8">
+                                    <button name="action_validate_aemet_key"
+                                            string="Validar API Key"
+                                            type="object"
+                                            class="btn-link"
+                                            icon="fa-check-circle"/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Información sobre las APIs -->
@@ -68,6 +94,7 @@
                                 <p><strong>Open-Meteo:</strong> API gratuita sin necesidad de registro. Proporciona datos meteorológicos globales y pronósticos.</p>
                                 <p><strong>Windy:</strong> Requiere API Key gratuita. Proporciona modelos meteorológicos avanzados (GFS, ECMWF) con datos de viento detallados.</p>
                                 <p><strong>Aviation Weather:</strong> API gratuita de la FAA (EE.UU.). Proporciona reportes METAR y TAF oficiales.</p>
+                                <p><strong>AEMET OpenData:</strong> Requiere API Key gratuita. AEMET no expone METAR/TAF en OpenData; este módulo sintetiza un texto tipo METAR a partir de la observación horaria AEMET de la estación más próxima.</p>
                             </div>
                         </div>
                     </div>

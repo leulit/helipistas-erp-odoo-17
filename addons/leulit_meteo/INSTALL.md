@@ -1,152 +1,113 @@
-# Instalación del Módulo leulit_meteo - Nueva Versión
+# Instalación de `leulit_meteo`
 
-Este módulo ha sido actualizado con nuevas funcionalidades:
-- ✅ Integración con Windy API (datos REST + visualización iframe)
-- ✅ Widget de mapa interactivo con Leaflet para selección de ubicaciones
-- ✅ Soporte para polilíneas/rutas con múltiples waypoints
-- ✅ Sistema de plantillas de rutas predefinidas
-- ✅ Resumen automático de condiciones meteorológicas de rutas
-- ✅ Visualización dual: datos numéricos + mapa visual Windy
+Guía de instalación, configuración inicial y verificación del módulo de meteorología para Odoo 16.
 
-## Pasos de Instalación/Actualización
+---
 
-### 1. Verificar Dependencias
+## 1. Requisitos previos
 
-El módulo ya no requiere dependencias Python adicionales más allá de `requests` que ya estaba instalado.
+- **Odoo 16 Community** en funcionamiento.
+- **Módulo `leulit`** instalado (dependencia interna del addon).
+- **Python**: paquete `requests` disponible en el entorno donde corre Odoo. Si no lo está:
 
-### 2. Actualizar el Módulo en Odoo
+  ```bash
+  pip install requests
+  ```
+
+- **Acceso a Internet** desde el servidor Odoo (consultas a Open-Meteo, Windy y AEMET) y desde el navegador del usuario (CDN `unpkg.com` para Leaflet).
+
+No se requiere instalar Leaflet manualmente: el módulo lo declara vía CDN en sus assets.
+
+---
+
+## 2. Instalación del módulo
+
+1. Copiar el directorio `leulit_meteo/` dentro de la ruta de addons de la instancia Odoo.
+2. En Odoo, ir a **Aplicaciones**, pulsar **Actualizar lista de aplicaciones**.
+3. Buscar **`leulit_meteo`** y pulsar **Instalar**.
+
+Alternativa por línea de comandos (genérica, sin asumir Docker):
 
 ```bash
-# Opción 1: Desde la interfaz de Odoo
-# - Ir a Aplicaciones
-# - Buscar "leulit_meteo"
-# - Click en "Actualizar"
-
-# Opción 2: Desde terminal Docker
-docker exec -ti helipistas_odoo odoo -u leulit_meteo -d nombre_bd --stop-after-init
+odoo -u leulit_meteo -d <nombre_bd> --stop-after-init
 ```
 
-### 3. Configurar Windy API (Opcional pero Recomendado)
+Tras instalar/actualizar, refrescar el navegador con **Ctrl+F5** para asegurar que se cargan los assets nuevos (Leaflet, vistas).
 
-1. Obtener API Key gratuita en: https://api.windy.com/keys
-2. En Odoo: **Ajustes > Meteorología**
-3. Ingresar API Key y seleccionar modelo (GFS recomendado)
-4. Click en "Validar API Key"
+---
 
-## Nuevos Modelos y Campos
+## 3. Configuración inicial
 
-El módulo agrega:
+Ambas API keys son **opcionales**, pero recomendadas según el uso previsto. Sin ninguna de ellas, el módulo sigue funcionando contra **Open-Meteo** (sin clave).
 
-### Modelos
-- `leulit.meteo.consulta.punto`: Para puntos de polilíneas
-- `leulit.meteo.ruta.template`: Plantillas de rutas reutilizables
-- `leulit.meteo.ruta.template.punto`: Puntos de las plantillas
+### 3.1. Windy API Key (opcional, recomendada para modelos profesionales)
 
-### Campos en `leulit.meteo.consulta`
-- `fuente_datos`: Selection (openmeteo/windy)
-- `es_polilinea`: Boolean
-- `ruta_template_id`: Many2one a plantilla de ruta
-- `puntos_ids`: One2many a puntos
-- `numero_puntos`: Integer computed
-- `puntos_geojson`: Text para widget de mapa
-- `temperatura_min/max`: Float computed (resumen ruta)
-- `viento_max`: Float computed
-- `condiciones_criticas`: Boolean computed
+Útil si se quieren consultar modelos meteorológicos profesionales (GFS, ECMWF, ICON, ICON-EU, NAM) o usar el mapa visual embebido de Windy.
 
-### Nuevas Vistas
-- Widget de mapa interactivo con Leaflet (selección ubicaciones)
-- Iframe de Windy embed (visualización meteorológica)
-- Pestaña "Puntos de Ruta" para polilíneas
-- Pestaña "Mapa Windy Visual" con iframe embebido
-- Configuración de Windy en Ajustes
-- Gestión de Rutas Predefinidas (tree, form)
-Simple con Mapa Interactivo
+1. Obtener la API key gratuita en <https://api.windy.com/keys>.
+2. En Odoo: **Ajustes → Meteorología**.
+3. Pegar la clave en **Windy API Key**.
+4. Seleccionar el **modelo por defecto** (GFS, ECMWF, ICON, ICON-EU o NAM).
+5. Pulsar **Validar API Key**.
 
-1. Crear nueva consulta meteorológica
-2. Seleccionar "Fuente de Datos: Windy"
-3. En "Mapa Interactivo", click en ubicación deseada
-4. Click "Consultar Windy"
-5. Ver datos en pestaña "Datos Actuales"
-6. Ver visualización en pestaña "Mapa Windy Visual"
+Sin esta clave, las consultas con fuente "Windy" lanzarán un `UserError`. Open-Meteo seguirá funcionando con normalidad.
 
-### Crear Ruta de Vuelo (Polilínea)
+### 3.2. AEMET OpenData API Key (opcional, recomendada para estaciones españolas)
 
-**Opción A: Crear desde cero**
-1. Nueva consulta, marcar "¿Es Polilínea?"
-2. Click en el mapa para agregar waypoints secuencialmente
-3. Click derecho en un punto para eliminarlo
-4. Arrastra markers para ajustar posición
-5. Click "Guardar Ruta"
-6. Seleccionar "Fuente: Windy" y click "Consultar Windy"
-7. Ver datos por punto en pestaña "Puntos de Ruta"
-8. Ver mapa visual en pestaña "Mapa Windy Visual"
+Útil para construir partes tipo METAR a partir de observaciones horarias de estaciones AEMET en España.
 
-**Opción B: Usar ruta predefinida**
-1. Ir a Meteorología → Rutas Predefinidas
-2. Crear ruta: "LEMD-LEBL" con waypoints
-3. En nueva consulta, campo "Cargar Ruta Predefinida" → seleccionar "LEMD-LEBL"
-4. Click "Cargar Ruta" → puntos se importan automáticamente
-5. Click "Consultar Windy"
+1. Solicitar la API key (un JWT) gratuita en <https://opendata.aemet.es/centrodedescargas/altaUsuario>. Llega por correo electrónico.
+2. En Odoo: **Ajustes → Meteorología**.
+3. Pegar el JWT completo en **AEMET OpenData API Key** (las JWT son largas; copiar sin espacios ni saltos de línea).
+4. Pulsar **Validar API Key**.
 
-### Visualizar Condiciones Meteorológicas
+Sin esta clave, la acción **Obtener observación** del modelo `leulit.meteo.metar` (con proveedor AEMET seleccionado) lanzará `UserError`.
 
-**Datos Numéricos** (Pestaña "Puntos de Ruta"):
-- Tabla con temperatura, viento, presión por waypoint
-- Editable: agregar/eliminar puntos
-- Exportable a Excel
+> **Nota:** AEMET OpenData **no** publica METAR oficiales. El módulo construye un texto en formato tipo METAR a partir de la observación horaria de la estación; el resultado queda etiquetado con `RMK AEMET` para diferenciarlo.
 
-**Mapa Visual** (Pestaña "Mapa Windy Visual"):
-- Iframe con overlay animado de Windy
-- Capas: viento, temperatura, nubes, precipitación
-- Timeline para ver evolución temporal
-- Zoom y navegación interactiva
+---
 
-**Resumen** (Campos superiores):
-- Temperatura Min/Max en toda la ruta
-- Viento Máximo encontrado
-- ⚠️ Alerta si condiciones críticas (viento > 50 km/h o temp < 0°C)
-### Crear Ruta de Vuelo
+## 4. Verificación post-instalación
 
-1. Nueva consulta, marcar "¿Es Polilínea?"
-2. Click en el mapa para agregar waypoints
-3. Click derecho en un punto para eliminarlo
-4. Arrastra markers para ajustar
-5. Click "Guardar Ruta"
-6. Seleccionar "Fuente: Windy" y click "Consultar Windy"
-7. Ver datos meteorológicos por punto en pestaña "Puntos de Ruta"
+1. **Menús**: en la barra superior debe aparecer **Meteorología** con tres submenús:
+   - Consultas Clima
+   - Rutas Predefinidas
+   - Reportes METAR
 
-## Solución de Problemas
+2. **Open-Meteo (sin clave)**: en **Consultas Clima**, crear un registro nuevo, introducir coordenadas (por ejemplo Madrid: `40.4168, -3.7038`) y pulsar **Consultar Clima Actual**. Debe devolver datos en pocos segundos.
 
-### El mapa no se muestra
-- Verificar que el navegador permite contenido desde unpkg.com (CDN)
-- Verificar en consola del navegador si hay errores de carga de Leaflet
-- Limpiar caché del navegador
+3. **AEMET (si se configuró)**: en **Reportes METAR**, crear un registro con OACI `LEMD` (proveedor por defecto: AEMET) y pulsar **Obtener observación**. Debe rellenarse el texto tipo METAR con el sufijo `RMK AEMET`.
 
-### Error "Leaflet no está cargado"
-- Refrescar la página con Ctrl+F5 (forzar recarga de assets)
-- Verificar conexión a internet (requiere CDN)
+4. **Windy (si se configuró)**: abrir una consulta existente, cambiar **Fuente de Datos** a **Windy** y pulsar **Consultar Windy**. Deben llegar los datos del modelo seleccionado.
 
-### API Key de Windy no válida
-- Verificar que copiaste la key completa sin espacios
-- La key puede tardar unos minutos en activarse tras registro
-- Verificar límites de uso (plan gratuito ~1000 consultas/mes)
+---
 
-### Los puntos de polilínea no se guardan
-- Asegurarse de hacer click en "Guardar Ruta" antes de salir
-- Verificar permisos del usuario (requiere RBase_employee para crear)
+## 5. Limitaciones conocidas
 
-## Documentación Completa
+- **Sin caché**: cada acción consulta la API en directo. No hay almacenamiento intermedio.
+- **Resolución OACI → IDEMA en AEMET**: existe un mapa estático con ~30 aeropuertos y aeródromos españoles habituales. Para estaciones no incluidas, introducir manualmente el código de estación (IDEMA) en el formulario.
+- **Open-Meteo**: aunque su uso es libre y sin clave, mantiene límites suaves para uso comercial intensivo.
 
-Ver archivos:
-- `README.md`: Visión general y características
-- `USAGE.md`: Guía detallada de uso con ejemplos
+---
 
-## Soporte
+## 6. Troubleshooting
 
-Para dudas o problemas:
-1. Revisar logs de Odoo: `docker logs -f helipistas_odoo`
-2. Verificar errores en consola del navegador (F12)
-3. Consultar documentación de las APIs:
-   - Open-Meteo: https://open-meteo.com/en/docs
-   - Windy: https://api.windy.com/
-   - Leaflet: https://leafletjs.com/
+### El mapa Leaflet no aparece en el formulario
+- El navegador necesita poder cargar recursos desde **`unpkg.com`** (CDN de Leaflet). Verificar que no esté bloqueado por proxy/firewall.
+- Forzar recarga con **Ctrl+F5** para refrescar los assets.
+- Revisar la consola del navegador (F12) por errores de carga.
+
+### "No se ha configurado la API Key de AEMET"
+Ir a **Ajustes → Meteorología** y pegar el JWT de AEMET (sección 3.2).
+
+### "La API Key de AEMET no es válida"
+- Comprobar que la JWT está completa, sin espacios ni saltos de línea (son cadenas largas).
+- Las claves recién emitidas pueden tardar unos minutos en activarse en el servicio de AEMET. Esperar y reintentar.
+
+### "No se han podido obtener datos de AEMET para …"
+La estación AEMET asociada al ICAO puede no tener observación reciente disponible. Probar con otro código de estación conocido o con el aeropuerto/aeródromo más cercano que sí publique observación horaria.
+
+### "API Key de Windy no válida"
+- Comprobar que la clave se ha copiado entera y sin espacios.
+- Las claves recién emitidas pueden tardar minutos en activarse.
+- Revisar los límites de uso de la cuenta Windy.

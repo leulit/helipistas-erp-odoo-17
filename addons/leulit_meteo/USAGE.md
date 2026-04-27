@@ -1,824 +1,235 @@
-# Guía de Uso - Leulit Meteorología
+# Guía de Uso — Leulit Meteo
 
-## Tabla de Contenidos
+Manual práctico de uso del módulo `leulit_meteo`. Para instalación consulta `INSTALL.md`; para una visión general del módulo, `README.md`; para flujos completos, `WORKFLOW.md`.
 
-1. [Inicio Rápido](#inicio-rápido)
-2. [Configuración](#configuración)
-3. [Widget de Mapa Interactivo](#widget-de-mapa-interactivo)
-4. [Consultas con Windy API](#consultas-con-windy-api)
-5. [Polilíneas y Rutas](#polilíneas-y-rutas)
-6. [Consultas Manuales](#consultas-manuales)
-7. [Integración Programática](#integración-programática)
-8. [Casos de Uso Comunes](#casos-de-uso-comunes)
-9. [Mejores Prácticas](#mejores-prácticas)
+## Contenidos
 
----
-
-## Inicio Rápido
-
-### Primera Consulta en 5 Pasos
-
-1. **Acceder al módulo**
-   ```
-   Navegación → Meteorología → Consultas
-   ```
-
-2. **Crear nueva consulta**
-   - Clic en botón "Crear"
-
-3. **Completar datos de ubicación**
-   ```
-   Ubicación: Madrid - Cuatro Vientos
-   Latitud: 40.3717
-   Longitud: -3.7856
-   ```
-
-4. **Obtener datos**
-   - Clic en "Consultar Clima Actual"
-
-5. **Ver resultados**
-   - Los campos se rellenan automáticamente con los datos meteorológicos
+1. [Consultar clima en un punto](#1-consultar-clima-en-un-punto)
+2. [Consultar clima en una ruta (polilínea)](#2-consultar-clima-en-una-ruta-polilínea)
+3. [Plantillas de rutas](#3-plantillas-de-rutas)
+4. [Reportes METAR](#4-reportes-metar)
+5. [Añadir un nuevo proveedor](#5-añadir-un-nuevo-proveedor)
+6. [Filtros y búsquedas habituales](#6-filtros-y-búsquedas-habituales)
+7. [Integración programática](#7-integración-programática)
+8. [Casos de uso prácticos](#8-casos-de-uso-prácticos)
+9. [Mejores prácticas](#9-mejores-prácticas)
 
 ---
 
-## Configuración
+## 1. Consultar clima en un punto
 
-### Configurar Windy API (Recomendado)
+Menú: **Meteorología → Consultas**.
 
-Para acceder a modelos meteorológicos avanzados (GFS, ECMWF), configure Windy:
+1. Pulsa **Crear**.
+2. Rellena **Ubicación** (descriptiva), **Latitud** y **Longitud**.
+3. Selecciona **Fuente de datos**: `Open-Meteo` (sin API key) o `Windy` (requiere API key configurada).
+4. Pulsa el botón correspondiente:
+   - **Consultar clima actual** — usa Open-Meteo y rellena temperatura, humedad, viento, descripción y código de clima.
+   - **Obtener pronóstico** — pronóstico Open-Meteo a varios días.
+   - **Consultar Windy** — usa el modelo Windy seleccionado en Ajustes (GFS, ECMWF, ICON, ICON-EU o NAM).
 
-1. **Obtener API Key**
-   - Visitar https://api.windy.com/keys
-   - Registrarse (gratuito)
-   - Copiar la API Key
+Los campos `temperatura`, `humedad`, `velocidad_viento`, `descripcion_clima` y `codigo_clima` se actualizan tras la consulta.
 
-2. **Configurar en Odoo**
-   ```
-   Navegación → Ajustes → Meteorología
-   ```
-   - Pegar la API Key en el campo "Windy API Key"
-   - Seleccionar modelo por defecto (GFS recomendado)
-   - Clic en "Validar API Key" para verificar
-
-3. **Modelos Disponibles**
-   - **GFS**: Global Forecast System (16 días, actualización cada 6h)
-   - **ECMWF**: European Centre (más preciso, 10 días)
-   - **ICON**: DWD alemán (7 días)
-   - **ICON-EU**: Europea de alta resolución (5 días)
-   - **NAM**: North American Model (3 días)
-
----
-
-## Widget de Mapa Interactivo
-
-### Uso Básico del Mapa
-
-El widget de mapa interactivo permite seleccionar ubicaciones visualmente:
-
-**Características:**
-- 🗺️ Mapa interactivo con OpenStreetMap
-- 📍 Click para establecer ubicación
-- 🖱️ Arrastrar markers para mover
-- 🔍 Zoom y navegación
-- 📐 Modos: Punto único o Polilínea (ruta)
+## 2. Consultar clima en una ruta (polilínea)
 
-### Modo Punto Único
-
-**Uso:**
-1. Crear nueva consulta
-2. En el mapa, click en la ubicación deseada
-3. Las coordenadas se actualizan automáticamente
-4. Arrastra el marker para ajustar
-5. Click en "Consultar" para obtener datos
+1. En la ficha de **Consulta**, marca el flag **Es polilínea**.
+2. Añade los puntos en la pestaña **Puntos de la ruta** (`puntos_ids`): cada punto con su latitud y longitud.
+3. Pulsa **Consultar Windy** — la consulta se hace para cada punto de la ruta y se guardan los resultados por waypoint.
 
-**Controles:**
-- **Centrar**: Centra el mapa en tu ubicación actual
-- **Limpiar**: Elimina el marker actual
-- **Pantalla completa**: Amplía el mapa (navegadores compatibles)
+El comportamiento de `action_consultar_windy()` cambia automáticamente según `es_polilinea`: punto único o polilínea.
 
-### Modo Polilínea (Ruta)
+## 3. Plantillas de rutas
 
-Ideal para planificación de rutas de vuelo:
-
-**Activar modo ruta:**
-1. En la consulta, marcar checkbox "¿Es Polilínea?"
-2. O clic en botón "Modo: Ruta" en la barra del mapa
-
-**Agregar puntos:**
-1. Click en el mapa para agregar puntos secuencialmente
-2. Cada click agrega un nuevo waypoint
-3. Los puntos se numeran automáticamente
-4. Se dibuja una línea conectando los puntos
-
-**Gestionar puntos:**
-- **Mover**: Arrastra un marker para reposicionarlo
-- **Eliminar**: Click derecho en un marker
-- **Reordenar**: Edita en la pestaña "Puntos de Ruta"
-
-**Guardar ruta:**
-1. Click en "Guardar Ruta" en la barra del mapa
-2. Los puntos se guardan en la base de datos
-3. Puedes editar nombre/altitud de cada punto
-
----
-
-## Consultas con Windy API
-
-### Datos de Windy: Cómo se Obtienen y Muestran
-
-**Importante**: Windy tiene **dos componentes separados**:
-
-#### 1. **Windy API REST** (Datos Numéricos)
-- Llamas a `https://api.windy.com/api/point-forecast/v2`
-- Obtienes JSON con temperatura, viento, presión, etc.
-- **Requiere API Key**
-- Los valores se guardan en la base de datos
-- Se muestran en la pestaña "Puntos de Ruta" (tabla)
-
-#### 2. **Windy Embed** (Visualización)
-- Iframe con `https://embed.windy.com/embed2.html`
-- Overlay meteorológico animado (viento, nubes, temperatura)
-- **NO requiere API Key** (embed público)
-- Se muestra en la pestaña "Mapa Windy Visual"
-- Es solo visualización (no se obtienen datos del iframe)
-
-### Consulta Simple con Windy
-
-**Requisito:** API Key de Windy configurada
-
-**Pasos:**
-1. Crear consulta meteorológica
-2. Seleccionar "Fuente de Datos: Windy"
-3. Establecer ubicación (mapa o coordenadas)
-4. Click en "Consultar Windy"
-
-**Datos obtenidos:**
-- Temperatura (°C)
-- Punto de rocío
-- Humedad relativa (%)
-- Presión atmosférica (hPa)
-- Cobertura de nubes (%)
-- Precipitación (mm)
-- Viento: velocidad, dirección, rachas
-- Modelo utilizado (GFS, ECMWF, etc.)
-
-**Ventajas de Windy vs Open-Meteo:**
-- ✅ Múltiples modelos meteorológicos profesionales
-- ✅ Mayor precisión en vientos
-- ✅ Datos de presión atmosférica
-- ✅ Punto de rocío
-- ⚠️ Requiere API Key
-- ⚠️ Límite de consultas (depende del plan)
-
----
-
-## Polilíneas y Rutas
-
-### ¿Qué es una Polilínea en este Contexto?
-
-Una **polilínea** es una **ruta de vuelo** definida por múltiples waypoints (puntos).
-Por ejemplo: LEMD → Waypoint1 → Waypoint2 → LEBL
-
-**Casos de uso**:
-- Planificar vuelo cross-country
-- Patrulla de vigilancia
-- Ruta comercial frecuente
-
-### Selector de Rutas: Cómo Funciona
-
-El módulo incluye un **sistema de plantillas de rutas** para reutilizar:
-
-**Crear Plantilla**:
-1. Ir a Meteorología → Rutas Predefinidas
-2. Crear nueva ruta: nombre "LEMD-LEBL"
-3. Agregar waypoints con coordenadas
-4. Guardar
-
-**Usar Plantilla en Consulta**:
-1. Nueva consulta meteorológica
-2. Campo "Cargar Ruta Predefinida" → seleccionar "LEMD-LEBL"
-3. Los puntos se cargan automáticamente
-4. También puedes usar `@onchange` automático al seleccionar
-
-**Guardar Consulta Actual como Plantilla**:
-1. Después de crear una ruta manualmente en el mapa
-2. Click botón "Guardar como Plantilla"
-
-**En Tabla "Puntos de Ruta"**:
-- Cada fila = 1 waypoint con sus datos meteorológicos
-- Temperatura por punto para calcular densidad de aire
-- Viento en ruta para estimar derive y tiempo
-- Cobertura de nubes para decisión VFR/IFR
-- Precipitación para evitar zonas peligrosas
-
-**En "Resumen de Condiciones"** (campos computados):
-- Temperatura Mínima/Máxima: rango térmico en toda la ruta
-- Viento Máximo: peor condición de viento esperada
-- Condiciones Críticas: ⚠️ alerta si viento > 50 km/h o temp < 0°C
-
-**En "Mapa Windy Visual"** (pestaña):
-- Iframe embebido que muestra overlay meteorológico animado
-- Cambia capas con controles de Windy (viento, temperatura, nubes)
-- Útil para ver patterns generales y evolución temporal
-- NO extrae datos (solo visualización)
-
-### Visualización de Datos de Windy
-
-Una vez consultada la API, los datos se muestran en **3 lugares**:
-
-#### 1. Pestaña "Mapa Windy Visual"
-```
-┌────────────────────────────────────────┐
-│  [Iframe de Windy Embed]              │
-│                                        │
-│  🗺️ Mapa animado con overlay         │
-│  🌬️ Viento visible en movimiento     │
-│  🌡️ Cambiar a capa temperatura        │
-│  ☁️ Cambiar a capa nubes              │
-│  ⏱️ Timeline para ver evolución       │
-│                                        │
-└────────────────────────────────────────┘
-```
-**NO requiere API Key** - es visualización pública
-
-#### 2. Pestaña "Puntos de Ruta"
-```
-| # | Nombre    | Lat    | Lon    | Temp | Viento | Nubes |
-|---|-----------|--------|--------|------|--------|-------|
-| 1 | LEMD      | 40.47  | -3.56  | 18°C | 15km/h | 30%   |
-| 2 | Waypoint1 | 40.85  | -2.45  | 17°C | 20km/h | 45%   |
-| 3 | Waypoint2 | 41.23  | -1.12  | 16°C | 18km/h | 35%   |
-| 4 | LEBL      | 41.30  | 2.08   | 19°C | 12km/h | 20%   |
-```
-**Datos numéricos de la API REST** - requiere API Key
-
-#### 3. Resumen de Condiciones
-```
-Temperatura Mínima: 16°C
-Temperatura Máxima: 19°C
-Viento Máximo: 20 km/h
-⚠️ Condiciones Críticas: No
-```
-**Calculado** desde los datos de los punto
-Ejemplo: Vuelo Madrid (LEMD) → Barcelona (LEBL)
-
-**Paso 1: Crear ruta**
-1. Nueva consulta meteorológica
-2. Nombre: "Ruta LEMD-LEBL"
-3. Marcar "¿Es Polilínea?"
-4. Fuente de datos: "Windy"
-
-**Paso 2: Definir waypoints**
-En el mapa, click en:
-1. Madrid-Barajas (40.4936, -3.5668)
-2. Calatayud (41.3561, -1.6408)
-3. Lleida (41.6168, 0.6208)
-4. Barcelona-El Prat (41.2974, 2.0833)
-
-**Paso 3: Ajustar puntos**
-En pestaña "Puntos de Ruta":
-- Renombrar: "LEMD", "Waypoint 1", "Waypoint 2", "LEBL"
-- Agregar altitud si es relevante
-- Reordenar arrastrando el handle
-
-**Paso 4: Obtener meteorología**
-1. Click en "Consultar Windy"
-2. Esperar (puede tardar según número de puntos)
-3. Ver datos en cada punto de la tabla
-
-**Interpretar resultados:**
-- Temperatura por punto para calcular densidad de aire
-- Viento en ruta para estimar derive y tiempo
-- Cobertura de nubes para decisión VFR/IFR
-- Precipitación para evitar zonas peligrosas
-
----
-
-## Consultas Manuales
-
-### Consultar Clima Actual
-
-El clima actual incluye:
-- Temperatura y sensación térmica
-- Humedad relativa
-- Precipitación actual
-- Velocidad y dirección del viento
-- Rachas de viento
-- Cobertura de nubes
-- Descripción de condiciones
-
-**Pasos:**
-1. Crear o abrir consulta existente
-2. Verificar coordenadas
-3. Clic en "Consultar Clima Actual"
-4. Los datos se actualizan automáticamente
-
-### Obtener Pronóstico
-
-El pronóstico incluye datos agregados diarios hasta 16 días:
-- Temperaturas máximas y mínimas
-- Precipitación acumulada
-- Velocidad máxima de viento
-- Dirección predominante del viento
-
-**Pasos:**
-1. Crear o abrir consulta
-2. Clic en "Obtener Pronóstico"
-3. Los datos JSON se almacenan en la pestaña "Pronóstico"
-
-### Obtener Reporte METAR
-
-Los METAR son reportes meteorológicos aeronáuticos oficiales:
-- Reporte completo en formato texto estándar
-- Datos decodificados automáticamente
-- Categoría de vuelo (VFR/MVFR/IFR/LIFR)
-- Información de viento, visibilidad, nubes, QNH
-
-**Pasos:**
-1. Ir a Meteorología → Reportes METAR
-2. Crear nuevo registro
-3. Introducir código OACI de 4 letras (ej: LECU)
-4. Clic en "Obtener METAR"
-5. Ver datos en pestañas "METAR Completo" y "Datos Decodificados"
-
-**⚠️ Importante - Datos Históricos:**
-
-Los METAR almacenados son **reportes históricos** del momento de la consulta:
-- La vista lista muestra el estado cuando se obtuvo el METAR
-- Para datos actuales, abrir el registro y clic en "Obtener METAR" nuevamente
-- El campo `observation_time` indica cuándo se realizó la observación meteorológica
-- El campo `fecha_consulta` indica cuándo se consultó desde Odoo
-- Usa el chatter para ver el historial de actualizaciones
-
-**Actualizar METAR existente:**
-```python
-# Método 1: Desde la interfaz
-# - Abrir registro METAR
-# - Clic en "Obtener METAR"
-# - Los datos se actualizan automáticamente
-
-# Método 2: Programáticamente
-metar = self.env['leulit.meteo.metar'].browse(metar_id)
-metar.action_obtener_metar()
-```
-
-### Filtros y Búsquedas
-
-**Filtros predefinidos:**
-- **Clima Actual**: Muestra solo consultas de clima actual
-- **Pronóstico**: Muestra solo consultas de pronóstico
-- **Hoy**: Consultas realizadas hoy
-- **Esta Semana**: Consultas de la semana actual
-- **Mis Consultas**: Solo tus consultas
-
-**Búsqueda por campos:**
-```
-Buscar por:
-- Código (METEO-00001)
-- Ubicación (Madrid, LECU)
-- Usuario
-- Fecha
-```
-
-**Agrupaciones:**
-```
-Agrupar por:
-- Ubicación
-- Tipo de consulta
-- Usuario
-- Fecha
-```
-
----
-
-## Integración Programática
-
-### Método 1: API Helper del Módulo
+Permiten reutilizar rutas frecuentes (ej. tramos habituales de instrucción o vuelos comerciales recurrentes).
+
+**Guardar una ruta como plantilla**:
+
+1. Crea una consulta polilínea con todos sus puntos.
+2. Pulsa **Guardar como plantilla** (`action_guardar_como_template`).
+
+**Cargar una plantilla en una consulta nueva**:
+
+1. En la consulta, selecciona **Plantilla de ruta** (`ruta_template_id`).
+2. Pulsa **Cargar ruta desde plantilla** (`action_cargar_ruta_template`) — los waypoints se insertan en `puntos_ids`.
+
+## 4. Reportes METAR
+
+Menú: **Meteorología → Reportes METAR**. Modelo `leulit.meteo.metar` con arquitectura de proveedores: el campo `provider` selecciona la fuente concreta (hoy solo `aemet`).
+
+1. **Crear** un nuevo registro `leulit.meteo.metar`.
+2. Selecciona el **Proveedor** (por defecto `AEMET (España)`).
+3. Indica un **ICAO** (4 letras, ej. `LEMD`, `LEBL`, `GCLP`) o un **código de estación** (`station_code`) si conoces uno concreto.
+4. Pulsa **Obtener observación** (`action_obtener_metar`).
+
+El registro se rellena con: `station_name`, `observation_time`, `temperatura`, `dewpoint`, `humidity`, `wind_direction`, `wind_speed_kt`, `wind_gust_kt`, `visibility_m`, `qnh`, `pressure`, `precipitation`, `latitud`, `longitud`, `elevation`, `edad_datos_minutos`, `estado_datos` y un `raw_metar`.
+
+**Importante — limitaciones del proveedor AEMET**:
+
+- AEMET OpenData **no publica METAR oficiales**. El campo `raw_metar` es una cadena tipo METAR construida a partir de la observación horaria, etiquetada con `RMK AEMET`.
+- El proveedor incluye un mapeo estático ICAO → IDEMA con ~30 aeropuertos y aeródromos habituales (LEMD, LEBL, LEMG, LEAL, LEVC, LEZL, LEBB, LEPA, LEIB, LEMH, GCLP, GCXO, GCTS, LECU, LETO, …). Si tu ICAO no está en el mapa, debes indicar el `station_code` manualmente.
+- Requiere `leulit_meteo.aemet_api_key` configurado en parámetros del sistema.
+
+## 5. Añadir un nuevo proveedor
+
+Crear una subclase de `MetarProvider` decorada con `@register_provider` y registrarla en `models/__init__.py`. El modelo, las vistas y el menú no necesitan cambios; el nuevo `code` aparece automáticamente en el selector `provider`.
 
 ```python
-# Uso recomendado desde otros módulos
-meteo_obj = self.env['leulit.meteo.consulta']
+# models/leulit_meteo_metar_aviationweather.py
+from .leulit_meteo_metar_provider import MetarProvider, register_provider
 
-datos = meteo_obj.consultar_clima_ubicacion(
-    ubicacion='Madrid LECU',
-    latitud=40.3717,
-    longitud=-3.7856
+@register_provider
+class AviationWeatherMetarProvider(MetarProvider):
+    code = 'aviationweather'
+    label = 'Aviation Weather (NOAA)'
+
+    def get_observation(self, env, icao_code=None, station_code=None):
+        # Llamar a la API y devolver el dict normalizado:
+        # provider, icao, station_code, station_name, observation_time,
+        # temperatura, dewpoint, humidity, wind_direction, wind_speed_kt,
+        # wind_gust_kt, visibility_m, qnh, pressure, precipitation,
+        # latitude, longitude, elevation, raw_metar
+        ...
+```
+
+Métodos opcionales: `validate(env)`, `prefill_station_code(icao_code)`, `coverage(icao_code)`.
+
+## 6. Filtros y búsquedas habituales
+
+**En `leulit.meteo.metar`**:
+
+- Filtros: *Datos actuales*, *Datos recientes*, *Datos antiguos* (sobre `estado_datos`), *Mis consultas* (`user_id=uid`).
+- Agrupar por: **Proveedor**, **OACI**, **Código de estación**, **Usuario**.
+
+**En `leulit.meteo.consulta`**:
+
+- Filtros y agrupaciones por fuente de datos, ubicación, fecha y usuario disponibles en la vista de búsqueda.
+
+## 7. Integración programática
+
+### 7.1. Consulta de clima genérico
+
+Método de clase reutilizable en `leulit.meteo.consulta`:
+
+```python
+result = self.env['leulit.meteo.consulta'].consultar_clima_ubicacion(
+    ubicacion='Aeródromo Sabadell',
+    latitud=41.5208,
+    longitud=2.1050,
 )
-
-if datos:
-    # Acceder a datos
-    consulta_id = datos['consulta_id']
-    temperatura = datos['temperatura']
-    viento = datos['viento']
-    humedad = datos['humedad']
-    descripcion = datos['descripcion']
-    
-    # Usar en tu lógica
-    self.write({
-        'temperatura_registro': temperatura,
-        'meteo_consulta_id': consulta_id
-    })
+# result -> {'consulta_id', 'temperatura', 'viento', 'humedad', 'descripcion'}
 ```
 
-### Método 2: Crear Consulta y Llamar Manualmente
+### 7.2. METAR vía proveedor
 
 ```python
-# Crear registro de consulta
-consulta = self.env['leulit.meteo.consulta'].create({
-    'ubicacion': 'Barcelona El Prat',
-    'latitud': 41.2974,
-    'longitud': 2.0833,
-    'notas': 'Consulta automática desde vuelo',
-})
-
-# Ejecutar consulta
-consulta.action_consultar_clima_actual()
-
-# Acceder a datos
-temperatura = consulta.temperatura
-descripcion = consulta.descripcion_clima
-viento = consulta.velocidad_viento
+data = self.env['leulit.meteo.metar'].obtener_metar(
+    icao_code='LEMD',
+    provider='aemet',
+)
+# data -> {'provider', 'icao', 'station_code', 'station_name',
+#          'observation_time', 'temperatura', 'dewpoint', 'humidity',
+#          'wind_speed_kt', 'wind_gust_kt', 'wind_direction',
+#          'visibility_m', 'qnh', 'raw_metar', ...}
 ```
 
-### Método 3: Acceso Directo a la API
+Para persistir el resultado como registro:
+
+```python
+data = self.env['leulit.meteo.metar'].obtener_metar(
+    icao_code='LEBL',
+    provider='aemet',
+    persistir=True,
+)
+record = self.env['leulit.meteo.metar'].browse(data['record_id'])
+```
+
+Si solo conoces el código de estación:
+
+```python
+data = self.env['leulit.meteo.metar'].obtener_metar(
+    station_code='0076',
+    provider='aemet',
+)
+```
+
+### 7.3. Acceso directo a los servicios (sin pasar por modelos)
 
 ```python
 from odoo.addons.leulit_meteo.models.leulit_meteo_service import OpenMeteoService
+from odoo.addons.leulit_meteo.models.leulit_meteo_aemet_service import AemetOpenDataService
 
-# Consultar directamente (sin crear registro en BD)
-data = OpenMeteoService.get_current_weather(
-    latitude=40.3717,
-    longitude=-3.7856
-)
+# Open-Meteo (no requiere API key)
+current = OpenMeteoService.get_current_weather(latitude=40.4165, longitude=-3.7026)
+forecast = OpenMeteoService.get_forecast(latitude=40.4165, longitude=-3.7026, days=3)
 
-if data and 'current' in data:
-    current = data['current']
-    temperatura = current.get('temperature_2m')
-    viento = current.get('wind_speed_10m')
-    humedad = current.get('relative_humidity_2m')
-    
-    # Traducir código de clima
-    codigo = current.get('weather_code')
-    descripcion = OpenMeteoService.get_weather_description(codigo)
+# AEMET (requiere api_key)
+api_key = self.env['ir.config_parameter'].sudo().get_param('leulit_meteo.aemet_api_key')
+metar_like = AemetOpenDataService.get_metar_like(api_key=api_key, icao_code='LEMG')
 ```
 
-### Método 4: Obtener Pronóstico
+## 8. Casos de uso prácticos
+
+### 8.1. Vincular METAR a un vuelo
 
 ```python
-# Pronóstico de 7 días
-data = OpenMeteoService.get_forecast(
-    latitude=40.3717,
-    longitude=-3.7856,
-    days=7
-)
-
-if data and 'daily' in data:
-    daily = data['daily']
-    fechas = daily['time']  # Lista de fechas
-    temp_max = daily['temperature_2m_max']  # Temperaturas máximas
-    temp_min = daily['temperature_2m_min']  # Temperaturas mínimas
-    precipitacion = daily['precipitation_sum']  # Precipitación
-    
-    # Procesar pronóstico
-    for i, fecha in enumerate(fechas):
-        _logger.info(
-            f"Fecha: {fecha}, Temp: {temp_min[i]}-{temp_max[i]}°C, "
-            f"Precip: {precipitacion[i]}mm"
-        )
-```
-
----
-
-## Casos de Uso Comunes
-
-### Caso 1: Vincular Meteorología a Vuelo
-
-**Objetivo:** Registrar condiciones meteorológicas al crear un vuelo
-
-```python
-# En leulit_operaciones, heredar modelo de vuelo
 class LeulitVuelo(models.Model):
     _inherit = 'leulit.vuelo'
-    
-    # Añadir campo
-    meteo_consulta_id = fields.Many2one(
-        'leulit.meteo.consulta',
-        string='Condiciones Meteorológicas'
-    )
-    
-    # Método para obtener meteo al confirmar vuelo
-    def action_confirmar_vuelo(self):
-        res = super().action_confirmar_vuelo()
-        
-        # Obtener meteo del aeródromo de salida
-        if self.aerodromo_salida_id:
-            meteo_obj = self.env['leulit.meteo.consulta']
-            datos = meteo_obj.consultar_clima_ubicacion(
-                ubicacion=f"{self.aerodromo_salida_id.name}",
-                latitud=self.aerodromo_salida_id.latitud,
-                longitud=self.aerodromo_salida_id.longitud
-            )
-            
-            if datos:
-                self.meteo_consulta_id = datos['consulta_id']
-                self.message_post(
-                    body=f"Condiciones meteorológicas: {datos['descripcion']}, "
-                         f"Temp: {datos['temperatura']}°C, "
-                         f"Viento: {datos['viento']} km/h"
+
+    metar_id = fields.Many2one('leulit.meteo.metar')
+
+    def action_obtener_meteo_salida(self):
+        for vuelo in self:
+            aerodromo = vuelo.aerodromo_salida_id
+            if aerodromo and aerodromo.codigo_oaci:
+                data = self.env['leulit.meteo.metar'].obtener_metar(
+                    icao_code=aerodromo.codigo_oaci,
+                    provider='aemet',
+                    persistir=True,
                 )
-        
-        return res
+                if data and data.get('record_id'):
+                    vuelo.metar_id = data['record_id']
 ```
 
-### Caso 2: Verificar Condiciones Antes de Vuelo
-
-**Objetivo:** Validar que las condiciones sean aptas para volar
+### 8.2. Validar condiciones antes de volar
 
 ```python
-def check_condiciones_meteo(self):
-    """Valida condiciones meteorológicas antes de vuelo"""
-    
-    # Consultar clima
-    meteo_obj = self.env['leulit.meteo.consulta']
-    datos = meteo_obj.consultar_clima_ubicacion(
-        ubicacion=self.aerodromo_salida_id.name,
-        latitud=self.aerodromo_salida_id.latitud,
-        longitud=self.aerodromo_salida_id.longitud
+def comprobar_condiciones(self):
+    self.ensure_one()
+    data = self.env['leulit.meteo.metar'].obtener_metar(
+        icao_code=self.aerodromo_id.codigo_oaci,
+        provider='aemet',
     )
-    
-    if not datos:
-        raise UserError(_('No se pudo obtener información meteorológica.'))
-    
-    # Verificar condiciones
-    alertas = []
-    
-    # Viento máximo 40 km/h para helicóptero ligero
-    if datos['viento'] > 40:
-        alertas.append(f"⚠️ Viento fuerte: {datos['viento']} km/h")
-    
-    # Visibilidad: rechazar si hay tormenta o nieve intensa
-    consulta = self.env['leulit.meteo.consulta'].browse(datos['consulta_id'])
-    if consulta.codigo_clima in [95, 96, 99, 75, 86]:
-        alertas.append(f"⚠️ Condiciones adversas: {consulta.descripcion_clima}")
-    
-    # Temperatura extrema
-    if datos['temperatura'] < -10 or datos['temperatura'] > 45:
-        alertas.append(f"⚠️ Temperatura extrema: {datos['temperatura']}°C")
-    
-    # Mostrar alertas si existen
-    if alertas:
-        mensaje = '\n'.join(alertas)
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Advertencias Meteorológicas'),
-                'message': mensaje,
-                'type': 'warning',
-                'sticky': True,
-            }
-        }
-    
-    return True
+    if not data:
+        return False  # sin observación reciente
+
+    viento = data.get('wind_speed_kt') or 0
+    rachas = data.get('wind_gust_kt') or 0
+    visibilidad = data.get('visibility_m') or 0
+
+    return viento <= 25 and rachas <= 35 and visibilidad >= 5000
 ```
 
-### Caso 3: Dashboard Meteorológico
+Para puntos sin estación AEMET (ruta libre, escuela en zona rural) usa `consultar_clima_ubicacion` con coordenadas y aplica los mismos umbrales sobre `viento` y `descripcion`.
 
-**Objetivo:** Mostrar clima de múltiples bases
+## 9. Mejores prácticas
 
-```python
-def get_dashboard_meteo(self):
-    """Obtiene datos meteorológicos de todas las bases"""
-    
-    bases = [
-        {'nombre': 'Madrid LECU', 'lat': 40.3717, 'lon': -3.7856},
-        {'nombre': 'Barcelona LEBL', 'lat': 41.2974, 'lon': 2.0833},
-        {'nombre': 'Sevilla LEZL', 'lat': 37.4180, 'lon': -5.8931},
-    ]
-    
-    meteo_obj = self.env['leulit.meteo.consulta']
-    resultados = []
-    
-    for base in bases:
-        datos = meteo_obj.consultar_clima_ubicacion(
-            ubicacion=base['nombre'],
-            latitud=base['lat'],
-            longitud=base['lon']
-        )
-        
-        if datos:
-            resultados.append({
-                'base': base['nombre'],
-                'temperatura': datos['temperatura'],
-                'descripcion': datos['descripcion'],
-                'viento': datos['viento'],
-                'humedad': datos['humedad'],
-            })
-    
-    return resultados
-```
+- **Validar coordenadas** con `@api.constrains` antes de llamar a los servicios:
 
-### Caso 4: Reporte de Vuelo con Datos Meteorológicos
+  ```python
+  @api.constrains('latitud', 'longitud')
+  def _check_coordenadas(self):
+      for rec in self:
+          if not -90 <= rec.latitud <= 90:
+              raise ValidationError("Latitud fuera de rango (-90..90).")
+          if not -180 <= rec.longitud <= 180:
+              raise ValidationError("Longitud fuera de rango (-180..180).")
+  ```
 
-**Objetivo:** Incluir datos meteorológicos en informes
-
-```xml
-<!-- En el template del reporte -->
-<div class="row mt-3" t-if="doc.meteo_consulta_id">
-    <div class="col-12">
-        <h5>Condiciones Meteorológicas</h5>
-        <table class="table table-sm">
-            <tr>
-                <td><strong>Ubicación:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.ubicacion"/></td>
-                <td><strong>Fecha Consulta:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.fecha_consulta"/></td>
-            </tr>
-            <tr>
-                <td><strong>Condiciones:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.descripcion_clima"/></td>
-                <td><strong>Temperatura:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.temperatura"/> °C</td>
-            </tr>
-            <tr>
-                <td><strong>Viento:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.velocidad_viento"/> km/h</td>
-                <td><strong>Humedad:</strong></td>
-                <td><t t-esc="doc.meteo_consulta_id.humedad"/> %</td>
-            </tr>
-        </table>
-    </div>
-</div>
-```
+- **Manejar `None`**: cualquier llamada puede devolver `None` por fallo de red, API key inválida o estación sin observación reciente. Comprueba siempre el resultado antes de acceder a sus claves.
+- **Logging**: usa `_logger` (`logging.getLogger(__name__)`) para registrar errores y respuestas inesperadas; no silencies excepciones.
+- **API keys**: lee siempre desde `ir.config_parameter` (`leulit_meteo.aemet_api_key`, equivalente para Windy), nunca las hardcodees.
+- **AEMET ≠ METAR oficial**: si necesitas METAR aeronáuticos certificados, consulta el proveedor oficial correspondiente; el `raw_metar` de este módulo es sintético.
 
 ---
 
-## Mejores Prácticas
-
-### 1. Caché de Consultas
-
-Evita consultar la API repetidamente para la misma ubicación y tiempo:
-
-```python
-def get_meteo_cached(self, ubicacion, latitud, longitud, max_age_hours=1):
-    """Obtiene meteo desde caché o API si es necesario"""
-    
-    # Buscar consulta reciente
-    limite_tiempo = fields.Datetime.now() - timedelta(hours=max_age_hours)
-    consulta = self.env['leulit.meteo.consulta'].search([
-        ('ubicacion', '=', ubicacion),
-        ('latitud', '=', latitud),
-        ('longitud', '=', longitud),
-        ('tipo_consulta', '=', 'actual'),
-        ('fecha_consulta', '>=', limite_tiempo),
-    ], limit=1, order='fecha_consulta desc')
-    
-    if consulta:
-        # Usar datos en caché
-        return {
-            'consulta_id': consulta.id,
-            'temperatura': consulta.temperatura,
-            'viento': consulta.velocidad_viento,
-            'descripcion': consulta.descripcion_clima,
-            'humedad': consulta.humedad,
-            'desde_cache': True,
-        }
-    else:
-        # Consultar API
-        return self.consultar_clima_ubicacion(ubicacion, latitud, longitud)
-```
-
-### 2. Manejo de Errores
-
-Siempre valida los datos recibidos:
-
-```python
-try:
-    datos = meteo_obj.consultar_clima_ubicacion(...)
-    if datos:
-        self.temperatura = datos['temperatura']
-    else:
-        _logger.warning('No se pudieron obtener datos meteorológicos')
-        # Continuar sin datos meteo
-except Exception as e:
-    _logger.error(f'Error al consultar meteorología: {str(e)}')
-    # No bloquear el proceso principal
-```
-
-### 3. Consultas Asíncronas
-
-Para no bloquear la UI en consultas múltiples:
-
-```python
-@api.model
-def actualizar_meteo_bases_async(self):
-    """Actualiza meteorología de todas las bases en background"""
-    
-    bases = self.env['res.partner'].search([
-        ('es_aerodromo', '=', True),
-        ('latitud', '!=', False),
-        ('longitud', '!=', False),
-    ])
-    
-    for base in bases:
-        try:
-            self.env['leulit.meteo.consulta'].with_delay().consultar_clima_ubicacion(
-                ubicacion=base.name,
-                latitud=base.latitud,
-                longitud=base.longitud
-            )
-        except Exception as e:
-            _logger.error(f'Error actualizando meteo para {base.name}: {e}')
-            continue
-```
-
-### 4. Coordinadas Precisas
-
-Asegúrate de que las coordenadas sean correctas:
-
-```python
-# Validación de coordenadas
-@api.constrains('latitud', 'longitud')
-def _check_coordenadas(self):
-    for record in self:
-        if not (-90 <= record.latitud <= 90):
-            raise ValidationError(_('La latitud debe estar entre -90 y 90 grados.'))
-        if not (-180 <= record.longitud <= 180):
-            raise ValidationError(_('La longitud debe estar entre -180 y 180 grados.'))
-```
-
-### 5. Logging Apropiado
-
-```python
-import logging
-_logger = logging.getLogger(__name__)
-
-# Nivel INFO para eventos normales
-_logger.info(f'Consultando meteo para {ubicacion}')
-
-# Nivel WARNING para situaciones inusuales pero no críticas
-_logger.warning(f'Datos meteo no disponibles para {ubicacion}')
-
-# Nivel ERROR para errores que requieren atención
-_logger.error(f'Error en API Open-Meteo: {str(e)}', exc_info=True)
-```
-
----
-
-## Ejemplos Avanzados
-
-### Widget Personalizado para Mostrar Clima
-
-```javascript
-// En static/src/js/weather_widget.js
-odoo.define('leulit_meteo.WeatherWidget', function (require) {
-    'use strict';
-    
-    var AbstractField = require('web.AbstractField');
-    var fieldRegistry = require('web.field_registry');
-    
-    var WeatherWidget = AbstractField.extend({
-        template: 'WeatherWidget',
-        
-        _renderReadonly: function () {
-            this.$el.html(this._getWeatherHTML());
-        },
-        
-        _getWeatherHTML: function () {
-            var consulta = this.recordData;
-            return `
-                <div class="weather-display">
-                    <span class="weather-icon">${this._getWeatherIcon(consulta.codigo_clima)}</span>
-                    <span class="weather-temp">${consulta.temperatura}°C</span>
-                    <span class="weather-desc">${consulta.descripcion_clima}</span>
-                </div>
-            `;
-        },
-        
-        _getWeatherIcon: function(code) {
-            // Retornar emoji según código
-            if (code === 0) return '☀️';
-            if (code <= 3) return '⛅';
-            if (code <= 48) return '🌫️';
-            if (code <= 67) return '🌧️';
-            if (code <= 77) return '❄️';
-            if (code <= 82) return '🌦️';
-            if (code >= 95) return '⛈️';
-            return '🌤️';
-        },
-    });
-    
-    fieldRegistry.add('weather_display', WeatherWidget);
-    
-    return WeatherWidget;
-});
-```
-
----
-
-**Fin de la Guía de Uso**
-
-Para más información, consulta:
-- README.md - Información general
-- __doc__.py - Documentación técnica completa
-- index.html - Documentación web del módulo
+Ver también: [README.md](README.md) · [WORKFLOW.md](WORKFLOW.md)

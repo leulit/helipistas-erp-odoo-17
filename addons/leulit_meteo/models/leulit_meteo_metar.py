@@ -1,403 +1,276 @@
 # -*- coding: utf-8 -*-
+"""Modelo genérico de reporte METAR.
+
+El modelo no depende de ningún proveedor concreto: delega la obtención
+de la observación en la instancia registrada de :class:`MetarProvider`
+seleccionada en el campo ``provider``. Para añadir un nuevo proveedor,
+crear un fichero en ``models/`` que defina una subclase de
+``MetarProvider`` registrada con ``@register_provider`` e importarlo en
+``models/__init__.py``.
+"""
 
 import logging
-from datetime import timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from .leulit_meteo_metar_service import AviationWeatherService
+
+from .leulit_meteo_metar_provider import (
+    get_provider, provider_selection,
+)
 
 _logger = logging.getLogger(__name__)
 
 
 class LeulitMeteoMetar(models.Model):
     _name = 'leulit.meteo.metar'
-    _description = 'METAR - Reporte Meteorológico Aeronáutico'
-    _order = 'observation_time desc'
+    _description = 'Reporte METAR'
+    _order = 'observation_time desc, id desc'
     _rec_name = 'icao_code'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    
-    # Identificación
+
     codigo = fields.Char(
-        string='Código',
-        required=True,
-        readonly=True,
-        copy=False,
-        default=lambda self: _('Nuevo')
-    )
+        string='Código', readonly=True, copy=False,
+        default=lambda self: _('Nuevo'))
+
+    # Proveedor de datos
+    provider = fields.Selection(
+        selection=lambda self: provider_selection(),
+        string='Proveedor', required=True, default='aemet', tracking=True,
+        help='Origen de los datos meteorológicos. Cada proveedor implementa '
+             'la interfaz MetarProvider y se selecciona aquí.')
+
+    # Identificación del aeródromo / estación
     icao_code = fields.Char(
-        string='Código OACI',
-        required=True,
-        size=4,
-        help='Código OACI de 4 letras del aeródromo (ej: LECU, LEBL)',
-        tracking=True
-    )
+        string='Código OACI', size=4, tracking=True,
+        help='Código OACI de 4 letras (LEMD, LEBL, GCLP...). '
+             'Algunos proveedores lo usan para resolver el código de '
+             'estación interno.')
+    station_code = fields.Char(
+        string='Código de estación', tracking=True,
+        help='Identificador de la estación dentro del proveedor (p. ej. '
+             'IDEMA en AEMET). Si se rellena, prevalece sobre el OACI.')
+    station_name = fields.Char(string='Estación', readonly=True)
+
+    # Texto METAR
     raw_metar = fields.Text(
-        string='METAR Completo',
-        readonly=True,
-        help='Reporte METAR en formato texto original'
-    )
-    
+        string='METAR', readonly=True,
+        help='Texto en formato METAR. Algunos proveedores (p. ej. AEMET) '
+             'lo sintetizan a partir de la observación horaria; en ese caso '
+             'el texto incluye el sufijo "RMK <PROVEEDOR>".')
+
     # Tiempos
     observation_time = fields.Datetime(
-        string='Hora de Observación',
-        readonly=True,
-        help='Momento de la observación meteorológica'
-    )
-    report_time = fields.Datetime(
-        string='Hora del Reporte',
-        readonly=True,
-        help='Momento de emisión del reporte'
-    )
+        string='Hora Observación (UTC)', readonly=True)
     fecha_consulta = fields.Datetime(
-        string='Fecha Consulta',
-        required=True,
-        readonly=True,
-        default=fields.Datetime.now,
-        tracking=True
-    )
-    
-    # Temperatura
-    temperatura = fields.Float(
-        string='Temperatura (°C)',
-        digits=(5, 1),
-        readonly=True,
-        help='Temperatura del aire'
-    )
-    dewpoint = fields.Float(
-        string='Punto de Rocío (°C)',
-        digits=(5, 1),
-        readonly=True,
-        help='Temperatura del punto de rocío'
-    )
-    
-    # Viento
-    wind_direction = fields.Integer(
-        string='Dirección Viento (°)',
-        readonly=True,
-        help='Dirección del viento en grados (0-360)'
-    )
-    wind_speed = fields.Float(
-        string='Velocidad Viento (kt)',
-        digits=(5, 1),
-        readonly=True,
-        help='Velocidad del viento en nudos'
-    )
-    wind_gust = fields.Float(
-        string='Rachas (kt)',
-        digits=(5, 1),
-        readonly=True,
-        help='Rachas de viento en nudos'
-    )
-    
-    # Visibilidad y Presión
-    visibility = fields.Float(
-        string='Visibilidad (SM)',
-        digits=(5, 2),
-        readonly=True,
-        help='Visibilidad en millas estatuarias'
-    )
-    altimeter = fields.Float(
-        string='Altímetro (inHg)',
-        digits=(5, 2),
-        readonly=True,
-        help='Ajuste del altímetro en pulgadas de mercurio'
-    )
-    qnh = fields.Float(
-        string='QNH (hPa)',
-        digits=(6, 1),
-        readonly=True,
-        help='Presión a nivel del mar en hectopascales'
-    )
-    
-    # Categoría de Vuelo
-    flight_category = fields.Selection([
-        ('VFR', 'VFR - Visual Flight Rules'),
-        ('MVFR', 'MVFR - Marginal VFR'),
-        ('IFR', 'IFR - Instrument Flight Rules'),
-        ('LIFR', 'LIFR - Low IFR'),
-    ], string='Categoría de Vuelo', readonly=True, tracking=True)
-    
-    flight_category_desc = fields.Char(
-        string='Descripción Categoría',
-        compute='_compute_flight_category_desc',
-        store=True
-    )
-    
-    # Nubes y Clima
-    clouds = fields.Text(
-        string='Información de Nubes',
-        readonly=True,
-        help='Capas de nubes reportadas'
-    )
-    weather = fields.Char(
-        string='Fenómenos Meteorológicos',
-        readonly=True,
-        help='Condiciones meteorológicas actuales (lluvia, niebla, etc.)'
-    )
-    
+        string='Fecha Consulta', readonly=True,
+        default=fields.Datetime.now)
+
+    # Magnitudes meteorológicas (esquema normalizado del proveedor)
+    temperatura = fields.Float(string='Temperatura (°C)', digits=(5, 1),
+                               readonly=True)
+    dewpoint = fields.Float(string='Punto de Rocío (°C)', digits=(5, 1),
+                            readonly=True)
+    humidity = fields.Float(string='Humedad Relativa (%)', digits=(5, 1),
+                            readonly=True)
+    wind_direction = fields.Integer(string='Dirección Viento (°)',
+                                    readonly=True)
+    wind_speed_kt = fields.Float(string='Velocidad Viento (kt)',
+                                 digits=(5, 1), readonly=True)
+    wind_gust_kt = fields.Float(string='Rachas (kt)', digits=(5, 1),
+                                readonly=True)
+    visibility_m = fields.Integer(string='Visibilidad (m)', readonly=True)
+    qnh = fields.Float(string='QNH (hPa)', digits=(6, 1), readonly=True,
+                       help='Presión a nivel del mar')
+    pressure = fields.Float(string='Presión Estación (hPa)', digits=(6, 1),
+                            readonly=True)
+    precipitation = fields.Float(string='Precipitación (mm)', digits=(5, 1),
+                                 readonly=True)
+
     # Ubicación
-    latitud = fields.Float(
-        string='Latitud',
-        digits=(10, 6),
-        readonly=True
-    )
-    longitud = fields.Float(
-        string='Longitud',
-        digits=(10, 6),
-        readonly=True
-    )
-    elevation = fields.Float(
-        string='Elevación (ft)',
-        digits=(7, 0),
-        readonly=True,
-        help='Elevación del aeródromo en pies'
-    )
-    
+    latitud = fields.Float(string='Latitud', digits=(10, 6), readonly=True)
+    longitud = fields.Float(string='Longitud', digits=(10, 6), readonly=True)
+    elevation = fields.Float(string='Elevación (m)', digits=(7, 0),
+                             readonly=True)
+
     # Metadata
-    user_id = fields.Many2one(
-        'res.users',
-        string='Usuario',
-        default=lambda self: self.env.user,
-        readonly=True
-    )
+    user_id = fields.Many2one('res.users', string='Usuario',
+                              default=lambda self: self.env.user,
+                              readonly=True)
     notas = fields.Text(string='Notas')
     active = fields.Boolean(default=True)
-    
-    # Relaciones
-    vuelo_id = fields.Many2one(
-        'leulit.vuelo',
-        string='Vuelo Relacionado',
-     
-    
-    # Campos computados para indicar frescura de datos
+
+    # Frescura de datos (computada)
     edad_datos_minutos = fields.Integer(
-        string='Edad de Datos (minutos)',
-        compute='_compute_edad_datos',
-        help='Minutos transcurridos desde la observación meteorológica'
-    )
-    datos_desactualizados = fields.Boolean(
-        string='Datos Desactualizados',
-        compute='_compute_edad_datos',
-        help='Los datos tienen más de 60 minutos'
-    )
-    estado_datos = fields.Selection([
-        ('actual', 'Actual (< 30 min)'),
-        ('reciente', 'Reciente (30-60 min)'),
-        ('antiguo', 'Antiguo (> 60 min)'),
-    ], string='Estado de Datos', compute='_compute_edad_datos', store=True)
-    
+        string='Edad de datos (min)', compute='_compute_edad_datos')
+    estado_datos = fields.Selection(
+        [('actual', 'Actual (< 90 min)'),
+         ('reciente', 'Reciente (90-180 min)'),
+         ('antiguo', 'Antiguo (> 180 min)')],
+        string='Estado de datos', compute='_compute_edad_datos', store=True)
+
+    display_name = fields.Char(compute='_compute_display_name', store=False)
+
+    # ---------- ORM ----------
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('codigo', _('Nuevo')) == _('Nuevo'):
+                vals['codigo'] = self.env['ir.sequence'].next_by_code(
+                    'leulit.meteo.metar') or _('Nuevo')
+            if vals.get('icao_code'):
+                vals['icao_code'] = vals['icao_code'].upper().strip()
+        return super().create(vals_list)
+
     @api.depends('observation_time')
     def _compute_edad_datos(self):
-        """Calcula la edad de los datos y si están desactualizados"""
+        ahora = fields.Datetime.now()
         for record in self:
             if record.observation_time:
-                ahora = fields.Datetime.now()
-                diferencia = ahora - record.observation_time
-                minutos = int(diferencia.total_seconds() / 60)
-                
+                minutos = int(
+                    (ahora - record.observation_time).total_seconds() / 60)
                 record.edad_datos_minutos = minutos
-                record.datos_desactualizados = minutos > 60
-                
-                if minutos < 30:
+                if minutos < 90:
                     record.estado_datos = 'actual'
-                elif minutos < 60:
+                elif minutos < 180:
                     record.estado_datos = 'reciente'
                 else:
                     record.estado_datos = 'antiguo'
             else:
                 record.edad_datos_minutos = 0
-                record.datos_desactualizados = False
-                record.estado_datos = False   ondelete='set null'
-    )
-    
-    @api.model_create_multi
-    def create(self, vals_list):
-        """Genera código de secuencia al crear"""
-        for vals in vals_list:
-            if vals.get('codigo', _('Nuevo')) == _('Nuevo'):
-                vals['codigo'] = self.env['ir.sequence'].next_by_code('leulit.meteo.metar') or _('Nuevo')
-        return super().create(vals_list)
-    
-    @api.depends('flight_category')
-    def _compute_flight_category_desc(self):
-        """Calcula descripción de la categoría de vuelo"""
-        for record in self:
-            if record.flight_category:
-                record.flight_category_desc = AviationWeatherService.get_flight_category_description(
-                    record.flight_category
-                )
-            else:
-                record.flight_category_desc = False
-    
+                record.estado_datos = False
+
+    @api.onchange('icao_code', 'provider')
+    def _onchange_icao_code(self):
+        if self.icao_code:
+            self.icao_code = self.icao_code.upper().strip()
+        prov = get_provider(self.provider) if self.provider else None
+        if prov and self.icao_code and not self.station_code:
+            sc = prov.prefill_station_code(self.icao_code)
+            if sc:
+                self.station_code = sc
+
+    # ---------- Acciones de UI ----------
+
     def action_obtener_metar(self):
-        """
-        Obtiene el METAR más reciente desde la API y actualiza el registro.
-        
-        Nota: Este método actualiza los datos del registro existente con
-        el METAR más reciente disponible. Los datos anteriores se sobrescriben.
-        Usa el chatter para ver el historial de cambios.
-        
-        Los METAR son reportes puntuales en el tiempo. Este registro almacena
-        el estado del momento de la consulta (campo observation_time), no datos
-        en tiempo real. Para obtener el METAR actual, ejecute este método nuevamente.
-        """
+        """Refresca el registro con la última observación del proveedor."""
         self.ensure_one()
-        
-        if not self.icao_code:
-            raise UserError(_('Debe especificar el código OACI del aeródromo.'))
-        
-        # Validar formato OACI (4 letras)
-        if len(self.icao_code) != 4 or not self.icao_code.isalpha():
-            raise UserError(_('El código OACI debe tener exactamente 4 letras (ej: LECU, LEBL).'))
-        
-        # Llamar a la API
-        data = AviationWeatherService.get_metar(self.icao_code)
-        
+        if not self.icao_code and not self.station_code:
+            raise UserError(_(
+                'Debe indicar un código OACI o un código de estación.'))
+        if self.icao_code and (
+                len(self.icao_code) != 4 or not self.icao_code.isalpha()):
+            raise UserError(_(
+                'El código OACI debe tener exactamente 4 letras (ej: LEMD).'))
+
+        prov = get_provider(self.provider)
+        if not prov:
+            raise UserError(_(
+                'Proveedor METAR no disponible: %s') % self.provider)
+
+        data = prov.get_observation(
+            self.env,
+            icao_code=self.icao_code or None,
+            station_code=self.station_code or None,
+        )
         if not data:
-            raise UserError(
-                _('No se pudo obtener METAR para %s. Verifique el código OACI y la conexión.') % self.icao_code
-            )
-        
-        # Actualizar campos con los datos obtenidos
-        import json
-        self.write({
-            'fecha_consulta': fields.Datetime.now(),
-            'raw_metar': data.get('raw'),
-            'observation_time': data.get('observation_time'),
-            'report_time': data.get('report_time'),
-            'temperatura': data.get('temperature'),
-            'dewpoint': data.get('dewpoint'),
-            'wind_direction': data.get('wind_dir'),
-            'wind_speed': data.get('wind_speed'),
-            'wind_gust': data.get('wind_gust'),
-            'visibility': data.get('visibility'),
-            'altimeter': data.get('altimeter'),
-            'qnh': data.get('qnh'),
-            'flight_category': data.get('flight_category'),
-            'clouds': json.dumps(data.get('clouds', []), indent=2) if data.get('clouds') else False,
-            'weather': data.get('weather'),
-            'latitud': data.get('latitude'),
-            'longitud': data.get('longitude'),
-            'elevation': data.get('elevation'),
-        })
-        
-        _logger.info(f'METAR actualizado: {self.codigo} - {self.icao_code}')
-        
+            raise UserError(_(
+                'No se han podido obtener datos del proveedor "%(prov)s" '
+                'para %(ref)s. Verifique el código OACI/estación, la '
+                'conexión y la configuración del proveedor.'
+            ) % {
+                'prov': prov.label,
+                'ref': self.icao_code or self.station_code,
+            })
+
+        self._write_observacion(data)
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Éxito'),
-                'message': _('METAR obtenido correctamente para %s') % self.icao_code,
+                'title': prov.label,
+                'message': _('Observación obtenida para %s') % (
+                    self.icao_code or self.station_code),
                 'type': 'success',
                 'sticky': False,
-            }
+            },
         }
-    
-    @api.model
-    def obtener_metar_aerodromo(self, icao_code):
-        """
-        Método helper para obtener METAR desde otros módulos
-        
-        Args:
-            icao_code (str): Código OACI del aeródromo
-            
-        Returns:
-            dict: Datos METAR simplificados
-        """
-        metar = self.create({
-            'icao_code': icao_code.upper(),
-        })
-        
-        data = AviationWeatherService.get_metar(icao_code)
-        
-        if data:
-            import json
-            metar.write({
-            if record.edad_datos_minutos:
-                name += f" ({record.edad_datos_minutos} min)"
-            result.append((record.id, name))
-        return result
-    
-    @api.model
-    def default_get(self, fields_list):
-        """Permite crear con actualización automática opcional"""
-        res = super().default_get(fields_list)
-        return res
-    
-    def write(self, vals):
-        """Override write para registrar actualizaciones en el chatter"""
-        result = super().write(vals)
-        for record in self:
-            if 'raw_metar' in vals and vals.get('raw_metar'):
-                record.message_post(
-                    body=_('METAR actualizado: %s') % vals['raw_metar'],
-                    subject=_('Actualización METAR')
-                )
-        return result
-    
-    def actualizar_si_antiguo(self, minutos_limite=60):
-        """
-        Actualiza automáticamente el METAR si los datos son antiguos
-        
-        Args:
-            minutos_limite (int): Edad máxima en minutos antes de actualizar
-            
-        Returns:
-            bool: True si se actualizó, False si no era necesario
-        """
+
+    def _write_observacion(self, data):
+        """Aplica un dict normalizado del proveedor al registro."""
         self.ensure_one()
-        
-        if not self.observation_time:
-            # Sin datos, actualizar
-            self.action_obtener_metar()
-            return True
-        
-        if self.edad_datos_minutos > minutos_limite:
-            _logger.info(
-                f'METAR {self.icao_code} antiguo ({self.edad_datos_minutos} min), actualizando...'
-            )
-            self.action_obtener_metar()
-            return True
-        
-        return Falservation_time': data.get('observation_time'),
-                'report_time': data.get('report_time'),
-                'temperatura': data.get('temperature'),
-                'dewpoint': data.get('dewpoint'),
-                'wind_direction': data.get('wind_dir'),
-                'wind_speed': data.get('wind_speed'),
-                'wind_gust': data.get('wind_gust'),
-                'visibility': data.get('visibility'),
-                'altimeter': data.get('altimeter'),
-                'qnh': data.get('qnh'),
-                'flight_category': data.get('flight_category'),
-                'clouds': json.dumps(data.get('clouds', []), indent=2) if data.get('clouds') else False,
-                'weather': data.get('weather'),
-                'latitud': data.get('latitude'),
-                'longitud': data.get('longitude'),
-                'elevation': data.get('elevation'),
+        self.write({
+            'station_code': data.get('station_code') or self.station_code,
+            'station_name': data.get('station_name'),
+            'raw_metar': data.get('raw_metar'),
+            'observation_time': data.get('observation_time'),
+            'fecha_consulta': fields.Datetime.now(),
+            'temperatura': data.get('temperatura'),
+            'dewpoint': data.get('dewpoint'),
+            'humidity': data.get('humidity'),
+            'wind_direction': data.get('wind_direction') or 0,
+            'wind_speed_kt': data.get('wind_speed_kt'),
+            'wind_gust_kt': data.get('wind_gust_kt'),
+            'visibility_m': data.get('visibility_m') or 0,
+            'qnh': data.get('qnh'),
+            'pressure': data.get('pressure'),
+            'precipitation': data.get('precipitation'),
+            'latitud': data.get('latitude'),
+            'longitud': data.get('longitude'),
+            'elevation': data.get('elevation'),
+        })
+
+    # ---------- API reutilizable ----------
+
+    @api.model
+    def obtener_metar(self, icao_code=None, station_code=None,
+                      provider='aemet', persistir=False):
+        """Obtiene una observación normalizada del proveedor indicado.
+
+        Pensado para ser invocado desde otros módulos::
+
+            data = self.env['leulit.meteo.metar'].obtener_metar(
+                icao_code='LEMD', provider='aemet')
+
+        Args:
+            icao_code: código OACI del aeródromo.
+            station_code: identificador de estación interno del proveedor.
+            provider: código del proveedor registrado (por defecto ``aemet``).
+            persistir: si ``True``, crea/actualiza un registro y añade
+                ``record_id`` al dict devuelto.
+
+        Returns:
+            dict con el esquema normalizado documentado en
+            :mod:`leulit_meteo_metar_provider`, o ``None``.
+        """
+        if not icao_code and not station_code:
+            return None
+        prov = get_provider(provider)
+        if not prov:
+            raise UserError(_(
+                'Proveedor METAR no disponible: %s') % provider)
+
+        data = prov.get_observation(
+            self.env,
+            icao_code=(icao_code or '').upper().strip() or None,
+            station_code=(station_code or '').strip() or None,
+        )
+        if not data:
+            return None
+
+        if persistir:
+            record = self.create({
+                'provider': provider,
+                'icao_code': (icao_code or '').upper().strip() or False,
+                'station_code': data.get('station_code'),
             })
-            
-            return {
-                'metar_id': metar.id,
-                'icao': metar.icao_code,
-                'raw': metar.raw_metar,
-                'temperatura': metar.temperatura,
-                'viento_velocidad': metar.wind_speed,
-                'viento_direccion': metar.wind_direction,
-                'visibilidad': metar.visibility,
-                'qnh': metar.qnh,
-                'categoria_vuelo': metar.flight_category,
-            }
-        
-        return None
-    
-    def name_get(self):
-        """Personaliza el nombre mostrado"""
-        result = []
+            record._write_observacion(data)
+            data['record_id'] = record.id
+        return data
+
+    @api.depends('icao_code', 'station_code', 'observation_time')
+    def _compute_display_name(self):
         for record in self:
-            name = f"{record.icao_code}"
+            label = record.icao_code or record.station_code or _('Nuevo')
             if record.observation_time:
-                name += f" - {record.observation_time.strftime('%d/%m/%Y %H:%M')}"
-            result.append((record.id, name))
-        return result
+                label += f" - {record.observation_time.strftime('%d/%m %H:%MZ')}"
+            record.display_name = label

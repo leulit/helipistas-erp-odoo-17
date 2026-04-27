@@ -148,15 +148,15 @@ class LeulitMeteoRutaTemplatePunto(models.Model):
         digits=(8, 2)
     )
     notas = fields.Text(string='Notas')
-    
+
+    display_name = fields.Char(compute='_compute_display_name', store=False)
+
     _sql_constraints = [
         ('secuencia_ruta_unique', 'unique(ruta_template_id, secuencia)',
          'La secuencia debe ser única dentro de cada ruta.')
     ]
-    
-    def name_get(self):
-        result = []
+
+    @api.depends('secuencia', 'nombre')
+    def _compute_display_name(self):
         for punto in self:
-            name = f"{punto.secuencia}. {punto.nombre}"
-            result.append((punto.id, name))
-        return result
+            punto.display_name = f"{punto.secuencia}. {punto.nombre}"

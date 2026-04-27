@@ -186,7 +186,28 @@ class LeulitMeteoConsulta(models.Model):
         string='Vuelo Relacionado',
         ondelete='set null'
     )
-    
+
+    # Embed HTML para Windy (iframe) renderizado vía campo Html
+    windy_embed_html = fields.Html(
+        string='Windy Embed',
+        compute='_compute_windy_embed_html',
+        sanitize=False,
+    )
+
+    @api.depends('latitud', 'longitud', 'es_polilinea', 'puntos_ids',
+                 'puntos_ids.latitud', 'puntos_ids.longitud')
+    def _compute_windy_embed_html(self):
+        for record in self:
+            url = record.get_windy_embed_url() if (
+                record.latitud or record.es_polilinea) else False
+            if url:
+                record.windy_embed_html = (
+                    f'<iframe src="{url}" width="100%" height="600" '
+                    f'frameborder="0" style="border:none; border-radius:8px;"></iframe>'
+                )
+            else:
+                record.windy_embed_html = False
+
     @api.model_create_multi
     def create(self, vals_list):
         """Genera código de secuencia al crear"""
