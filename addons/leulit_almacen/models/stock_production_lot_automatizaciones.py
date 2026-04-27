@@ -25,7 +25,7 @@ class StockLot(models.Model):
         template = self.env.ref('leulit_almacen.email_template_notify_expiration_date', raise_if_not_found=False)
         email_values = {}
         if template:
-            now = datetime.now().date()
+            now = (datetime.now() + relativedelta(months=1)).date()
             for item in self.search([('fecha_caducidad','<=',now),('product_qty','>',0),('location_etiqueta','in',['MATERIAL ÚTIL','MATERIAL NUEVO'])]):
                 email_values[item.name] = {
                     'qty': item.product_qty,
