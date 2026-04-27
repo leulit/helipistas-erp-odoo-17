@@ -18,7 +18,7 @@
             <field name="model_id" ref="base.model_res_users"/>
             <field name="subject">Notificación de Piezas Caducadas</field>
             <field name="email_from">erp@helipistas.com</field>
-            <field name="email_to">almacen@icarus-manteniment.com</field>
+            <field name="email_to">almacen@icarus-manteniment.com,otecnica@helipistas.com</field>
             <field name="body_html" type="html">
                 <div>
                     <t t-if="ctx.get('values_flag')">
