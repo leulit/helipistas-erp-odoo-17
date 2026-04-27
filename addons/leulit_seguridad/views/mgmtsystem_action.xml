@@ -4,7 +4,20 @@
             <field name="name">Gestiones del cambio</field>
             <field name="res_model">project.project</field>
             <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="project.view_project_project_filter"/>
             <field name="domain">[('name', 'ilike', 'GC-')]</field>
+        </record>
+        <record id="leulit_20260427_1000_action_kanban_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">kanban</field>
+            <field name="act_window_id" ref="leulit_20260427_1000_action"/>
+            <field name="view_id" ref="project.project_kanban_view_group_stage"/>
+        </record>
+        <record id="leulit_20260427_1000_action_tree_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="leulit_20260427_1000_action"/>
+            <field name="view_id" ref="project.project_list_view_group_stage"/>
         </record>
 
         <record id="leulit_20260112_0833_action" model="ir.actions.act_window">
