@@ -7,54 +7,147 @@
         <field name="arch" type="xml">
             <form string="Umbrales Operacionales">
                 <sheet>
-                    <div class="alert alert-info" role="alert">
-                        Estos valores determinan el estado meteorológico calculado en los
-                        partes de vuelo. Ajústalos a los mínimos de tu Manual de Operaciones
-                        u OpsSpec. Los cambios se aplican a todas las consultas nuevas.
+                    <style>
+                        .umbral-header {
+                            background: #1a3a5c;
+                            color: white;
+                            padding: 16px 20px;
+                            border-radius: 6px;
+                            margin-bottom: 20px;
+                        }
+                        .umbral-header h4 { margin: 0 0 4px 0; font-size: 15pt; font-weight: 600; }
+                        .umbral-header p  { margin: 0; font-size: 10pt; opacity: 0.85; }
+
+                        .umbral-section {
+                            border: 1px solid #d0dae8;
+                            border-radius: 6px;
+                            margin-bottom: 16px;
+                            overflow: hidden;
+                        }
+                        .umbral-section-title {
+                            background: #f0f4fa;
+                            border-bottom: 1px solid #d0dae8;
+                            padding: 8px 16px;
+                            font-size: 10pt;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.06em;
+                            color: #1a3a5c;
+                        }
+                        .umbral-body {
+                            display: flex;
+                            padding: 16px;
+                            gap: 24px;
+                            align-items: flex-start;
+                        }
+                        .umbral-inputs { flex: 0 0 300px; }
+                        .umbral-legend { flex: 1; }
+
+                        .legend-bar {
+                            display: flex;
+                            border-radius: 4px;
+                            overflow: hidden;
+                            height: 32px;
+                            margin-bottom: 10px;
+                        }
+                        .bar-ok       { background: #28a745; flex: 1; display:flex; align-items:center; justify-content:center; color:white; font-size:9pt; font-weight:700; }
+                        .bar-marginal { background: #fd7e14; flex: 1; display:flex; align-items:center; justify-content:center; color:white; font-size:9pt; font-weight:700; }
+                        .bar-nogo     { background: #dc3545; flex: 1; display:flex; align-items:center; justify-content:center; color:white; font-size:9pt; font-weight:700; }
+
+                        .legend-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+                        .legend-table th { background: #f0f4fa; padding: 5px 10px; text-align: left; color: #1a3a5c; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #d0dae8; }
+                        .legend-table td { padding: 5px 10px; border-bottom: 1px solid #eef2f7; }
+                        .badge-ok       { background:#28a745; color:white; padding:2px 8px; border-radius:3px; font-size:8.5pt; font-weight:700; }
+                        .badge-marginal { background:#fd7e14; color:white; padding:2px 8px; border-radius:3px; font-size:8.5pt; font-weight:700; }
+                        .badge-nogo     { background:#dc3545; color:white; padding:2px 8px; border-radius:3px; font-size:8.5pt; font-weight:700; }
+
+                        .note-text { font-size: 9pt; color: #6c757d; margin-top: 8px; font-style: italic; }
+                    </style>
+
+                    <!-- Cabecera -->
+                    <div class="umbral-header">
+                        <h4>Umbrales Operacionales</h4>
+                        <p>Define los límites meteorológicos para el cálculo automático del estado de vuelo en los partes.
+                           Ajusta los valores a los mínimos de tu Manual de Operaciones u OpsSpec.</p>
                     </div>
 
-                    <group string="Viento sostenido">
-                        <group>
-                            <field name="viento_marginal_kt"
-                                   decoration-warning="True"/>
-                            <field name="viento_nogo_kt"
-                                   decoration-danger="True"/>
-                        </group>
-                        <group>
-                            <div class="text-muted o_field_widget" colspan="2">
-                                <ul class="mb-0">
-                                    <li>Por debajo de <strong><field name="viento_marginal_kt" readonly="1" nolabel="1"/> kt</strong>: estado <span class="badge bg-success">OK</span></li>
-                                    <li>Entre <strong><field name="viento_marginal_kt" readonly="1" nolabel="1"/> y <field name="viento_nogo_kt" readonly="1" nolabel="1"/> kt</strong>: estado <span class="badge bg-warning">MARGINAL</span></li>
-                                    <li>Por encima de <strong><field name="viento_nogo_kt" readonly="1" nolabel="1"/> kt</strong>: estado <span class="badge bg-danger">NO GO</span></li>
-                                </ul>
+                    <!-- VIENTO SOSTENIDO -->
+                    <div class="umbral-section">
+                        <div class="umbral-section-title">Viento sostenido</div>
+                        <div class="umbral-body">
+                            <div class="umbral-inputs">
+                                <field name="viento_marginal_kt" string="Umbral MARGINAL (kt)"/>
+                                <field name="viento_nogo_kt"     string="Umbral NO GO (kt)"/>
                             </div>
-                        </group>
-                    </group>
-
-                    <group string="Rachas">
-                        <group>
-                            <field name="rachas_marginal_kt"/>
-                            <field name="rachas_nogo_kt"/>
-                        </group>
-                    </group>
-
-                    <group string="Visibilidad">
-                        <group>
-                            <field name="vis_marginal_m"/>
-                            <field name="vis_nogo_m"/>
-                        </group>
-                        <group>
-                            <div class="text-muted" colspan="2">
-                                Por encima de <strong><field name="vis_marginal_m" readonly="1" nolabel="1"/> m</strong>: OK —
-                                entre <strong><field name="vis_nogo_m" readonly="1" nolabel="1"/> y <field name="vis_marginal_m" readonly="1" nolabel="1"/> m</strong>: MARGINAL —
-                                por debajo de <strong><field name="vis_nogo_m" readonly="1" nolabel="1"/> m</strong>: NO GO
+                            <div class="umbral-legend">
+                                <div class="legend-bar">
+                                    <div class="bar-ok">OK</div>
+                                    <div class="bar-marginal">MARGINAL</div>
+                                    <div class="bar-nogo">NO GO</div>
+                                </div>
+                                <table class="legend-table">
+                                    <tr><th>Condición</th><th>Estado</th></tr>
+                                    <tr><td>Viento &lt; umbral marginal</td><td><span class="badge-ok">OK</span></td></tr>
+                                    <tr><td>Entre umbral marginal y NO GO</td><td><span class="badge-marginal">MARGINAL</span></td></tr>
+                                    <tr><td>Viento ≥ umbral NO GO</td><td><span class="badge-nogo">NO GO</span></td></tr>
+                                </table>
                             </div>
-                        </group>
-                    </group>
+                        </div>
+                    </div>
+
+                    <!-- RACHAS -->
+                    <div class="umbral-section">
+                        <div class="umbral-section-title">Rachas</div>
+                        <div class="umbral-body">
+                            <div class="umbral-inputs">
+                                <field name="rachas_marginal_kt" string="Umbral MARGINAL (kt)"/>
+                                <field name="rachas_nogo_kt"     string="Umbral NO GO (kt)"/>
+                            </div>
+                            <div class="umbral-legend">
+                                <div class="legend-bar">
+                                    <div class="bar-ok">OK</div>
+                                    <div class="bar-marginal">MARGINAL</div>
+                                    <div class="bar-nogo">NO GO</div>
+                                </div>
+                                <table class="legend-table">
+                                    <tr><th>Condición</th><th>Estado</th></tr>
+                                    <tr><td>Rachas &lt; umbral marginal</td><td><span class="badge-ok">OK</span></td></tr>
+                                    <tr><td>Entre umbral marginal y NO GO</td><td><span class="badge-marginal">MARGINAL</span></td></tr>
+                                    <tr><td>Rachas ≥ umbral NO GO</td><td><span class="badge-nogo">NO GO</span></td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISIBILIDAD -->
+                    <div class="umbral-section">
+                        <div class="umbral-section-title">Visibilidad</div>
+                        <div class="umbral-body">
+                            <div class="umbral-inputs">
+                                <field name="vis_marginal_m" string="Umbral MARGINAL (m)"/>
+                                <field name="vis_nogo_m"     string="Umbral NO GO (m)"/>
+                            </div>
+                            <div class="umbral-legend">
+                                <div class="legend-bar">
+                                    <div class="bar-nogo">NO GO</div>
+                                    <div class="bar-marginal">MARGINAL</div>
+                                    <div class="bar-ok">OK</div>
+                                </div>
+                                <table class="legend-table">
+                                    <tr><th>Condición</th><th>Estado</th></tr>
+                                    <tr><td>Visibilidad ≥ umbral marginal</td><td><span class="badge-ok">OK</span></td></tr>
+                                    <tr><td>Entre umbral NO GO y marginal</td><td><span class="badge-marginal">MARGINAL</span></td></tr>
+                                    <tr><td>Visibilidad &lt; umbral NO GO</td><td><span class="badge-nogo">NO GO</span></td></tr>
+                                </table>
+                                <p class="note-text">La visibilidad es inversamente proporcional al riesgo: a menor visibilidad, mayor restricción.</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </sheet>
                 <footer>
                     <button name="action_save"
-                            string="Guardar"
+                            string="Guardar cambios"
                             type="object"
                             class="btn-primary"/>
                     <button string="Cancelar"
