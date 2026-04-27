@@ -74,6 +74,41 @@ class CheckWXService:
         }
 
     @classmethod
+    def get_nearest_metar(cls, lat, lon, radius_nm, api_key):
+        """Devuelve lista de {'icao','name','lat','lon','country_code'} con METAR en el radio.
+
+        Usa /v2/metar/lat/{lat}/lon/{lon}/radius/{radius}/decoded.
+        radius_nm en millas náuticas (150 km ≈ 81 nm).
+        """
+        data = cls._get(
+            f"/v2/metar/lat/{lat}/lon/{lon}/radius/{int(radius_nm)}/decoded",
+            api_key)
+        if not data or not data.get('data'):
+            return []
+        results = []
+        for item in data['data']:
+            icao = item.get('icao', '')
+            if not icao:
+                continue
+            station = item.get('station', {})
+            coords = station.get('geometry', {}).get('coordinates')
+            slat = station.get('latitude', {}).get('decimal')
+            slon = station.get('longitude', {}).get('decimal')
+            if coords and len(coords) >= 2:
+                slon = float(coords[0])
+                slat = float(coords[1])
+            if slat is None or slon is None:
+                continue
+            results.append({
+                'icao': icao.upper(),
+                'name': station.get('name', ''),
+                'lat': float(slat),
+                'lon': float(slon),
+                'country_code': station.get('country', {}).get('code', ''),
+            })
+        return results
+
+    @classmethod
     def validate_api_key(cls, api_key):
         data = cls._get("/v2/station/LEMD", api_key)
         return data is not None

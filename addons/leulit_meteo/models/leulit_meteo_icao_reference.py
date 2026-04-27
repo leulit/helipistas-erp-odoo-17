@@ -169,23 +169,22 @@ class LeulitMeteoIcaoReference(models.Model):
                     country = station_info.get('country_code', '')
                     proveedor = 'aemet' if country == 'ES' else 'checkwx'
 
-        # 3. Si no tiene METAR propio → buscar aeródromo con METAR cercano
-        if not tiene_metar and lat is not None and checkwx_key and openaip_key:
-            nearby = OpenAIPService.get_airports_near(
-                lat, lon, _SEARCH_RADIUS_KM, openaip_key, limit=15)
-            for candidate in nearby:
+        # 3. Si no tiene METAR propio → buscar aeródromo con METAR cercano via CheckWX radius
+        if not tiene_metar and lat is not None and checkwx_key:
+            radius_nm = int(_SEARCH_RADIUS_KM / 1.852)
+            candidates = CheckWXService.get_nearest_metar(lat, lon, radius_nm, checkwx_key)
+            for candidate in candidates:
                 cand_icao = candidate.get('icao', '')
                 if not cand_icao or cand_icao == icao:
                     continue
-                cand_metar = CheckWXService.get_metar(cand_icao, checkwx_key)
-                if cand_metar:
-                    cand_station = CheckWXService.get_station(cand_icao, checkwx_key)
-                    ref_icao = cand_icao
-                    ref_nombre = (cand_station.get('name') if cand_station else None) or candidate.get('name') or cand_icao
-                    ref_dist_km = candidate.get('dist_km', 0.0)
-                    country = (cand_station.get('country_code', '') if cand_station else '')
-                    proveedor = 'aemet' if country == 'ES' else 'checkwx'
-                    break
+                ref_icao = cand_icao
+                ref_nombre = candidate.get('name') or cand_icao
+                cand_lat = candidate.get('lat')
+                cand_lon = candidate.get('lon')
+                ref_dist_km = round(_haversine(lat, lon, cand_lat, cand_lon), 1) if cand_lat and cand_lon else 0.0
+                country = candidate.get('country_code', '')
+                proveedor = 'aemet' if country == 'ES' else 'checkwx'
+                break
 
         # 4. FIR por heurística (el registro en tabla se gestiona en resolve())
         fir = _fir_heuristic(lat, lon)
@@ -296,35 +295,31 @@ class LeulitMeteoIcaoReference(models.Model):
         ref_dist_km = 0.0
         proveedor = 'aemet'
 
-        if checkwx_key and openaip_key:
-            nearby = OpenAIPService.get_airports_near(
-                lat, lon, _SEARCH_RADIUS_KM, openaip_key, limit=15)
+        if checkwx_key:
+            radius_nm = int(_SEARCH_RADIUS_KM / 1.852)
+            candidates = CheckWXService.get_nearest_metar(lat, lon, radius_nm, checkwx_key)
             _logger.info(
-                "_enrich_ref_icao %s: OpenAIP nearby (%.0fkm) → %d candidatos",
-                icao, _SEARCH_RADIUS_KM, len(nearby) if nearby else 0)
-            for candidate in nearby:
+                "_enrich_ref_icao %s: CheckWX radius %dnm → %d candidatos",
+                icao, radius_nm, len(candidates))
+            for candidate in candidates:
                 cand_icao = candidate.get('icao', '')
                 if not cand_icao or cand_icao == icao:
                     continue
-                cand_metar = CheckWXService.get_metar(cand_icao, checkwx_key)
+                ref_icao = cand_icao
+                ref_nombre = candidate.get('name') or cand_icao
+                cand_lat = candidate.get('lat')
+                cand_lon = candidate.get('lon')
+                if cand_lat and cand_lon:
+                    ref_dist_km = round(_haversine(lat, lon, cand_lat, cand_lon), 1)
+                country = candidate.get('country_code', '')
+                proveedor = 'aemet' if country == 'ES' else 'checkwx'
                 _logger.info(
-                    "_enrich_ref_icao %s: CheckWX METAR para %s → %s",
-                    icao, cand_icao, bool(cand_metar))
-                if cand_metar:
-                    cand_station = CheckWXService.get_station(cand_icao, checkwx_key)
-                    ref_icao = cand_icao
-                    ref_nombre = (
-                        (cand_station.get('name') if cand_station else None)
-                        or candidate.get('name') or cand_icao
-                    )
-                    ref_dist_km = candidate.get('dist_km', 0.0)
-                    country = (cand_station.get('country_code', '') if cand_station else '')
-                    proveedor = 'aemet' if country == 'ES' else 'checkwx'
-                    break
+                    "_enrich_ref_icao %s: ref encontrado → %s (%s, %.1f km)",
+                    icao, ref_icao, proveedor, ref_dist_km)
+                break
         else:
             _logger.warning(
-                "_enrich_ref_icao %s: sin checkwx_key o sin openaip_key, "
-                "no se puede buscar aeródromo próximo", icao)
+                "_enrich_ref_icao %s: sin checkwx_key, no se puede buscar aeródromo próximo", icao)
 
         if not ref_icao:
             _logger.warning(
