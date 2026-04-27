@@ -26,7 +26,7 @@ Menú: **Meteorología → Consultas**.
 4. Pulsa el botón correspondiente:
    - **Consultar clima actual** — usa Open-Meteo y rellena temperatura, humedad, viento, descripción y código de clima.
    - **Obtener pronóstico** — pronóstico Open-Meteo a varios días.
-   - **Consultar Windy** — usa el modelo Windy seleccionado en Ajustes (GFS, ECMWF, ICON, ICON-EU o NAM).
+   - **Consultar Windy** — usa el modelo Windy seleccionado en **Meteorología → Configuración** (GFS, ECMWF, ICON, ICON-EU o NAM).
 
 Los campos `temperatura`, `humedad`, `velocidad_viento`, `descripcion_clima` y `codigo_clima` se actualizan tras la consulta.
 

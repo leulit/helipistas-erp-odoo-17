@@ -30,9 +30,11 @@ leulit.meteo.metar
     Reporte tipo METAR. Campo ``provider`` (Selection) identifica el origen.
     Hoy el único proveedor activo es ``aemet``. Secuencia ``METAR-XXXXX``.
 
-res.config.settings (extendido)
-    Claves de configuración: ``windy_api_key``, ``windy_model``,
-    ``aemet_api_key``.
+leulit.meteo.config (TransientModel)
+    Wizard propio de configuración del módulo, independiente del modelo de
+    Settings de Odoo. Lee y escribe los ``ir.config_parameter``
+    ``leulit_meteo.windy_api_key``, ``leulit_meteo.windy_model`` y
+    ``leulit_meteo.aemet_api_key``.
 
 Servicios HTTP (``models/*_service.py``)
 ----------------------------------------
@@ -68,15 +70,16 @@ Cómo añadir un nuevo proveedor
     2. Importarlo en ``models/__init__.py`` **antes** de
        ``leulit_meteo_metar`` para que el registro esté listo cuando el
        Selection del modelo se construya.
-    3. Añadir la clave correspondiente en ``res.config.settings`` si requiere
-       autenticación.
+    3. Añadir la clave correspondiente en el wizard ``leulit.meteo.config``
+       (``views/leulit_meteo_config_views.xml``) si requiere autenticación;
+       internamente se persiste como ``ir.config_parameter``.
 
 Vistas y menú
 -------------
 - ``views/leulit_meteo_consulta_views.xml``
 - ``views/leulit_meteo_ruta_template_views.xml``
 - ``views/leulit_meteo_metar_views.xml``
-- ``views/res_config_settings_views.xml``
+- ``views/leulit_meteo_config_views.xml``
 - ``views/menu.xml``
 
 Datos
@@ -113,7 +116,7 @@ Python:
 
 Configuración
 -------------
-Ajustes → Leulit Meteorología:
+Meteorología → Configuración (wizard ``leulit.meteo.config``, restringido a ``base.group_system``):
 - ``windy_api_key``: clave de Windy (opcional para REST; embed funciona sin ella).
 - ``windy_model``: modelo Windy a usar.
 - ``aemet_api_key``: token JWT de AEMET OpenData.

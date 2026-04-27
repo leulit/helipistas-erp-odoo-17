@@ -42,7 +42,7 @@ Infraestructura de proveedores:
 - Rutas Predefinidas
 - Reportes METAR
 
-La configuración (claves de Windy y AEMET, modelo Windy por defecto y botones de validación) está en `Ajustes → Meteorología`, sobre los parámetros del sistema:
+La configuración (claves de Windy y AEMET, modelo Windy por defecto y botones de validación) está en `Meteorología → Configuración` (submenú dentro del módulo, accesible solo a administradores — `base.group_system`). Es un wizard (`TransientModel` `leulit.meteo.config`) que lee y escribe los siguientes parámetros del sistema:
 
 - `leulit_meteo.windy_api_key`
 - `leulit_meteo.windy_model` (gfs, ecmwf, icon, iconEu, nam)
@@ -52,7 +52,7 @@ La configuración (claves de Windy y AEMET, modelo Windy por defecto y botones d
 
 1. Instalar la dependencia Python `requests`.
 2. Actualizar la lista de aplicaciones en Odoo e instalar **Leulit Meteorología**.
-3. Configurar las API keys de Windy y AEMET en `Ajustes → Meteorología`.
+3. Configurar las API keys de Windy y AEMET en `Meteorología → Configuración`.
 
 Para el procedimiento detallado (Docker, permisos, validación de claves, troubleshooting) consulta [INSTALL.md](INSTALL.md).
 

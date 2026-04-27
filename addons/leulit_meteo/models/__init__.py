@@ -13,4 +13,4 @@ from . import leulit_meteo_metar_provider
 from . import leulit_meteo_metar_aemet
 from . import leulit_meteo_metar
 
-from . import res_config_settings
+from . import leulit_meteo_config

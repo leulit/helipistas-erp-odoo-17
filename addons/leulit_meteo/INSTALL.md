@@ -45,10 +45,10 @@ Ambas API keys son **opcionales**, pero recomendadas según el uso previsto. Sin
 Útil si se quieren consultar modelos meteorológicos profesionales (GFS, ECMWF, ICON, ICON-EU, NAM) o usar el mapa visual embebido de Windy.
 
 1. Obtener la API key gratuita en <https://api.windy.com/keys>.
-2. En Odoo: **Ajustes → Meteorología**.
+2. En Odoo: **Meteorología → Configuración** (submenú restringido a administradores — `base.group_system`). Se abre como modal (wizard).
 3. Pegar la clave en **Windy API Key**.
 4. Seleccionar el **modelo por defecto** (GFS, ECMWF, ICON, ICON-EU o NAM).
-5. Pulsar **Validar API Key**.
+5. Pulsar **Validar API Key** y luego **Guardar**.
 
 Sin esta clave, las consultas con fuente "Windy" lanzarán un `UserError`. Open-Meteo seguirá funcionando con normalidad.
 
@@ -57,9 +57,9 @@ Sin esta clave, las consultas con fuente "Windy" lanzarán un `UserError`. Open-
 Útil para construir partes tipo METAR a partir de observaciones horarias de estaciones AEMET en España.
 
 1. Solicitar la API key (un JWT) gratuita en <https://opendata.aemet.es/centrodedescargas/altaUsuario>. Llega por correo electrónico.
-2. En Odoo: **Ajustes → Meteorología**.
+2. En Odoo: **Meteorología → Configuración**.
 3. Pegar el JWT completo en **AEMET OpenData API Key** (las JWT son largas; copiar sin espacios ni saltos de línea).
-4. Pulsar **Validar API Key**.
+4. Pulsar **Validar API Key** y luego **Guardar**.
 
 Sin esta clave, la acción **Obtener observación** del modelo `leulit.meteo.metar` (con proveedor AEMET seleccionado) lanzará `UserError`.
 
@@ -98,7 +98,7 @@ Sin esta clave, la acción **Obtener observación** del modelo `leulit.meteo.met
 - Revisar la consola del navegador (F12) por errores de carga.
 
 ### "No se ha configurado la API Key de AEMET"
-Ir a **Ajustes → Meteorología** y pegar el JWT de AEMET (sección 3.2).
+Ir a **Meteorología → Configuración** y pegar el JWT de AEMET (sección 3.2).
 
 ### "La API Key de AEMET no es válida"
 - Comprobar que la JWT está completa, sin espacios ni saltos de línea (son cadenas largas).

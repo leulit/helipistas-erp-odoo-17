@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view for Meteorología configuration wizard -->
+    <record id="view_leulit_meteo_config_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.config.form</field>
+        <field name="model">leulit.meteo.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuración Meteorología">
+                <header>
+                    <button name="action_validate_windy_key"
+                            string="Validar Windy"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-check-circle"/>
+                    <button name="action_validate_aemet_key"
+                            string="Validar AEMET"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-check-circle"/>
+                </header>
+                <sheet>
+                    <group string="Windy">
+                        <div colspan="2" class="text-muted">
+                            API de modelos meteorológicos avanzados (GFS, ECMWF, ICON...).
+                            Obtén tu API Key en
+                            <a href="https://api.windy.com/keys" target="_blank">api.windy.com/keys</a>.
+                        </div>
+                        <field name="windy_api_key" password="True" placeholder="Tu API Key de Windy"/>
+                        <field name="windy_model" widget="radio"/>
+                    </group>
+                    <group string="AEMET OpenData">
+                        <div colspan="2" class="text-muted">
+                            API pública de la Agencia Estatal de Meteorología (España),
+                            usada para los reportes METAR sintéticos.
+                            Solicita tu API Key (JWT) en
+                            <a href="https://opendata.aemet.es/centrodedescargas/altaUsuario" target="_blank">opendata.aemet.es</a>.
+                        </div>
+                        <field name="aemet_api_key" password="True" placeholder="Tu API Key de AEMET"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_save"
+                            string="Guardar"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancelar"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action: open the configuration wizard -->
+    <record id="action_leulit_meteo_config" model="ir.actions.act_window">
+        <field name="name">Configuración Meteorología</field>
+        <field name="res_model">leulit.meteo.config</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_leulit_meteo_config_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

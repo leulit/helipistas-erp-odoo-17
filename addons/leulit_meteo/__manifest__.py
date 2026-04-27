@@ -41,10 +41,10 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequences.xml',
-        'views/res_config_settings_views.xml',
         'views/leulit_meteo_ruta_template_views.xml',
         'views/leulit_meteo_consulta_views.xml',
         'views/leulit_meteo_metar_views.xml',
+        'views/leulit_meteo_config_views.xml',
         'views/menu.xml',
     ],
     'assets': {
