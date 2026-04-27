@@ -259,21 +259,26 @@ class LeulitMeteoIcaoReference(models.Model):
         aemet_key = ICP.get_param('leulit_meteo.aemet_api_key', '')
 
         rec = self.search([('icao', '=', icao)], limit=1)
+        _logger.info(
+            "_enrich_ref_icao %s: rec=%s openaip_key=%s checkwx_key=%s aemet_key=%s",
+            icao, bool(rec), bool(openaip_key), bool(checkwx_key), bool(aemet_key))
         if not rec:
             return None
 
         lat = rec.latitud if rec.latitud else None
         lon = rec.longitud if rec.longitud else None
+        _logger.info("_enrich_ref_icao %s: coords en registro → lat=%s lon=%s", icao, lat, lon)
 
         # Coordenadas del OACI via OpenAIP si no están en el registro
         if not lat and openaip_key:
             airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
+            _logger.info("_enrich_ref_icao %s: OpenAIP → %s", icao, airport_info)
             if airport_info:
                 lat = airport_info.get('lat')
                 lon = airport_info.get('lon')
 
         if not lat:
-            _logger.warning("_enrich_ref_icao %s: no se obtuvieron coordenadas", icao)
+            _logger.warning("_enrich_ref_icao %s: no se obtuvieron coordenadas (openaip_key=%s)", icao, bool(openaip_key))
             return None
 
         # Buscar el aeródromo con METAR oficial más próximo
@@ -285,11 +290,17 @@ class LeulitMeteoIcaoReference(models.Model):
         if checkwx_key and openaip_key:
             nearby = OpenAIPService.get_airports_near(
                 lat, lon, _SEARCH_RADIUS_KM, openaip_key, limit=15)
+            _logger.info(
+                "_enrich_ref_icao %s: OpenAIP nearby (%.0fkm) → %d candidatos",
+                icao, _SEARCH_RADIUS_KM, len(nearby) if nearby else 0)
             for candidate in nearby:
                 cand_icao = candidate.get('icao', '')
                 if not cand_icao or cand_icao == icao:
                     continue
                 cand_metar = CheckWXService.get_metar(cand_icao, checkwx_key)
+                _logger.info(
+                    "_enrich_ref_icao %s: CheckWX METAR para %s → %s",
+                    icao, cand_icao, bool(cand_metar))
                 if cand_metar:
                     cand_station = CheckWXService.get_station(cand_icao, checkwx_key)
                     ref_icao = cand_icao
@@ -301,6 +312,10 @@ class LeulitMeteoIcaoReference(models.Model):
                     country = (cand_station.get('country_code', '') if cand_station else '')
                     proveedor = 'aemet' if country == 'ES' else 'checkwx'
                     break
+        else:
+            _logger.warning(
+                "_enrich_ref_icao %s: sin checkwx_key o sin openaip_key, "
+                "no se puede buscar aeródromo próximo", icao)
 
         if not ref_icao:
             _logger.warning(
