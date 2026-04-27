@@ -15,47 +15,24 @@ class LeulitMeteoAesaDoc(models.TransientModel):
 
     @staticmethod
     def _html_content():
-        """Lee el fichero AESA_COMPLIANCE.md y lo convierte a HTML básico."""
-        md_path = os.path.join(os.path.dirname(__file__), '..', 'AESA_COMPLIANCE.md')
+        """Lee el fichero AESA_COMPLIANCE.html."""
+        html_path = os.path.join(os.path.dirname(__file__), '..', 'AESA_COMPLIANCE.html')
         try:
-            with open(md_path, encoding='utf-8') as f:
-                md = f.read()
+            with open(html_path, encoding='utf-8') as f:
+                return f.read()
         except FileNotFoundError:
             return '<p>Documento no encontrado.</p>'
 
-        try:
-            import markdown
-            return markdown.markdown(md, extensions=['tables', 'fenced_code'])
-        except ImportError:
-            pass
-
-        # Conversión mínima sin librería externa
-        import re
-        html = md
-        html = re.sub(r'^#{3} (.+)$', r'<h3>\1</h3>', html, flags=re.MULTILINE)
-        html = re.sub(r'^#{2} (.+)$', r'<h2>\1</h2>', html, flags=re.MULTILINE)
-        html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
-        html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
-        html = re.sub(r'^\| (.+)$', lambda m: '<tr>' + ''.join(
-            f'<td>{c.strip()}</td>' for c in m.group(1).split('|')) + '</tr>', html, flags=re.MULTILINE)
-        html = re.sub(r'^---+$', '<hr/>', html, flags=re.MULTILINE)
-        html = re.sub(r'^- (.+)$', r'<li>\1</li>', html, flags=re.MULTILINE)
-        html = '\n'.join(
-            line if line.startswith('<') else f'<p>{line}</p>' if line.strip() else ''
-            for line in html.splitlines()
-        )
-        return html
-
     def action_download_md(self):
-        """Descarga el fichero AESA_COMPLIANCE.md."""
+        """Descarga el fichero AESA_COMPLIANCE.html."""
         self.ensure_one()
-        md_path = os.path.join(os.path.dirname(__file__), '..', 'AESA_COMPLIANCE.md')
-        with open(md_path, 'rb') as f:
+        html_path = os.path.join(os.path.dirname(__file__), '..', 'AESA_COMPLIANCE.html')
+        with open(html_path, 'rb') as f:
             content = base64.b64encode(f.read())
         attachment = self.env['ir.attachment'].sudo().create({
-            'name': 'AESA_Compliance_Leulit_Meteo.md',
+            'name': 'AESA_Compliance_Leulit_Meteo.html',
             'datas': content,
-            'mimetype': 'text/markdown',
+            'mimetype': 'text/html',
             'res_model': self._name,
             'res_id': self.id,
         })

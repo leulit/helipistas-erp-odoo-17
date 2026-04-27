@@ -331,6 +331,52 @@ class LeulitMeteoMetar(models.Model):
             data['record_id'] = record.id
         return data
 
+    @api.model
+    def briefing_oaci(self, icao_code, provider='aemet'):
+        """Busca o crea el reporte METAR para el OACI y devuelve el briefing.
+
+        Reutilizable desde cualquier módulo::
+
+            result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
+
+        Args:
+            icao_code: código OACI de 4 letras (ej. 'LEUL').
+            provider: proveedor a usar si se crea el registro (por defecto 'aemet').
+
+        Returns:
+            dict con claves ``record_id``, ``raw_metar``, ``raw_taf``,
+            ``raw_metar_est`` o ``None`` si el proveedor no devuelve datos.
+        """
+        if not icao_code:
+            return None
+        icao = icao_code.upper().strip()
+
+        record = self.search(
+            [('icao_code', '=', icao), ('active', '=', True)],
+            order='fecha_consulta desc',
+            limit=1,
+        )
+        if not record:
+            record = self.create({'provider': provider, 'icao_code': icao})
+
+        prov = get_provider(record.provider)
+        if not prov:
+            raise UserError(
+                _('Proveedor METAR no disponible: %s') % record.provider)
+
+        data = prov.get_observation(self.env, icao_code=icao)
+        if not data:
+            return None
+
+        record._write_observacion(data)
+
+        return {
+            'record_id': record.id,
+            'raw_metar': record.raw_metar,
+            'raw_taf': record.raw_taf,
+            'raw_metar_est': record.raw_metar_est,
+        }
+
     @api.depends('icao_code', 'observation_time')
     def _compute_display_name(self):
         for record in self:

@@ -90,6 +90,102 @@ class LeulitVuelo(models.Model):
 
 ---
 
+## 1.1 API simplificada: `briefing_oaci`
+
+`briefing_oaci` es el punto de entrada recomendado cuando otro módulo necesita obtener el briefing de un OACI y recibir directamente los tres campos que muestra el formulario: METAR oficial, TAF oficial y METAR sintético de la estación más cercana.
+
+### Firma
+
+```python
+self.env['leulit.meteo.metar'].briefing_oaci(icao_code, provider='aemet')
+```
+
+| Parámetro | Tipo | Requerido | Descripción |
+|---|---|---|---|
+| `icao_code` | `str` | Sí | Código OACI de 4 letras (`LEUL`, `LEMD`, …) |
+| `provider` | `str` | No | Proveedor a usar **si se crea** el registro. Por defecto `'aemet'`. No cambia el proveedor de un registro ya existente. |
+
+### Valor de retorno
+
+```python
+{
+    'record_id':    42,          # id del registro leulit.meteo.metar
+    'raw_metar':    'LEUL ...',  # pestaña METAR del formulario
+    'raw_taf':      'TAF ...',   # pestaña TAF del formulario
+    'raw_metar_est': 'LEUL ...',# METAR no oficial — estación más próxima
+                                 # (None si el proveedor no lo incluye)
+}
+# → None si el proveedor no devuelve datos para ese OACI
+```
+
+### Comportamiento interno
+
+```
+1. Busca el registro activo más reciente con icao_code = OACI
+2. Si no existe → lo crea (con el proveedor indicado)
+3. Llama al proveedor y escribe los datos (igual que el botón "Obtener briefing")
+4. Devuelve los tres campos de texto + record_id
+```
+
+La diferencia con `obtener_metar(persistir=True)` es que `briefing_oaci` **reutiliza el registro existente** en lugar de crear uno nuevo en cada llamada, y devuelve directamente los campos del formulario en lugar del dict completo del proveedor.
+
+### Ejemplo mínimo
+
+```python
+result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
+if result:
+    _logger.info("METAR: %s", result['raw_metar'])
+    _logger.info("TAF:   %s", result['raw_taf'])
+    _logger.info("Est.:  %s", result['raw_metar_est'])
+```
+
+### Integración en el parte de vuelo (versión simplificada)
+
+Reemplaza el uso de `obtener_metar` de la sección 1 por `briefing_oaci` para obtener un código más directo:
+
+```python
+def action_obtener_meteo_salida(self):
+    for vuelo in self:
+        icao = (
+            vuelo.aerodromo_salida_id.codigo_oaci
+            if vuelo.aerodromo_salida_id
+            else None
+        )
+        if not icao:
+            raise UserError(_('El aeródromo de salida no tiene código OACI configurado.'))
+
+        result = self.env['leulit.meteo.metar'].briefing_oaci(icao)
+        if not result:
+            raise UserError(_(
+                'No se pudo obtener información meteorológica para %s. '
+                'Verifique la conexión y la configuración del proveedor.'
+            ) % icao)
+
+        vuelo.metar_salida_id = result['record_id']
+        # result['raw_metar'], result['raw_taf'], result['raw_metar_est']
+        # disponibles si se necesitan en el mismo flujo
+
+    return {
+        'type': 'ir.actions.client',
+        'tag': 'display_notification',
+        'params': {
+            'title': _('Meteorología actualizada'),
+            'message': _('Briefing obtenido para %s') % icao,
+            'type': 'success',
+            'sticky': False,
+        },
+    }
+```
+
+### Cuándo usar cada función
+
+| Función | Úsala cuando… |
+|---|---|
+| `briefing_oaci(icao)` | Quieres el briefing listo para mostrar (METAR + TAF + est.) y reutilizar el registro existente |
+| `obtener_metar(icao, persistir=True)` | Necesitas el dict completo del proveedor (todos los campos numéricos, coordenadas, etc.) o quieres crear siempre un registro nuevo |
+
+---
+
 ## 2. Vista — botón y campos meteorológicos en el parte de vuelo
 
 ```xml
