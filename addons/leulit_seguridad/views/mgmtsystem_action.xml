@@ -1,7 +1,7 @@
 <odoo>
 
         <record id="leulit_20260427_1000_action" model="ir.actions.act_window">
-            <field name="name">Proyectos GC</field>
+            <field name="name">Gestiones del cambio</field>
             <field name="res_model">project.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[('name', 'ilike', 'GC-')]</field>
