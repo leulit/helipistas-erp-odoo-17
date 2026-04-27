@@ -24,4 +24,3 @@ from . import leulit_meteo_metar
 
 from . import leulit_meteo_config
 from . import leulit_meteo_umbral_config
-from . import leulit_meteo_aesa_doc
