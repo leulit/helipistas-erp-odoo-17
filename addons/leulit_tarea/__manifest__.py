@@ -19,6 +19,7 @@
         "views/hr_timesheet_views.xml",
         "views/hr_timesheet_switch_view.xml",
         "views/unificar_etapas_wizard.xml",
+        "views/mail_activity.xml",
         "menu.xml",
     ],
     "demo": [],

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <!-- Vista Tree de Actividades -->
+        <record id="leulit_mail_activity_tree_view" model="ir.ui.view">
+            <field name="name">mail.activity.tree.leulit</field>
+            <field name="model">mail.activity</field>
+            <field name="priority">9999</field>
+            <field name="arch" type="xml">
+                <tree string="Actividades" decoration-danger="date_deadline &lt; current_date" decoration-warning="date_deadline == current_date">
+                    <field name="activity_type_id" string="Tipo"/>
+                    <field name="summary" string="Resumen"/>
+                    <field name="date_deadline" string="Vencimiento"/>
+                    <field name="user_id" string="Responsable"/>
+                    <field name="res_model_id" string="Tipo de documento" optional="show"/>
+                    <field name="res_name" string="Documento fuente" optional="show"/>
+                    <field name="create_uid" string="Creado por" optional="show"/>
+                    <field name="create_date" string="Fecha creación" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Form de Actividades -->
+        <record id="leulit_mail_activity_form_view" model="ir.ui.view">
+            <field name="name">mail.activity.form.leulit</field>
+            <field name="model">mail.activity</field>
+            <field name="priority">9999</field>
+            <field name="arch" type="xml">
+                <form string="Actividad">
+                    <header>
+                        <button name="action_open_source_record"
+                                string="Abrir documento fuente"
+                                type="object"
+                                class="btn-primary"
+                                attrs="{'invisible': [('res_id', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <group string="Actividad">
+                            <group>
+                                <field name="activity_type_id" string="Tipo de actividad"/>
+                                <field name="summary" string="Resumen"/>
+                                <field name="date_deadline" string="Fecha de vencimiento"/>
+                                <field name="user_id" string="Responsable"/>
+                            </group>
+                            <group>
+                                <field name="create_uid" string="Creado por" readonly="1"/>
+                                <field name="create_date" string="Fecha de creación" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Documento de origen">
+                            <group>
+                                <field name="res_model_id" string="Tipo de documento" readonly="1"/>
+                                <field name="res_name" string="Nombre del documento" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Nota">
+                            <field name="note" string="" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción: Control de Actividades -->
+        <record id="leulit_20260116_1030_action" model="ir.actions.act_window">
+            <field name="name">Control de Actividades</field>
+            <field name="res_model">mail.activity</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'group_by': ['date_deadline:day', 'user_id']}</field>
+            <field name="view_ids" eval="[
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('leulit_mail_activity_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('leulit_mail_activity_form_view')}),
+            ]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay actividades programadas.
+                </p><p>
+                    Las actividades programadas aparecerán aquí, agrupadas por fecha límite y responsable.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
