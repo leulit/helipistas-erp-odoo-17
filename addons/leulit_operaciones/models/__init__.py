@@ -27,3 +27,4 @@ from . import leulit_16_bravo
 from . import leulit_informe_seguros
 from . import leulit_vuelo_wizard_report
 from . import technical_log_report
+from . import leulit_checklist_item

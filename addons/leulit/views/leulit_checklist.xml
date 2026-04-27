@@ -36,8 +36,9 @@
                                 <field name="doit" column_invisible="1"/>
                                 <field name="orden"/>
                                 <field name="descriptor" class="lt_tree_wrap_line"/>
+                                <field name="requiere_parte_vuelo" string="Req. parte vuelo" optional="show"/>
                                 <field name="fecha_doit"/>
-                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" invisible="doit != False"/>                                
+                                <button name="checklist_item_doit" string="Hecho" class="oe_edit_only oe_highlight" type="object" invisible="doit != False"/>
                             </tree>
                         </field>
                         <div class="oe_chatter">

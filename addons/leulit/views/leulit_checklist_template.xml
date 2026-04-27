@@ -40,6 +40,7 @@
                                 <tree string="Items" editable="bottom" limit="80">
                                     <field name="orden"/>
                                     <field name="descriptor" class="lt_tree_wrap_line"/>
+                                    <field name="requiere_parte_vuelo" optional="show"/>
                                 </tree>
                             </field>
                         </group>

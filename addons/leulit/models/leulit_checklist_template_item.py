@@ -20,6 +20,7 @@ class leulit_checklist_template_item(models.Model):
     descriptor = fields.Char("Descriptor", required=True)
     checklist_template_id = fields.Many2one('leulit.checklist_template', 'Checklist')
     orden = fields.Integer("Orden")
+    requiere_parte_vuelo = fields.Boolean(string='Requiere parte de vuelo')
 
 
     '''

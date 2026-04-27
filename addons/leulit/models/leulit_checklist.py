@@ -50,8 +50,9 @@ class leulit_checklist(models.Model):
                 #checklistitems.append((5,))
                 for item1 in plantilla.items:
                     checklistitems.append((0,0,{
-                        'descriptor'    : item1.descriptor,
-                        'orden'         : item1.orden
+                        'descriptor'            : item1.descriptor,
+                        'orden'                 : item1.orden,
+                        'requiere_parte_vuelo'  : item1.requiere_parte_vuelo,
                     }))
             if plantilla.tags:
                 for tag in plantilla.tags:

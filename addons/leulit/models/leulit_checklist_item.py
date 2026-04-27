@@ -30,6 +30,7 @@ class leulit_checklist_item(models.Model):
     orden = fields.Integer("Orden")
     doit = fields.Boolean('Hecho')
     fecha_doit = fields.Datetime("Fecha realización")
+    requiere_parte_vuelo = fields.Boolean(string='Requiere parte de vuelo')
 
 
 
