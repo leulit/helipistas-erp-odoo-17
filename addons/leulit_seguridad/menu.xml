@@ -92,8 +92,15 @@
 
     <!-- Sistema de Gestión -->
 
+    <menuitem
+        id="leulit_20260427_1000_menuitem"
+        name="Gestiones del cambio"
+        parent="mgmtsystem.menu_mgmtsystem_root"
+        action="leulit_seguridad.leulit_20260427_1000_action"
+        sequence="90"
+    />
 
-    <menuitem 
+    <menuitem
         id="leulit_20240729_1059_menuitem"
         name="Plan de Auditorías"
         parent="mgmtsystem.menu_mgmtsystem_root"

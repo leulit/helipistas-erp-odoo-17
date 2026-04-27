@@ -1,5 +1,11 @@
 <odoo>
 
+        <record id="leulit_20260427_1000_action" model="ir.actions.act_window">
+            <field name="name">Proyectos GC</field>
+            <field name="res_model">project.project</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('name', 'ilike', 'GC-')]</field>
+        </record>
 
         <record id="leulit_20260112_0833_action" model="ir.actions.act_window">
             <field name="name">Mis Acciones</field>
