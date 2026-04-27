@@ -58,15 +58,17 @@ Menú: **Meteorología → Reportes METAR**. Modelo `leulit.meteo.metar` con arq
 
 1. **Crear** un nuevo registro `leulit.meteo.metar`.
 2. Selecciona el **Proveedor** (por defecto `AEMET (España)`).
-3. Indica un **ICAO** (4 letras, ej. `LEMD`, `LEBL`, `GCLP`) o un **código de estación** (`station_code`) si conoces uno concreto.
-4. Pulsa **Obtener observación** (`action_obtener_metar`).
+3. Escribe un **OACI** (4 letras, ej. `LEMD`, `LELL`, `GCLP`).
+4. Pulsa **Obtener observación** (`action_obtener_metar`). El sistema resuelve automáticamente la estación interna del proveedor (en AEMET, el IDEMA) y descarga la última observación.
+
+No es necesario tocar el código de estación: es un identificador interno del proveedor y aparece read-only en la pestaña **Información técnica** del formulario, junto con coordenadas y elevación.
 
 El registro se rellena con: `station_name`, `observation_time`, `temperatura`, `dewpoint`, `humidity`, `wind_direction`, `wind_speed_kt`, `wind_gust_kt`, `visibility_m`, `qnh`, `pressure`, `precipitation`, `latitud`, `longitud`, `elevation`, `edad_datos_minutos`, `estado_datos` y un `raw_metar`.
 
 **Importante — limitaciones del proveedor AEMET**:
 
 - AEMET OpenData **no publica METAR oficiales**. El campo `raw_metar` es una cadena tipo METAR construida a partir de la observación horaria, etiquetada con `RMK AEMET`.
-- El proveedor incluye un mapeo estático ICAO → IDEMA con ~30 aeropuertos y aeródromos habituales (LEMD, LEBL, LEMG, LEAL, LEVC, LEZL, LEBB, LEPA, LEIB, LEMH, GCLP, GCXO, GCTS, LECU, LETO, …). Si tu ICAO no está en el mapa, debes indicar el `station_code` manualmente.
+- La resolución OACI → IDEMA usa un mapeo estático con ~30 aeropuertos/aeródromos habituales (LEMD, LEBL, LELL, LEMG, LEAL, LEVC, LEZL, LEBB, LEPA, LEIB, LEMH, GCLP, GCXO, GCTS, LECU, LETO, …). Si el OACI no está en el dict, el proveedor consulta el inventario AEMET para localizarlo por nombre. Si aun así no se resuelve, usa el botón **Buscar estación AEMET** para seleccionarla manualmente.
 - Requiere `leulit_meteo.aemet_api_key` configurado en parámetros del sistema.
 
 ## 5. Añadir un nuevo proveedor
@@ -91,7 +93,9 @@ class AviationWeatherMetarProvider(MetarProvider):
         ...
 ```
 
-Métodos opcionales: `validate(env)`, `prefill_station_code(icao_code)`, `coverage(icao_code)`.
+Métodos opcionales: `validate(env)`, `prefill_station_code(icao_code)`, `resolve(env, icao_code)`, `coverage(icao_code)`.
+
+`resolve(env, icao_code)` se invoca antes de `get_observation` cuando el usuario solo informó el OACI; por defecto delega en `prefill_station_code` (mapa estático), pero un proveedor puede sobrescribirlo para consultar un inventario remoto. El modelo cachea el resultado en `station_code` para futuras consultas.
 
 ## 6. Filtros y búsquedas habituales
 

@@ -47,6 +47,25 @@ class AemetMetarProvider(MetarProvider):
             return None
         return ICAO_TO_IDEMA.get(icao_code.upper().strip())
 
+    def resolve(self, env, icao_code):
+        """Resuelve OACI -> IDEMA usando dict estático y, si falla, el
+        inventario AEMET (requiere API key)."""
+        if not icao_code:
+            return None
+        icao = icao_code.upper().strip()
+        sc = self.prefill_station_code(icao)
+        if sc:
+            return sc
+        api_key = self._get_api_key(env, raise_if_missing=False)
+        if not api_key:
+            return None
+        try:
+            return AemetOpenDataService.resolve_idema(icao, api_key)
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning(
+                "AEMET resolve_idema falló para %s: %s", icao, exc)
+            return None
+
     def coverage(self, icao_code):
         """AEMET solo cubre estaciones en territorio español."""
         if not icao_code:

@@ -150,7 +150,7 @@ Pensado para rutas de vuelo recurrentes.
 Modelo: `leulit.meteo.metar`. Capa de proveedores: `MetarProvider` (interfaz) + `AemetMetarProvider` (implementación actual). Cliente HTTP: `AemetOpenDataService`.
 
 ```
-[Form] provider = "aemet", icao = "LEMD"  (o station_code manual)
+[Form] provider = "aemet", icao = "LEMD"   (el usuario solo introduce OACI)
    │
    ▼
 Usuario pulsa "Obtener observación" → action_obtener_metar()
@@ -160,18 +160,25 @@ Modelo resuelve provider a partir del campo:
    get_provider(self.provider)  → AemetMetarProvider
    │
    ▼
-provider.get_observation(env, icao_code, station_code)
+Si station_code está vacío: prov.resolve(env, icao_code)
+   AemetMetarProvider.resolve():
+     1) Dict estático ICAO_TO_IDEMA (~30 entradas)
+     2) AemetOpenDataService.resolve_idema() → inventario AEMET
+        (busca por OACI literal en el campo `nombre` de la estación)
+     3) Si nada resuelve, raise UserError sugiriendo "Buscar estación AEMET"
+   El station_code resuelto se cachea en el registro.
    │
-   ▼  (dentro del proveedor AEMET)
-Resolver código de estación:
-   1) Dict estático ICAO_TO_IDEMA (~30 entradas)
-   2) Heurística: única estación con "AEROPUERTO" en el inventario
-   3) Fallback: el usuario debe introducir station_code manualmente
+   ▼
+provider.get_observation(env, icao_code, station_code)
    │
    ▼
 AemetOpenDataService → GET .../observacion/convencional/datos/estacion/{idema}?api_key=JWT
                        → GET <URL datos> (patrón 2 pasos; api_key como query param,
                           la URL `datos` ya está preautenticada y no lleva token)
+   │
+   ▼
+latest_observation(): elige la observación horaria más reciente
+   con datos meteo útiles (al menos `ta` + `pres`/`pres_nmar`).
    │
    ▼
 Conversiones: m/s → kt (viento), km → m (visibilidad), etc.
@@ -183,7 +190,9 @@ Sintetizar texto tipo METAR + sufijo "RMK AEMET"
 Provider devuelve dict normalizado al modelo
    │
    ▼
-Modelo escribe los campos en el registro
+Modelo escribe los campos en el registro. station_code, latitud,
+longitud y elevation quedan visibles read-only en la pestaña
+"Información técnica" del formulario.
 ```
 
 **Importante:** AEMET OpenData **no** ofrece METAR oficiales. El proveedor `aemet` construye un texto con formato METAR a partir de la observación horaria. Se marca con `RMK AEMET` para no confundirlo con un METAR oficial.
@@ -277,7 +286,7 @@ No. El embed (`embed.windy.com/embed2.html`) es público. La API key de Windy so
 La acción `action_obtener_metar()` lanza un `UserError`. Soluciones: introducir un `station_code` distinto, probar otro aeropuerto cercano, o esperar a la siguiente actualización horaria.
 
 **¿Cómo añado un OACI nuevo al mapping ICAO→IDEMA?**
-Editar el dict `ICAO_TO_IDEMA` que usa `AemetMetarProvider` (en `models/leulit_meteo_metar_aemet.py` o el servicio de bajo nivel `models/leulit_meteo_aemet_service.py`). Alternativamente, en el formulario del registro METAR introducir el `station_code` manualmente, sin tocar el dict.
+Editar el dict `ICAO_TO_IDEMA` en `models/leulit_meteo_aemet_service.py`. El proveedor también intenta el inventario AEMET por nombre, así que muchos OACI funcionan sin tocar el dict. Si la búsqueda por inventario falla, el botón **Buscar estación AEMET** del formulario permite seleccionar la estación manualmente.
 
 **¿Cómo cambio de proveedor de METAR?**
 Selecciona otro valor en el campo **Proveedor** del registro `leulit.meteo.metar`. Para añadir un proveedor nuevo, crea una subclase de `MetarProvider` decorada con `@register_provider` e impórtala en `models/__init__.py`. El modelo, las vistas y el menú no necesitan cambios: el nuevo `code` aparece automáticamente en el selector.

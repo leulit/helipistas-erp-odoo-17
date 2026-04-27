@@ -76,7 +76,7 @@ ICAO_TO_IDEMA = {
     # Aeródromos / aeropuertos secundarios habituales
     # NOTA: algunos IDEMA son aproximaciones a estaciones cercanas. Verificar
     # con inventario AEMET. Si no se acierta, usar el buscador de estaciones.
-    'LELL': '0149X',  # Sabadell - verificar con inventario AEMET
+    'LELL': '0229I',  # Sabadell aeropuerto
     'LEEC': '8412A',  # Murcia - San Javier (referencia próxima)
     'LERI': '7178I',  # San Javier (Murcia) - referencia
     'LECN': '5612X',  # Granada / Armilla - referencia
@@ -298,6 +298,46 @@ class AemetOpenDataService:
 
     # ---------- Normalización de observaciones ----------
 
+    # Conjunto de claves que esperamos en la observación (para DEBUG)
+    _EXPECTED_KEYS = (
+        'idema', 'ubi', 'lat', 'lon', 'alt', 'fint',
+        'ta', 'tpr', 'hr', 'dv', 'vv', 'vmax', 'vis',
+        'pres', 'pres_nmar', 'prec',
+    )
+
+    @staticmethod
+    def _parse_fint(fint):
+        """Parsea ``fint`` ISO 8601 admitiendo todas las variantes que
+        AEMET devuelve (con/sin zona, con/sin milisegundos, ``+0000`` o
+        ``+00:00``)."""
+        if not fint:
+            return None
+        s = fint
+        # Normalizar 'Z' al formato tolerado por strptime
+        if s.endswith('Z'):
+            s = s[:-1] + '+0000'
+        # Normalizar '+HH:MM' -> '+HHMM' (acepta tanto offset 4 dígitos)
+        if len(s) >= 6 and (s[-6] in ('+', '-')) and s[-3] == ':':
+            s = s[:-3] + s[-2:]
+        candidates = (
+            '%Y-%m-%dT%H:%M:%S.%f%z',
+            '%Y-%m-%dT%H:%M:%S%z',
+            '%Y-%m-%dT%H:%M:%S.%f',
+            '%Y-%m-%dT%H:%M:%S',
+        )
+        for fmt in candidates:
+            try:
+                dt = datetime.strptime(s, fmt)
+                if dt.tzinfo is not None:
+                    # AEMET viene en UTC; nos quedamos naive en UTC
+                    dt = dt.replace(tzinfo=None)
+                return dt
+            except ValueError:
+                continue
+        _logger.debug(
+            "AEMET parse_observacion: no se pudo parsear fint=%r", fint)
+        return None
+
     @classmethod
     def parse_observacion(cls, raw):
         """Normaliza un registro de observación AEMET.
@@ -309,25 +349,23 @@ class AemetOpenDataService:
         if not raw:
             return None
 
-        # Fecha de observación: "fint" en ISO 8601 (puede traer zona)
-        fint = raw.get('fint')
-        observation_time = None
-        if fint:
-            for fmt in ('%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%S%z'):
-                try:
-                    dt = datetime.strptime(fint, fmt)
-                    if dt.tzinfo is not None:
-                        dt = dt.replace(tzinfo=None)  # AEMET ya viene en UTC
-                    observation_time = dt
-                    break
-                except ValueError:
-                    continue
+        if _logger.isEnabledFor(logging.DEBUG):
+            _logger.debug(
+                "AEMET parse_observacion: claves recibidas=%s",
+                sorted(raw.keys()))
+            faltan = [k for k in cls._EXPECTED_KEYS if k not in raw]
+            if faltan:
+                _logger.debug(
+                    "AEMET parse_observacion: claves esperadas ausentes=%s",
+                    faltan)
+
+        observation_time = cls._parse_fint(raw.get('fint'))
 
         wind_speed_ms = raw.get('vv')
         wind_gust_ms = raw.get('vmax')
         visibility_km = raw.get('vis')
 
-        return {
+        result = {
             'idema': raw.get('idema'),
             'station_name': raw.get('ubi'),
             'latitude': raw.get('lat'),
@@ -353,16 +391,53 @@ class AemetOpenDataService:
             'raw': raw,
         }
 
+        if _logger.isEnabledFor(logging.DEBUG):
+            vacios = [k for k, v in result.items()
+                      if k != 'raw' and v in (None, '')]
+            _logger.debug(
+                "AEMET parse_observacion: campos vacíos tras normalizar=%s",
+                vacios)
+        return result
+
     @classmethod
     def latest_observation(cls, observaciones):
-        """Selecciona la observación más reciente del listado AEMET."""
+        """Selecciona la observación más reciente del listado AEMET con
+        datos meteo útiles.
+
+        AEMET devuelve hasta 24 observaciones horarias por estación. La
+        más reciente puede no traer todos los campos (sensor caído, dato
+        provisional). Buscamos la observación más reciente que al menos
+        tenga ``ta`` (temperatura) **y** alguna lectura de presión
+        (``pres`` o ``pres_nmar``); si ninguna cumple, caemos a la última
+        con ``fint`` válido para no perder el reporte.
+        """
         if not observaciones:
             return None
-        # AEMET devuelve cronológicamente; tomamos la última con fint válido
         valid = [o for o in observaciones if o.get('fint')]
         if not valid:
+            _logger.warning(
+                "AEMET latest_observation: ninguna observación con 'fint'")
             return None
         valid.sort(key=lambda o: o.get('fint'))
+
+        def _has_useful_data(o):
+            return (o.get('ta') is not None
+                    and (o.get('pres') is not None
+                         or o.get('pres_nmar') is not None))
+
+        # Recorremos de más reciente a más antiguo.
+        for obs in reversed(valid):
+            if _has_useful_data(obs):
+                if _logger.isEnabledFor(logging.DEBUG):
+                    _logger.debug(
+                        "AEMET latest_observation: elegida fint=%s "
+                        "(claves=%s)", obs.get('fint'),
+                        sorted(obs.keys()))
+                return obs
+
+        _logger.warning(
+            "AEMET latest_observation: ninguna observación con ta+pres; "
+            "se usa la última con fint=%s", valid[-1].get('fint'))
         return valid[-1]
 
     # ---------- Sintetizar texto tipo METAR ----------

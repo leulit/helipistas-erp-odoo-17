@@ -145,6 +145,8 @@ class LeulitMeteoMetar(models.Model):
             self.icao_code = self.icao_code.upper().strip()
         prov = get_provider(self.provider) if self.provider else None
         if prov and self.icao_code and not self.station_code:
+            # Solo dict estático en onchange (no red): la resolución
+            # completa ocurre al pulsar "Obtener observación".
             sc = prov.prefill_station_code(self.icao_code)
             if sc:
                 self.station_code = sc
@@ -166,6 +168,25 @@ class LeulitMeteoMetar(models.Model):
         if not prov:
             raise UserError(_(
                 'Proveedor METAR no disponible: %s') % self.provider)
+
+        # Auto-resolución agresiva: si el usuario solo introdujo OACI,
+        # pedimos al proveedor que resuelva el station_code interno
+        # (dict estático + inventario AEMET, según implemente cada uno).
+        if self.icao_code and not self.station_code:
+            sc = prov.resolve(self.env, self.icao_code)
+            if sc:
+                self.station_code = sc
+            else:
+                msg = _(
+                    'No se ha podido resolver automáticamente la estación '
+                    'para OACI %(icao)s en el proveedor "%(prov)s".'
+                ) % {'icao': self.icao_code, 'prov': prov.label}
+                if self.provider == 'aemet':
+                    msg += '\n\n' + _(
+                        'Use el botón "Buscar estación AEMET" para '
+                        'localizar el indicativo (IDEMA) por nombre/'
+                        'provincia y aplicarlo manualmente.')
+                raise UserError(msg)
 
         data = prov.get_observation(
             self.env,

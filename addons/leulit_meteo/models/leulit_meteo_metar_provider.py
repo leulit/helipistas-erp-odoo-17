@@ -103,6 +103,15 @@ class MetarProvider(abc.ABC):
         """
         return None
 
+    def resolve(self, env, icao_code):
+        """Resuelve un OACI al ``station_code`` interno del proveedor.
+
+        A diferencia de :meth:`prefill_station_code`, este método sí puede
+        usar la red si el proveedor lo necesita (consultar inventario,
+        catálogo, etc.). Por defecto delega en ``prefill_station_code``.
+        """
+        return self.prefill_station_code(icao_code)
+
     def coverage(self, icao_code):
         """Indica si este proveedor puede cubrir el OACI dado.
 

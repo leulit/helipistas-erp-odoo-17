@@ -48,7 +48,7 @@
                             string="Buscar estación AEMET"
                             type="object"
                             icon="fa-search"
-                            invisible="provider != 'aemet'"/>
+                            invisible="provider != 'aemet' or not icao_code"/>
                     <field name="estado_datos" widget="statusbar"
                            statusbar_visible="actual,reciente,antiguo"/>
                 </header>
@@ -71,11 +71,8 @@
                     <group>
                         <group string="Proveedor / Estación">
                             <field name="provider"/>
-                            <field name="station_code"
-                                   placeholder="Código de estación (opcional)"/>
-                            <field name="latitud"/>
-                            <field name="longitud"/>
-                            <field name="elevation"/>
+                            <field name="station_name" readonly="1"
+                                   placeholder="Se rellena tras la consulta"/>
                         </group>
                         <group string="Tiempos">
                             <field name="observation_time"/>
@@ -113,6 +110,19 @@
                                 <group string="Visibilidad / precipitación">
                                     <field name="visibility_m"/>
                                     <field name="precipitation"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Información técnica" name="tecnica">
+                            <group>
+                                <group string="Estación (proveedor)">
+                                    <field name="station_code" readonly="1"/>
+                                </group>
+                                <group string="Coordenadas / elevación">
+                                    <field name="latitud" readonly="1"/>
+                                    <field name="longitud" readonly="1"/>
+                                    <field name="elevation" readonly="1"/>
                                 </group>
                             </group>
                         </page>
