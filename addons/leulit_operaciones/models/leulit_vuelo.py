@@ -5,7 +5,7 @@ from odoo import models, fields, api, tools, exceptions, registry, _
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError
 import logging
 from lxml import etree
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from odoo.addons.leulit import utilitylib
 import odoo.netsvc as netsvc
 import base64
@@ -2125,6 +2125,7 @@ class leulit_vuelo(models.Model):
 
     p_corregido = fields.Boolean(string="Parte corregido", default=False)
     p_corregido_date = fields.Datetime(string="Fecha en que se corrigió el parte")
+    alerta_tripulacion_enviada = fields.Boolean(string="Alerta tripulación enviada", default=False)
     codigo = fields.Char('Código', )
     fechavuelo = fields.Date('Fecha', required=True, default=fields.Date.context_today)
     fuelqty = fields.Float('Combustible añadido (l.)', help='Cantidad combustible añadida antes de iniciar el vuelo (en litros)')
@@ -2393,4 +2394,37 @@ class leulit_vuelo(models.Model):
             report = self.env.ref('leulit_operaciones.leulit_20250507_1537_report', False)
             pdf, _ = self.env['ir.actions.report']._render_qweb_pdf(report,None,data)
             return base64.b64encode(pdf)
-        
+
+    @api.model
+    def get_postvuelo_con_llegada_prevista_superada(self):
+        """Busca partes de vuelo en estado postvuelo cuya hora de llegada prevista
+        (en UTC) fue hace 1 hora o más. Por cada uno envía un email de alerta a
+        ops@helipistas.com para que localicen a la tripulación."""
+        ahora_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+        limite_utc = ahora_utc - timedelta(hours=1)
+
+        vuelos_postvuelo = self.search([('estado', '=', 'postvuelo'), ('alerta_tripulacion_enviada', '=', False)])
+        resultado = self.env['leulit.vuelo']
+
+        for vuelo in vuelos_postvuelo:
+            if not vuelo.horallegadaprevista or not vuelo.fechavuelo or not vuelo.lugarllegada or not vuelo.lugarllegada.tz:
+                continue
+            datetime_llegada_utc = vuelo.getDateTimeUTC(vuelo.fechavuelo, vuelo.horallegadaprevista, vuelo.lugarllegada.tz)
+            if datetime_llegada_utc and datetime_llegada_utc <= limite_utc:
+                resultado |= vuelo
+                self._enviar_alerta_tripulacion(vuelo, datetime_llegada_utc, ahora_utc)
+
+        return resultado
+
+    def _enviar_alerta_tripulacion(self, vuelo, datetime_llegada_utc, ahora_utc):
+        minutos_retraso = int((ahora_utc - datetime_llegada_utc).total_seconds() / 60)
+        template = self.env.ref('leulit_operaciones.leulit_vuelo_alerta_tripulacion')
+        template.with_context(
+            subject='[ALERTA OPS] Vuelo {} — tripulación pendiente de localizar ({} min de retraso)'.format(
+                vuelo.codigo, minutos_retraso
+            ),
+            minutos_retraso=minutos_retraso,
+            hora_llegada_local=utilitylib.hlp_float_time_to_str(vuelo.horallegadaprevista),
+            hora_llegada_utc=datetime_llegada_utc.strftime('%H:%M') + ' UTC',
+        ).send_mail(vuelo.id, force_send=True)
+        vuelo.sudo().write({'alerta_tripulacion_enviada': True})

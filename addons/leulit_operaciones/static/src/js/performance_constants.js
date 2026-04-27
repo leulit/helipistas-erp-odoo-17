@@ -265,7 +265,7 @@ export const temperaturas_hil_out = new Array(
 
 /********************  R44 CLIPPER 2 / RAVEN 2 IN ********************/
 export const canvas_r44_2_in = "micanvas_r44_2_in";
-export const src_r44_2_in = "/leulit_operaciones/static/src/img/R44_2_IGE_HOVER_CEILING_VS_GROSS_WEIGHT.png";
+export const src_r44_2_in = "/leulit_operaciones/static/src/img/R44_2_IGE_HOVER_CEILING_VS_GROSS_WEIGHT.jpg";
 
 // Eje de peso
 export const inicio_eje_r44_2_in = 2000;
@@ -292,7 +292,7 @@ export const temperaturas_r44_2_in = new Array(
 
 /********************  R44 CLIPPER 2 / RAVEN 2 OUT ********************/
 export const canvas_r44_2_out = "micanvas_r44_2_out";
-export const src_r44_2_out = "/leulit_operaciones/static/src/img/R44_2_OGE_HOVER_CEILING_VD_GROSS_WEIGHT.png";
+export const src_r44_2_out = "/leulit_operaciones/static/src/img/R44_2_OGE_HOVER_CEILING_VD_GROSS_WEIGHT.jpg";
 
 // Eje de peso
 export const inicio_eje_r44_2_out = 1700;
