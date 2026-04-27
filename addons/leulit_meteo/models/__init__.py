@@ -12,5 +12,6 @@ from . import leulit_meteo_aemet_service
 from . import leulit_meteo_metar_provider
 from . import leulit_meteo_metar_aemet
 from . import leulit_meteo_metar
+from . import leulit_meteo_aemet_station_finder
 
 from . import leulit_meteo_config

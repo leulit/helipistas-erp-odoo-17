@@ -44,6 +44,11 @@
                             type="object"
                             class="btn-primary"
                             icon="fa-cloud-download"/>
+                    <button name="action_buscar_estacion_aemet"
+                            string="Buscar estación AEMET"
+                            type="object"
+                            icon="fa-search"
+                            invisible="provider != 'aemet'"/>
                     <field name="estado_datos" widget="statusbar"
                            statusbar_visible="actual,reciente,antiguo"/>
                 </header>

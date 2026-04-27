@@ -44,6 +44,7 @@
         'views/leulit_meteo_ruta_template_views.xml',
         'views/leulit_meteo_consulta_views.xml',
         'views/leulit_meteo_metar_views.xml',
+        'views/leulit_meteo_aemet_station_finder_views.xml',
         'views/leulit_meteo_config_views.xml',
         'views/menu.xml',
     ],

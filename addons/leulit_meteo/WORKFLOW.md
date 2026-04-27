@@ -169,8 +169,9 @@ Resolver código de estación:
    3) Fallback: el usuario debe introducir station_code manualmente
    │
    ▼
-AemetOpenDataService → GET .../observacion/convencional/datos/estacion/{idema}
-                       → GET <URL datos> (patrón 2 pasos, header api_key JWT)
+AemetOpenDataService → GET .../observacion/convencional/datos/estacion/{idema}?api_key=JWT
+                       → GET <URL datos> (patrón 2 pasos; api_key como query param,
+                          la URL `datos` ya está preautenticada y no lleva token)
    │
    ▼
 Conversiones: m/s → kt (viento), km → m (visibilidad), etc.

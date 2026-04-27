@@ -16,6 +16,7 @@ Este servicio:
     * Sintetiza un texto tipo METAR a partir de la observación.
 """
 
+import json
 import logging
 import re
 import requests
@@ -72,6 +73,20 @@ ICAO_TO_IDEMA = {
     'LEGT': '3200',   # Getafe (referencia próxima Madrid)
     'LEMO': '5910',   # Morón (referencia)
     'LERO': '8019X',  # Logroño
+    # Aeródromos / aeropuertos secundarios habituales
+    # NOTA: algunos IDEMA son aproximaciones a estaciones cercanas. Verificar
+    # con inventario AEMET. Si no se acierta, usar el buscador de estaciones.
+    'LELL': '0149X',  # Sabadell - verificar con inventario AEMET
+    'LEEC': '8412A',  # Murcia - San Javier (referencia próxima)
+    'LERI': '7178I',  # San Javier (Murcia) - referencia
+    'LECN': '5612X',  # Granada / Armilla - referencia
+    'LEMI': '7031',   # Murcia (Alcantarilla) - referencia
+    'LEAM': '6325O',  # Almería
+    'LEJR': '5972X',  # Jerez
+    # Los siguientes OACI no se mapean por falta de IDEMA fiable; usar el
+    # buscador de estaciones AEMET desde la ficha del METAR:
+    #   LECH (Castellón), LEMP (Empuriabrava), LEHC (Huesca),
+    #   LERJ (La Rioja), LELC (La Cerdanya).
 }
 
 
@@ -84,12 +99,40 @@ class AemetOpenDataService:
     # ---------- Llamadas básicas ----------
 
     @classmethod
+    def _log_estado(cls, path, estado, descripcion):
+        """Log unificado para los códigos de estado AEMET (HTTP o JSON)."""
+        try:
+            estado_int = int(estado) if estado is not None else None
+        except (TypeError, ValueError):
+            estado_int = None
+        if estado_int == 401:
+            _logger.warning(
+                "AEMET %s -> 401 Unauthorized: API key inválida o no "
+                "autorizada (%s)", path, descripcion)
+        elif estado_int == 404:
+            _logger.warning(
+                "AEMET %s -> 404 Not Found: recurso/estación no encontrado "
+                "(%s)", path, descripcion)
+        elif estado_int == 429:
+            _logger.warning(
+                "AEMET %s -> 429 Too Many Requests: se ha excedido el "
+                "límite de peticiones de la API. Reintenta más tarde (%s)",
+                path, descripcion)
+        else:
+            _logger.error(
+                "AEMET %s -> estado %s: %s", path, estado, descripcion)
+
+    @classmethod
     def _request(cls, path, api_key, params=None):
         """Hace la primera llamada (devuelve la URL ``datos``).
 
+        La autenticación AEMET se hace pasando ``api_key`` como **query
+        parameter**, no como header. Es el patrón documentado por el
+        Centro de Descargas de AEMET (ver ejemplo de curl en la web).
+
         Args:
             path: ruta del endpoint (debe empezar por ``/api/``)
-            api_key: token de AEMET
+            api_key: token de AEMET (JWT)
             params: query params adicionales
 
         Returns:
@@ -101,21 +144,37 @@ class AemetOpenDataService:
 
         url = f"{cls.BASE_URL}{path}"
         headers = {
-            'api_key': api_key,
             'Accept': 'application/json',
-            'cache-control': 'no-cache',
+            'Cache-Control': 'no-cache',
         }
+        # api_key SIEMPRE como query parameter (ver curl oficial AEMET)
+        query = dict(params or {})
+        query['api_key'] = api_key
         try:
-            response = requests.get(url, headers=headers, params=params,
+            response = requests.get(url, headers=headers, params=query,
                                     timeout=cls.TIMEOUT)
+            # Tratamos antes los códigos típicos para dar log específico
+            status = response.status_code
+            if status in (401, 404, 429):
+                # Intentar extraer descripcion del JSON, si está
+                descripcion = None
+                try:
+                    body = response.json()
+                    descripcion = body.get('descripcion') if isinstance(
+                        body, dict) else None
+                except ValueError:
+                    descripcion = response.text[:200]
+                cls._log_estado(path, status, descripcion)
+                return None
             response.raise_for_status()
             payload = response.json()
-            if payload.get('estado') not in (200, None):
-                _logger.warning("AEMET %s -> estado %s: %s",
-                                path, payload.get('estado'),
-                                payload.get('descripcion'))
-                return None
-            return payload
+            estado = payload.get('estado') if isinstance(payload, dict) else None
+            # Éxito: estado 200 o ausente (algunos endpoints no lo incluyen)
+            if estado in (200, None):
+                return payload
+            # estado != 200 dentro del JSON: tratar igual que HTTP
+            cls._log_estado(path, estado, payload.get('descripcion'))
+            return None
         except requests.exceptions.RequestException as exc:
             _logger.error("Error llamando AEMET %s: %s", path, exc)
             return None
@@ -124,16 +183,40 @@ class AemetOpenDataService:
             return None
 
     @classmethod
+    def _decode_response(cls, response):
+        """Decodifica el cuerpo de una respuesta AEMET probando varios
+        encodings habituales (utf-8, iso-8859-15, latin-1).
+
+        AEMET devuelve a veces ficheros JSON con encoding ``ISO-8859-15``
+        o ``latin-1`` (caracteres con tildes), por lo que confiar solo en
+        ``apparent_encoding`` puede fallar. Esta función intenta los
+        encodings explícitamente y devuelve el texto decodificado.
+        """
+        raw = response.content
+        for enc in ('utf-8', 'iso-8859-15', 'latin-1'):
+            try:
+                return raw.decode(enc)
+            except UnicodeDecodeError:
+                continue
+        # Último recurso: latin-1 nunca falla aunque pueda mojibrear
+        return raw.decode('latin-1', errors='replace')
+
+    @classmethod
     def _fetch_datos(cls, datos_url):
-        """Descarga el contenido apuntado por la URL ``datos``."""
+        """Descarga el contenido apuntado por la URL ``datos``.
+
+        La URL ``datos`` ya está preautenticada (lleva el token internamente
+        en el path firmado por AEMET); por eso aquí **no** añadimos
+        ``api_key`` ni headers de autenticación.
+        """
         if not datos_url:
             return None
         try:
             response = requests.get(datos_url, timeout=cls.TIMEOUT)
             response.raise_for_status()
-            # AEMET devuelve a veces application/json con encoding ISO-8859-15
-            response.encoding = response.apparent_encoding or 'utf-8'
-            return response.json()
+            # Decodificación robusta para JSON con encoding ISO-8859-15/latin-1
+            text = cls._decode_response(response)
+            return json.loads(text)
         except requests.exceptions.RequestException as exc:
             _logger.error("Error descargando datos AEMET %s: %s",
                           datos_url, exc)
@@ -165,7 +248,19 @@ class AemetOpenDataService:
 
     @classmethod
     def get_inventario_estaciones(cls, api_key):
-        """Devuelve el inventario completo de estaciones."""
+        """Devuelve el inventario completo de estaciones climatológicas.
+
+        Endpoint según OpenAPI:
+            GET /api/valores/climatologicos/inventarioestaciones/todasestaciones
+
+        El campo ``indicativo`` de cada elemento es el IDEMA usado en el
+        endpoint de observación convencional. Las estaciones de
+        aeropuertos/aeródromos también figuran en este inventario, por lo
+        que sirve como tabla de resolución OACI -> IDEMA por nombre.
+        """
+        # NOTA: el ejemplo del curl oficial añade trailing slash
+        # ("/todasestaciones/"). El endpoint funciona con o sin ella; usamos
+        # la forma exacta del spec OpenAPI (sin slash final).
         path = "/api/valores/climatologicos/inventarioestaciones/todasestaciones"
         data = cls.call(path, api_key)
         if not isinstance(data, list):
@@ -178,10 +273,12 @@ class AemetOpenDataService:
     def resolve_idema(cls, icao_code, api_key, inventario=None):
         """Intenta obtener el indicativo AEMET (idema) para un código OACI.
 
-        Estrategia:
+        Estrategia (en orden):
             1. Mapa estático ``ICAO_TO_IDEMA``.
-            2. Búsqueda en el inventario por nombre (contiene "AEROPUERTO"
-               y la ciudad inferida del código OACI español).
+            2. Inventario AEMET: estación cuyo ``nombre`` contenga el OACI
+               completo (en mayúsculas). Algunas estaciones AEMET incluyen
+               el código OACI en su nombre.
+            3. ``None`` (el llamador deberá usar el buscador de estaciones).
         """
         if not icao_code:
             return None
@@ -192,12 +289,9 @@ class AemetOpenDataService:
         if inventario is None:
             inventario = cls.get_inventario_estaciones(api_key) or []
 
-        # Heurística: estaciones cuyo nombre contenga "AEROPUERTO"
+        # Coincidencia por OACI literal en el nombre de la estación.
         candidatas = [e for e in inventario
-                      if 'AEROPUERTO' in (e.get('nombre') or '').upper()]
-        if not candidatas:
-            return None
-        # Si solo hay una, devolverla; en otro caso, no hay forma fiable
+                      if icao in (e.get('nombre') or '').upper()]
         if len(candidatas) == 1:
             return candidatas[0].get('indicativo')
         return None

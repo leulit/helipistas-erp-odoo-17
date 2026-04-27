@@ -15,6 +15,8 @@ Módulo Odoo para consulta meteorológica orientada a operaciones aeronáuticas:
 
 ## APIs externas
 
+información swagger--> https://opendata.aemet.es/dist/index.html?
+
 | API | URL base | Requiere key | Uso en el módulo |
 |-----|----------|--------------|------------------|
 | Open-Meteo | `https://api.open-meteo.com/v1/forecast` | No | Clima actual y pronóstico (gratuita; aplican rate limits suaves para uso comercial). |

@@ -173,14 +173,21 @@ class LeulitMeteoMetar(models.Model):
             station_code=self.station_code or None,
         )
         if not data:
-            raise UserError(_(
+            msg = _(
                 'No se han podido obtener datos del proveedor "%(prov)s" '
                 'para %(ref)s. Verifique el código OACI/estación, la '
                 'conexión y la configuración del proveedor.'
             ) % {
                 'prov': prov.label,
                 'ref': self.icao_code or self.station_code,
-            })
+            }
+            if self.provider == 'aemet' and not self.station_code:
+                msg += '\n\n' + _(
+                    'Sugerencia: AEMET puede no tener mapeado este OACI. '
+                    'Use el botón "Buscar estación AEMET" para localizar '
+                    'el indicativo (IDEMA) por nombre/provincia y '
+                    'aplicarlo al campo "Código de estación".')
+            raise UserError(msg)
 
         self._write_observacion(data)
         return {
@@ -266,6 +273,23 @@ class LeulitMeteoMetar(models.Model):
             record._write_observacion(data)
             data['record_id'] = record.id
         return data
+
+    def action_buscar_estacion_aemet(self):
+        """Abre el wizard ``leulit.meteo.aemet.station.finder`` apuntando
+        a este registro, para que el usuario seleccione manualmente la
+        estación cuando ``resolve_idema`` no consigue mapear el OACI."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Buscar estación AEMET'),
+            'res_model': 'leulit.meteo.aemet.station.finder',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_metar_id': self.id,
+                'default_search_term': self.icao_code or '',
+            },
+        }
 
     @api.depends('icao_code', 'station_code', 'observation_time')
     def _compute_display_name(self):
