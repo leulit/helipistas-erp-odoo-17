@@ -180,13 +180,6 @@ class LeulitMeteoConsulta(models.Model):
     notas = fields.Text(string='Notas')
     active = fields.Boolean(default=True)
     
-    # Campos relacionados (opcionales para futuras integraciones)
-    vuelo_id = fields.Many2one(
-        'leulit.vuelo',
-        string='Vuelo Relacionado',
-        ondelete='set null'
-    )
-
     # Embed HTML para Windy (iframe) renderizado vía campo Html
     windy_embed_html = fields.Html(
         string='Windy Embed',

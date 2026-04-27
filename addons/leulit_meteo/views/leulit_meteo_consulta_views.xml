@@ -81,7 +81,6 @@
                         <group name="metadata" string="Información">
                             <field name="fecha_consulta"/>
                             <field name="user_id"/>
-                            <field name="vuelo_id" invisible="not vuelo_id"/>
                             <field name="active"/>
                         </group>
                     </group>
