@@ -61,7 +61,7 @@
     <menuitem id="menu_leulit_meteo_aesa_doc"
               name="Documento AESA"
               parent="menu_leulit_meteo_config_root"
-              action="action_leulit_meteo_aesa_doc"
+              action="action_leulit_meteo_aesa_doc_url"
               sequence="30"
               groups="base.group_system"/>
 

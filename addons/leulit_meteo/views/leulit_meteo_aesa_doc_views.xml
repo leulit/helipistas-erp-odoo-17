@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- Abre el documento HTML estático directamente en el navegador -->
-    <record id="action_leulit_meteo_aesa_doc" model="ir.actions.act_url">
+    <record id="action_leulit_meteo_aesa_doc_url" model="ir.actions.act_url">
         <field name="name">Documento Conformidad AESA</field>
         <field name="url">/leulit_meteo/static/src/aesa_compliance.html</field>
         <field name="target">new</field>
