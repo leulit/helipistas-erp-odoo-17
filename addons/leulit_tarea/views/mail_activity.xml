@@ -36,6 +36,7 @@
                                 attrs="{'invisible': [('res_id', '=', False)]}"/>
                     </header>
                     <sheet>
+                        <field name="res_model" invisible="1"/>
                         <group string="Actividad">
                             <group>
                                 <field name="activity_type_id" string="Tipo de actividad"/>
