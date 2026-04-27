@@ -31,6 +31,7 @@
                             display: flex;
                             gap: 40px;
                             align-items: flex-end;
+                            margin-bottom: 10px;
                         }
                         .u-field label.o_form_label {
                             display: block;
@@ -42,6 +43,33 @@
                         }
                         .u-field.marginal label.o_form_label { color: #fd7e14; }
                         .u-field.nogo     label.o_form_label { color: #dc3545; }
+
+                        /* Escala de rangos */
+                        .u-scale {
+                            display: flex;
+                            align-items: center;
+                            gap: 0;
+                            margin-top: 6px;
+                            font-size: 8.5pt;
+                            font-weight: 600;
+                        }
+                        .u-scale-zone {
+                            padding: 3px 10px;
+                            color: white;
+                            border-radius: 3px;
+                        }
+                        .u-scale-zone.ok       { background: #28a745; }
+                        .u-scale-zone.marginal { background: #fd7e14; }
+                        .u-scale-zone.nogo     { background: #dc3545; }
+                        .u-scale-sep {
+                            padding: 0 6px;
+                            color: #6c757d;
+                            font-size: 9pt;
+                        }
+                        .u-scale-val {
+                            font-weight: 700;
+                            color: #333;
+                        }
                         .u-note {
                             font-size: 8.5pt;
                             color: #6c757d;
@@ -65,6 +93,17 @@
                                 <field name="viento_nogo_kt" nolabel="1"/>
                             </div>
                         </div>
+                        <div class="u-scale">
+                            <span class="u-scale-zone ok">OK</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="viento_marginal_kt" readonly="1" nolabel="1"/> kt</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone marginal">MARGINAL</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="viento_nogo_kt" readonly="1" nolabel="1"/> kt</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone nogo">NO GO</span>
+                        </div>
                     </div>
 
                     <!-- RACHAS -->
@@ -80,9 +119,20 @@
                                 <field name="rachas_nogo_kt" nolabel="1"/>
                             </div>
                         </div>
+                        <div class="u-scale">
+                            <span class="u-scale-zone ok">OK</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="rachas_marginal_kt" readonly="1" nolabel="1"/> kt</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone marginal">MARGINAL</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="rachas_nogo_kt" readonly="1" nolabel="1"/> kt</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone nogo">NO GO</span>
+                        </div>
                     </div>
 
-                    <!-- VISIBILIDAD -->
+                    <!-- VISIBILIDAD (escala invertida) -->
                     <div class="u-section">
                         <div class="u-section-name">Visibilidad</div>
                         <div class="u-fields">
@@ -94,6 +144,17 @@
                                 <label for="vis_nogo_m" string="No Go (m)" class="o_form_label"/>
                                 <field name="vis_nogo_m" nolabel="1"/>
                             </div>
+                        </div>
+                        <div class="u-scale">
+                            <span class="u-scale-zone nogo">NO GO</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="vis_nogo_m" readonly="1" nolabel="1"/> m</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone marginal">MARGINAL</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-val"><field name="vis_marginal_m" readonly="1" nolabel="1"/> m</span>
+                            <span class="u-scale-sep">‹</span>
+                            <span class="u-scale-zone ok">OK</span>
                         </div>
                         <div class="u-note">A menor visibilidad, mayor restricción.</div>
                     </div>
