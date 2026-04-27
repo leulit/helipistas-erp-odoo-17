@@ -365,4 +365,7 @@ export class MeteoMapWidget extends Component {
 }
 
 // Registrar el widget en el registro de campos
-registry.category("fields").add("meteo_map", MeteoMapWidget);
+registry.category("fields").add("meteo_map", {
+    component: MeteoMapWidget,
+    supportedTypes: ["text"],
+});
