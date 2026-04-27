@@ -6,15 +6,18 @@
         <field name="name">leulit.meteo.metar.tree</field>
         <field name="model">leulit.meteo.metar</field>
         <field name="arch" type="xml">
-            <tree string="Reportes METAR"
+            <tree string="Reportes METAR/TAF/SIGMET"
                   decoration-success="estado_datos == 'actual'"
                   decoration-warning="estado_datos == 'reciente'"
                   decoration-danger="estado_datos == 'antiguo'"
-                  decoration-muted="not observation_time">
+                  decoration-muted="not observation_time"
+                  decoration-info="usa_referencia">
                 <field name="codigo"/>
                 <field name="provider" widget="badge"/>
                 <field name="icao_code"/>
-                <field name="station_code"/>
+                <field name="ref_icao" optional="show"/>
+                <field name="usa_referencia" optional="hide"/>
+                <field name="fir_code" optional="show"/>
                 <field name="station_name"/>
                 <field name="observation_time"/>
                 <field name="edad_datos_minutos" optional="show"/>
@@ -37,21 +40,29 @@
         <field name="name">leulit.meteo.metar.form</field>
         <field name="model">leulit.meteo.metar</field>
         <field name="arch" type="xml">
-            <form string="Reporte METAR">
+            <form string="Reporte METAR/TAF/SIGMET">
                 <header>
-                    <button name="action_obtener_metar"
-                            string="Obtener observación"
+                    <button name="action_obtener_briefing"
+                            string="Obtener briefing"
                             type="object"
                             class="btn-primary"
                             icon="fa-cloud-download"/>
-                    <button name="action_buscar_estacion_aemet"
-                            string="Buscar estación AEMET"
-                            type="object"
-                            icon="fa-search"
-                            invisible="provider != 'aemet' or not icao_code"/>
                     <field name="estado_datos" widget="statusbar"
                            statusbar_visible="actual,reciente,antiguo"/>
                 </header>
+
+                <div class="alert alert-info" role="alert"
+                     invisible="not usa_referencia">
+                    <i class="fa fa-info-circle"/>
+                    <field name="aviso_referencia" readonly="1" nolabel="1"/>
+                </div>
+
+                <div class="alert alert-warning" role="alert"
+                     invisible="not raw_metar and not raw_taf and not raw_sigmet">
+                    <i class="fa fa-exclamation-triangle"/>
+                    Información orientativa. Verifique siempre NOTAM y el
+                    autoservicio briefing oficial. Fuente: AEMET OpenData.
+                </div>
 
                 <sheet>
                     <div class="oe_title">
@@ -64,15 +75,19 @@
                             <field name="codigo" readonly="1"/>
                             -
                             <field name="station_name" readonly="1"
-                                   placeholder="Estación..."/>
+                                   placeholder="Aeródromo..."/>
                         </h3>
                     </div>
 
                     <group>
-                        <group string="Proveedor / Estación">
+                        <group string="Proveedor / Aeródromo">
                             <field name="provider"/>
-                            <field name="station_name" readonly="1"
-                                   placeholder="Se rellena tras la consulta"/>
+                            <field name="fir_code" readonly="1"/>
+                            <field name="usa_referencia" readonly="1"/>
+                            <field name="ref_icao" readonly="1"
+                                   invisible="not usa_referencia"/>
+                            <field name="ref_nombre" readonly="1"
+                                   invisible="not usa_referencia"/>
                         </group>
                         <group string="Tiempos">
                             <field name="observation_time"/>
@@ -83,22 +98,41 @@
                     </group>
 
                     <notebook>
-                        <page string="METAR" name="raw">
+                        <page string="METAR" name="metar">
                             <field name="raw_metar" nolabel="1"
                                    widget="text"
-                                   placeholder="Pulse 'Obtener observación' para traer el texto..."/>
+                                   placeholder="Pulse 'Obtener briefing' para traer el METAR oficial..."/>
+                        </page>
+
+                        <page string="TAF" name="taf">
+                            <field name="raw_taf" nolabel="1"
+                                   widget="text"
+                                   placeholder="Pulse 'Obtener briefing' para traer el TAF oficial..."/>
+                        </page>
+
+                        <page string="SIGMET" name="sigmet">
+                            <group>
+                                <field name="fir_code" readonly="1"
+                                       string="FIR consultada"/>
+                            </group>
+                            <field name="raw_sigmet" nolabel="1"
+                                   widget="text"
+                                   placeholder="SIGMET vigentes para la FIR (puede no haber ninguno)..."/>
                         </page>
 
                         <page string="Datos decodificados" name="decoded">
+                            <p class="text-muted">
+                                Campos extraídos del METAR de forma
+                                automática (best-effort). El RAW de
+                                arriba prevalece ante cualquier duda.
+                            </p>
                             <group>
-                                <group string="Temperatura / humedad">
+                                <group string="Temperatura">
                                     <field name="temperatura"/>
                                     <field name="dewpoint"/>
-                                    <field name="humidity"/>
                                 </group>
                                 <group string="Presión">
                                     <field name="qnh"/>
-                                    <field name="pressure"/>
                                 </group>
                             </group>
                             <group>
@@ -107,18 +141,26 @@
                                     <field name="wind_speed_kt"/>
                                     <field name="wind_gust_kt"/>
                                 </group>
-                                <group string="Visibilidad / precipitación">
+                                <group string="Visibilidad">
                                     <field name="visibility_m"/>
-                                    <field name="precipitation"/>
                                 </group>
                             </group>
                         </page>
 
                         <page string="Información técnica" name="tecnica">
                             <group>
-                                <group string="Estación (proveedor)">
+                                <group string="Resolución">
+                                    <field name="fir_code" readonly="1"/>
+                                    <field name="ref_icao" readonly="1"/>
+                                    <field name="ref_nombre" readonly="1"/>
+                                    <field name="usa_referencia" readonly="1"/>
+                                </group>
+                                <group string="Estación (proveedor)"
+                                       invisible="provider == 'aemet'">
                                     <field name="station_code" readonly="1"/>
                                 </group>
+                            </group>
+                            <group>
                                 <group string="Coordenadas / elevación">
                                     <field name="latitud" readonly="1"/>
                                     <field name="longitud" readonly="1"/>
@@ -149,7 +191,8 @@
             <search string="Buscar METAR">
                 <field name="codigo"/>
                 <field name="icao_code"/>
-                <field name="station_code"/>
+                <field name="ref_icao"/>
+                <field name="fir_code"/>
                 <field name="station_name"/>
                 <field name="provider"/>
                 <field name="observation_time"/>
@@ -161,6 +204,9 @@
                 <filter string="Datos antiguos" name="filter_antiguo"
                         domain="[('estado_datos','=','antiguo')]"/>
                 <separator/>
+                <filter string="Usa referencia" name="filter_usa_ref"
+                        domain="[('usa_referencia','=',True)]"/>
+                <separator/>
                 <filter string="Mis consultas" name="filter_mis"
                         domain="[('user_id','=',uid)]"/>
 
@@ -169,8 +215,8 @@
                             context="{'group_by': 'provider'}"/>
                     <filter string="OACI" name="group_icao"
                             context="{'group_by': 'icao_code'}"/>
-                    <filter string="Estación" name="group_station"
-                            context="{'group_by': 'station_code'}"/>
+                    <filter string="FIR" name="group_fir"
+                            context="{'group_by': 'fir_code'}"/>
                     <filter string="Usuario" name="group_user"
                             context="{'group_by': 'user_id'}"/>
                 </group>
@@ -187,11 +233,13 @@
                ref="view_leulit_meteo_metar_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Crear un nuevo reporte METAR
+                Crear un nuevo briefing METAR/TAF/SIGMET
             </p>
             <p>
-                Seleccione el proveedor de datos (AEMET, etc.), introduzca el
-                código OACI del aeródromo y pulse <b>Obtener observación</b>.
+                Introduzca el código OACI del aeródromo y pulse
+                <b>Obtener briefing</b> para traer METAR + TAF + SIGMET
+                oficiales de AEMET. Si el OACI no emite METAR propio se
+                usará el aeródromo de referencia configurado.
             </p>
         </field>
     </record>

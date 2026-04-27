@@ -1,24 +1,35 @@
 # -*- coding: utf-8 -*-
-"""Proveedor METAR basado en AEMET OpenData.
+"""Proveedor METAR/TAF/SIGMET basado en AEMET OpenData.
 
-AEMET OpenData no expone METAR oficiales, así que esta implementación
-construye un texto tipo METAR a partir de la observación horaria más
-reciente de la estación AEMET correspondiente.
+A diferencia de la versión anterior (que sintetizaba un METAR a partir
+de la observación horaria), este proveedor descarga los **mensajes
+oficiales** que AEMET expone en OpenData:
+
+    * METAR  por OACI
+    * TAF    por OACI
+    * SIGMET por FIR (LECM/LECB/GCCC)
+
+Se apoya en la tabla ``leulit.meteo.icao.reference`` para:
+    * Saber la FIR del aeródromo (necesario para SIGMET).
+    * Sustituir, si procede, un OACI sin METAR propio (helipuerto)
+      por el aeródromo de referencia.
 """
 
 import logging
+
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
+from .leulit_meteo_aemet_service import AemetOpenDataService
+from .leulit_meteo_metar_parser import parse_metar
 from .leulit_meteo_metar_provider import MetarProvider, register_provider
-from .leulit_meteo_aemet_service import AemetOpenDataService, ICAO_TO_IDEMA
 
 _logger = logging.getLogger(__name__)
 
 
 @register_provider
 class AemetMetarProvider(MetarProvider):
-    """AEMET OpenData (España)."""
+    """AEMET OpenData (España): METAR + TAF + SIGMET."""
 
     code = 'aemet'
     label = 'AEMET (España)'
@@ -32,7 +43,7 @@ class AemetMetarProvider(MetarProvider):
         if not key and raise_if_missing:
             raise UserError(_(
                 'No se ha configurado la API Key de AEMET. '
-                'Configúrela en Ajustes → Meteorología → AEMET API Key. '
+                'Configúrela en Ajustes -> Meteorología -> AEMET API Key. '
                 'Puede obtener una en https://opendata.aemet.es/'))
         return key
 
@@ -42,65 +53,80 @@ class AemetMetarProvider(MetarProvider):
         key = self._get_api_key(env, raise_if_missing=False)
         return bool(key) and AemetOpenDataService.validate_api_key(key)
 
-    def prefill_station_code(self, icao_code):
-        if not icao_code:
-            return None
-        return ICAO_TO_IDEMA.get(icao_code.upper().strip())
-
-    def resolve(self, env, icao_code):
-        """Resuelve OACI -> IDEMA usando dict estático y, si falla, el
-        inventario AEMET (requiere API key)."""
-        if not icao_code:
-            return None
-        icao = icao_code.upper().strip()
-        sc = self.prefill_station_code(icao)
-        if sc:
-            return sc
-        api_key = self._get_api_key(env, raise_if_missing=False)
-        if not api_key:
-            return None
-        try:
-            return AemetOpenDataService.resolve_idema(icao, api_key)
-        except Exception as exc:  # noqa: BLE001
-            _logger.warning(
-                "AEMET resolve_idema falló para %s: %s", icao, exc)
-            return None
-
-    def coverage(self, icao_code):
-        """AEMET solo cubre estaciones en territorio español."""
-        if not icao_code:
-            return True  # acepta consultas por station_code
-        prefix = icao_code[:2].upper()
-        return prefix in ('LE', 'GC', 'GE')
-
     def get_observation(self, env, icao_code=None, station_code=None):
-        api_key = self._get_api_key(env)
-        data = AemetOpenDataService.get_metar_like(
-            api_key,
-            icao_code=icao_code,
-            idema_code=station_code,
-        )
-        if not data:
+        """Devuelve un dict normalizado con METAR + TAF + SIGMET RAW.
+
+        El RAW se conserva intacto. Los campos derivados se calculan a
+        partir del METAR mediante :func:`parse_metar` (best-effort).
+        """
+        if not icao_code:
             return None
+        api_key = self._get_api_key(env)
+        icao_in = icao_code.upper().strip()
+
+        ref = env['leulit.meteo.icao.reference'].sudo().resolve(icao_in)
+        if ref is None:
+            _logger.warning(
+                "AEMET provider: OACI %s no está en "
+                "leulit.meteo.icao.reference; consultando directo y sin "
+                "FIR (no se podrá traer SIGMET).", icao_in)
+            ref = {
+                'icao_consultar': icao_in,
+                'fir': None,
+                'usa_referencia': False,
+                'nombre': icao_in,
+                'ref_nombre': None,
+            }
+
+        icao_consultar = ref['icao_consultar']
+        fir = ref['fir']
+        usa_referencia = ref['usa_referencia']
+        ref_nombre = ref['ref_nombre']
+        station_name = ref.get('nombre') or icao_consultar
+
+        raw_metar = AemetOpenDataService.get_message(
+            'METAR', icao_consultar, api_key)
+        raw_taf = AemetOpenDataService.get_message(
+            'TAF', icao_consultar, api_key)
+        raw_sigmet = (
+            AemetOpenDataService.get_message('SIGMET', fir, api_key)
+            if fir else None
+        )
+
+        if not (raw_metar or raw_taf or raw_sigmet):
+            return None
+
+        derived = parse_metar(raw_metar) if raw_metar else {}
+
         return {
             'provider': self.code,
-            'icao': data.get('icao') or (
-                icao_code.upper().strip() if icao_code else None),
-            'station_code': data.get('idema'),
-            'station_name': data.get('station_name'),
-            'observation_time': data.get('observation_time'),
-            'temperatura': data.get('temperatura'),
-            'dewpoint': data.get('dewpoint'),
-            'humidity': data.get('humidity'),
-            'wind_direction': data.get('wind_direction'),
-            'wind_speed_kt': data.get('wind_speed_kt'),
-            'wind_gust_kt': data.get('wind_gust_kt'),
-            'visibility_m': data.get('visibility_m'),
-            'qnh': data.get('qnh'),
-            'pressure': data.get('pressure'),
-            'precipitation': data.get('precipitation'),
-            'latitude': data.get('latitude'),
-            'longitude': data.get('longitude'),
-            'elevation': data.get('elevation_m'),
-            'raw_metar': data.get('raw_metar'),
+            'icao': icao_in,
+            'icao_consultar': icao_consultar,
+            'usa_referencia': usa_referencia,
+            'ref_icao': icao_consultar if usa_referencia else None,
+            'ref_nombre': ref_nombre,
+            'fir_code': fir,
+            'station_code': station_code or None,
+            'station_name': station_name,
+            'raw_metar': raw_metar,
+            'raw_taf': raw_taf,
+            'raw_sigmet': raw_sigmet,
+            'observation_time': derived.get('observation_time'),
+            'temperatura': derived.get('temperatura'),
+            'dewpoint': derived.get('dewpoint'),
+            'wind_direction': derived.get('wind_direction'),
+            'wind_speed_kt': derived.get('wind_speed_kt'),
+            'wind_gust_kt': derived.get('wind_gust_kt'),
+            'visibility_m': derived.get('visibility_m'),
+            'qnh': derived.get('qnh'),
+            # Campos legacy del esquema normalizado: hoy AEMET no los
+            # rellena en este flujo (no parseamos humedad ni
+            # precipitación del METAR). Los dejamos a None para no
+            # romper consumidores que esperen las claves.
+            'humidity': None,
+            'pressure': None,
+            'precipitation': None,
+            'latitude': None,
+            'longitude': None,
+            'elevation': None,
         }

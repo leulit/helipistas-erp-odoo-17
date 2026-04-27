@@ -29,6 +29,14 @@
               action="action_leulit_meteo_metar"
               sequence="20"/>
 
+    <!-- Submenú Aeródromos de Referencia (solo administradores) -->
+    <menuitem id="menu_leulit_meteo_icao_reference"
+              name="Aeródromos de Referencia"
+              parent="menu_leulit_meteo_root"
+              action="action_leulit_meteo_icao_reference"
+              sequence="22"
+              groups="base.group_system"/>
+
     <!-- Submenú Configuración -->
     <menuitem id="menu_leulit_meteo_config"
               name="Configuración"

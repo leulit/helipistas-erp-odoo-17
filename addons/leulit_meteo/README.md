@@ -1,6 +1,6 @@
 # Leulit Meteorología
 
-Módulo Odoo para consulta meteorológica orientada a operaciones aeronáuticas: clima actual y pronóstico por punto o ruta, mapa interactivo Leaflet, plantillas de rutas reutilizables, visor Windy embebido y reportes tipo METAR mediante una arquitectura de proveedores pluggable (actualmente AEMET para España, fácilmente extensible a otras fuentes).
+Módulo Odoo para consulta meteorológica orientada a operaciones aeronáuticas: clima actual y pronóstico por punto o ruta, mapa interactivo Leaflet, plantillas de rutas reutilizables, visor Windy embebido y briefings METAR/TAF/SIGMET oficiales de AEMET OpenData (texto RAW intacto). Sistema de aeródromos de referencia para puntos sin METAR propio.
 
 ## Características
 
@@ -10,7 +10,7 @@ Módulo Odoo para consulta meteorológica orientada a operaciones aeronáuticas:
 - Plantillas de rutas reutilizables (p.ej. LEMD-LEBL) cargables en cualquier consulta.
 - Resumen automático de la ruta: temperatura mín./máx., viento máximo y alerta de condiciones críticas.
 - Iframe Windy embebido para visualización animada de capas (no requiere key).
-- Reportes tipo METAR mediante arquitectura de proveedores pluggable: actualmente AEMET (España) sintetizado desde observación horaria y etiquetado con `RMK AEMET`. Añadir nuevos proveedores no requiere tocar el modelo ni las vistas.
+- Briefings **METAR + TAF + SIGMET oficiales** de AEMET OpenData (texto RAW intacto, válido a efectos legales/AESA). Sistema de aeródromos de referencia (`leulit.meteo.icao.reference`) para resolver FIR y redirigir helipuertos sin METAR propio al aeródromo cercano. Arquitectura de proveedores pluggable: añadir nuevas fuentes (NOAA, etc.) no requiere tocar el modelo ni las vistas.
 - Histórico de consultas vinculable a otros módulos (vuelos, operaciones, etc.) mediante Many2one.
 
 ## APIs externas
@@ -22,14 +22,15 @@ información swagger--> https://opendata.aemet.es/dist/index.html?
 | Open-Meteo | `https://api.open-meteo.com/v1/forecast` | No | Clima actual y pronóstico (gratuita; aplican rate limits suaves para uso comercial). |
 | Windy REST | `https://api.windy.com/api/point-forecast/v2` | Sí | Datos numéricos de modelos profesionales por punto o ruta. |
 | Windy Embed | `https://embed.windy.com/embed2.html` | No | Iframe público con visualización animada. |
-| AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | Observación horaria de estaciones españolas (patrón de 2 llamadas: endpoint → URL `datos`). AEMET **no** publica METAR oficiales; el módulo sintetiza un texto tipo METAR a partir de la observación. |
+| AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | Mensajes oficiales METAR/TAF/SIGMET por OACI (METAR/TAF) y por FIR (SIGMET). Patrón 2 llamadas: endpoint → URL `datos` con texto plano. RAW intacto (sin alterar). |
 
 ## Modelos principales
 
 - `leulit.meteo.consulta` — consulta meteorológica para punto único o polilínea/ruta; soporta fuente Open-Meteo o Windy.
 - `leulit.meteo.consulta.punto` — waypoints (One2many) de una consulta en modo ruta.
 - `leulit.meteo.ruta.template` y `leulit.meteo.ruta.template.punto` — plantillas de rutas reutilizables.
-- `leulit.meteo.metar` — reporte METAR independiente de proveedor; campo `provider` para seleccionar la fuente (hoy `aemet`).
+- `leulit.meteo.metar` — briefing METAR/TAF/SIGMET independiente de proveedor; campo `provider` para seleccionar la fuente (hoy `aemet`).
+- `leulit.meteo.icao.reference` — tabla de aeródromos OACI ↔ FIR + opcional `ref_icao` para puntos sin METAR propio.
 
 Infraestructura de proveedores:
 
@@ -43,6 +44,7 @@ Infraestructura de proveedores:
 - Consultas Clima
 - Rutas Predefinidas
 - Reportes METAR
+- Aeródromos de Referencia (solo administradores)
 
 La configuración (claves de Windy y AEMET, modelo Windy por defecto y botones de validación) está en `Meteorología → Configuración` (submenú dentro del módulo, accesible solo a administradores — `base.group_system`). Es un wizard (`TransientModel` `leulit.meteo.config`) que lee y escribe los siguientes parámetros del sistema:
 

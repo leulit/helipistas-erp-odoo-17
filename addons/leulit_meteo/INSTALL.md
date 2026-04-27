@@ -54,29 +54,30 @@ Sin esta clave, las consultas con fuente "Windy" lanzarán un `UserError`. Open-
 
 ### 3.2. AEMET OpenData API Key (opcional, recomendada para estaciones españolas)
 
-Útil para construir partes tipo METAR a partir de observaciones horarias de estaciones AEMET en España.
+Útil para descargar METAR + TAF + SIGMET oficiales por OACI (METAR/TAF) y por FIR (SIGMET) desde AEMET OpenData.
 
 1. Solicitar la API key (un JWT) gratuita en <https://opendata.aemet.es/centrodedescargas/altaUsuario>. Llega por correo electrónico.
 2. En Odoo: **Meteorología → Configuración**.
 3. Pegar el JWT completo en **AEMET OpenData API Key** (las JWT son largas; copiar sin espacios ni saltos de línea).
 4. Pulsar **Validar API Key** y luego **Guardar**.
 
-Sin esta clave, la acción **Obtener observación** del modelo `leulit.meteo.metar` (con proveedor AEMET seleccionado) lanzará `UserError`.
+Sin esta clave, la acción **Obtener briefing** del modelo `leulit.meteo.metar` (con proveedor AEMET seleccionado) lanzará `UserError`.
 
-> **Nota:** AEMET OpenData **no** publica METAR oficiales. El módulo construye un texto en formato tipo METAR a partir de la observación horaria de la estación; el resultado queda etiquetado con `RMK AEMET` para diferenciarlo.
+> **Nota:** el RAW del METAR/TAF/SIGMET se guarda **sin modificación** (importante a efectos de AESA). Los campos numéricos decodificados son auxiliares; el RAW prevalece.
 
 ---
 
 ## 4. Verificación post-instalación
 
-1. **Menús**: en la barra superior debe aparecer **Meteorología** con tres submenús:
+1. **Menús**: en la barra superior debe aparecer **Meteorología** con submenús:
    - Consultas Clima
    - Rutas Predefinidas
    - Reportes METAR
+   - Aeródromos de Referencia (solo administradores)
 
 2. **Open-Meteo (sin clave)**: en **Consultas Clima**, crear un registro nuevo, introducir coordenadas (por ejemplo Madrid: `40.4168, -3.7038`) y pulsar **Consultar Clima Actual**. Debe devolver datos en pocos segundos.
 
-3. **AEMET (si se configuró)**: en **Reportes METAR**, crear un registro con OACI `LEMD` (proveedor por defecto: AEMET) y pulsar **Obtener observación**. Debe rellenarse el texto tipo METAR con el sufijo `RMK AEMET`.
+3. **AEMET (si se configuró)**: en **Reportes METAR**, crear un registro con OACI `LEMD` (proveedor por defecto: AEMET) y pulsar **Obtener briefing**. Debe rellenarse el RAW del METAR, el TAF y los SIGMET vigentes para la FIR LECM.
 
 4. **Windy (si se configuró)**: abrir una consulta existente, cambiar **Fuente de Datos** a **Windy** y pulsar **Consultar Windy**. Deben llegar los datos del modelo seleccionado.
 
@@ -85,7 +86,7 @@ Sin esta clave, la acción **Obtener observación** del modelo `leulit.meteo.met
 ## 5. Limitaciones conocidas
 
 - **Sin caché**: cada acción consulta la API en directo. No hay almacenamiento intermedio.
-- **Resolución OACI → IDEMA en AEMET**: existe un mapa estático con ~30 aeropuertos y aeródromos españoles habituales. Para estaciones no incluidas, introducir manualmente el código de estación (IDEMA) en el formulario.
+- **Aeródromos de Referencia**: la tabla `leulit.meteo.icao.reference` se siembra con los aeropuertos españoles principales y un ejemplo de helipuerto (LEUL). Para añadir más helipuertos / aeródromos sin METAR propio, edítela desde **Meteorología → Aeródromos de Referencia** (solo administradores).
 - **Open-Meteo**: aunque su uso es libre y sin clave, mantiene límites suaves para uso comercial intensivo.
 
 ---
@@ -105,7 +106,7 @@ Ir a **Meteorología → Configuración** y pegar el JWT de AEMET (sección 3.2)
 - Las claves recién emitidas pueden tardar unos minutos en activarse en el servicio de AEMET. Esperar y reintentar.
 
 ### "No se han podido obtener datos de AEMET para …"
-La estación AEMET asociada al ICAO puede no tener observación reciente disponible. Probar con otro código de estación conocido o con el aeropuerto/aeródromo más cercano que sí publique observación horaria.
+AEMET puede no estar publicando METAR/TAF para ese OACI en este momento (aeródromo cerrado, sin servicio MET). Si el OACI corresponde a un helipuerto sin METAR propio, asegúrese de que está dado de alta en **Aeródromos de Referencia** con `tiene_metar_propio = False` y un `ref_icao` correcto.
 
 ### "API Key de Windy no válida"
 - Comprobar que la clave se ha copiado entera y sin espacios.

@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
-"""Modelo genérico de reporte METAR.
+"""Modelo genérico de reporte METAR/TAF/SIGMET.
 
 El modelo no depende de ningún proveedor concreto: delega la obtención
-de la observación en la instancia registrada de :class:`MetarProvider`
-seleccionada en el campo ``provider``. Para añadir un nuevo proveedor,
-crear un fichero en ``models/`` que defina una subclase de
-``MetarProvider`` registrada con ``@register_provider`` e importarlo en
-``models/__init__.py``.
+de los mensajes oficiales en la instancia registrada de
+:class:`MetarProvider` seleccionada en el campo ``provider``.
+
+El **RAW** de METAR/TAF/SIGMET no se altera (legalmente importante para
+AESA). Los campos numéricos decodificados son auxiliares para mostrar
+una tabla; ante duda, prevalece el RAW.
 """
 
 import logging
-from odoo import api, fields, models, _
+
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from .leulit_meteo_metar_provider import (
-    get_provider, provider_selection,
-)
+from .leulit_meteo_metar_provider import get_provider, provider_selection
 
 _logger = logging.getLogger(__name__)
 
 
 class LeulitMeteoMetar(models.Model):
     _name = 'leulit.meteo.metar'
-    _description = 'Reporte METAR'
+    _description = 'Reporte METAR / TAF / SIGMET'
     _order = 'observation_time desc, id desc'
     _rec_name = 'icao_code'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -35,27 +35,47 @@ class LeulitMeteoMetar(models.Model):
     provider = fields.Selection(
         selection=lambda self: provider_selection(),
         string='Proveedor', required=True, default='aemet', tracking=True,
-        help='Origen de los datos meteorológicos. Cada proveedor implementa '
-             'la interfaz MetarProvider y se selecciona aquí.')
+        help='Origen de los datos meteorológicos.')
 
     # Identificación del aeródromo / estación
     icao_code = fields.Char(
         string='Código OACI', size=4, tracking=True,
-        help='Código OACI de 4 letras (LEMD, LEBL, GCLP...). '
-             'Algunos proveedores lo usan para resolver el código de '
-             'estación interno.')
+        help='Código OACI de 4 letras (LEMD, LEBL, LEUL, ...).')
     station_code = fields.Char(
         string='Código de estación', tracking=True,
-        help='Identificador de la estación dentro del proveedor (p. ej. '
-             'IDEMA en AEMET). Si se rellena, prevalece sobre el OACI.')
-    station_name = fields.Char(string='Estación', readonly=True)
+        help='Identificador de estación interno del proveedor. Hoy AEMET '
+             'no lo usa para METAR/TAF/SIGMET; se mantiene para futuros '
+             'proveedores.')
+    station_name = fields.Char(string='Aeródromo', readonly=True)
 
-    # Texto METAR
+    # Resolución por aeródromo de referencia
+    fir_code = fields.Char(
+        string='FIR', readonly=True,
+        help='Región de información de vuelo (LECM, LECB, GCCC). '
+             'Determina a qué FIR se piden los SIGMET.')
+    ref_icao = fields.Char(
+        string='OACI de referencia', readonly=True,
+        help='Si el OACI introducido no emite METAR propio, se usa este '
+             'aeródromo como sustituto.')
+    ref_nombre = fields.Char(
+        string='Nombre del aeródromo de referencia', readonly=True)
+    usa_referencia = fields.Boolean(
+        string='Datos de aeródromo de referencia', readonly=True)
+    aviso_referencia = fields.Char(
+        string='Aviso', compute='_compute_aviso_referencia')
+
+    # Textos crudos (RAW) — fuente de verdad
     raw_metar = fields.Text(
         string='METAR', readonly=True,
-        help='Texto en formato METAR. Algunos proveedores (p. ej. AEMET) '
-             'lo sintetizan a partir de la observación horaria; en ese caso '
-             'el texto incluye el sufijo "RMK <PROVEEDOR>".')
+        help='Texto crudo del METAR oficial publicado por AEMET. No se '
+             'altera. Si el aeródromo no emite METAR propio, este texto '
+             'corresponde al aeródromo de referencia.')
+    raw_taf = fields.Text(
+        string='TAF', readonly=True,
+        help='Texto crudo del TAF oficial publicado por AEMET.')
+    raw_sigmet = fields.Text(
+        string='SIGMET', readonly=True,
+        help='Texto crudo de los SIGMET vigentes para la FIR.')
 
     # Tiempos
     observation_time = fields.Datetime(
@@ -64,7 +84,7 @@ class LeulitMeteoMetar(models.Model):
         string='Fecha Consulta', readonly=True,
         default=fields.Datetime.now)
 
-    # Magnitudes meteorológicas (esquema normalizado del proveedor)
+    # Campos derivados del METAR (best-effort)
     temperatura = fields.Float(string='Temperatura (°C)', digits=(5, 1),
                                readonly=True)
     dewpoint = fields.Float(string='Punto de Rocío (°C)', digits=(5, 1),
@@ -85,7 +105,7 @@ class LeulitMeteoMetar(models.Model):
     precipitation = fields.Float(string='Precipitación (mm)', digits=(5, 1),
                                  readonly=True)
 
-    # Ubicación
+    # Ubicación (legacy, hoy AEMET no la rellena en este flujo)
     latitud = fields.Float(string='Latitud', digits=(10, 6), readonly=True)
     longitud = fields.Float(string='Longitud', digits=(10, 6), readonly=True)
     elevation = fields.Float(string='Elevación (m)', digits=(7, 0),
@@ -139,76 +159,55 @@ class LeulitMeteoMetar(models.Model):
                 record.edad_datos_minutos = 0
                 record.estado_datos = False
 
-    @api.onchange('icao_code', 'provider')
+    @api.depends('usa_referencia', 'ref_icao', 'ref_nombre', 'icao_code')
+    def _compute_aviso_referencia(self):
+        for record in self:
+            if record.usa_referencia and record.ref_icao:
+                nombre = record.ref_nombre or record.ref_icao
+                record.aviso_referencia = _(
+                    'Mostrando datos de %(nombre)s (%(ref)s) porque '
+                    '%(orig)s no emite METAR propio.'
+                ) % {
+                    'nombre': nombre,
+                    'ref': record.ref_icao,
+                    'orig': record.icao_code or '',
+                }
+            else:
+                record.aviso_referencia = False
+
+    @api.onchange('icao_code')
     def _onchange_icao_code(self):
         if self.icao_code:
             self.icao_code = self.icao_code.upper().strip()
-        prov = get_provider(self.provider) if self.provider else None
-        if prov and self.icao_code and not self.station_code:
-            # Solo dict estático en onchange (no red): la resolución
-            # completa ocurre al pulsar "Obtener observación".
-            sc = prov.prefill_station_code(self.icao_code)
-            if sc:
-                self.station_code = sc
 
     # ---------- Acciones de UI ----------
 
-    def action_obtener_metar(self):
-        """Refresca el registro con la última observación del proveedor."""
+    def action_obtener_briefing(self):
+        """Trae METAR + TAF + SIGMET del proveedor y los aplica."""
         self.ensure_one()
-        if not self.icao_code and not self.station_code:
+        if not self.icao_code:
+            raise UserError(_('Debe indicar un código OACI.'))
+        if len(self.icao_code) != 4 or not self.icao_code.isalpha():
             raise UserError(_(
-                'Debe indicar un código OACI o un código de estación.'))
-        if self.icao_code and (
-                len(self.icao_code) != 4 or not self.icao_code.isalpha()):
-            raise UserError(_(
-                'El código OACI debe tener exactamente 4 letras (ej: LEMD).'))
+                'El código OACI debe tener exactamente 4 letras '
+                '(ej: LEMD).'))
 
         prov = get_provider(self.provider)
         if not prov:
             raise UserError(_(
                 'Proveedor METAR no disponible: %s') % self.provider)
 
-        # Auto-resolución agresiva: si el usuario solo introdujo OACI,
-        # pedimos al proveedor que resuelva el station_code interno
-        # (dict estático + inventario AEMET, según implemente cada uno).
-        if self.icao_code and not self.station_code:
-            sc = prov.resolve(self.env, self.icao_code)
-            if sc:
-                self.station_code = sc
-            else:
-                msg = _(
-                    'No se ha podido resolver automáticamente la estación '
-                    'para OACI %(icao)s en el proveedor "%(prov)s".'
-                ) % {'icao': self.icao_code, 'prov': prov.label}
-                if self.provider == 'aemet':
-                    msg += '\n\n' + _(
-                        'Use el botón "Buscar estación AEMET" para '
-                        'localizar el indicativo (IDEMA) por nombre/'
-                        'provincia y aplicarlo manualmente.')
-                raise UserError(msg)
-
         data = prov.get_observation(
             self.env,
-            icao_code=self.icao_code or None,
+            icao_code=self.icao_code,
             station_code=self.station_code or None,
         )
         if not data:
-            msg = _(
+            raise UserError(_(
                 'No se han podido obtener datos del proveedor "%(prov)s" '
-                'para %(ref)s. Verifique el código OACI/estación, la '
-                'conexión y la configuración del proveedor.'
-            ) % {
-                'prov': prov.label,
-                'ref': self.icao_code or self.station_code,
-            }
-            if self.provider == 'aemet' and not self.station_code:
-                msg += '\n\n' + _(
-                    'Sugerencia: AEMET puede no tener mapeado este OACI. '
-                    'Use el botón "Buscar estación AEMET" para localizar '
-                    'el indicativo (IDEMA) por nombre/provincia y '
-                    'aplicarlo al campo "Código de estación".')
-            raise UserError(msg)
+                'para %(icao)s. Verifique el OACI, la conexión y la '
+                'configuración del proveedor.'
+            ) % {'prov': prov.label, 'icao': self.icao_code})
 
         self._write_observacion(data)
         return {
@@ -216,12 +215,16 @@ class LeulitMeteoMetar(models.Model):
             'tag': 'display_notification',
             'params': {
                 'title': prov.label,
-                'message': _('Observación obtenida para %s') % (
-                    self.icao_code or self.station_code),
+                'message': _('Briefing obtenido para %s') % self.icao_code,
                 'type': 'success',
                 'sticky': False,
             },
         }
+
+    # Alias para no romper referencias externas (XML, código de
+    # terceros) que aún apunten al nombre antiguo.
+    def action_obtener_metar(self):
+        return self.action_obtener_briefing()
 
     def _write_observacion(self, data):
         """Aplica un dict normalizado del proveedor al registro."""
@@ -229,7 +232,13 @@ class LeulitMeteoMetar(models.Model):
         self.write({
             'station_code': data.get('station_code') or self.station_code,
             'station_name': data.get('station_name'),
+            'fir_code': data.get('fir_code'),
+            'ref_icao': data.get('ref_icao'),
+            'ref_nombre': data.get('ref_nombre'),
+            'usa_referencia': bool(data.get('usa_referencia')),
             'raw_metar': data.get('raw_metar'),
+            'raw_taf': data.get('raw_taf'),
+            'raw_sigmet': data.get('raw_sigmet'),
             'observation_time': data.get('observation_time'),
             'fecha_consulta': fields.Datetime.now(),
             'temperatura': data.get('temperatura'),
@@ -252,25 +261,26 @@ class LeulitMeteoMetar(models.Model):
     @api.model
     def obtener_metar(self, icao_code=None, station_code=None,
                       provider='aemet', persistir=False):
-        """Obtiene una observación normalizada del proveedor indicado.
+        """Obtiene un briefing normalizado del proveedor indicado.
 
         Pensado para ser invocado desde otros módulos::
 
             data = self.env['leulit.meteo.metar'].obtener_metar(
-                icao_code='LEMD', provider='aemet')
+                icao_code='LEUL', provider='aemet', persistir=True)
 
         Args:
-            icao_code: código OACI del aeródromo.
-            station_code: identificador de estación interno del proveedor.
-            provider: código del proveedor registrado (por defecto ``aemet``).
-            persistir: si ``True``, crea/actualiza un registro y añade
+            icao_code: código OACI del aeródromo (4 letras).
+            station_code: identificador de estación interno (opcional).
+            provider: código del proveedor registrado (por defecto
+                ``aemet``).
+            persistir: si ``True``, crea un registro y añade
                 ``record_id`` al dict devuelto.
 
         Returns:
             dict con el esquema normalizado documentado en
             :mod:`leulit_meteo_metar_provider`, o ``None``.
         """
-        if not icao_code and not station_code:
+        if not icao_code:
             return None
         prov = get_provider(provider)
         if not prov:
@@ -279,7 +289,7 @@ class LeulitMeteoMetar(models.Model):
 
         data = prov.get_observation(
             self.env,
-            icao_code=(icao_code or '').upper().strip() or None,
+            icao_code=icao_code.upper().strip(),
             station_code=(station_code or '').strip() or None,
         )
         if not data:
@@ -288,34 +298,17 @@ class LeulitMeteoMetar(models.Model):
         if persistir:
             record = self.create({
                 'provider': provider,
-                'icao_code': (icao_code or '').upper().strip() or False,
+                'icao_code': icao_code.upper().strip(),
                 'station_code': data.get('station_code'),
             })
             record._write_observacion(data)
             data['record_id'] = record.id
         return data
 
-    def action_buscar_estacion_aemet(self):
-        """Abre el wizard ``leulit.meteo.aemet.station.finder`` apuntando
-        a este registro, para que el usuario seleccione manualmente la
-        estación cuando ``resolve_idema`` no consigue mapear el OACI."""
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Buscar estación AEMET'),
-            'res_model': 'leulit.meteo.aemet.station.finder',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_metar_id': self.id,
-                'default_search_term': self.icao_code or '',
-            },
-        }
-
-    @api.depends('icao_code', 'station_code', 'observation_time')
+    @api.depends('icao_code', 'observation_time')
     def _compute_display_name(self):
         for record in self:
-            label = record.icao_code or record.station_code or _('Nuevo')
+            label = record.icao_code or _('Nuevo')
             if record.observation_time:
                 label += f" - {record.observation_time.strftime('%d/%m %H:%MZ')}"
             record.display_name = label

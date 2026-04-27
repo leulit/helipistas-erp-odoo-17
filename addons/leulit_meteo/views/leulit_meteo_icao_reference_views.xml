@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_leulit_meteo_icao_reference_tree" model="ir.ui.view">
+        <field name="name">leulit.meteo.icao.reference.tree</field>
+        <field name="model">leulit.meteo.icao.reference</field>
+        <field name="arch" type="xml">
+            <tree string="Aeródromos de Referencia"
+                  decoration-info="not tiene_metar_propio">
+                <field name="icao"/>
+                <field name="nombre"/>
+                <field name="fir"/>
+                <field name="tiene_metar_propio" widget="boolean_toggle"/>
+                <field name="ref_icao"/>
+                <field name="ref_nombre" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_leulit_meteo_icao_reference_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.icao.reference.form</field>
+        <field name="model">leulit.meteo.icao.reference</field>
+        <field name="arch" type="xml">
+            <form string="Aeródromo de Referencia">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icao"
+                                   placeholder="OACI 4 letras"
+                                   style="text-transform:uppercase"/>
+                        </h1>
+                        <h3><field name="nombre" placeholder="Nombre del punto"/></h3>
+                    </div>
+                    <group>
+                        <group string="Identificación">
+                            <field name="fir"/>
+                            <field name="tiene_metar_propio"/>
+                        </group>
+                        <group string="Aeródromo de referencia"
+                               invisible="tiene_metar_propio">
+                            <field name="ref_icao"
+                                   required="not tiene_metar_propio"
+                                   style="text-transform:uppercase"/>
+                            <field name="ref_nombre"/>
+                        </group>
+                    </group>
+                    <group string="Notas">
+                        <field name="notas" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_leulit_meteo_icao_reference_search" model="ir.ui.view">
+        <field name="name">leulit.meteo.icao.reference.search</field>
+        <field name="model">leulit.meteo.icao.reference</field>
+        <field name="arch" type="xml">
+            <search string="Buscar aeródromo">
+                <field name="icao"/>
+                <field name="nombre"/>
+                <field name="fir"/>
+                <field name="ref_icao"/>
+                <filter string="Con METAR propio" name="filter_propio"
+                        domain="[('tiene_metar_propio','=',True)]"/>
+                <filter string="Usa referencia" name="filter_referencia"
+                        domain="[('tiene_metar_propio','=',False)]"/>
+                <separator/>
+                <filter string="FIR Madrid (LECM)" name="filter_lecm"
+                        domain="[('fir','=','LECM')]"/>
+                <filter string="FIR Barcelona (LECB)" name="filter_lecb"
+                        domain="[('fir','=','LECB')]"/>
+                <filter string="FIR Canarias (GCCC)" name="filter_gccc"
+                        domain="[('fir','=','GCCC')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="FIR" name="group_fir"
+                            context="{'group_by': 'fir'}"/>
+                    <filter string="Tiene METAR propio" name="group_metar"
+                            context="{'group_by': 'tiene_metar_propio'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_leulit_meteo_icao_reference"
+            model="ir.actions.act_window">
+        <field name="name">Aeródromos de Referencia</field>
+        <field name="res_model">leulit.meteo.icao.reference</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id"
+               ref="view_leulit_meteo_icao_reference_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Añade un aeródromo o helipuerto de referencia
+            </p>
+            <p>
+                Esta tabla se consulta cada vez que se pide un briefing
+                METAR/TAF/SIGMET. Permite asignar la FIR (LECM/LECB/GCCC)
+                y, opcionalmente, redirigir un punto sin METAR propio
+                (helipuerto) al aeródromo cercano que sí emita METAR.
+            </p>
+        </field>
+    </record>
+
+</odoo>

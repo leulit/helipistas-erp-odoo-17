@@ -3,7 +3,7 @@
     'name': 'Leulit Meteorología',
     'version': '17.0.1.0.0',
     'category': 'Operations',
-    'summary': 'Consultas meteorológicas (Open-Meteo, Windy) y METAR sintético desde AEMET OpenData',
+    'summary': 'Consultas meteorológicas (Open-Meteo, Windy) y briefings METAR/TAF/SIGMET oficiales de AEMET OpenData',
     'description': """
         Leulit Meteorología
         ===================
@@ -14,8 +14,10 @@
         Funcionalidades principales:
         * Consulta de clima actual y pronósticos con Open-Meteo (sin clave).
         * Capas y modelos meteorológicos avanzados con Windy (REST + embed).
-        * METAR sintético generado a partir de observaciones de AEMET OpenData
-          (texto tipo METAR con sufijo ``RMK AEMET``; AEMET no publica METAR oficiales).
+        * Briefings METAR + TAF + SIGMET oficiales descargados de AEMET
+          OpenData; el texto crudo se conserva intacto (importante a efectos
+          de AESA). Sistema de aeródromos de referencia para puntos sin
+          METAR propio (helipuertos).
         * Definición de rutas como polilíneas (waypoints) y consulta meteo por punto.
         * Plantillas de ruta reutilizables.
         * Widget de mapa interactivo (Leaflet + componente OWL) para selección de
@@ -41,10 +43,11 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequences.xml',
+        'data/icao_reference_data.xml',
         'views/leulit_meteo_ruta_template_views.xml',
         'views/leulit_meteo_consulta_views.xml',
+        'views/leulit_meteo_icao_reference_views.xml',
         'views/leulit_meteo_metar_views.xml',
-        'views/leulit_meteo_aemet_station_finder_views.xml',
         'views/leulit_meteo_config_views.xml',
         'views/menu.xml',
     ],

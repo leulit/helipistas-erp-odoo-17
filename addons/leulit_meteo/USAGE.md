@@ -59,16 +59,19 @@ Menú: **Meteorología → Reportes METAR**. Modelo `leulit.meteo.metar` con arq
 1. **Crear** un nuevo registro `leulit.meteo.metar`.
 2. Selecciona el **Proveedor** (por defecto `AEMET (España)`).
 3. Escribe un **OACI** (4 letras, ej. `LEMD`, `LELL`, `GCLP`).
-4. Pulsa **Obtener observación** (`action_obtener_metar`). El sistema resuelve automáticamente la estación interna del proveedor (en AEMET, el IDEMA) y descarga la última observación.
+4. Pulsa **Obtener briefing** (`action_obtener_briefing`). El sistema consulta la tabla **Aeródromos de Referencia** para determinar la FIR y, si el OACI no emite METAR propio (helipuerto), usa el aeródromo de referencia configurado.
 
-No es necesario tocar el código de estación: es un identificador interno del proveedor y aparece read-only en la pestaña **Información técnica** del formulario, junto con coordenadas y elevación.
+El registro se rellena con:
+- **RAW intacto**: `raw_metar`, `raw_taf`, `raw_sigmet` — texto oficial de AEMET, sin modificar.
+- **Campos decodificados** (best-effort): `observation_time`, `temperatura`, `dewpoint`, `wind_direction`, `wind_speed_kt`, `wind_gust_kt`, `visibility_m`, `qnh`, `edad_datos_minutos`, `estado_datos`.
+- **Metadatos de resolución**: `fir_code`, `usa_referencia`, `ref_icao`, `ref_nombre`, `station_name`.
 
-El registro se rellena con: `station_name`, `observation_time`, `temperatura`, `dewpoint`, `humidity`, `wind_direction`, `wind_speed_kt`, `wind_gust_kt`, `visibility_m`, `qnh`, `pressure`, `precipitation`, `latitud`, `longitud`, `elevation`, `edad_datos_minutos`, `estado_datos` y un `raw_metar`.
+Si el OACI es un helipuerto sin METAR propio y está dado de alta con `tiene_metar_propio = False` en **Aeródromos de Referencia**, se muestra un aviso informativo en el formulario indicando el aeródromo de referencia usado.
 
-**Importante — limitaciones del proveedor AEMET**:
+**Notas del proveedor AEMET**:
 
-- AEMET OpenData **no publica METAR oficiales**. El campo `raw_metar` es una cadena tipo METAR construida a partir de la observación horaria, etiquetada con `RMK AEMET`.
-- La resolución OACI → IDEMA usa un mapeo estático con ~30 aeropuertos/aeródromos habituales (LEMD, LEBL, LELL, LEMG, LEAL, LEVC, LEZL, LEBB, LEPA, LEIB, LEMH, GCLP, GCXO, GCTS, LECU, LETO, …). Si el OACI no está en el dict, el proveedor consulta el inventario AEMET para localizarlo por nombre. Si aun así no se resuelve, usa el botón **Buscar estación AEMET** para seleccionarla manualmente.
+- Los campos `raw_metar`, `raw_taf` y `raw_sigmet` contienen el texto oficial publicado por AEMET OpenData, **sin alterar** (válido a efectos legales/AESA).
+- El SIGMET se obtiene por FIR (LECM/LECB/GCCC); si el OACI no está en la tabla de referencia, el SIGMET no estará disponible.
 - Requiere `leulit_meteo.aemet_api_key` configurado en parámetros del sistema.
 
 ## 5. Añadir un nuevo proveedor
@@ -85,24 +88,24 @@ class AviationWeatherMetarProvider(MetarProvider):
     label = 'Aviation Weather (NOAA)'
 
     def get_observation(self, env, icao_code=None, station_code=None):
-        # Llamar a la API y devolver el dict normalizado:
-        # provider, icao, station_code, station_name, observation_time,
-        # temperatura, dewpoint, humidity, wind_direction, wind_speed_kt,
-        # wind_gust_kt, visibility_m, qnh, pressure, precipitation,
-        # latitude, longitude, elevation, raw_metar
+        # Devolver el dict normalizado (ver leulit_meteo_metar_provider.py):
+        # provider, icao, icao_consultar, usa_referencia, ref_icao, ref_nombre,
+        # fir_code, station_code, station_name,
+        # raw_metar, raw_taf, raw_sigmet,
+        # observation_time, temperatura, dewpoint, wind_direction, wind_speed_kt,
+        # wind_gust_kt, visibility_m, qnh,
+        # humidity, pressure, precipitation, latitude, longitude, elevation
         ...
 ```
 
-Métodos opcionales: `validate(env)`, `prefill_station_code(icao_code)`, `resolve(env, icao_code)`, `coverage(icao_code)`.
-
-`resolve(env, icao_code)` se invoca antes de `get_observation` cuando el usuario solo informó el OACI; por defecto delega en `prefill_station_code` (mapa estático), pero un proveedor puede sobrescribirlo para consultar un inventario remoto. El modelo cachea el resultado en `station_code` para futuras consultas.
+Método opcional: `validate(env)` — comprueba que el proveedor está bien configurado (API key, etc.).
 
 ## 6. Filtros y búsquedas habituales
 
 **En `leulit.meteo.metar`**:
 
-- Filtros: *Datos actuales*, *Datos recientes*, *Datos antiguos* (sobre `estado_datos`), *Mis consultas* (`user_id=uid`).
-- Agrupar por: **Proveedor**, **OACI**, **Código de estación**, **Usuario**.
+- Filtros: *Datos actuales*, *Datos recientes*, *Datos antiguos* (sobre `estado_datos`), *Usa referencia*, *Mis consultas* (`user_id=uid`).
+- Agrupar por: **Proveedor**, **OACI**, **FIR**, **Usuario**.
 
 **En `leulit.meteo.consulta`**:
 
@@ -130,10 +133,12 @@ data = self.env['leulit.meteo.metar'].obtener_metar(
     icao_code='LEMD',
     provider='aemet',
 )
-# data -> {'provider', 'icao', 'station_code', 'station_name',
-#          'observation_time', 'temperatura', 'dewpoint', 'humidity',
+# data -> {'provider', 'icao', 'icao_consultar', 'usa_referencia',
+#          'ref_icao', 'ref_nombre', 'fir_code', 'station_name',
+#          'raw_metar', 'raw_taf', 'raw_sigmet',
+#          'observation_time', 'temperatura', 'dewpoint',
 #          'wind_speed_kt', 'wind_gust_kt', 'wind_direction',
-#          'visibility_m', 'qnh', 'raw_metar', ...}
+#          'visibility_m', 'qnh', ...}
 ```
 
 Para persistir el resultado como registro:
@@ -147,15 +152,6 @@ data = self.env['leulit.meteo.metar'].obtener_metar(
 record = self.env['leulit.meteo.metar'].browse(data['record_id'])
 ```
 
-Si solo conoces el código de estación:
-
-```python
-data = self.env['leulit.meteo.metar'].obtener_metar(
-    station_code='0076',
-    provider='aemet',
-)
-```
-
 ### 7.3. Acceso directo a los servicios (sin pasar por modelos)
 
 ```python
@@ -166,9 +162,11 @@ from odoo.addons.leulit_meteo.models.leulit_meteo_aemet_service import AemetOpen
 current = OpenMeteoService.get_current_weather(latitude=40.4165, longitude=-3.7026)
 forecast = OpenMeteoService.get_forecast(latitude=40.4165, longitude=-3.7026, days=3)
 
-# AEMET (requiere api_key)
+# AEMET — mensajes oficiales por OACI o FIR (requiere api_key)
 api_key = self.env['ir.config_parameter'].sudo().get_param('leulit_meteo.aemet_api_key')
-metar_like = AemetOpenDataService.get_metar_like(api_key=api_key, icao_code='LEMG')
+raw_metar = AemetOpenDataService.get_message('METAR', 'LEMG', api_key)
+raw_taf   = AemetOpenDataService.get_message('TAF',   'LEMG', api_key)
+raw_sigmet = AemetOpenDataService.get_message('SIGMET', 'LECM', api_key)
 ```
 
 ## 8. Casos de uso prácticos
@@ -183,10 +181,9 @@ class LeulitVuelo(models.Model):
 
     def action_obtener_meteo_salida(self):
         for vuelo in self:
-            aerodromo = vuelo.aerodromo_salida_id
-            if aerodromo and aerodromo.codigo_oaci:
+            if vuelo.aerodromo_salida_id and vuelo.aerodromo_salida_id.codigo_oaci:
                 data = self.env['leulit.meteo.metar'].obtener_metar(
-                    icao_code=aerodromo.codigo_oaci,
+                    icao_code=vuelo.aerodromo_salida_id.codigo_oaci,
                     provider='aemet',
                     persistir=True,
                 )
@@ -229,10 +226,11 @@ Para puntos sin estación AEMET (ruta libre, escuela en zona rural) usa `consult
               raise ValidationError("Longitud fuera de rango (-180..180).")
   ```
 
-- **Manejar `None`**: cualquier llamada puede devolver `None` por fallo de red, API key inválida o estación sin observación reciente. Comprueba siempre el resultado antes de acceder a sus claves.
+- **Manejar `None`**: cualquier llamada puede devolver `None` por fallo de red, API key inválida o aeródromo sin publicación activa. Comprueba siempre el resultado antes de acceder a sus claves.
 - **Logging**: usa `_logger` (`logging.getLogger(__name__)`) para registrar errores y respuestas inesperadas; no silencies excepciones.
 - **API keys**: lee siempre desde `ir.config_parameter` (`leulit_meteo.aemet_api_key`, equivalente para Windy), nunca las hardcodees.
-- **AEMET ≠ METAR oficial**: si necesitas METAR aeronáuticos certificados, consulta el proveedor oficial correspondiente; el `raw_metar` de este módulo es sintético.
+- **RAW prevalece**: los campos decodificados (`temperatura`, `wind_speed_kt`, etc.) son auxiliares; ante cualquier duda, el texto `raw_metar` / `raw_taf` / `raw_sigmet` es la fuente de verdad (válido a efectos legales/AESA).
+- **Aeródromos de Referencia**: para que un helipuerto obtenga METAR y SIGMET, debe estar dado de alta en `leulit.meteo.icao.reference` con su FIR correcta y, si no emite METAR propio, con un `ref_icao` al aeródromo cercano.
 
 ---
 

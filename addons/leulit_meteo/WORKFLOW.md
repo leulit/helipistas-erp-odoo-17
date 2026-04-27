@@ -36,7 +36,7 @@ Visión general (selección de ubicación + obtención de datos + visualización
 
 Punto clave: **selección, datos y visualización son piezas independientes**. La visualización Windy (iframe) no consume datos del módulo; los servicios REST no usan el iframe.
 
-### 1.1 Arquitectura del subsistema METAR — 3 capas
+### 1.1 Arquitectura del subsistema METAR — 4 capas
 
 El subsistema METAR está diseñado para que cambiar o añadir proveedores no toque ni el modelo ni las vistas:
 
@@ -51,15 +51,35 @@ El subsistema METAR está diseñado para que cambiar o añadir proveedores no to
                              │
                              ▼
 ┌──────────────────────────────────────────────────────────────┐
+│  CAPA 1b — Datos de referencia                               │
+│  Tabla `leulit.meteo.icao.reference`                         │
+│  Mapeo OACI ↔ FIR; opcional redirección de helipuertos       │
+│  (tiene_metar_propio=False → ref_icao) al aeródromo          │
+│  más cercano con METAR. El proveedor la consulta vía          │
+│  `env['leulit.meteo.icao.reference'].resolve(icao)`.         │
+└──────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌──────────────────────────────────────────────────────────────┐
 │  CAPA 2 — Proveedores                                        │
 │  Interfaz `MetarProvider` + registro `@register_provider`    │
 │    · AemetMetarProvider     (code='aemet')                   │
 │    · (futuros: Aviation Weather, etc.)                       │
-│  Cada proveedor traduce los datos de su fuente al esquema    │
-│  normalizado (provider, icao, station_code, station_name,    │
-│  observation_time, temperatura, dewpoint, humidity,          │
-│  wind_*, visibility_m, qnh, pressure, precipitation,         │
-│  latitude, longitude, elevation, raw_metar).                 │
+│  Cada proveedor devuelve el esquema normalizado:             │
+│  provider, icao, icao_consultar, usa_referencia, ref_icao,   │
+│  ref_nombre, fir_code, station_name,                         │
+│  raw_metar, raw_taf, raw_sigmet,                             │
+│  observation_time (parseo best-effort via capa 2b),          │
+│  temperatura, dewpoint, wind_*, visibility_m, qnh.           │
+└──────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌──────────────────────────────────────────────────────────────┐
+│  CAPA 2b — Parser METAR (best-effort)                        │
+│  `leulit_meteo_metar_parser.parse_metar(raw)`                │
+│  Extrae observation_time, viento, visibilidad, T/Td, QNH     │
+│  del RAW. Nunca modifica el texto original. Usado por los    │
+│  proveedores para poblar los campos numéricos derivados.     │
 └──────────────────────────────────────────────────────────────┘
                              │
                              ▼
@@ -70,7 +90,7 @@ El subsistema METAR está diseñado para que cambiar o añadir proveedores no to
 └──────────────────────────────────────────────────────────────┘
 ```
 
-Para cambiar de fuente solo hace falta tocar la **capa 2** (añadir o reemplazar un `MetarProvider`); opcionalmente, si la nueva fuente requiere un cliente HTTP nuevo, se añade en la **capa 3**. La capa 1 nunca cambia.
+Para cambiar de fuente solo hace falta tocar la **capa 2** (añadir o reemplazar un `MetarProvider`); si la nueva fuente requiere un cliente HTTP propio, se añade en la **capa 3**. Las capas 1, 1b y 2b nunca cambian.
 
 ---
 
@@ -145,57 +165,58 @@ Consultar Windy/Open-Meteo (ver flujos anteriores)
 
 Pensado para rutas de vuelo recurrentes.
 
-### 2.4 Obtener METAR (proveedor pluggable)
+### 2.4 Obtener METAR / TAF / SIGMET (proveedor pluggable)
 
-Modelo: `leulit.meteo.metar`. Capa de proveedores: `MetarProvider` (interfaz) + `AemetMetarProvider` (implementación actual). Cliente HTTP: `AemetOpenDataService`.
+Modelo: `leulit.meteo.metar`. Capa de proveedores: `MetarProvider` (interfaz) + `AemetMetarProvider` (implementación actual). Referencia de aeródromos: `leulit.meteo.icao.reference`. Cliente HTTP: `AemetOpenDataService`. Parser: `leulit_meteo_metar_parser`.
 
 ```
-[Form] provider = "aemet", icao = "LEMD"   (el usuario solo introduce OACI)
+[Form] provider = "aemet", icao = "LEUL"   (helipuerto sin METAR propio)
    │
    ▼
-Usuario pulsa "Obtener observación" → action_obtener_metar()
+Usuario pulsa "Obtener briefing" → action_obtener_briefing()
    │
    ▼
-Modelo resuelve provider a partir del campo:
+Modelo resuelve provider:
    get_provider(self.provider)  → AemetMetarProvider
    │
    ▼
-Si station_code está vacío: prov.resolve(env, icao_code)
-   AemetMetarProvider.resolve():
-     1) Dict estático ICAO_TO_IDEMA (~30 entradas)
-     2) AemetOpenDataService.resolve_idema() → inventario AEMET
-        (busca por OACI literal en el campo `nombre` de la estación)
-     3) Si nada resuelve, raise UserError sugiriendo "Buscar estación AEMET"
-   El station_code resuelto se cachea en el registro.
+AemetMetarProvider.get_observation(env, icao_code='LEUL')
    │
    ▼
-provider.get_observation(env, icao_code, station_code)
+env['leulit.meteo.icao.reference'].resolve('LEUL')
+   → icao_consultar='LELL', fir='LECB', usa_referencia=True,
+     ref_nombre='Sabadell'
+   (si no está en tabla: icao_consultar=icao_code, fir=None,
+    usa_referencia=False — sin SIGMET disponible)
+   │
+   ├─► AemetOpenDataService.get_message('METAR', 'LELL', api_key)
+   │       → GET .../mensajes/tipomensaje/METAR/id/LELL?api_key=JWT
+   │       → GET <URL datos>  (texto plano RAW)
+   │
+   ├─► AemetOpenDataService.get_message('TAF', 'LELL', api_key)
+   │       → idem para TAF
+   │
+   └─► AemetOpenDataService.get_message('SIGMET', 'LECB', api_key)
+           → GET .../mensajes/tipomensaje/SIGMET/id/LECB?api_key=JWT
+           → GET <URL datos>  (o None si fir es None)
    │
    ▼
-AemetOpenDataService → GET .../observacion/convencional/datos/estacion/{idema}?api_key=JWT
-                       → GET <URL datos> (patrón 2 pasos; api_key como query param,
-                          la URL `datos` ya está preautenticada y no lleva token)
-   │
-   ▼
-latest_observation(): elige la observación horaria más reciente
-   con datos meteo útiles (al menos `ta` + `pres`/`pres_nmar`).
-   │
-   ▼
-Conversiones: m/s → kt (viento), km → m (visibilidad), etc.
-   │
-   ▼
-Sintetizar texto tipo METAR + sufijo "RMK AEMET"
+parse_metar(raw_metar)   (best-effort, no altera el RAW)
+   → observation_time, wind_direction/speed/gust, visibility_m,
+     temperatura, dewpoint, qnh
    │
    ▼
 Provider devuelve dict normalizado al modelo
    │
    ▼
-Modelo escribe los campos en el registro. station_code, latitud,
-longitud y elevation quedan visibles read-only en la pestaña
-"Información técnica" del formulario.
+Modelo escribe los campos en el registro:
+   raw_metar / raw_taf / raw_sigmet  (textos oficiales AEMET, sin alterar)
+   fir_code, usa_referencia, ref_icao, ref_nombre, station_name
+   campos numéricos decodificados (best-effort)
+   │
+   ▼
+Vista muestra aviso informativo si usa_referencia=True
 ```
-
-**Importante:** AEMET OpenData **no** ofrece METAR oficiales. El proveedor `aemet` construye un texto con formato METAR a partir de la observación horaria. Se marca con `RMK AEMET` para no confundirlo con un METAR oficial.
 
 ---
 
@@ -236,7 +257,8 @@ longitud y elevation quedan visibles read-only en la pestaña
 - `leulit.meteo.consulta` — cabecera de consulta. Campos relevantes: `fuente_datos`, `es_polilinea`, `ruta_template_id`, `puntos_ids`, resúmenes computados.
 - `leulit.meteo.consulta.punto` — waypoint individual con sus datos meteo.
 - `leulit.meteo.ruta.template` + `leulit.meteo.ruta.template.punto` — plantillas reutilizables.
-- `leulit.meteo.metar` — reporte METAR independiente de proveedor (ver 2.4). Campo `provider` selecciona la fuente; hoy solo `aemet`.
+- `leulit.meteo.metar` — reporte METAR/TAF/SIGMET independiente de proveedor (ver 2.4). Campo `provider` selecciona la fuente; hoy solo `aemet`.
+- `leulit.meteo.icao.reference` — tabla de aeródromos OACI ↔ FIR; permite redirigir helipuertos sin METAR propio al aeródromo de referencia más cercano.
 
 ---
 
@@ -263,7 +285,7 @@ Confusión habitual: ambos parecen "el mapa", pero hacen cosas opuestas.
 | Open-Meteo              | `https://api.open-meteo.com/v1/forecast`                       | No            | Open-Meteo        | Datos meteo generales              |
 | Windy REST              | `https://api.windy.com/api/point-forecast/v2`                  | Sí            | Windyty SE        | Punto-forecast por waypoint        |
 | Windy Embed (iframe)    | `https://embed.windy.com/embed2.html`                          | No            | Windyty SE        | Visualización rica con overlay     |
-| AEMET OpenData          | `https://opendata.aemet.es/opendata`                           | Sí (JWT)      | AEMET (España)    | Observación horaria → METAR sint.  |
+| AEMET OpenData          | `https://opendata.aemet.es/opendata`                           | Sí (JWT)      | AEMET (España)    | Mensajes oficiales METAR/TAF/SIGMET por OACI o FIR. RAW intacto. |
 
 Notas:
 
@@ -277,16 +299,16 @@ Notas:
 El de Leaflet sirve para que tú selecciones la ubicación (input). El iframe de Windy sirve para que veas las condiciones meteorológicas con overlay animado (output). Hacen cosas opuestas.
 
 **¿AEMET ofrece METAR oficiales?**
-No. AEMET OpenData expone observaciones horarias de estaciones convencionales. El módulo construye un texto con formato METAR a partir de esa observación y lo marca con `RMK AEMET` para distinguirlo de un METAR oficial.
+Sí. AEMET OpenData publica mensajes oficiales METAR, TAF y SIGMET por OACI y FIR respectivamente. El módulo los descarga y guarda el texto **sin modificar** (`raw_metar`, `raw_taf`, `raw_sigmet`), válido a efectos legales/AESA. Los campos numéricos decodificados son auxiliares y obtenidos por parsing best-effort.
 
 **¿Necesito API key para el iframe de Windy?**
 No. El embed (`embed.windy.com/embed2.html`) es público. La API key de Windy solo se requiere para la API REST (`api.windy.com/api/point-forecast/v2`).
 
-**¿Qué pasa si AEMET no devuelve observación reciente para una estación?**
-La acción `action_obtener_metar()` lanza un `UserError`. Soluciones: introducir un `station_code` distinto, probar otro aeropuerto cercano, o esperar a la siguiente actualización horaria.
+**¿Qué pasa si AEMET no devuelve datos para un OACI?**
+La acción `action_obtener_briefing()` lanza un `UserError`. Causas habituales: aeródromo sin servicio MET activo, AEMET sin publicación en ese momento, o API key incorrecta. Si el OACI es un helipuerto sin METAR propio, asegúrate de que esté dado de alta en **Aeródromos de Referencia** con un `ref_icao` correcto.
 
-**¿Cómo añado un OACI nuevo al mapping ICAO→IDEMA?**
-Editar el dict `ICAO_TO_IDEMA` en `models/leulit_meteo_aemet_service.py`. El proveedor también intenta el inventario AEMET por nombre, así que muchos OACI funcionan sin tocar el dict. Si la búsqueda por inventario falla, el botón **Buscar estación AEMET** del formulario permite seleccionar la estación manualmente.
+**¿Cómo añado un helipuerto o aeródromo nuevo?**
+Ir a **Meteorología → Aeródromos de Referencia** (solo administradores) y crear un registro. Indicar FIR (LECM/LECB/GCCC) y, si el punto no emite METAR propio, desmarcar `tiene_metar_propio` y rellenar `ref_icao` con el OACI del aeródromo cercano. No hay que tocar ningún fichero Python.
 
 **¿Cómo cambio de proveedor de METAR?**
 Selecciona otro valor en el campo **Proveedor** del registro `leulit.meteo.metar`. Para añadir un proveedor nuevo, crea una subclase de `MetarProvider` decorada con `@register_provider` e impórtala en `models/__init__.py`. El modelo, las vistas y el menú no necesitan cambios: el nuevo `code` aparece automáticamente en el selector.
