@@ -112,11 +112,22 @@ class AemetMetarProvider(MetarProvider):
             icao_consultar,
             bool(raw_metar), bool(raw_taf), bool(raw_sigmet))
 
-        # AEMET sin datos → buscar el aeródromo MET más próximo via OpenAIP + CheckWX
+        # AEMET sin datos → (1) CheckWX para el mismo ICAO; (2) aeródromo MET más próximo
+        if not (raw_metar or raw_taf):
+            _logger.info("AEMET.get_observation: %s sin datos en AEMET", icao_consultar)
+            checkwx_key = self._get_checkwx_key(env)
+            if checkwx_key:
+                raw_metar = CheckWXService.get_metar(icao_consultar, checkwx_key)
+                raw_taf = CheckWXService.get_taf(icao_consultar, checkwx_key)
+                _logger.info(
+                    "AEMET.get_observation: CheckWX directo %s → metar=%s taf=%s",
+                    icao_consultar, bool(raw_metar), bool(raw_taf))
+
+        # Si ni AEMET ni CheckWX tienen el ICAO → buscar aeródromo MET más próximo
         if not (raw_metar or raw_taf):
             _logger.info(
-                "AEMET.get_observation: %s sin datos en AEMET, "
-                "iniciando búsqueda de aeródromo MET próximo", icao_consultar)
+                "AEMET.get_observation: %s sin datos en ninguna fuente directa, "
+                "buscando aeródromo MET próximo", icao_consultar)
             enrich = env['leulit.meteo.icao.reference'].sudo()._enrich_ref_icao(icao_consultar)
             _logger.info(
                 "AEMET.get_observation: _enrich_ref_icao(%s) → %s",
@@ -124,29 +135,20 @@ class AemetMetarProvider(MetarProvider):
             if enrich and enrich.get('ref_icao'):
                 new_icao = enrich['ref_icao']
                 new_proveedor = enrich.get('proveedor_oficial', 'aemet')
-                # Aeródromos españoles: AEMET primero; internacionales: CheckWX directamente
                 if new_proveedor != 'checkwx':
                     raw_metar = AemetOpenDataService.get_message('METAR', new_icao, api_key)
                     raw_taf = AemetOpenDataService.get_message('TAF', new_icao, api_key)
-                    _logger.info(
-                        "AEMET.get_observation: AEMET para ref %s → "
-                        "metar=%s taf=%s", new_icao, bool(raw_metar), bool(raw_taf))
                 if not (raw_metar or raw_taf):
-                    checkwx_key = self._get_checkwx_key(env)
+                    checkwx_key = checkwx_key or self._get_checkwx_key(env)
                     if checkwx_key:
                         raw_metar = CheckWXService.get_metar(new_icao, checkwx_key)
                         raw_taf = CheckWXService.get_taf(new_icao, checkwx_key)
-                        _logger.info(
-                            "AEMET.get_observation: CheckWX para ref %s → "
-                            "metar=%s taf=%s", new_icao, bool(raw_metar), bool(raw_taf))
-                    else:
-                        _logger.warning(
-                            "AEMET.get_observation: CheckWX no configurado, "
-                            "no se puede obtener METAR para %s", new_icao)
                 if raw_metar or raw_taf:
                     icao_consultar = new_icao
                     usa_referencia = True
                     ref_nombre = enrich.get('ref_nombre') or new_icao
+                    _logger.info(
+                        "AEMET.get_observation: usando aeródromo próximo %s", new_icao)
 
         derived = parse_metar(raw_metar) if raw_metar else {}
 

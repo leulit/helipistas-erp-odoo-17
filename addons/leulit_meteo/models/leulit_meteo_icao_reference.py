@@ -269,7 +269,7 @@ class LeulitMeteoIcaoReference(models.Model):
         lon = rec.longitud if rec.longitud else None
         _logger.info("_enrich_ref_icao %s: coords en registro → lat=%s lon=%s", icao, lat, lon)
 
-        # Coordenadas del OACI via OpenAIP si no están en el registro
+        # Coordenadas: OpenAIP primero, CheckWX station como fallback
         if not lat and openaip_key:
             airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
             _logger.info("_enrich_ref_icao %s: OpenAIP → %s", icao, airport_info)
@@ -277,8 +277,17 @@ class LeulitMeteoIcaoReference(models.Model):
                 lat = airport_info.get('lat')
                 lon = airport_info.get('lon')
 
+        if not lat and checkwx_key:
+            station_info = CheckWXService.get_station(icao, checkwx_key)
+            _logger.info("_enrich_ref_icao %s: CheckWX station → %s", icao, station_info)
+            if station_info:
+                lat = station_info.get('lat')
+                lon = station_info.get('lon')
+
         if not lat:
-            _logger.warning("_enrich_ref_icao %s: no se obtuvieron coordenadas (openaip_key=%s)", icao, bool(openaip_key))
+            _logger.warning(
+                "_enrich_ref_icao %s: no se obtuvieron coordenadas "
+                "(openaip=%s, checkwx=%s)", icao, bool(openaip_key), bool(checkwx_key))
             return None
 
         # Buscar el aeródromo con METAR oficial más próximo

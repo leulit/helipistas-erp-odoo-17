@@ -40,19 +40,28 @@ class OpenAIPService:
         """Devuelve {'icao', 'name', 'lat', 'lon'} o None."""
         if not icao or not api_key:
             return None
+        icao_up = icao.upper().strip()
         try:
             r = requests.get(
                 f"{cls.BASE_URL}/airports",
                 headers=cls._headers(api_key),
-                params={"icaoCode": icao.upper().strip(), "limit": 1},
+                params={"icaoCode": icao_up, "limit": 10},
                 timeout=cls.TIMEOUT)
             if r.status_code != 200:
                 _logger.warning("OpenAIP %s -> HTTP %s", icao, r.status_code)
                 return None
             items = r.json().get('items') or []
-            if not items:
-                return None
-            return cls._parse_airport(items[0])
+            # La API puede ignorar el filtro icaoCode; verificar cada resultado
+            for item in items:
+                parsed = cls._parse_airport(item)
+                if parsed and parsed.get('icao', '').upper() == icao_up:
+                    return parsed
+            _logger.warning(
+                "OpenAIP get_airport_by_icao(%s): ningún resultado coincide "
+                "(devolvió %d items, icaos=%s)",
+                icao, len(items),
+                [i.get('icaoCode', '') for i in items[:3]])
+            return None
         except Exception as exc:
             _logger.error("OpenAIP get_airport_by_icao(%s): %s", icao, exc)
             return None
