@@ -300,57 +300,59 @@ patch(FormController.prototype, {
                 const t = d.temperatura;
                 const p = d.peso;
 
+                // NOTA: peso llega en kg desde W&B (takeoff_gw). Los inicio_eje están en lbs
+                // (el digitalizador calibra siempre en lbs). Por eso pasarLibras=true en todos.
                 if (el(K.canvas_r22_in) && el(K.canvas_r22_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_r22_in,  K.proporcion_r22_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_r22_out, K.proporcion_r22_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22_in,  K.proporcion_r22_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_r22_out, K.proporcion_r22_out, true);
                     const a_in  = calc_altura(K.temperaturas_r22_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_r22_out, t, p_out);
                     paintPoint(K.canvas_r22_in,  K.src_r22_in,  K.inicio_eje_x_r22_in,  K.inicio_eje_y_r22_in,  K.altura_imagen_r22_in,  p_in,  a_in);
                     paintPoint(K.canvas_r22_out, K.src_r22_out, K.inicio_eje_x_r22_out, K.inicio_eje_y_r22_out, K.altura_imagen_r22_out, p_out, a_out);
                 }
                 if (el(K.canvas_r22_2_in) && el(K.canvas_r22_2_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_r22_2_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_r22_2_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r22_2_in,  K.proporcion_r22_2_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_r22_2_out, K.proporcion_r22_2_out, true);
                     const a_in  = calc_altura(K.temperaturas_r22_2_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_r22_2_out, t, p_out);
                     paintPoint(K.canvas_r22_2_in,  K.src_r22_2_in,  K.inicio_eje_x_r22_2_in,  K.inicio_eje_y_r22_2_in,  K.altura_imagen_r22_2_in,  p_in,  a_in);
                     paintPoint(K.canvas_r22_2_out, K.src_r22_2_out, K.inicio_eje_x_r22_2_out, K.inicio_eje_y_r22_2_out, K.altura_imagen_r22_2_out, p_out, a_out);
                 }
                 if (el(K.canvas_cabri_in) && el(K.canvas_cabri_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_cabri, K.proporcion_cabri_out, true);
                     const a_in  = calc_altura(K.temperaturas_cabri_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_cabri_out, t, p_out);
                     paintPoint(K.canvas_cabri_in,  K.src_cabri_in,  K.inicio_eje_x_cabri_in,  K.inicio_eje_y_cabri_in,  K.altura_imagen_cabri_in,  p_in,  a_in);
                     paintPoint(K.canvas_cabri_out, K.src_cabri_out, K.inicio_eje_x_cabri_out, K.inicio_eje_y_cabri_out, K.altura_imagen_cabri_out, p_out, a_out);
                 }
                 if (el(K.canvas_r44_2_in) && el(K.canvas_r44_2_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r44_2_in,  K.proporcion_r44_2_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_r44_2_out, K.proporcion_r44_2_out, true);
                     const a_in  = calc_altura(K.temperaturas_r44_2_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_r44_2_out, t, p_out);
                     paintPoint(K.canvas_r44_2_in,  K.src_r44_2_in,  K.inicio_eje_x_r44_2_in,  K.inicio_eje_y_r44_2_in,  K.altura_imagen_r44_2_in,  p_in,  a_in);
                     paintPoint(K.canvas_r44_2_out, K.src_r44_2_out, K.inicio_eje_x_r44_2_out, K.inicio_eje_y_r44_2_out, K.altura_imagen_r44_2_out, p_out, a_out);
                 }
                 if (el(K.canvas_r44_in) && el(K.canvas_r44_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_r44_in,  K.proporcion_r44_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_r44_out, K.proporcion_r44_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_r44_in,  K.proporcion_r44_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_r44_out, K.proporcion_r44_out, true);
                     const a_in  = calc_altura(K.temperaturas_r44_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_r44_out, t, p_out);
                     paintPoint(K.canvas_r44_in,  K.src_r44_in,  K.inicio_eje_x_r44_in,  K.inicio_eje_y_r44_in,  K.altura_imagen_r44_in,  p_in,  a_in);
                     paintPoint(K.canvas_r44_out, K.src_r44_out, K.inicio_eje_x_r44_out, K.inicio_eje_y_r44_out, K.altura_imagen_r44_out, p_out, a_out);
                 }
                 if (el(K.canvas_ec_in) && el(K.canvas_ec_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_ec_in,  K.proporcion_ec_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_ec_out, K.proporcion_ec_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_ec_in,  K.proporcion_ec_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_ec_out, K.proporcion_ec_out, true);
                     const a_in  = calc_altura(K.temperaturas_ec_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_ec_out, t, p_out);
                     paintPoint(K.canvas_ec_in,  K.src_ec_in,  K.inicio_eje_x_ec_in,  K.inicio_eje_y_ec_in,  K.altura_imagen_ec_in,  p_in,  a_in);
                     paintPoint(K.canvas_ec_out, K.src_ec_out, K.inicio_eje_x_ec_out, K.inicio_eje_y_ec_out, K.altura_imagen_ec_out, p_out, a_out);
                 }
                 if (el(K.canvas_hil_in) && el(K.canvas_hil_out)) {
-                    const p_in  = calc_peso(p, K.inicio_eje_hil_in,  K.proporcion_hil_in,  false);
-                    const p_out = calc_peso(p, K.inicio_eje_hil_out, K.proporcion_hil_out, false);
+                    const p_in  = calc_peso(p, K.inicio_eje_hil_in,  K.proporcion_hil_in,  true);
+                    const p_out = calc_peso(p, K.inicio_eje_hil_out, K.proporcion_hil_out, true);
                     const a_in  = calc_altura(K.temperaturas_hil_in,  t, p_in);
                     const a_out = calc_altura(K.temperaturas_hil_out, t, p_out);
                     paintPoint(K.canvas_hil_in,  K.src_hil_in,  K.inicio_eje_x_hil_in,  K.inicio_eje_y_hil_in,  K.altura_imagen_hil_in,  p_in,  a_in);
