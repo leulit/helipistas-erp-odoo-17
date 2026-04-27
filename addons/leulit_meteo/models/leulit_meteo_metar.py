@@ -232,6 +232,13 @@ class LeulitMeteoMetar(models.Model):
                 'message': _('Briefing obtenido para %s') % self.icao_code,
                 'type': 'success',
                 'sticky': False,
+                'next': {
+                    'type': 'ir.actions.act_window',
+                    'res_model': self._name,
+                    'res_id': self.id,
+                    'views': [(False, 'form')],
+                    'target': 'current',
+                },
             },
         }
 
