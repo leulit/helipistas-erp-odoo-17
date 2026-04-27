@@ -40,7 +40,11 @@
                             gap: 24px;
                             align-items: flex-start;
                         }
-                        .umbral-inputs { flex: 0 0 300px; }
+                        .umbral-inputs { flex: 0 0 240px; }
+                        .umbral-inputs .o_wrap_field { margin-bottom: 10px; }
+                        .umbral-inputs .o_form_label { display: block; font-size: 8.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+                        .label-marginal { color: #fd7e14; }
+                        .label-nogo     { color: #dc3545; }
                         .umbral-legend { flex: 1; }
 
                         .legend-bar {
@@ -76,8 +80,14 @@
                         <div class="umbral-section-title">Viento sostenido</div>
                         <div class="umbral-body">
                             <div class="umbral-inputs">
-                                <field name="viento_marginal_kt" string="Umbral MARGINAL (kt)"/>
-                                <field name="viento_nogo_kt"     string="Umbral NO GO (kt)"/>
+                                <div class="o_wrap_field">
+                                    <label for="viento_marginal_kt" string="Marginal (kt)" class="o_form_label label-marginal"/>
+                                    <field name="viento_marginal_kt" nolabel="1"/>
+                                </div>
+                                <div class="o_wrap_field">
+                                    <label for="viento_nogo_kt" string="No Go (kt)" class="o_form_label label-nogo"/>
+                                    <field name="viento_nogo_kt" nolabel="1"/>
+                                </div>
                             </div>
                             <div class="umbral-legend">
                                 <div class="legend-bar">
@@ -100,8 +110,14 @@
                         <div class="umbral-section-title">Rachas</div>
                         <div class="umbral-body">
                             <div class="umbral-inputs">
-                                <field name="rachas_marginal_kt" string="Umbral MARGINAL (kt)"/>
-                                <field name="rachas_nogo_kt"     string="Umbral NO GO (kt)"/>
+                                <div class="o_wrap_field">
+                                    <label for="rachas_marginal_kt" string="Marginal (kt)" class="o_form_label label-marginal"/>
+                                    <field name="rachas_marginal_kt" nolabel="1"/>
+                                </div>
+                                <div class="o_wrap_field">
+                                    <label for="rachas_nogo_kt" string="No Go (kt)" class="o_form_label label-nogo"/>
+                                    <field name="rachas_nogo_kt" nolabel="1"/>
+                                </div>
                             </div>
                             <div class="umbral-legend">
                                 <div class="legend-bar">
@@ -124,8 +140,14 @@
                         <div class="umbral-section-title">Visibilidad</div>
                         <div class="umbral-body">
                             <div class="umbral-inputs">
-                                <field name="vis_marginal_m" string="Umbral MARGINAL (m)"/>
-                                <field name="vis_nogo_m"     string="Umbral NO GO (m)"/>
+                                <div class="o_wrap_field">
+                                    <label for="vis_marginal_m" string="Marginal (m)" class="o_form_label label-marginal"/>
+                                    <field name="vis_marginal_m" nolabel="1"/>
+                                </div>
+                                <div class="o_wrap_field">
+                                    <label for="vis_nogo_m" string="No Go (m)" class="o_form_label label-nogo"/>
+                                    <field name="vis_nogo_m" nolabel="1"/>
+                                </div>
                             </div>
                             <div class="umbral-legend">
                                 <div class="legend-bar">
@@ -147,12 +169,9 @@
                 </sheet>
                 <footer>
                     <button name="action_save"
-                            string="Guardar cambios"
+                            string="Guardar umbrales"
                             type="object"
                             class="btn-primary"/>
-                    <button string="Cancelar"
-                            class="btn-secondary"
-                            special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -163,7 +182,6 @@
         <field name="res_model">leulit.meteo.umbral.config</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_leulit_meteo_umbral_config_form"/>
-        <field name="target">new</field>
     </record>
 
 </odoo>

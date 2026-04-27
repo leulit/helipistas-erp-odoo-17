@@ -65,7 +65,16 @@ class LeulitMeteoUmbralConfig(models.TransientModel):
         ICP.set_param(self.PARAM_RACHAS_NOGO, self.rachas_nogo_kt)
         ICP.set_param(self.PARAM_VIS_MARGINAL, self.vis_marginal_m)
         ICP.set_param(self.PARAM_VIS_NOGO, self.vis_nogo_m)
-        return {'type': 'ir.actions.act_window_close'}
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Guardado'),
+                'message': _('Umbrales operacionales guardados.'),
+                'type': 'success',
+                'sticky': False,
+            },
+        }
 
     @classmethod
     def get_umbrales(cls, env):

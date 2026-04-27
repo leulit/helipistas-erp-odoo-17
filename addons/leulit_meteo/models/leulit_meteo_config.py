@@ -60,7 +60,16 @@ class LeulitMeteoConfig(models.TransientModel):
         ICP.set_param(self.PARAM_AEMET_KEY, self.aemet_api_key or '')
         ICP.set_param(self.PARAM_OPENAIP_KEY, self.openaip_api_key or '')
         ICP.set_param(self.PARAM_CHECKWX_KEY, self.checkwx_api_key or '')
-        return {'type': 'ir.actions.act_window_close'}
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Guardado'),
+                'message': _('API Keys guardadas correctamente.'),
+                'type': 'success',
+                'sticky': False,
+            },
+        }
 
     def action_validate_windy_key(self):
         self.ensure_one()

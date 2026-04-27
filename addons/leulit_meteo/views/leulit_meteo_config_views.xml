@@ -67,12 +67,9 @@
                 </sheet>
                 <footer>
                     <button name="action_save"
-                            string="Guardar"
+                            string="Guardar API Keys"
                             type="object"
                             class="btn-primary"/>
-                    <button string="Cancelar"
-                            class="btn-secondary"
-                            special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -84,7 +81,6 @@
         <field name="res_model">leulit.meteo.config</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_leulit_meteo_config_form"/>
-        <field name="target">new</field>
     </record>
 
 </odoo>
