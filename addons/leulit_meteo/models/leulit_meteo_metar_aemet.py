@@ -101,16 +101,25 @@ class AemetMetarProvider(MetarProvider):
             if fir else None
         )
 
-        # Fallback CheckWX si AEMET no tiene METAR y el proveedor es checkwx
-        if not raw_metar and proveedor_oficial == 'checkwx':
-            checkwx_key = self._get_checkwx_key(env)
-            if checkwx_key:
-                raw_metar = CheckWXService.get_metar(icao_consultar, checkwx_key)
-                if not raw_taf:
-                    raw_taf = CheckWXService.get_taf(icao_consultar, checkwx_key)
-
-        if not (raw_metar or raw_taf or raw_sigmet):
-            return None
+        # AEMET sin datos → buscar el aeródromo MET más próximo via OpenAIP + CheckWX
+        if not (raw_metar or raw_taf):
+            enrich = env['leulit.meteo.icao.reference'].sudo()._enrich_ref_icao(icao_consultar)
+            if enrich and enrich.get('ref_icao'):
+                new_icao = enrich['ref_icao']
+                new_proveedor = enrich.get('proveedor_oficial', 'aemet')
+                # Aeródromos españoles: AEMET primero; internacionales: CheckWX directamente
+                if new_proveedor != 'checkwx':
+                    raw_metar = AemetOpenDataService.get_message('METAR', new_icao, api_key)
+                    raw_taf = AemetOpenDataService.get_message('TAF', new_icao, api_key)
+                if not (raw_metar or raw_taf):
+                    checkwx_key = self._get_checkwx_key(env)
+                    if checkwx_key:
+                        raw_metar = CheckWXService.get_metar(new_icao, checkwx_key)
+                        raw_taf = CheckWXService.get_taf(new_icao, checkwx_key)
+                if raw_metar or raw_taf:
+                    icao_consultar = new_icao
+                    usa_referencia = True
+                    ref_nombre = enrich.get('ref_nombre') or new_icao
 
         derived = parse_metar(raw_metar) if raw_metar else {}
 
@@ -136,6 +145,10 @@ class AemetMetarProvider(MetarProvider):
                     station_est_code = station_code_ref
                     station_est_nombre = station_nombre_ref or parsed_obs.get('station_name')
                     station_est_distancia_km = station_dist_ref
+
+        # Sin ninguna fuente de datos disponible, devolver None
+        if not (raw_metar or raw_taf or raw_sigmet or raw_metar_est):
+            return None
 
         return {
             'provider': self.code,
