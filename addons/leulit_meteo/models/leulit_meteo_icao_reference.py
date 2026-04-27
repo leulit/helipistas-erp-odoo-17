@@ -99,6 +99,8 @@ class LeulitMeteoIcaoReference(models.Model):
             'station_nombre': rec.station_nombre or None,
             'station_distancia_km': rec.station_distancia_km or None,
             'ref_distancia_km': rec.ref_distancia_km or None,
+            'latitud': rec.latitud or None,
+            'longitud': rec.longitud or None,
         }
 
         if not rec.tiene_metar_propio and rec.ref_icao:
