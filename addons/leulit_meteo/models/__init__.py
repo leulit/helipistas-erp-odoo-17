@@ -23,3 +23,4 @@ from . import leulit_meteo_metar_aemet
 from . import leulit_meteo_metar
 
 from . import leulit_meteo_config
+from . import leulit_meteo_umbral_config

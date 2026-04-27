@@ -37,12 +37,25 @@
               sequence="22"
               groups="base.group_system"/>
 
-    <!-- Submenú Configuración -->
-    <menuitem id="menu_leulit_meteo_config"
+    <!-- Configuración (padre) -->
+    <menuitem id="menu_leulit_meteo_config_root"
               name="Configuración"
               parent="menu_leulit_meteo_root"
-              action="action_leulit_meteo_config"
               sequence="99"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_leulit_meteo_config"
+              name="API Keys"
+              parent="menu_leulit_meteo_config_root"
+              action="action_leulit_meteo_config"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_leulit_meteo_umbral_config"
+              name="Umbrales Operacionales"
+              parent="menu_leulit_meteo_config_root"
+              action="action_leulit_meteo_umbral_config"
+              sequence="20"
               groups="base.group_system"/>
 
 </odoo>

@@ -49,6 +49,7 @@
         'views/leulit_meteo_icao_reference_views.xml',
         'views/leulit_meteo_metar_views.xml',
         'views/leulit_meteo_config_views.xml',
+        'views/leulit_meteo_umbral_config_views.xml',
         'views/menu.xml',
     ],
     'assets': {
