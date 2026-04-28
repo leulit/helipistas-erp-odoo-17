@@ -332,25 +332,79 @@ class LeulitMeteoMetar(models.Model):
         return data
 
     @api.model
-    def briefing_oaci(self, icao_code, provider='aemet'):
+    def briefing_oaci(self, icao_code, provider='aemet', fecha=None):
         """Busca o crea el reporte METAR para el OACI y devuelve el briefing.
 
         Reutilizable desde cualquier módulo::
 
+            # Datos actuales
             result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
+
+            # Datos históricos (busca en BD, no llama a la API)
+            from datetime import datetime
+            result = self.env['leulit.meteo.metar'].briefing_oaci(
+                'LEUL', fecha=datetime(2026, 4, 27, 14, 30))
 
         Args:
             icao_code: código OACI de 4 letras (ej. 'LEUL').
-            provider: proveedor a usar si se crea el registro (por defecto 'aemet').
+            provider: proveedor a usar si se crea el registro. Solo se aplica
+                en modo actual; ignorado en modo histórico.
+            fecha: datetime UTC opcional. Si se indica y corresponde a más de
+                30 minutos en el pasado, activa el **modo histórico**: busca
+                en la BD el registro con ``observation_time`` más cercano a
+                esa fecha (máx. 2 horas de diferencia) sin llamar a la API.
+                Las APIs de los proveedores no ofrecen datos históricos.
 
         Returns:
-            dict con claves ``record_id``, ``raw_metar``, ``raw_taf``,
-            ``raw_metar_est`` o ``None`` si el proveedor no devuelve datos.
+            dict con claves:
+                - ``record_id`` (int)
+                - ``raw_metar`` (str|None)
+                - ``raw_taf`` (str|None)
+                - ``raw_metar_est`` (str|None)
+                - ``historico`` (bool) — True si viene de la BD sin actualizar
+                - ``observation_time`` (datetime UTC|None)
+            o ``None`` si no hay datos disponibles.
         """
         if not icao_code:
             return None
         icao = icao_code.upper().strip()
 
+        # ── Modo histórico ──────────────────────────────────────────────────
+        if fecha is not None:
+            from datetime import timedelta
+            if isinstance(fecha, str):
+                fecha = fields.Datetime.from_string(fecha)
+            ahora = fields.Datetime.now()
+            if (ahora - fecha) > timedelta(minutes=30):
+                # Búsqueda hacia atrás (registro más reciente antes de fecha)
+                record = self.search([
+                    ('icao_code', '=', icao),
+                    ('active', '=', True),
+                    ('observation_time', '<=', fecha),
+                ], order='observation_time desc', limit=1)
+                # Si no hay registro previo, probar el más antiguo posterior
+                if not record:
+                    record = self.search([
+                        ('icao_code', '=', icao),
+                        ('active', '=', True),
+                        ('observation_time', '>=', fecha),
+                    ], order='observation_time asc', limit=1)
+                if not record or not record.observation_time:
+                    return None
+                diff_seg = abs(
+                    (record.observation_time - fecha).total_seconds())
+                if diff_seg > 7200:  # más de 2 horas → demasiado lejos
+                    return None
+                return {
+                    'record_id': record.id,
+                    'raw_metar': record.raw_metar,
+                    'raw_taf': record.raw_taf,
+                    'raw_metar_est': record.raw_metar_est,
+                    'historico': True,
+                    'observation_time': record.observation_time,
+                }
+
+        # ── Modo actual: busca/crea registro y llama a la API ───────────────
         record = self.search(
             [('icao_code', '=', icao), ('active', '=', True)],
             order='fecha_consulta desc',
@@ -375,6 +429,8 @@ class LeulitMeteoMetar(models.Model):
             'raw_metar': record.raw_metar,
             'raw_taf': record.raw_taf,
             'raw_metar_est': record.raw_metar_est,
+            'historico': False,
+            'observation_time': record.observation_time,
         }
 
     @api.depends('icao_code', 'observation_time')

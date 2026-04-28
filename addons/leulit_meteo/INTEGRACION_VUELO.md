@@ -97,46 +97,70 @@ class LeulitVuelo(models.Model):
 ### Firma
 
 ```python
-self.env['leulit.meteo.metar'].briefing_oaci(icao_code, provider='aemet')
+self.env['leulit.meteo.metar'].briefing_oaci(icao_code, provider='aemet', fecha=None)
 ```
 
 | Parámetro | Tipo | Requerido | Descripción |
 |---|---|---|---|
 | `icao_code` | `str` | Sí | Código OACI de 4 letras (`LEUL`, `LEMD`, …) |
-| `provider` | `str` | No | Proveedor a usar **si se crea** el registro. Por defecto `'aemet'`. No cambia el proveedor de un registro ya existente. |
+| `provider` | `str` | No | Proveedor a usar **si se crea** el registro. Por defecto `'aemet'`. Ignorado en modo histórico. |
+| `fecha` | `datetime` UTC | No | Si se indica y está a más de 30 min en el pasado, activa el **modo histórico** (ver más abajo). |
 
 ### Valor de retorno
 
 ```python
 {
-    'record_id':    42,          # id del registro leulit.meteo.metar
-    'raw_metar':    'LEUL ...',  # pestaña METAR del formulario
-    'raw_taf':      'TAF ...',   # pestaña TAF del formulario
-    'raw_metar_est': 'LEUL ...',# METAR no oficial — estación más próxima
-                                 # (None si el proveedor no lo incluye)
+    'record_id':      42,             # id del registro leulit.meteo.metar
+    'raw_metar':      'LEUL ...',     # pestaña METAR del formulario
+    'raw_taf':        'TAF ...',      # pestaña TAF del formulario
+    'raw_metar_est':  'LEUL ...',     # METAR no oficial — estación más próxima
+                                      # (None si el proveedor no lo incluye)
+    'historico':      False,          # True si los datos vienen de BD sin actualizar
+    'observation_time': datetime(...) # hora UTC de la observación
 }
-# → None si el proveedor no devuelve datos para ese OACI
+# → None si no hay datos disponibles
 ```
 
-### Comportamiento interno
+### Modo actual (sin `fecha`)
 
 ```
 1. Busca el registro activo más reciente con icao_code = OACI
 2. Si no existe → lo crea (con el proveedor indicado)
 3. Llama al proveedor y escribe los datos (igual que el botón "Obtener briefing")
-4. Devuelve los tres campos de texto + record_id
+4. Devuelve los campos + historico=False
 ```
 
-La diferencia con `obtener_metar(persistir=True)` es que `briefing_oaci` **reutiliza el registro existente** en lugar de crear uno nuevo en cada llamada, y devuelve directamente los campos del formulario en lugar del dict completo del proveedor.
+### Modo histórico (con `fecha` > 30 min en el pasado)
+
+Las APIs de AEMET y CheckWX **no proporcionan datos históricos** — solo devuelven el METAR en vigor en el momento de la llamada. En modo histórico la función **solo consulta la base de datos**:
+
+```
+1. Busca el registro con observation_time más cercano a fecha (hacia atrás primero)
+2. Si la diferencia supera 2 horas → devuelve None (registro demasiado alejado)
+3. Si lo encuentra → devuelve sus datos + historico=True sin llamar a la API
+```
+
+> El histórico solo tiene datos si en su momento se guardaron registros con `persistir=True`
+> o mediante el botón "Obtener briefing" del formulario.
 
 ### Ejemplo mínimo
 
 ```python
+# Datos actuales
 result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
 if result:
     _logger.info("METAR: %s", result['raw_metar'])
     _logger.info("TAF:   %s", result['raw_taf'])
-    _logger.info("Est.:  %s", result['raw_metar_est'])
+
+# Datos de un vuelo anterior
+from datetime import datetime
+result = self.env['leulit.meteo.metar'].briefing_oaci(
+    'LEUL', fecha=datetime(2026, 4, 27, 14, 30))
+if result:
+    _logger.info("Histórico: %s | Observación: %s",
+                 result['historico'], result['observation_time'])
+elif result is None:
+    _logger.warning("Sin datos históricos para LEUL en esa fecha")
 ```
 
 ### Integración en el parte de vuelo (versión simplificada)
