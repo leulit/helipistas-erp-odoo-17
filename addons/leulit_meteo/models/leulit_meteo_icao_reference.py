@@ -2,10 +2,14 @@
 import logging
 import math
 
+import pytz
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
+
+_TZ_MADRID = 'Europe/Madrid'
 
 
 def _haversine(lat1, lon1, lat2, lon2):
@@ -57,6 +61,12 @@ class LeulitMeteoIcaoReference(models.Model):
         help='Momento estimado en que se espera el siguiente METAR. '
              'El cron solo procesa este aeródromo cuando la hora actual '
              'es igual o posterior a este valor.')
+    proxima_actualizacion_utc = fields.Char(
+        'Próxima actualización (UTC)', compute='_compute_proxima_actualizacion_local',
+        readonly=True)
+    proxima_actualizacion_local = fields.Char(
+        'Próxima actualización (Madrid)', compute='_compute_proxima_actualizacion_local',
+        readonly=True)
 
     notas = fields.Text()
 
@@ -75,6 +85,18 @@ class LeulitMeteoIcaoReference(models.Model):
         for rec in self:
             rec.historico_count = self.env['leulit.meteo.historico'].search_count(
                 [('icao_reference_id', '=', rec.id)])
+
+    @api.depends('proxima_actualizacion')
+    def _compute_proxima_actualizacion_local(self):
+        tz = pytz.timezone(_TZ_MADRID)
+        for rec in self:
+            if rec.proxima_actualizacion:
+                rec.proxima_actualizacion_utc = rec.proxima_actualizacion.strftime('%d/%m/%Y %H:%MZ')
+                dt = rec.proxima_actualizacion.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.proxima_actualizacion_local = dt.strftime('%d/%m/%Y %H:%M %Z')
+            else:
+                rec.proxima_actualizacion_utc = False
+                rec.proxima_actualizacion_local = False
 
     # ---------- Acciones UI ----------
 

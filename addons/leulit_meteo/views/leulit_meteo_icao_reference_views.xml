@@ -48,7 +48,8 @@
                             <field name="latitud" readonly="1"/>
                             <field name="longitud" readonly="1"/>
                             <field name="elevacion_ft"/>
-                            <field name="proxima_actualizacion" readonly="1"/>
+                            <field name="proxima_actualizacion_local" readonly="1"/>
+                            <field name="proxima_actualizacion_utc" readonly="1"/>
                         </group>
                     </group>
                     <notebook>
