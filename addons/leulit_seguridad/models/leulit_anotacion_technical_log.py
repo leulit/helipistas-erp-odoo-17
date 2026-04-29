@@ -127,3 +127,115 @@ class leulit_anotacion_technical_log(models.Model):
     logo = fields.Binary('Logo', related='company_id.logo_reports', readonly=True)
 
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order")
+    calendar_event_id = fields.Many2one(comodel_name="calendar.event", string="Planning event", ondelete="set null")
+
+    is_operational = fields.Boolean('Operational', default=False)
+    flight_id = fields.Many2one('leulit.vuelo', 'Flight')
+    deadline_time = fields.Char('Deadline time (HH:MM)', default='12:00')
+
+    install_dual_control = fields.Boolean('Dual control')
+    install_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
+    install_floats = fields.Boolean('Floats')
+    install_life_raft = fields.Boolean('Life raft')
+    install_life_vests_qty = fields.Integer('Life vests qty')
+    install_headsets_qty = fields.Integer('Headsets qty')
+    install_tyler = fields.Boolean('Tyler')
+    install_gss = fields.Boolean('GSS')
+    install_cineflex = fields.Boolean('Cineflex')
+    install_lidar_system = fields.Boolean('Lidar system')
+
+    remove_dual_control = fields.Boolean('Dual control')
+    remove_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
+    remove_floats = fields.Boolean('Floats')
+    remove_life_raft = fields.Boolean('Life raft')
+    remove_life_vests_qty = fields.Integer('Life vests qty')
+    remove_headsets_qty = fields.Integer('Headsets qty')
+    remove_tyler = fields.Boolean('Tyler')
+    remove_gss = fields.Boolean('GSS')
+    remove_cineflex = fields.Boolean('Cineflex')
+    remove_lidar_system = fields.Boolean('Lidar system')
+
+    def _get_operational_items(self, mode):
+        items = []
+        if mode == 'install':
+            if self.install_floats:
+                items.append('floats')
+            if self.install_dual_control:
+                items.append('dual control')
+            if self.install_cargo_hook_mirror:
+                items.append('cargo hook and mirror')
+            if self.install_life_raft:
+                items.append('life raft')
+            if self.install_life_vests_qty > 0:
+                items.append('{0} life vests'.format(self.install_life_vests_qty))
+            if self.install_headsets_qty > 0:
+                items.append('{0} headsets'.format(self.install_headsets_qty))
+            if self.install_tyler:
+                items.append('Tyler')
+            if self.install_gss:
+                items.append('GSS')
+            if self.install_cineflex:
+                items.append('Cineflex')
+            if self.install_lidar_system:
+                items.append('Lidar system')
+        if mode == 'remove':
+            if self.remove_floats:
+                items.append('floats')
+            if self.remove_dual_control:
+                items.append('dual control')
+            if self.remove_cargo_hook_mirror:
+                items.append('cargo hook and mirror')
+            if self.remove_life_raft:
+                items.append('life raft')
+            if self.remove_life_vests_qty > 0:
+                items.append('{0} life vests'.format(self.remove_life_vests_qty))
+            if self.remove_headsets_qty > 0:
+                items.append('{0} headsets'.format(self.remove_headsets_qty))
+            if self.remove_tyler:
+                items.append('Tyler')
+            if self.remove_gss:
+                items.append('GSS')
+            if self.remove_cineflex:
+                items.append('Cineflex')
+            if self.remove_lidar_system:
+                items.append('Lidar system')
+        return items
+
+    def _build_operational_annotation(self):
+        install_items = self._get_operational_items('install')
+        remove_items = self._get_operational_items('remove')
+        fecha_str = self.fecha.strftime('%d/%m/%Y') if self.fecha else 'DD/MM/YYYY'
+        hora_str = self.deadline_time if self.deadline_time else 'HH:MM'
+
+        clauses = []
+        if install_items:
+            clauses.append('{0} must be installed'.format(' / '.join(install_items)))
+        if remove_items:
+            clauses.append('{0} must be removed'.format(' / '.join(remove_items)))
+
+        if self.flight_id and self.flight_id.codigo:
+            reference_clause = 'before flight to {0}.'.format(self.flight_id.codigo)
+        else:
+            reference_clause = 'before day {0} at {1}.'.format(fecha_str, hora_str)
+
+        if not clauses:
+            return False
+
+        actions = ', and '.join(clauses)
+        return 'For operational reasons, {0}, {1}'.format(actions, reference_clause)
+
+    @api.onchange(
+        'is_operational', 'fecha', 'flight_id', 'deadline_time',
+        'install_floats', 'install_dual_control', 'install_cargo_hook_mirror', 'install_life_raft',
+        'install_life_vests_qty', 'install_headsets_qty',
+        'install_tyler', 'install_gss', 'install_cineflex', 'install_lidar_system',
+        'remove_floats', 'remove_dual_control', 'remove_cargo_hook_mirror', 'remove_life_raft',
+        'remove_life_vests_qty', 'remove_headsets_qty',
+        'remove_tyler', 'remove_gss', 'remove_cineflex', 'remove_lidar_system',
+    )
+    def _onchange_build_annotation(self):
+        if not self.is_operational:
+            return
+        text = self._build_operational_annotation()
+        if text:
+            self.anotacion = text

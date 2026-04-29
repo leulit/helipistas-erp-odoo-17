@@ -25,21 +25,30 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
     vuelo_id = fields.Many2one('leulit.vuelo', 'Flight')
     hora_limite = fields.Char('Deadline time (HH:MM)', default='12:00')
 
-    instalar_floats = fields.Boolean('Floats')
     instalar_dual_control = fields.Boolean('Dual control')
     instalar_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
+    instalar_floats = fields.Boolean('Floats')
     instalar_life_raft = fields.Boolean('Life raft')
     instalar_life_vests_qty = fields.Integer('Life vests qty')
     instalar_headsets_qty = fields.Integer('Headsets qty')
+    instalar_tyler = fields.Boolean('Tyler')
+    instalar_gss = fields.Boolean('GSS')
+    instalar_cineflex = fields.Boolean('Cineflex')
+    instalar_lidar_system = fields.Boolean('Lidar system')
 
-    remover_floats = fields.Boolean('Floats')
     remover_dual_control = fields.Boolean('Dual control')
     remover_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
+    remover_floats = fields.Boolean('Floats')
     remover_life_raft = fields.Boolean('Life raft')
     remover_life_vests_qty = fields.Integer('Life vests qty')
     remover_headsets_qty = fields.Integer('Headsets qty')
+    remover_tyler = fields.Boolean('Tyler')
+    remover_gss = fields.Boolean('GSS')
+    remover_cineflex = fields.Boolean('Cineflex')
+    remover_lidar_system = fields.Boolean('Lidar system')
 
     anotacion = fields.Text('Annotation')
+    calendar_event_id = fields.Many2one(comodel_name="calendar.event", string="Evento planificación")
 
     def _get_selected_items(self, mode):
         items = []
@@ -56,6 +65,14 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
                 items.append('{0} life vests'.format(self.instalar_life_vests_qty))
             if self.instalar_headsets_qty > 0:
                 items.append('{0} headsets'.format(self.instalar_headsets_qty))
+            if self.instalar_tyler:
+                items.append('Tyler')
+            if self.instalar_gss:
+                items.append('GSS')
+            if self.instalar_cineflex:
+                items.append('Cineflex')
+            if self.instalar_lidar_system:
+                items.append('Lidar system')
 
         if mode == 'remove':
             if self.remover_floats:
@@ -70,6 +87,14 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
                 items.append('{0} life vests'.format(self.remover_life_vests_qty))
             if self.remover_headsets_qty > 0:
                 items.append('{0} headsets'.format(self.remover_headsets_qty))
+            if self.remover_tyler:
+                items.append('Tyler')
+            if self.remover_gss:
+                items.append('GSS')
+            if self.remover_cineflex:
+                items.append('Cineflex')
+            if self.remover_lidar_system:
+                items.append('Lidar system')
         return items
 
     def _validate_hora(self):
@@ -114,8 +139,10 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
         'helicoptero_id', 'fecha', 'vuelo_id', 'hora_limite',
         'instalar_floats', 'instalar_dual_control', 'instalar_cargo_hook_mirror', 'instalar_life_raft',
         'instalar_life_vests_qty', 'instalar_headsets_qty',
+        'instalar_tyler', 'instalar_gss', 'instalar_cineflex', 'instalar_lidar_system',
         'remover_floats', 'remover_dual_control', 'remover_cargo_hook_mirror', 'remover_life_raft',
-        'remover_life_vests_qty', 'remover_headsets_qty'
+        'remover_life_vests_qty', 'remover_headsets_qty',
+        'remover_tyler', 'remover_gss', 'remover_cineflex', 'remover_lidar_system',
     )
     def _onchange_anotacion_operacional(self):
         self.anotacion = self._build_operational_annotation()
@@ -136,6 +163,30 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
             'anotacion': self.anotacion,
             'lugar': 'LEUL',
             'rol_informa': self.rol_informa,
+            'calendar_event_id': self.calendar_event_id.id if self.calendar_event_id else False,
+            'is_operational': True,
+            'flight_id': self.vuelo_id.id if self.vuelo_id else False,
+            'deadline_time': self.hora_limite,
+            'install_dual_control': self.instalar_dual_control,
+            'install_cargo_hook_mirror': self.instalar_cargo_hook_mirror,
+            'install_floats': self.instalar_floats,
+            'install_life_raft': self.instalar_life_raft,
+            'install_life_vests_qty': self.instalar_life_vests_qty,
+            'install_headsets_qty': self.instalar_headsets_qty,
+            'install_tyler': self.instalar_tyler,
+            'install_gss': self.instalar_gss,
+            'install_cineflex': self.instalar_cineflex,
+            'install_lidar_system': self.instalar_lidar_system,
+            'remove_dual_control': self.remover_dual_control,
+            'remove_cargo_hook_mirror': self.remover_cargo_hook_mirror,
+            'remove_floats': self.remover_floats,
+            'remove_life_raft': self.remover_life_raft,
+            'remove_life_vests_qty': self.remover_life_vests_qty,
+            'remove_headsets_qty': self.remover_headsets_qty,
+            'remove_tyler': self.remover_tyler,
+            'remove_gss': self.remover_gss,
+            'remove_cineflex': self.remover_cineflex,
+            'remove_lidar_system': self.remover_lidar_system,
         })
         return {
             'type': 'ir.actions.act_window',

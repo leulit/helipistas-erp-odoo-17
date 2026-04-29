@@ -446,6 +446,7 @@ class leulit_calendar_event(models.Model):
         string='Puede crear parte vuelo',
         compute='_compute_part_actions_visibility',
     )
+    anotaciones_ids = fields.One2many(comodel_name='leulit.anotacion_technical_log', inverse_name='calendar_event_id', string='Anotaciones')
 
     def _is_school_event_type(self):
         self.ensure_one()
@@ -602,6 +603,7 @@ class leulit_calendar_event(models.Model):
             'target': 'new',
             'context': {
                 'default_fecha': start_dt.date(),
-                'default_helicoptero_id': helicoptero_id
+                'default_helicoptero_id': helicoptero_id,
+                'default_calendar_event_id': self.id,
             }
         }

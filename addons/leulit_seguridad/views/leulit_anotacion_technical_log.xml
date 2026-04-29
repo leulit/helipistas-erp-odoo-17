@@ -50,7 +50,42 @@
                                 <field name="lugar" readonly="estado in ['pending', 'closed']"/>
                             </group>
                             <group colspan="2">
-                                <field name="anotacion" readonly="estado in ['pending', 'closed']" colspan="2"/>
+                                <field name="is_operational" readonly="estado in ['pending', 'closed']"/>
+                            </group>
+                            <group invisible="not is_operational" colspan="2">
+                                <group>
+                                    <field name="flight_id" readonly="estado in ['pending', 'closed']" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="deadline_time" readonly="estado in ['pending', 'closed']" placeholder="HH:MM"/>
+                                </group>
+                            </group>
+                            <group invisible="not is_operational" colspan="2">
+                                <group string="Install" readonly="estado in ['pending', 'closed']">
+                                    <field name="install_dual_control"/>
+                                    <field name="install_cargo_hook_mirror"/>
+                                    <field name="install_floats"/>
+                                    <field name="install_life_raft"/>
+                                    <field name="install_life_vests_qty"/>
+                                    <field name="install_headsets_qty"/>
+                                    <field name="install_tyler"/>
+                                    <field name="install_gss"/>
+                                    <field name="install_cineflex"/>
+                                    <field name="install_lidar_system"/>
+                                </group>
+                                <group string="Remove" readonly="estado in ['pending', 'closed']">
+                                    <field name="remove_dual_control"/>
+                                    <field name="remove_cargo_hook_mirror"/>
+                                    <field name="remove_floats"/>
+                                    <field name="remove_life_raft"/>
+                                    <field name="remove_life_vests_qty"/>
+                                    <field name="remove_headsets_qty"/>
+                                    <field name="remove_tyler"/>
+                                    <field name="remove_gss"/>
+                                    <field name="remove_cineflex"/>
+                                    <field name="remove_lidar_system"/>
+                                </group>
+                            </group>
+                            <group colspan="2">
+                                <field name="anotacion" readonly="estado in ['pending', 'closed'] or is_operational" colspan="2"/>
                             </group>
                         </group>
                         <group>

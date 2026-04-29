@@ -139,6 +139,19 @@
                     <page name="page_description" string="Descripción" >
                         <field name="description" placeholder="Añadir una descripción" nolabel="1"/>
                     </page>
+                    <page name="page_anotaciones" string="Anotaciones">
+                        <field name="anotaciones_ids" readonly="1">
+                            <tree create="false" delete="false" edit="false">
+                                <field name="codigo" readonly="1"/>
+                                <field name="fecha" readonly="1"/>
+                                <field name="helicoptero_id" readonly="1"/>
+                                <field name="rol_informa" readonly="1"/>
+                                <field name="estado" readonly="1"/>
+                                <field name="anotacion" readonly="1"/>
+                                <button name="edit_anotacion" type="object" string="Ver" icon="fa-external-link"/>
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
                 <xpath expr="//div[@invisible='not invalid_email_partner_ids']" position="after">
                     <field name="tipo_vuelo" invisible="1"/>
