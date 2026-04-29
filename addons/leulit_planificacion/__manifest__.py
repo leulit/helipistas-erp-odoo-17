@@ -9,6 +9,7 @@
     "depends": [
         "leulit",
         "leulit_taller",
+        "leulit_seguridad",
         "calendar",
         "leulit_tarea",
         "auditlog"
