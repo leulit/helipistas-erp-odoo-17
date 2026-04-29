@@ -111,17 +111,6 @@ class LeulitMeteoMetar(models.Model):
     elevation = fields.Float(string='Elevación (m)', digits=(7, 0),
                              readonly=True)
 
-    # Estación AEMET próxima — METAR sintético
-    raw_metar_est = fields.Text(
-        string='METAR Estación (sintético)', readonly=True,
-        help='METAR construido a partir de la observación horaria de la '
-             'estación AEMET más próxima. NO es un mensaje oficial.')
-    station_est_code = fields.Char(
-        string='Cód. Estación AEMET', readonly=True)
-    station_est_nombre = fields.Char(
-        string='Estación AEMET', readonly=True)
-    station_est_distancia_km = fields.Float(
-        string='Distancia Estación (km)', digits=(6, 1), readonly=True)
     ref_distancia_km = fields.Float(
         string='Distancia Ref. (km)', digits=(6, 1), readonly=True)
 
@@ -275,10 +264,6 @@ class LeulitMeteoMetar(models.Model):
             'latitud': data.get('latitude'),
             'longitud': data.get('longitude'),
             'elevation': data.get('elevation'),
-            'raw_metar_est': data.get('raw_metar_est'),
-            'station_est_code': data.get('station_est_code'),
-            'station_est_nombre': data.get('station_est_nombre'),
-            'station_est_distancia_km': data.get('station_est_distancia_km'),
             'ref_distancia_km': data.get('ref_distancia_km'),
         })
 

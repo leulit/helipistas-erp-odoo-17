@@ -17,6 +17,7 @@ Esquema normalizado que devuelve ``get_observation``:
         'usa_referencia': True,         # se sustituyó por aeródromo ref
         'ref_icao': 'LELL' | None,
         'ref_nombre': 'Sabadell' | None,
+        'ref_distancia_km': 56.3 | None,
         'fir_code': 'LECB' | None,
         'station_code': str | None,
         'station_name': str | None,
@@ -33,7 +34,7 @@ Esquema normalizado que devuelve ``get_observation``:
         'qnh': 1015.0 | None,                   # hPa
         'humidity': None, 'pressure': None,
         'precipitation': None, 'latitude': None,
-        'longitude': None, 'elevation': None,   # legacy, hoy None
+        'longitude': None, 'elevation': None,
     }
 """
 

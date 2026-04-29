@@ -5,22 +5,13 @@
         <field name="name">leulit.meteo.icao.reference.tree</field>
         <field name="model">leulit.meteo.icao.reference</field>
         <field name="arch" type="xml">
-            <tree string="Aeródromos de Referencia"
-                  decoration-info="not tiene_metar_propio"
-                  decoration-muted="auto_resolved">
+            <tree string="Aeródromos de Referencia">
                 <field name="icao"/>
                 <field name="nombre"/>
                 <field name="fir"/>
-                <field name="tiene_metar_propio" widget="boolean_toggle"/>
-                <field name="ref_icao"/>
-                <field name="ref_nombre" optional="hide"/>
-                <field name="ref_distancia_km" optional="show"/>
                 <field name="proveedor_oficial" widget="badge" optional="show"/>
                 <field name="elevacion_ft" optional="hide"/>
-                <field name="station_code" optional="show"/>
-                <field name="station_distancia_km" optional="hide"/>
                 <field name="proxima_actualizacion" optional="show"/>
-                <field name="auto_resolved" widget="boolean_toggle" readonly="1"/>
             </tree>
         </field>
     </record>
@@ -51,30 +42,13 @@
                     <group>
                         <group string="Identificación">
                             <field name="fir"/>
-                            <field name="tiene_metar_propio"/>
                             <field name="proveedor_oficial" readonly="1"/>
-                            <field name="auto_resolved" readonly="1"/>
                         </group>
                         <group string="Coordenadas">
                             <field name="latitud" readonly="1"/>
                             <field name="longitud" readonly="1"/>
                             <field name="elevacion_ft"/>
                             <field name="proxima_actualizacion" readonly="1"/>
-                        </group>
-                    </group>
-                    <group>
-                        <group string="Aeródromo de referencia"
-                               invisible="tiene_metar_propio">
-                            <field name="ref_icao"
-                                   required="not tiene_metar_propio"
-                                   style="text-transform:uppercase"/>
-                            <field name="ref_nombre"/>
-                            <field name="ref_distancia_km" readonly="1"/>
-                        </group>
-                        <group string="Estación AEMET (sintético)">
-                            <field name="station_code"/>
-                            <field name="station_nombre"/>
-                            <field name="station_distancia_km" readonly="1"/>
                         </group>
                     </group>
                     <group string="Notas">
@@ -93,13 +67,6 @@
                 <field name="icao"/>
                 <field name="nombre"/>
                 <field name="fir"/>
-                <field name="ref_icao"/>
-                <filter string="Con METAR propio" name="filter_propio"
-                        domain="[('tiene_metar_propio','=',True)]"/>
-                <filter string="Usa referencia" name="filter_referencia"
-                        domain="[('tiene_metar_propio','=',False)]"/>
-                <filter string="Auto-resueltos" name="filter_auto"
-                        domain="[('auto_resolved','=',True)]"/>
                 <separator/>
                 <filter string="FIR Madrid (LECM)" name="filter_lecm"
                         domain="[('fir','=','LECM')]"/>
@@ -110,8 +77,6 @@
                 <group expand="0" string="Agrupar por">
                     <filter string="FIR" name="group_fir"
                             context="{'group_by': 'fir'}"/>
-                    <filter string="Tiene METAR propio" name="group_metar"
-                            context="{'group_by': 'tiene_metar_propio'}"/>
                     <filter string="Proveedor" name="group_proveedor"
                             context="{'group_by': 'proveedor_oficial'}"/>
                 </group>
@@ -128,15 +93,13 @@
                ref="view_leulit_meteo_icao_reference_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Añade un aeródromo o helipuerto de referencia
+                Añade un aeródromo de referencia
             </p>
             <p>
-                Esta tabla se consulta cada vez que se pide un briefing
-                METAR/TAF/SIGMET. Permite asignar la FIR (LECM/LECB/GCCC)
-                y, opcionalmente, redirigir un punto sin METAR propio
-                (helipuerto) al aeródromo cercano que sí emita METAR.
-                Los registros marcados como "Auto-resuelto" fueron creados
-                automáticamente por el sistema al encontrar un OACI desconocido.
+                Esta tabla contiene los aeródromos con METAR/TAF oficiales.
+                Se consulta cada vez que se pide un briefing METAR/TAF/SIGMET.
+                Para un OACI desconocido, el sistema busca automáticamente
+                el aeródromo de referencia más próximo.
             </p>
         </field>
     </record>

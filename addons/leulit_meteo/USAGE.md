@@ -8,7 +8,7 @@ Manual práctico de uso del módulo `leulit_meteo`. Para instalación consulta `
 2. [Consultar clima en una ruta (polilínea)](#2-consultar-clima-en-una-ruta-polilínea)
 3. [Plantillas de rutas](#3-plantillas-de-rutas)
 4. [Reportes METAR](#4-reportes-metar)
-5. [Aeródromos de Referencia y auto-resolución](#5-aeródromos-de-referencia-y-auto-resolución)
+5. [Aeródromos de Referencia y resolución de OACIs desconocidos](#5-aeródromos-de-referencia-y-resolución-de-oaCIs-desconocidos)
 6. [Histórico automático de METAR](#6-histórico-automático-de-metar)
 7. [Sincronización de aeródromos desde aviationweather.gov](#7-sincronización-de-aeródromos-desde-aviationweathergov)
 8. [Añadir un nuevo proveedor](#8-añadir-un-nuevo-proveedor)
@@ -64,14 +64,14 @@ Menú: **Meteorología → Reportes METAR**. Modelo `leulit.meteo.metar` con arq
 3. Escribe un **OACI** (4 letras, ej. `LEMD`, `LELL`, `GCLP`).
 4. Pulsa **Obtener briefing** (`action_obtener_briefing`).
 
-El sistema consulta la tabla **Aeródromos de Referencia** para determinar la FIR. Si el OACI no está registrado, lo **auto-resuelve** consultando OpenAIP y CheckWX (ver sección 5).
+El sistema consulta la tabla **Aeródromos de Referencia** para determinar la FIR. Si el OACI no está registrado, el sistema obtiene sus coordenadas (OpenAIP o CheckWX) y localiza el aeródromo más cercano de la tabla sin crear ningún registro nuevo (ver sección 5).
 
 El registro se rellena con:
 - **RAW intacto**: `raw_metar`, `raw_taf`, `raw_sigmet` — texto oficial de AEMET, sin modificar.
 - **Campos decodificados** (best-effort): `observation_time`, `temperatura`, `dewpoint`, `wind_direction`, `wind_speed_kt`, `wind_gust_kt`, `visibility_m`, `qnh`, `edad_datos_minutos`, `estado_datos`.
-- **Metadatos de resolución**: `fir_code`, `usa_referencia`, `ref_icao`, `ref_nombre`, `station_name`.
+- **Metadatos de resolución**: `fir_code`, `usa_referencia`, `station_name`.
 
-Si el OACI es un helipuerto sin METAR propio y está dado de alta con `tiene_metar_propio = False` en **Aeródromos de Referencia**, se muestra un aviso informativo indicando el aeródromo de referencia usado.
+Si el OACI no tiene METAR propio (helipuerto, campo sin servicio MET), se muestra un aviso informativo indicando el aeródromo de referencia usado y su distancia.
 
 **Notas del proveedor AEMET**:
 
@@ -79,11 +79,11 @@ Si el OACI es un helipuerto sin METAR propio y está dado de alta con `tiene_met
 - El SIGMET se obtiene por FIR (LECM/LECB/GCCC); si el OACI no está en la tabla de referencia, el SIGMET no estará disponible.
 - Requiere `leulit_meteo.aemet_api_key` configurado en parámetros del sistema.
 
-## 5. Aeródromos de Referencia y auto-resolución
+## 5. Aeródromos de Referencia y resolución de OACIs desconocidos
 
 Menú: **Meteorología → Aeródromos de Referencia** (solo administradores). Modelo `leulit.meteo.icao.reference`.
 
-Cada registro mapea un OACI a su FIR y, opcionalmente, al aeródromo cercano que emite METAR cuando el punto no tiene servicio MET propio (helipuertos).
+La tabla contiene únicamente aeródromos que emiten METAR/TAF real. Helipuertos y puntos sin servicio MET no se incluyen en esta tabla; se resuelven en tiempo real cuando se solicita un briefing para ellos (ver más abajo).
 
 **Campos principales**:
 
@@ -91,30 +91,24 @@ Cada registro mapea un OACI a su FIR y, opcionalmente, al aeródromo cercano que
 |-------|-------------|
 | `icao` | Código OACI (4 letras) |
 | `fir` | FIR asignada: LECM, LECB o GCCC |
-| `tiene_metar_propio` | Si está desmarcado, se usa `ref_icao` para METAR/TAF |
-| `ref_icao` | OACI del aeródromo con METAR al que redirigir |
 | `proveedor_oficial` | Fuente METAR: AEMET, CheckWX o Ninguno |
-| `latitud` / `longitud` | Coordenadas (rellenadas en auto-resolución) |
-| `station_code` | Código de estación AEMET para METAR sintético |
-| `auto_resolved` | `True` si el sistema lo creó automáticamente |
+| `latitud` / `longitud` | Coordenadas del aeródromo |
 | `proxima_actualizacion` | Momento esperado del siguiente METAR (usado por el cron) |
 
-**Auto-resolución de OACIs desconocidos**:
+**Resolución en tiempo real de OACIs desconocidos (`_resolve_nearest`)**:
 
-Cuando se pide un briefing para un OACI que no está en la tabla, el sistema ejecuta `_auto_resolve()` automáticamente:
+Cuando se pide un briefing para un OACI que no está en la tabla, el sistema ejecuta `_resolve_nearest()` automáticamente. No crea ningún registro nuevo:
 
-1. Consulta **OpenAIP** para obtener coordenadas y nombre oficial.
-2. Consulta **CheckWX** para verificar si el OACI tiene METAR propio.
-3. Si no tiene METAR propio, busca el aeródromo con METAR más cercano en un radio de 150 km.
-4. Asigna la FIR por heurística de coordenadas (lat ≤ 30 → GCCC; lon ≥ -1.5 y lat ≥ 40 → LECB; resto → LECM).
-5. Busca la estación AEMET más próxima (para METAR sintético).
-6. Crea el registro en la tabla con `auto_resolved = True`.
+1. Consulta **OpenAIP** para obtener las coordenadas del OACI desconocido (fallback: **CheckWX**).
+2. Calcula la distancia haversine a todos los aeródromos de la tabla de referencia.
+3. Selecciona el aeródromo más cercano y obtiene su METAR/TAF.
+4. Devuelve el resultado con `usa_referencia=True` e informa al usuario del aeródromo usado.
 
-Los registros auto-resueltos aparecen atenuados en la lista. Puedes editarlos manualmente para corregir o ampliar la información.
+Si no hay coordenadas disponibles (sin OpenAIP ni CheckWX configurados), el briefing falla con un aviso al usuario.
 
 **Añadir un aeródromo manualmente**:
 
-Ir a **Meteorología → Aeródromos de Referencia** y crear un registro. Indicar FIR (LECM/LECB/GCCC) y, si el punto no emite METAR propio, desmarcar `tiene_metar_propio` y rellenar `ref_icao` con el OACI del aeródromo cercano. No hay que tocar ningún fichero Python.
+Ir a **Meteorología → Aeródromos de Referencia** y crear un registro indicando FIR (LECM/LECB/GCCC) y coordenadas. Solo añadir aeródromos que publiquen METAR o TAF propios. No hay que tocar ningún fichero Python.
 
 ## 6. Histórico automático de METAR
 
@@ -141,7 +135,7 @@ El cron `cron_actualizar_metar_referencia` se ejecuta cada 10 minutos y descarga
 | `observation_time` | Hora UTC de la observación METAR |
 | `fecha_obtencion` | Momento en que el cron lo descargó |
 | `fuente_metar` / `fuente_taf` | Proveedor que entregó el dato (aemet, checkwx, ninguno) |
-| `usa_referencia` | `True` si los datos vienen del `ref_icao` |
+| `usa_referencia` | `True` si los datos vienen de un aeródromo de referencia cercano |
 
 ## 7. Sincronización de aeródromos desde aviationweather.gov
 
@@ -151,10 +145,9 @@ El proceso:
 
 1. Consulta aviationweather.gov (NOAA/FAA) para obtener todas las estaciones LE* y GC* que declaran capacidad METAR o TAF. Intenta primero el endpoint ADDS clásico (XML con `site_type`); si falla (desde 2025 devuelve HTTP 403), cae al API nuevo por bounding box `(minLat,minLon,maxLat,maxLon)` sobre Península y Canarias.
 2. Filtra aeródromos con prefijo LE* (España peninsular + Baleares) o GC* (Canarias).
-3. **Crea** registros nuevos con `tiene_metar_propio = True` y `proxima_actualizacion = None` (el cron los procesará en su siguiente ejecución).
-4. **Actualiza** nombre y coordenadas de los ya existentes con `tiene_metar_propio = True`.
-5. **No toca** registros con `tiene_metar_propio = False` (helipuertos y refs manuales).
-6. **Elimina** los registros con `tiene_metar_propio = True` que ya no aparecen en la fuente.
+3. **Crea** registros nuevos con `proxima_actualizacion = None` (el cron los procesará en su siguiente ejecución).
+4. **Actualiza** nombre y coordenadas de los ya existentes.
+5. **Elimina** los registros que ya no aparecen en la fuente.
 
 Resultado: la notificación muestra el número de aeródromos añadidos, actualizados y eliminados.
 
@@ -171,10 +164,10 @@ class AviationWeatherMetarProvider(MetarProvider):
     code = 'aviationweather'
     label = 'Aviation Weather (NOAA)'
 
-    def get_observation(self, env, icao_code=None, station_code=None):
+    def get_observation(self, env, icao_code=None):
         # Devolver el dict normalizado (ver leulit_meteo_metar_provider.py):
-        # provider, icao, icao_consultar, usa_referencia, ref_icao, ref_nombre,
-        # fir_code, station_code, station_name,
+        # provider, icao, icao_consultar, usa_referencia,
+        # fir_code, station_name,
         # raw_metar, raw_taf, raw_sigmet,
         # observation_time, temperatura, dewpoint, wind_direction, wind_speed_kt,
         # wind_gust_kt, visibility_m, qnh,
@@ -193,9 +186,8 @@ Método opcional: `validate(env)` — comprueba que el proveedor está bien conf
 
 **En `leulit.meteo.icao.reference`**:
 
-- Filtros: *Con METAR propio*, *Usa referencia*, *Auto-resueltos*.
 - Filtros por FIR: *FIR Madrid (LECM)*, *FIR Barcelona (LECB)*, *FIR Canarias (GCCC)*.
-- Agrupar por: **FIR**, **Tiene METAR propio**, **Proveedor**.
+- Agrupar por: **FIR**, **Proveedor**.
 
 **En `leulit.meteo.consulta`**:
 
@@ -224,7 +216,7 @@ data = self.env['leulit.meteo.metar'].obtener_metar(
     provider='aemet',
 )
 # data -> {'provider', 'icao', 'icao_consultar', 'usa_referencia',
-#          'ref_icao', 'ref_nombre', 'fir_code', 'station_name',
+#          'fir_code', 'station_name',
 #          'raw_metar', 'raw_taf', 'raw_sigmet',
 #          'observation_time', 'temperatura', 'dewpoint',
 #          'wind_speed_kt', 'wind_gust_kt', 'wind_direction',
@@ -246,7 +238,7 @@ record = self.env['leulit.meteo.metar'].browse(data['record_id'])
 
 ```python
 result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
-# result -> {'record_id', 'raw_metar', 'raw_taf', 'raw_metar_est',
+# result -> {'record_id', 'raw_metar', 'raw_taf',
 #            'historico', 'observation_time', 'provider',
 #            'metar_icao', 'usa_referencia'}
 # → None si no hay datos disponibles
@@ -352,7 +344,7 @@ Para puntos sin estación AEMET (ruta libre, escuela en zona rural) usa `consult
 - **Logging**: usa `_logger` (`logging.getLogger(__name__)`) para registrar errores y respuestas inesperadas; no silencies excepciones.
 - **API keys**: lee siempre desde `ir.config_parameter` (`leulit_meteo.aemet_api_key`, `leulit_meteo.checkwx_api_key`, `leulit_meteo.openaip_api_key`, `leulit_meteo.windy_api_key`), nunca las hardcodees.
 - **RAW prevalece**: los campos decodificados (`temperatura`, `wind_speed_kt`, etc.) son auxiliares; ante cualquier duda, el texto `raw_metar` / `raw_taf` / `raw_sigmet` es la fuente de verdad (válido a efectos legales/AESA).
-- **Aeródromos de Referencia**: para que un helipuerto obtenga METAR y SIGMET, debe estar dado de alta en `leulit.meteo.icao.reference` con su FIR correcta y, si no emite METAR propio, con un `ref_icao` al aeródromo cercano. Si no está dado de alta, el sistema intentará auto-resolverlo (necesita OpenAIP y/o CheckWX key).
+- **Aeródromos de Referencia**: la tabla solo contiene aeródromos con METAR/TAF real. Para OACIs sin servicio MET (helipuertos, campos rurales), el sistema localiza automáticamente el aeródromo más cercano de la tabla usando haversine, sin necesidad de configurar nada manualmente. Para que este mecanismo funcione se necesita OpenAIP y/o CheckWX key configuradas.
 
 ---
 

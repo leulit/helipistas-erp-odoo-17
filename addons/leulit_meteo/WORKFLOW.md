@@ -55,10 +55,10 @@ El subsistema METAR está diseñado para que cambiar o añadir proveedores no to
 ┌──────────────────────────────────────────────────────────────┐
 │  CAPA 1b — Datos de referencia y histórico                   │
 │  Tabla `leulit.meteo.icao.reference`                         │
-│  Mapeo OACI ↔ FIR; opcional redirección de helipuertos       │
-│  (tiene_metar_propio=False → ref_icao) al aeródromo          │
-│  más cercano con METAR. Auto-resolución de OACIs             │
-│  desconocidos vía _auto_resolve() (OpenAIP + CheckWX).       │
+│  Solo aeródromos con METAR/TAF real. Mapeo OACI ↔ FIR.      │
+│  Para OACIs desconocidos (no en tabla), `_resolve_nearest()` │
+│  obtiene coordenadas vía OpenAIP/CheckWX y encuentra el      │
+│  aeródromo más cercano por haversine. Sin crear registros.   │
 │  El proveedor la consulta vía                                │
 │  `env['leulit.meteo.icao.reference'].resolve(icao)`.         │
 │                                                              │
@@ -74,8 +74,8 @@ El subsistema METAR está diseñado para que cambiar o añadir proveedores no to
 │    · AemetMetarProvider     (code='aemet')                   │
 │    · (futuros: Aviation Weather, etc.)                       │
 │  Cada proveedor devuelve el esquema normalizado:             │
-│  provider, icao, icao_consultar, usa_referencia, ref_icao,   │
-│  ref_nombre, fir_code, station_name,                         │
+│  provider, icao, icao_consultar, usa_referencia,             │
+│  fir_code, station_name,                                     │
 │  raw_metar, raw_taf, raw_sigmet,                             │
 │  observation_time (parseo best-effort via capa 2b),          │
 │  temperatura, dewpoint, wind_*, visibility_m, qnh.           │
@@ -95,8 +95,8 @@ El subsistema METAR está diseñado para que cambiar o añadir proveedores no to
 │  CAPA 3 — Clientes HTTP                                      │
 │  Clases que conocen el detalle de cada API REST              │
 │    · AemetOpenDataService   (usado por AemetMetarProvider)   │
-│    · CheckWXService         (fallback METAR + auto-resolve)  │
-│    · OpenAIPService         (coordenadas en auto-resolve)    │
+│    · CheckWXService         (fallback coordenadas en _resolve_nearest)  │
+│    · OpenAIPService         (coordenadas en _resolve_nearest)           │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -195,20 +195,16 @@ AemetMetarProvider.get_observation(env, icao_code='LEUL')
    │
    ▼
 leulit.meteo.icao.reference.resolve('LEUL')
-   ├─ Caso A: OACI encontrado en tabla
-   │     → icao_consultar='LELL', fir='LECB', usa_referencia=True, ref_nombre='Sabadell'
+   ├─ Caso A: OACI encontrado en tabla (tiene METAR propio)
+   │     → icao_consultar='LEUL', fir='LECB', usa_referencia=False
    │
-   └─ Caso B: OACI NO encontrado en tabla → _auto_resolve('LEUL')
+   └─ Caso B: OACI NO encontrado en tabla → _resolve_nearest('LEUL')
             OpenAIPService.get_airport_by_icao('LEUL', openaip_key)
-               → lat, lon, nombre oficial
-            CheckWXService.get_station('LEUL', checkwx_key)
-               → ¿tiene METAR propio?
-            Si no tiene METAR:
-               CheckWXService.get_nearest_metar(lat, lon, 81nm, checkwx_key)
-               → ref_icao, ref_nombre, ref_distancia_km
-            AemetOpenDataService.get_inventario_estaciones(aemet_key)
-               → station_code, station_nombre (estación AEMET más próxima)
-            → Crea registro con auto_resolved=True, devuelve resolución
+               → lat, lon  (fallback: CheckWXService.get_station si OpenAIP falla)
+            Calcula distancia haversine a todos los aeródromos de la tabla
+            → selecciona el más cercano (ej. 'LELL' a 12 km)
+            → icao_consultar='LELL', fir='LECB', usa_referencia=True
+            → NO crea ningún registro nuevo
    │
    ▼
 ── RAMA PRINCIPAL: AEMET OpenData ──────────────────────────────────────────
@@ -228,27 +224,18 @@ leulit.meteo.icao.reference.resolve('LEUL')
    │
    ├─ SÍ ─────────────────────────────────────────────────────────────────►─┐
    │                                                                         │
-   └─ NO → FALLBACK 1: CheckWX ─────────────────────────────────────────────┤
+   └─ NO → FALLBACK: CheckWX ───────────────────────────────────────────────┤
               CheckWXService.get_metar(icao_consultar)                       │
               CheckWXService.get_taf(icao_consultar)                         │
               GET https://api.checkwx.com/metar/{OACI}?token=<key>          │
               GET https://api.checkwx.com/taf/{OACI}?token=<key>            │
-                                                                             │
-              ¿hay station_code en el registro?                              │
-                 SÍ → FALLBACK 2: METAR sintético de estación AEMET ────────┤
-                        get_observaciones_estacion(station_code)             │
-                        latest_observation() → observación más reciente      │
-                        build_metar_synthetic() → raw_metar_est              │
-                        (texto NO oficial, identificado como "SYN")          │
-                 NO → sin datos adicionales                                  │
                                                                              ▼
                                                               ┌──────────────────────────┐
                                                               │ dict normalizado del      │
                                                               │ proveedor:                │
                                                               │   raw_metar, raw_taf,     │
-                                                              │   raw_sigmet, raw_metar_est│
+                                                              │   raw_sigmet              │
                                                               │   fir_code, usa_referencia│
-                                                              │   ref_icao, ref_nombre    │
                                                               │   station_name            │
                                                               └──────────────┬───────────┘
    │                                                                         │
@@ -263,8 +250,7 @@ parse_metar(raw_metar)   (best-effort, nunca altera el RAW)
 _write_observacion(data)
    Escribe en el registro leulit.meteo.metar:
    · raw_metar, raw_taf, raw_sigmet   (textos oficiales, sin alterar — válidos AESA)
-   · raw_metar_est                    (sintético AEMET, si disponible)
-   · fir_code, usa_referencia, ref_icao, ref_nombre, station_name
+   · fir_code, usa_referencia, station_name
    · observation_time, temperatura, dewpoint, wind_*, visibility_m, qnh
    · fecha_consulta = now()
    [campos computados: edad_datos_minutos, estado_datos se recalculan solos]
@@ -274,7 +260,7 @@ Notificación de éxito + recarga del formulario
 Vista: aviso informativo visible si usa_referencia=True
 ```
 
-**Campos leídos:** `icao_code`, `provider`, `station_code` (del registro); `leulit_meteo.aemet_api_key`, `leulit_meteo.checkwx_api_key`, `leulit_meteo.openaip_api_key` (de `ir.config_parameter`); tabla `leulit.meteo.icao.reference` (tiene_metar_propio, ref_icao, fir, station_code).
+**Campos leídos:** `icao_code`, `provider` (del registro); `leulit_meteo.aemet_api_key`, `leulit_meteo.checkwx_api_key`, `leulit_meteo.openaip_api_key` (de `ir.config_parameter`); tabla `leulit.meteo.icao.reference` (icao, fir, latitud, longitud).
 
 **Campos escritos:** todos los listados en `_write_observacion` arriba. El RAW prevalece siempre; los campos numéricos son auxiliares.
 
@@ -314,7 +300,7 @@ Para cada ref en la lista:
         raw_metar, raw_taf, raw_sigmet
         observation_time, fecha_obtencion
         fuente_metar, fuente_taf (aemet / checkwx / ninguno)
-        usa_referencia, ref_icao, ref_nombre, proveedor
+        usa_referencia, proveedor
       ref.proxima_actualizacion = obs_time + 35 min
       log info
    │
@@ -360,14 +346,13 @@ AviationWeatherService.get_stations_spain()
 Para cada estación española con METAR o TAF:
    ├─ Asigna FIR por heurística de coordenadas
    ├─ ¿Existe registro con ese OACI?
-   │     SÍ y tiene_metar_propio=True  → actualiza nombre, coords, fir
-   │     SÍ y tiene_metar_propio=False → NO toca (helipuerto / ref manual)
-   │     NO                             → crea registro nuevo
-   │                                      (proxima_actualizacion=None,
-   │                                       el cron lo procesa en su siguiente ejecución)
+   │     SÍ → actualiza nombre, coords, fir
+   │     NO → crea registro nuevo
+   │           (proxima_actualizacion=None,
+   │            el cron lo procesa en su siguiente ejecución)
    │
    ▼
-Elimina registros con tiene_metar_propio=True que ya no aparecen en la fuente
+Elimina registros que ya no aparecen en la fuente
    │
    ▼
 Notificación: "X añadidos · Y actualizados · Z eliminados"
@@ -395,7 +380,7 @@ action_obtener_meteo_salida()
         self.env['leulit.meteo.metar'].briefing_oaci(icao)
         → busca/crea registro leulit.meteo.metar para ese OACI
         → ejecuta el flujo completo de la sección 2.4
-        → devuelve: {record_id, raw_metar, raw_taf, raw_metar_est,
+        → devuelve: {record_id, raw_metar, raw_taf,
                       historico, observation_time,
                       provider, metar_icao, usa_referencia}
 
@@ -477,8 +462,8 @@ Ver [INTEGRACION_VUELO.md](INTEGRACION_VUELO.md) para la implementación complet
 | `OpenMeteoService` | `https://api.open-meteo.com/v1/forecast` | GET | Sin API key |
 | `WindyService` | `https://api.windy.com/api/point-forecast/v2` | POST | Requiere windy_api_key |
 | `AemetOpenDataService` | `https://opendata.aemet.es/opendata/api/...` (+ URL `datos`) | GET×2 | Patrón 2 llamadas; requiere aemet_api_key |
-| `CheckWXService` | `https://api.checkwx.com` | GET | METAR/TAF/station + nearest; requiere checkwx_api_key. Solo auto-resolución. |
-| `OpenAIPService` | `https://api.openaip.net/api` | GET | Coordenadas y nombre por OACI; requiere openaip_api_key |
+| `CheckWXService` | `https://api.checkwx.com` | GET | Coordenadas por OACI (fallback en `_resolve_nearest`); requiere checkwx_api_key. |
+| `OpenAIPService` | `https://api.openaip.net/api` | GET | Coordenadas por OACI (fuente primaria en `_resolve_nearest`); requiere openaip_api_key. |
 | `AviationWeatherService` | `https://aviationweather.gov` (ADDS + `/api/data`) | GET | Sin API key. METAR/TAF globales y listado de estaciones LE*/GC*. Fuente principal de sincronización. |
 
 ### Modelos Odoo
@@ -487,7 +472,7 @@ Ver [INTEGRACION_VUELO.md](INTEGRACION_VUELO.md) para la implementación complet
 - `leulit.meteo.consulta.punto` — waypoint individual con sus datos meteo.
 - `leulit.meteo.ruta.template` + `leulit.meteo.ruta.template.punto` — plantillas reutilizables.
 - `leulit.meteo.metar` — reporte METAR/TAF/SIGMET independiente de proveedor (ver 2.4). Campo `provider` selecciona la fuente; hoy solo `aemet`.
-- `leulit.meteo.icao.reference` — tabla de aeródromos OACI ↔ FIR; permite redirigir helipuertos sin METAR propio al aeródromo de referencia más cercano. Soporta auto-resolución de OACIs desconocidos y cron de actualización.
+- `leulit.meteo.icao.reference` — tabla de aeródromos OACI ↔ FIR (solo aeródromos con METAR/TAF real). Para OACIs sin METAR propio, `_resolve_nearest()` localiza el aeródromo más cercano en tiempo real sin crear registros. Soporta cron de actualización automática.
 - `leulit.meteo.historico` — histórico de METAR/TAF descargados automáticamente por el cron para cada aeródromo de referencia.
 
 ---
@@ -517,14 +502,14 @@ Confusión habitual: ambos parecen "el mapa", pero hacen cosas opuestas.
 | Windy Embed (iframe) | `https://embed.windy.com/embed2.html` | No | Windyty SE | Visualización rica con overlay |
 | AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | AEMET (España) | Mensajes oficiales METAR/TAF/SIGMET. RAW intacto. |
 | Aviation Weather | `https://aviationweather.gov` (ADDS + `/api/data`) | No | NOAA/FAA | Listado de estaciones LE*/GC* con METAR/TAF (sincronización). METAR/TAF globales. |
-| CheckWX | `https://api.checkwx.com` | Sí | CheckWX | Auto-resolución de OACIs desconocidos: verificación METAR propio y búsqueda del aeródromo más cercano. |
-| OpenAIP | `https://api.openaip.net/api` | Sí | OpenAIP | Coordenadas y nombre oficial de aeródromo por OACI (auto-resolución). |
+| CheckWX | `https://api.checkwx.com` | Sí | CheckWX | Coordenadas por OACI (fallback en `_resolve_nearest` para OACIs desconocidos). |
+| OpenAIP | `https://api.openaip.net/api` | Sí | OpenAIP | Coordenadas por OACI (fuente primaria en `_resolve_nearest` para OACIs desconocidos). |
 
 Notas:
 
 - **AEMET OpenData** usa un patrón de dos llamadas: la primera devuelve un JSON con un campo `datos` que es a su vez una URL temporal donde están los datos reales.
 - **aviationweather.gov** es la fuente principal de sincronización de la tabla de aeródromos. No requiere API key. Usa el endpoint ADDS clásico (XML `station2_0`) con fallback al API nuevo por bounding box.
-- **CheckWX** y **OpenAIP** solo se usan en auto-resolución de OACIs desconocidos. No son necesarias para el flujo básico AEMET ni para la sincronización de aeródromos.
+- **CheckWX** y **OpenAIP** solo se usan en `_resolve_nearest()` para OACIs desconocidos (obtención de coordenadas). No son necesarias para el flujo básico AEMET ni para la sincronización de aeródromos.
 
 ---
 
@@ -540,13 +525,13 @@ Sí. AEMET OpenData publica mensajes oficiales METAR, TAF y SIGMET por OACI y FI
 No. El embed (`embed.windy.com/embed2.html`) es público. La API key de Windy solo se requiere para la API REST (`api.windy.com/api/point-forecast/v2`).
 
 **¿Qué pasa si AEMET no devuelve datos para un OACI?**
-Se intenta CheckWX como fallback (FALLBACK 1). Si hay `station_code` en el registro de referencia, se genera un METAR sintético de la estación AEMET más próxima (FALLBACK 2, texto NO oficial).
+Se intenta CheckWX como fallback. Si tampoco hay datos disponibles, el briefing devuelve `None` y se muestra un aviso al usuario.
 
 **¿Qué pasa si el OACI no está en la tabla de Aeródromos de Referencia?**
-Si están configuradas las API keys de OpenAIP y/o CheckWX, el sistema auto-resuelve el OACI creando automáticamente el registro. Si no hay keys disponibles, el briefing fallará con un aviso al usuario.
+El sistema ejecuta `_resolve_nearest()`: obtiene las coordenadas del OACI vía OpenAIP (o CheckWX como fallback), calcula la distancia haversine a todos los aeródromos de la tabla y devuelve el METAR/TAF del más cercano. No se crea ningún registro nuevo. Si no hay API keys disponibles para obtener las coordenadas, el briefing falla con un aviso al usuario.
 
-**¿Cómo añado un helipuerto o aeródromo nuevo?**
-Ir a **Meteorología → Aeródromos de Referencia** (solo administradores) y crear un registro. Indicar FIR (LECM/LECB/GCCC) y, si el punto no emite METAR propio, desmarcar `tiene_metar_propio` y rellenar `ref_icao` con el OACI del aeródromo cercano. No hay que tocar ningún fichero Python. Alternativamente, el sistema lo crea automáticamente si OpenAIP/CheckWX están configurados.
+**¿Cómo añado un aeródromo a la tabla de referencia?**
+Ir a **Meteorología → Aeródromos de Referencia** (solo administradores) y crear un registro. Solo añadir aeródromos que publiquen METAR o TAF propios. Indicar FIR (LECM/LECB/GCCC) y coordenadas. Para helipuertos y puntos sin servicio MET no es necesario añadir ningún registro: el sistema los resuelve automáticamente en tiempo real.
 
 **¿Cómo cambio de proveedor de METAR?**
 Selecciona otro valor en el campo **Proveedor** del registro `leulit.meteo.metar`. Para añadir un proveedor nuevo, crea una subclase de `MetarProvider` decorada con `@register_provider` e impórtala en `models/__init__.py`. El modelo, las vistas y el menú no necesitan cambios: el nuevo `code` aparece automáticamente en el selector.

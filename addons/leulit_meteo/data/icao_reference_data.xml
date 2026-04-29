@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
     <!--
-        Aeródromos / helipuertos de referencia.
-        Solo incluir puntos que necesiten configuración manual:
-        helipuertos y aeródromos sin METAR propio (tiene_metar_propio=False).
-        El resto se auto-resuelve via OpenAIP + CheckWX + AEMET en la primera consulta.
+        Aeródromos de referencia con METAR/TAF oficiales.
+        La tabla se sincroniza desde CheckWX o aviationweather.gov.
+        Para un OACI desconocido el sistema busca automáticamente
+        el aeródromo de referencia más próximo.
     -->
 
 </odoo>
