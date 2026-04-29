@@ -12,10 +12,14 @@ una tabla; ante duda, prevalece el RAW.
 
 import logging
 
+import pytz
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from .leulit_meteo_metar_provider import get_provider, provider_selection
+
+_TZ_MADRID = 'Europe/Madrid'
 
 _logger = logging.getLogger(__name__)
 
@@ -124,11 +128,20 @@ class LeulitMeteoMetar(models.Model):
     # Frescura de datos (computada)
     edad_datos_minutos = fields.Integer(
         string='Edad de datos (min)', compute='_compute_edad_datos')
+    edad_datos = fields.Char(
+        string='Actualización', compute='_compute_edad_datos',
+        help='Tiempo transcurrido desde la observación.')
     estado_datos = fields.Selection(
         [('actual', 'Actual (< 90 min)'),
          ('reciente', 'Reciente (90-180 min)'),
          ('antiguo', 'Antiguo (> 180 min)')],
         string='Estado de datos', compute='_compute_edad_datos', store=True)
+    observation_time_local = fields.Char(
+        string='Observación (Madrid)', compute='_compute_tiempos_local',
+        help='Hora de observación en hora local de Madrid.')
+    fecha_consulta_local = fields.Char(
+        string='Consulta (Madrid)', compute='_compute_tiempos_local',
+        help='Fecha de consulta en hora local de Madrid.')
 
     display_name = fields.Char(compute='_compute_display_name', store=False)
 
@@ -152,6 +165,14 @@ class LeulitMeteoMetar(models.Model):
                 minutos = int(
                     (ahora - record.observation_time).total_seconds() / 60)
                 record.edad_datos_minutos = minutos
+                if minutos < 1:
+                    record.edad_datos = 'Ahora mismo'
+                elif minutos < 60:
+                    record.edad_datos = f'Hace {minutos} min'
+                else:
+                    horas = minutos // 60
+                    mins = minutos % 60
+                    record.edad_datos = f'Hace {horas}h {mins:02d}min' if mins else f'Hace {horas}h'
                 if minutos < 90:
                     record.estado_datos = 'actual'
                 elif minutos < 180:
@@ -160,7 +181,23 @@ class LeulitMeteoMetar(models.Model):
                     record.estado_datos = 'antiguo'
             else:
                 record.edad_datos_minutos = 0
+                record.edad_datos = False
                 record.estado_datos = False
+
+    @api.depends('observation_time', 'fecha_consulta')
+    def _compute_tiempos_local(self):
+        tz = pytz.timezone(_TZ_MADRID)
+        for rec in self:
+            if rec.observation_time:
+                dt = rec.observation_time.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.observation_time_local = dt.strftime('%d/%m/%Y %H:%M %Z')
+            else:
+                rec.observation_time_local = False
+            if rec.fecha_consulta:
+                dt = rec.fecha_consulta.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.fecha_consulta_local = dt.strftime('%d/%m/%Y %H:%M %Z')
+            else:
+                rec.fecha_consulta_local = False
 
     @api.depends('usa_referencia', 'ref_icao', 'ref_nombre', 'icao_code')
     def _compute_aviso_referencia(self):

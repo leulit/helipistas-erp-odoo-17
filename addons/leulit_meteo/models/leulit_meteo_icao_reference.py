@@ -63,6 +63,10 @@ class LeulitMeteoIcaoReference(models.Model):
     historico_count = fields.Integer(
         'Registros históricos', compute='_compute_historico_count')
 
+    historico_ids = fields.One2many(
+        'leulit.meteo.historico', 'icao_reference_id',
+        string='Histórico METAR/TAF')
+
     _sql_constraints = [
         ('icao_uniq', 'UNIQUE(icao)', 'Ya existe un mapeo para este OACI.'),
     ]

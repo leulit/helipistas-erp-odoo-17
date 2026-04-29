@@ -10,8 +10,8 @@
                 <field name="nombre"/>
                 <field name="fir"/>
                 <field name="proveedor_oficial" widget="badge" optional="show"/>
-                <field name="elevacion_ft" optional="hide"/>
                 <field name="proxima_actualizacion" optional="show"/>
+                <field name="elevacion_ft" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -51,9 +51,25 @@
                             <field name="proxima_actualizacion" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Notas">
-                        <field name="notas" nolabel="1"/>
-                    </group>
+                    <notebook>
+                        <page string="METAR / TAF" name="metar_taf">
+                            <field name="historico_ids" nolabel="1" readonly="1">
+                                <tree limit="5" create="0" delete="0" editable="0"
+                                      decoration-muted="not raw_metar">
+                                    <field name="observation_time" string="Obs. (UTC)"/>
+                                    <field name="observation_time_local" string="Obs. (Madrid)"/>
+                                    <field name="edad_datos" string="Actualización"/>
+                                    <field name="raw_metar" string="METAR"/>
+                                    <field name="raw_taf" string="TAF" optional="show"/>
+                                    <field name="fuente_metar" string="Fuente" optional="show"/>
+                                    <field name="fecha_obtencion" string="Obtenido (UTC)" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notas" name="notas">
+                            <field name="notas" nolabel="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

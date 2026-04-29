@@ -20,7 +20,7 @@
                 <field name="fir_code" optional="show"/>
                 <field name="station_name"/>
                 <field name="observation_time"/>
-                <field name="edad_datos_minutos" optional="show"/>
+                <field name="edad_datos" optional="show"/>
                 <field name="estado_datos" widget="badge"
                        decoration-success="estado_datos == 'actual'"
                        decoration-warning="estado_datos == 'reciente'"
@@ -92,9 +92,11 @@
                                    invisible="not usa_referencia"/>
                         </group>
                         <group string="Tiempos">
-                            <field name="observation_time"/>
-                            <field name="edad_datos_minutos"/>
-                            <field name="fecha_consulta"/>
+                            <field name="observation_time" string="Observación (UTC)"/>
+                            <field name="observation_time_local" string="Observación (Madrid)" readonly="1"/>
+                            <field name="edad_datos" readonly="1"/>
+                            <field name="fecha_consulta" string="Consulta (UTC)"/>
+                            <field name="fecha_consulta_local" string="Consulta (Madrid)" readonly="1"/>
                             <field name="user_id"/>
                         </group>
                     </group>

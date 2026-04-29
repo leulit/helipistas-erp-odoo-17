@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
 
+import pytz
+
 from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
+
+_TZ_MADRID = 'Europe/Madrid'
 
 
 class LeulitMeteoHistorico(models.Model):
@@ -47,6 +51,40 @@ class LeulitMeteoHistorico(models.Model):
     ref_icao = fields.Char('OACI Referencia', readonly=True)
     ref_nombre = fields.Char('Nombre Referencia', readonly=True)
     proveedor = fields.Char('Proveedor', readonly=True)
+
+    edad_datos = fields.Char(
+        string='Actualización', compute='_compute_edad_datos',
+        help='Tiempo transcurrido desde la observación.')
+    observation_time_local = fields.Char(
+        string='Observación (Madrid)', compute='_compute_observation_time_local',
+        help='Hora de observación en hora local de Madrid.')
+
+    @api.depends('observation_time')
+    def _compute_edad_datos(self):
+        ahora = fields.Datetime.now()
+        for rec in self:
+            if rec.observation_time:
+                minutos = int((ahora - rec.observation_time).total_seconds() / 60)
+                if minutos < 1:
+                    rec.edad_datos = 'Ahora mismo'
+                elif minutos < 60:
+                    rec.edad_datos = f'Hace {minutos} min'
+                else:
+                    horas = minutos // 60
+                    mins = minutos % 60
+                    rec.edad_datos = f'Hace {horas}h {mins:02d}min' if mins else f'Hace {horas}h'
+            else:
+                rec.edad_datos = False
+
+    @api.depends('observation_time')
+    def _compute_observation_time_local(self):
+        tz = pytz.timezone(_TZ_MADRID)
+        for rec in self:
+            if rec.observation_time:
+                dt_local = rec.observation_time.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.observation_time_local = dt_local.strftime('%d/%m %H:%M %Z')
+            else:
+                rec.observation_time_local = False
 
     @api.depends('icao', 'observation_time')
     def _compute_display_name(self):
