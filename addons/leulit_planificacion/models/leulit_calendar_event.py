@@ -446,7 +446,7 @@ class leulit_calendar_event(models.Model):
         string='Puede crear parte vuelo',
         compute='_compute_part_actions_visibility',
     )
-    anotaciones_ids = fields.One2many(comodel_name='leulit.anotacion_technical_log', inverse_name='calendar_event_id', string='Anotaciones')
+    # anotaciones_ids = fields.One2many(comodel_name='leulit.anotacion_technical_log', inverse_name='calendar_event_id', string='Anotaciones')
 
     def _is_school_event_type(self):
         self.ensure_one()
