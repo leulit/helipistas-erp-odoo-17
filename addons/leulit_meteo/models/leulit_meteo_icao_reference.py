@@ -265,31 +265,24 @@ class LeulitMeteoIcaoReference(models.Model):
         if not checkwx_key:
             raise UserError(_('Configura primero la API Key de CheckWX en Configuración → API Keys.'))
 
-        def _es_espanol(icao, country):
-            return (bool(icao) and
-                    (icao.startswith('LE') or icao.startswith('GC')) and
-                    country in ('ES', ''))
-
-        # 2 llamadas por radio: Península+Baleares y Canarias
-        CENTROS = [
-            (40.0, -3.7, 400),   # Península + Baleares
-            (28.1, -15.4, 200),  # Canarias
-        ]
+        # Obtener todas las estaciones españolas (LE* y GC*) directamente por país.
+        # Se usa el endpoint /v2/station/country/ES, que devuelve estaciones registradas
+        # independientemente de si tienen METAR activo en este momento. Esto es más fiable
+        # que buscar por radio, que solo devuelve aeródromos con METAR activo y tiene
+        # un límite de resultados que puede excluir aeródromos peninsulares.
+        candidatos_es = CheckWXService.get_stations_by_country('ES', checkwx_key)
 
         estaciones = {}   # icao -> {nombre, lat, lon}
-        for lat_c, lon_c, radius_nm in CENTROS:
-            candidatos = CheckWXService.get_nearest_metar(lat_c, lon_c, radius_nm, checkwx_key)
-            for c in candidatos:
-                icao = (c.get('icao') or '').upper().strip()
-                country = (c.get('country_code') or '').upper().strip()
-                if not _es_espanol(icao, country):
-                    continue
-                if icao not in estaciones:
-                    estaciones[icao] = {
-                        'nombre': (c.get('name') or icao).strip(),
-                        'lat': float(c.get('lat') or 0.0),
-                        'lon': float(c.get('lon') or 0.0),
-                    }
+        for c in candidatos_es:
+            icao = (c.get('icao') or '').upper().strip()
+            if not (icao.startswith('LE') or icao.startswith('GC')):
+                continue
+            if icao not in estaciones:
+                estaciones[icao] = {
+                    'nombre': (c.get('name') or icao).strip(),
+                    'lat': float(c.get('lat') or 0.0),
+                    'lon': float(c.get('lon') or 0.0),
+                }
 
         if not estaciones:
             raise UserError(

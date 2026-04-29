@@ -43,13 +43,4 @@ class LeulitMeteoParams(models.TransientModel):
             raise_if_not_found=False)
         if cron:
             cron.sudo().write({'active': self.cron_activo})
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Guardado'),
-                'message': _('Parámetros guardados correctamente.'),
-                'type': 'success',
-                'sticky': False,
-            },
-        }
+        return {'type': 'ir.actions.act_window_close'}

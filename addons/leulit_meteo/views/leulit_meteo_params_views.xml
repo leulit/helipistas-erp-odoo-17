@@ -48,6 +48,7 @@
         <field name="res_model">leulit.meteo.params</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_leulit_meteo_params_form"/>
+        <field name="target">new</field>
     </record>
 
 </odoo>
