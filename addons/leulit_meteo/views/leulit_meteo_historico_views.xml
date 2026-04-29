@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_leulit_meteo_historico_tree" model="ir.ui.view">
+        <field name="name">leulit.meteo.historico.tree</field>
+        <field name="model">leulit.meteo.historico</field>
+        <field name="arch" type="xml">
+            <tree string="Histórico METAR/TAF"
+                  decoration-muted="not raw_metar"
+                  default_order="fecha_obtencion desc">
+                <field name="fecha_obtencion" string="Obtenido"/>
+                <field name="icao"/>
+                <field name="icao_consultar" optional="show"/>
+                <field name="observation_time" string="Obs. (UTC)"/>
+                <field name="fuente_metar" widget="badge"
+                       decoration-success="fuente_metar == 'aemet'"
+                       decoration-info="fuente_metar == 'checkwx'"
+                       decoration-muted="fuente_metar == 'ninguno'"/>
+                <field name="fuente_taf" widget="badge"
+                       decoration-success="fuente_taf == 'aemet'"
+                       decoration-info="fuente_taf == 'checkwx'"
+                       decoration-muted="fuente_taf == 'ninguno'"/>
+                <field name="usa_referencia" widget="boolean_toggle" readonly="1" optional="show"/>
+                <field name="ref_icao" optional="show"/>
+                <field name="raw_metar" optional="hide"/>
+                <field name="raw_taf" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_leulit_meteo_historico_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.historico.form</field>
+        <field name="model">leulit.meteo.historico</field>
+        <field name="arch" type="xml">
+            <form string="Registro Histórico METAR/TAF" create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="icao"/></h1>
+                        <h3>
+                            Obtenido: <field name="fecha_obtencion"/>
+                            &amp;nbsp;·&amp;nbsp;
+                            Observación: <field name="observation_time"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Origen">
+                            <field name="icao_reference_id"/>
+                            <field name="icao_consultar"/>
+                            <field name="usa_referencia"/>
+                            <field name="ref_icao" invisible="not usa_referencia"/>
+                            <field name="ref_nombre" invisible="not usa_referencia"/>
+                            <field name="proveedor"/>
+                        </group>
+                        <group string="Fuentes">
+                            <field name="fuente_metar" widget="badge"/>
+                            <field name="fuente_taf" widget="badge"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="METAR">
+                            <field name="raw_metar" widget="text" readonly="1"
+                                   style="font-family:monospace;font-size:13px;"/>
+                        </page>
+                        <page string="TAF">
+                            <field name="raw_taf" widget="text" readonly="1"
+                                   style="font-family:monospace;font-size:13px;"/>
+                        </page>
+                        <page string="SIGMET">
+                            <field name="raw_sigmet" widget="text" readonly="1"
+                                   style="font-family:monospace;font-size:13px;"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_leulit_meteo_historico_search" model="ir.ui.view">
+        <field name="name">leulit.meteo.historico.search</field>
+        <field name="model">leulit.meteo.historico</field>
+        <field name="arch" type="xml">
+            <search string="Buscar histórico">
+                <field name="icao"/>
+                <field name="icao_reference_id"/>
+                <filter string="Con METAR" name="filter_con_metar"
+                        domain="[('raw_metar', '!=', False)]"/>
+                <filter string="Con TAF" name="filter_con_taf"
+                        domain="[('raw_taf', '!=', False)]"/>
+                <filter string="Fuente AEMET" name="filter_aemet"
+                        domain="[('fuente_metar', '=', 'aemet')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Aeródromo" name="group_icao"
+                            context="{'group_by': 'icao'}"/>
+                    <filter string="Fuente METAR" name="group_fuente"
+                            context="{'group_by': 'fuente_metar'}"/>
+                    <filter string="Fecha obtención" name="group_fecha"
+                            context="{'group_by': 'fecha_obtencion:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_leulit_meteo_historico" model="ir.actions.act_window">
+        <field name="name">Histórico METAR/TAF</field>
+        <field name="res_model">leulit.meteo.historico</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_leulit_meteo_historico_search"/>
+    </record>
+
+</odoo>

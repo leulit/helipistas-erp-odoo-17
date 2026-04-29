@@ -29,6 +29,15 @@
         <field name="arch" type="xml">
             <form string="Aeródromo de Referencia">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_historico"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-history">
+                            <field name="historico_count" widget="statinfo"
+                                   string="Histórico"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="icao"

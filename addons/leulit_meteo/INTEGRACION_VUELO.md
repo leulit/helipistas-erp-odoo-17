@@ -110,13 +110,17 @@ self.env['leulit.meteo.metar'].briefing_oaci(icao_code, provider='aemet', fecha=
 
 ```python
 {
-    'record_id':      42,             # id del registro leulit.meteo.metar
-    'raw_metar':      'LEUL ...',     # pestaña METAR del formulario
-    'raw_taf':        'TAF ...',      # pestaña TAF del formulario
-    'raw_metar_est':  'LEUL ...',     # METAR no oficial — estación más próxima
-                                      # (None si el proveedor no lo incluye)
-    'historico':      False,          # True si los datos vienen de BD sin actualizar
-    'observation_time': datetime(...) # hora UTC de la observación
+    'record_id':        42,             # id del registro leulit.meteo.metar
+    'raw_metar':        'LEBL ...',     # pestaña METAR del formulario
+    'raw_taf':          'TAF LEBL ...', # pestaña TAF del formulario
+    'raw_metar_est':    'LEUL ...',     # METAR no oficial — estación más próxima
+                                        # (None si el proveedor no lo incluye)
+    'historico':        False,          # True si los datos vienen de BD sin actualizar
+    'observation_time': datetime(...),  # hora UTC de la observación
+    'provider':         'aemet',        # proveedor usado ('aemet', 'checkwx', ...)
+    'metar_icao':       'LEBL',         # OACI del que procede el METAR/TAF
+                                        # (puede diferir del icao_code solicitado)
+    'usa_referencia':   True,           # True si metar_icao ≠ icao_code solicitado
 }
 # → None si no hay datos disponibles
 ```

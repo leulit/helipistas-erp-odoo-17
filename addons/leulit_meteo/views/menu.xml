@@ -15,13 +15,6 @@
               action="action_leulit_meteo_consulta"
               sequence="10"/>
 
-    <!-- Submenú Rutas Predefinidas -->
-    <menuitem id="menu_leulit_meteo_rutas"
-              name="Rutas Predefinidas"
-              parent="menu_leulit_meteo_root"
-              action="action_leulit_meteo_ruta_template"
-              sequence="15"/>
-
     <!-- Submenú METAR -->
     <menuitem id="menu_leulit_meteo_metar"
               name="Reportes METAR"
@@ -37,6 +30,14 @@
               sequence="22"
               groups="base.group_system"/>
 
+    <!-- Submenú Histórico METAR/TAF (solo administradores) -->
+    <menuitem id="menu_leulit_meteo_historico"
+              name="Histórico METAR/TAF"
+              parent="menu_leulit_meteo_root"
+              action="leulit_meteo.action_leulit_meteo_historico"
+              sequence="24"
+              groups="base.group_system"/>
+
     <!-- Configuración (padre) -->
     <menuitem id="menu_leulit_meteo_config_root"
               name="Configuración"
@@ -49,6 +50,13 @@
               parent="menu_leulit_meteo_config_root"
               action="action_leulit_meteo_config"
               sequence="10"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_leulit_meteo_params"
+              name="Parámetros"
+              parent="menu_leulit_meteo_config_root"
+              action="leulit_meteo.action_leulit_meteo_params"
+              sequence="15"
               groups="base.group_system"/>
 
     <menuitem id="menu_leulit_meteo_umbral_config"

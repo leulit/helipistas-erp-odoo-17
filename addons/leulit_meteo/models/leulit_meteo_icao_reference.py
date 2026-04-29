@@ -76,9 +76,136 @@ class LeulitMeteoIcaoReference(models.Model):
 
     notas = fields.Text()
 
+    historico_count = fields.Integer(
+        'Registros históricos', compute='_compute_historico_count')
+
     _sql_constraints = [
         ('icao_uniq', 'UNIQUE(icao)', 'Ya existe un mapeo para este OACI.'),
     ]
+
+    def _compute_historico_count(self):
+        for rec in self:
+            rec.historico_count = self.env['leulit.meteo.historico'].search_count(
+                [('icao_reference_id', '=', rec.id)])
+
+    # ---------- Acciones UI ----------
+
+    def action_ver_historico(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Histórico METAR/TAF - {self.icao}',
+            'res_model': 'leulit.meteo.historico',
+            'view_mode': 'tree,form',
+            'domain': [('icao_reference_id', '=', self.id)],
+            'context': {'default_icao_reference_id': self.id},
+        }
+
+    # ---------- Cron ----------
+
+    @api.model
+    def action_actualizar_metar_cron(self):
+        """Cron cada 2 h: obtiene METAR/TAF de todos los aeródromos de referencia y guarda histórico."""
+        from .leulit_meteo_metar_provider import get_provider
+
+        prov = get_provider('aemet')
+        if not prov:
+            _logger.error("Cron METAR: proveedor 'aemet' no disponible")
+            return
+
+        refs = self.search([])
+        _logger.info("Cron METAR: actualizando %d aeródromos de referencia", len(refs))
+        Historico = self.env['leulit.meteo.historico']
+        errores = []
+
+        for ref in refs:
+            try:
+                data = prov.get_observation(self.env, icao_code=ref.icao)
+                if not data:
+                    _logger.warning("Cron METAR: sin datos para %s", ref.icao)
+                    continue
+
+                obs_time = data.get('observation_time')
+
+                # Evitar duplicados con mismo observation_time
+                if obs_time:
+                    existe = Historico.search([
+                        ('icao_reference_id', '=', ref.id),
+                        ('observation_time', '=', obs_time),
+                    ], limit=1)
+                    if existe:
+                        _logger.debug(
+                            "Cron METAR: %s ya tiene registro para %s, omitiendo",
+                            ref.icao, obs_time)
+                        continue
+
+                provider_code = data.get('provider') or 'aemet'
+                Historico.create({
+                    'icao_reference_id': ref.id,
+                    'icao_consultar': data.get('icao_consultar') or ref.icao,
+                    'raw_metar': data.get('raw_metar'),
+                    'raw_taf': data.get('raw_taf'),
+                    'raw_sigmet': data.get('raw_sigmet'),
+                    'observation_time': obs_time,
+                    'fecha_obtencion': fields.Datetime.now(),
+                    'fuente_metar': provider_code if data.get('raw_metar') else 'ninguno',
+                    'fuente_taf': provider_code if data.get('raw_taf') else 'ninguno',
+                    'usa_referencia': bool(data.get('usa_referencia')),
+                    'ref_icao': data.get('ref_icao'),
+                    'ref_nombre': data.get('ref_nombre'),
+                    'proveedor': provider_code,
+                })
+                _logger.info("Cron METAR: histórico guardado para %s (%s)", ref.icao, obs_time)
+            except Exception as exc:
+                _logger.error("Cron METAR: error en %s: %s", ref.icao, exc)
+                errores.append((ref.icao, str(exc)))
+
+        if errores:
+            self._cron_notificar_errores(errores)
+
+    @api.model
+    def _cron_notificar_errores(self, errores):
+        """Envía email de notificación de errores del cron al email configurado en Parámetros."""
+        email_to = self.env['ir.config_parameter'].sudo().get_param(
+            'leulit_meteo.email_errores', '')
+        if not email_to:
+            return
+
+        ahora = fields.Datetime.now().strftime('%d/%m/%Y %H:%M UTC')
+        filas = ''.join(
+            f'<tr>'
+            f'<td style="padding:6px 12px;border:1px solid #ddd;">{icao}</td>'
+            f'<td style="padding:6px 12px;border:1px solid #ddd;color:#c00;">{error}</td>'
+            f'</tr>'
+            for icao, error in errores
+        )
+        body = f"""
+            <p>La tarea de actualización automática de METAR
+            ({ahora}) ha encontrado errores en
+            <strong>{len(errores)}</strong> aeródromo(s):</p>
+            <table style="border-collapse:collapse;margin:12px 0;">
+                <thead>
+                    <tr style="background:#f5f5f5;">
+                        <th style="padding:6px 12px;border:1px solid #ddd;">OACI</th>
+                        <th style="padding:6px 12px;border:1px solid #ddd;">Error</th>
+                    </tr>
+                </thead>
+                <tbody>{filas}</tbody>
+            </table>
+            <p style="color:#888;font-size:12px;">
+                Mensaje automático del módulo de Meteorología.
+            </p>
+        """
+        try:
+            self.env['mail.mail'].sudo().create({
+                'subject': f'[METAR] Errores en actualización automática ({len(errores)} aeródromo(s))',
+                'body_html': body,
+                'email_to': email_to,
+                'auto_delete': True,
+            }).send()
+            _logger.info("Cron METAR: notificación de errores enviada a %s", email_to)
+        except Exception as exc:
+            _logger.error("Cron METAR: fallo al enviar notificación de errores: %s", exc)
 
     # ---------- API pública ----------
 

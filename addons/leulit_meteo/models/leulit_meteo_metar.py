@@ -379,13 +379,41 @@ class LeulitMeteoMetar(models.Model):
                 fecha = fields.Datetime.from_string(fecha)
             ahora = fields.Datetime.now()
             if (ahora - fecha) > timedelta(minutes=30):
-                # Búsqueda hacia atrás (registro más reciente antes de fecha)
+                # 1. Buscar en histórico automático (leulit.meteo.historico)
+                Hist = self.env['leulit.meteo.historico']
+                hist = Hist.search([
+                    ('icao', '=', icao),
+                    ('observation_time', '<=', fecha),
+                ], order='observation_time desc', limit=1)
+                if not hist:
+                    hist = Hist.search([
+                        ('icao', '=', icao),
+                        ('observation_time', '>=', fecha),
+                    ], order='observation_time asc', limit=1)
+                if hist and hist.observation_time:
+                    diff_seg = abs((hist.observation_time - fecha).total_seconds())
+                    if diff_seg <= 7200:
+                        return {
+                            'record_id': None,
+                            'raw_metar': hist.raw_metar,
+                            'raw_taf': hist.raw_taf,
+                            'raw_metar_est': None,
+                            'raw_sigmet': hist.raw_sigmet,
+                            'historico': True,
+                            'observation_time': hist.observation_time,
+                            'provider': hist.proveedor or 'aemet',
+                            'metar_icao': hist.ref_icao if hist.usa_referencia else hist.icao,
+                            'usa_referencia': hist.usa_referencia,
+                            'fuente_metar': hist.fuente_metar,
+                            'fuente_taf': hist.fuente_taf,
+                        }
+
+                # 2. Fallback: buscar en reportes manuales (leulit.meteo.metar)
                 record = self.search([
                     ('icao_code', '=', icao),
                     ('active', '=', True),
                     ('observation_time', '<=', fecha),
                 ], order='observation_time desc', limit=1)
-                # Si no hay registro previo, probar el más antiguo posterior
                 if not record:
                     record = self.search([
                         ('icao_code', '=', icao),
@@ -394,9 +422,8 @@ class LeulitMeteoMetar(models.Model):
                     ], order='observation_time asc', limit=1)
                 if not record or not record.observation_time:
                     return None
-                diff_seg = abs(
-                    (record.observation_time - fecha).total_seconds())
-                if diff_seg > 7200:  # más de 2 horas → demasiado lejos
+                diff_seg = abs((record.observation_time - fecha).total_seconds())
+                if diff_seg > 7200:
                     return None
                 return {
                     'record_id': record.id,

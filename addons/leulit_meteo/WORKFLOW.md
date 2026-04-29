@@ -280,7 +280,8 @@ action_obtener_meteo_salida()
         → busca/crea registro leulit.meteo.metar para ese OACI
         → ejecuta el flujo completo de la sección 2.4
         → devuelve: {record_id, raw_metar, raw_taf, raw_metar_est,
-                      historico, observation_time}
+                      historico, observation_time,
+                      provider, metar_icao, usa_referencia}
 
       Opción B — método clásico:
         self.env['leulit.meteo.metar'].obtener_metar(

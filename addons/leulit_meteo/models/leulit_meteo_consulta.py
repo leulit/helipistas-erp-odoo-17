@@ -65,12 +65,6 @@ class LeulitMeteoConsulta(models.Model):
         default=False,
         help='Si está marcado, la consulta es para múltiples puntos (polilínea/ruta)'
     )
-    ruta_template_id = fields.Many2one(
-        'leulit.meteo.ruta.template',
-        string='Cargar Ruta Predefinida',
-        help='Selecciona una ruta guardada para cargar automáticamente sus puntos',
-        domain=[('activa', '=', True)]
-    )
     puntos_ids = fields.One2many(
         'leulit.meteo.consulta.punto',
         'consulta_id',
@@ -250,30 +244,6 @@ class LeulitMeteoConsulta(models.Model):
                 record.viento_max > 50 or 
                 (record.temperatura_min < 0 and record.temperatura_min != 0)
             )
-    
-    @api.onchange('ruta_template_id')
-    def _onchange_ruta_template(self):
-        """Carga puntos desde la plantilla de ruta seleccionada"""
-        if self.ruta_template_id:
-            # Marcar como polilínea
-            self.es_polilinea = True
-            
-            # Actualizar nombre de ubicación
-            if not self.ubicacion or self.ubicacion == 'Nueva ubicación':
-                self.ubicacion = self.ruta_template_id.name
-            
-            # Cargar puntos (solo en creación)
-            if not self.id:
-                puntos_commands = []
-                for punto_template in self.ruta_template_id.puntos_template_ids:
-                    puntos_commands.append((0, 0, {
-                        'secuencia': punto_template.secuencia,
-                        'nombre': punto_template.nombre,
-                        'latitud': punto_template.latitud,
-                        'longitud': punto_template.longitud,
-                        'altitud': punto_template.altitud,
-                    }))
-                self.puntos_ids = puntos_commands
     
     def action_consultar_clima_actual(self):
         """Consulta el clima actual desde la API"""
@@ -495,78 +465,6 @@ class LeulitMeteoConsulta(models.Model):
             }
         
         return None
-    
-    def action_cargar_ruta_template(self):
-        """Carga puntos desde la ruta template seleccionada"""
-        self.ensure_one()
-        
-        if not self.ruta_template_id:
-            raise UserError(_('Debe seleccionar una ruta predefinida'))
-        
-        # Eliminar puntos existentes
-        self.puntos_ids.unlink()
-        
-        # Crear nuevos puntos desde la plantilla
-        for punto_template in self.ruta_template_id.puntos_template_ids:
-            self.env['leulit.meteo.consulta.punto'].create({
-                'consulta_id': self.id,
-                'secuencia': punto_template.secuencia,
-                'nombre': punto_template.nombre,
-                'latitud': punto_template.latitud,
-                'longitud': punto_template.longitud,
-                'altitud': punto_template.altitud,
-            })
-        
-        # Actualizar estadísticas de la plantilla
-        self.ruta_template_id.write({
-            'veces_utilizada': self.ruta_template_id.veces_utilizada + 1,
-            'ultima_consulta': fields.Datetime.now(),
-        })
-        
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Ruta Cargada'),
-                'message': _('Se han cargado %d puntos de la ruta %s') % (
-                    len(self.puntos_ids), self.ruta_template_id.name
-                ),
-                'type': 'success',
-                'sticky': False,
-            }
-        }
-    
-    def action_guardar_como_template(self):
-        """Guarda la consulta actual como plantilla de ruta"""
-        self.ensure_one()
-        
-        if not self.es_polilinea or not self.puntos_ids:
-            raise UserError(_('Solo se pueden guardar rutas con puntos definidos'))
-        
-        # Crear plantilla
-        template = self.env['leulit.meteo.ruta.template'].create({
-            'name': self.ubicacion or f'Ruta {self.codigo}',
-            'descripcion': self.notas or '',
-        })
-        
-        # Copiar puntos
-        for punto in self.puntos_ids:
-            self.env['leulit.meteo.ruta.template.punto'].create({
-                'ruta_template_id': template.id,
-                'secuencia': punto.secuencia,
-                'nombre': punto.nombre,
-                'latitud': punto.latitud,
-                'longitud': punto.longitud,
-                'altitud': punto.altitud,
-            })
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'leulit.meteo.ruta.template',
-            'res_id': template.id,
-            'view_mode': 'form',
-            'target': 'new',
-        }
     
     def get_windy_embed_url(self):
         """Genera URL de embed de Windy para la consulta"""

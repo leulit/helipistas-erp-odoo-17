@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="cron_actualizar_metar_referencia" model="ir.cron">
+            <field name="name">Actualizar METAR Aeródromos de Referencia</field>
+            <field name="model_id" ref="model_leulit_meteo_icao_reference"/>
+            <field name="state">code</field>
+            <field name="code">model.action_actualizar_metar_cron()</field>
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+    </data>
+</odoo>
