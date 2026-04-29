@@ -14,3 +14,4 @@ from . import leulit_audit_template_list_questions
 from . import mgmtsystem_verification_line
 from . import mgmtsystem_nonconformity
 from . import leulit_wizard_nueva_anotacion
+from . import leulit_wizard_asign_anotacion

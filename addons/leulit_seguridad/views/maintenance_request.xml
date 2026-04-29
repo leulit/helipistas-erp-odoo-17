@@ -20,6 +20,17 @@
                             </tree>
                         </field>
                     </page>
+                    <page name="page_anotaciones" string="Anotaciones">
+                        <button name="open_wizard_asign_anotacion" string="Agregar Anotacion" type="object" class="oe_highlight"/>
+                        <field name="anotacion_ids">
+                            <tree editable="false" create="false" delete="false">
+                                <field name="codigo" readonly="1"/>
+                                <field name="anotacion" readonly="1"/>
+                                <field name="fecha" readonly="1"/>
+                                <button name="edit_anotacion" string="Editar" type="object" class="oe_highlight"/>
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
             </field>
         </record>

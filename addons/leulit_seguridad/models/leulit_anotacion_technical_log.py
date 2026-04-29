@@ -60,7 +60,7 @@ class leulit_anotacion_technical_log(models.Model):
             template.send_mail(self.id, force_send=True, raise_exception=True)
         except Exception as e:
             pass
-                
+
     def _send_reminder_email(self):
         context = self.env.context.copy()
         context.update({'subject': u'Aviso: quedan 3 días para la fecha de la anotación ({0})'.format(self.codigo)})
@@ -69,6 +69,19 @@ class leulit_anotacion_technical_log(models.Model):
             template.send_mail(self.id, force_send=True, raise_exception=True)
         except Exception as e:
             _logger.error("Error enviando email de aviso para anotacion %s: %s", self.codigo, e)
+
+    def edit_anotacion(self):
+        self.ensure_one()
+        view = self.env.ref('leulit_seguridad.leulit_20260401_1013_form',raise_if_not_found=False)        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Anotación',
+            'res_model': 'leulit.anotacion_technical_log',
+            'view_mode': 'form',
+            'res_id': self.id,
+            'view_id': view.id if view else False,
+            'target': 'current',
+        }
 
     @api.model
     def _cron_check_anotacion_technical_log(self):
@@ -112,3 +125,5 @@ class leulit_anotacion_technical_log(models.Model):
     
     company_id =fields.Many2one('res.company', 'Company', default=1, readonly=True)
     logo = fields.Binary('Logo', related='company_id.logo_reports', readonly=True)
+
+    maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order")

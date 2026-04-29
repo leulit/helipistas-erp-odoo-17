@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="leulit_20260429_1020_form" model="ir.ui.view">
+            <field name="name">leulit_20260429_1020_form</field>
+            <field name="model">leulit.wizard_asign_anotacion</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Asignar anotación">
+                    <field name="helicoptero" invisible="1"/>
+                    <field name="rel_maintenance_request" invisible="1"/>
+                    <field name="anotacion_ids" domain="[('maintenance_request_id','=',False),('helicoptero_id','=',helicoptero),('estado','in',['pending'])]" context="{'tree_view_ref': 'leulit_seguridad.leulit_20260401_1013_tree'}">
+                        <tree>
+                            <field name="codigo" readonly="1"/>
+                            <field name="anotacion" readonly="1"/>
+                            <field name="fecha" readonly="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="asign_anotacion" type="object" string="Guardar" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

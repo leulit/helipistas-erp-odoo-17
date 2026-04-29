@@ -25,6 +25,7 @@
         "views/leulit_vuelo.xml",
         "views/maintenance_request.xml",
         "views/leulit_wizard_asign_anomalia.xml",
+        "views/leulit_wizard_asign_anotacion.xml",
         "views/leulit_wizard_nueva_anotacion.xml",
         "views/mgmtsystem_audit.xml",
         "views/leulit_audit_question.xml",
