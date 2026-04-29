@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Leulit Meteorología',
-    'version': '17.0.2.0.0',
+    'version': '17.0.2.1.0',
     'category': 'Operations',
     'summary': 'Consultas meteorológicas (Open-Meteo, Windy) y briefings METAR/TAF/SIGMET oficiales de AEMET OpenData',
     'description': """

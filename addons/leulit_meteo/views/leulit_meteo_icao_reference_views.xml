@@ -16,6 +16,7 @@
                 <field name="ref_nombre" optional="hide"/>
                 <field name="ref_distancia_km" optional="show"/>
                 <field name="proveedor_oficial" widget="badge" optional="show"/>
+                <field name="elevacion_ft" optional="hide"/>
                 <field name="station_code" optional="show"/>
                 <field name="station_distancia_km" optional="hide"/>
                 <field name="proxima_actualizacion" optional="show"/>
@@ -57,6 +58,8 @@
                         <group string="Coordenadas">
                             <field name="latitud" readonly="1"/>
                             <field name="longitud" readonly="1"/>
+                            <field name="elevacion_ft"/>
+                            <field name="proxima_actualizacion" readonly="1"/>
                         </group>
                     </group>
                     <group>

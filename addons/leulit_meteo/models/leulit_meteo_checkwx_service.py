@@ -68,12 +68,14 @@ class CheckWXService:
             lat = float(coords[1])
         if lat is None or lon is None:
             return None
+        elev = item.get('elevation', {})
         return {
             'icao': item.get('icao', icao).upper(),
             'name': item.get('name', ''),
             'lat': float(lat),
             'lon': float(lon),
             'country_code': item.get('country', {}).get('code', ''),
+            'elevation_ft': int(elev.get('feet') or 0) if elev else 0,
         }
 
     @classmethod
@@ -102,12 +104,14 @@ class CheckWXService:
                 slat = float(coords[1])
             if slat is None or slon is None:
                 continue
+            selev = station.get('elevation', {})
             results.append({
                 'icao': icao.upper(),
                 'name': station.get('name', ''),
                 'lat': float(slat),
                 'lon': float(slon),
                 'country_code': station.get('country', {}).get('code', ''),
+                'elevation_ft': int(selev.get('feet') or 0) if selev else 0,
             })
         return results
 
@@ -143,12 +147,14 @@ class CheckWXService:
             if lat is None or lon is None:
                 sin_coords += 1
                 continue
+            ielev = item.get('elevation', {})
             results.append({
                 'icao': icao,
                 'name': item.get('name', ''),
                 'lat': float(lat),
                 'lon': float(lon),
                 'country_code': item.get('country', {}).get('code', ''),
+                'elevation_ft': int(ielev.get('feet') or 0) if ielev else 0,
             })
         if sin_coords:
             _logger.debug(

@@ -56,6 +56,7 @@ class LeulitMeteoIcaoReference(models.Model):
     # Coordenadas del OACI (rellenas en auto-resolución)
     latitud = fields.Float('Latitud', digits=(10, 6))
     longitud = fields.Float('Longitud', digits=(10, 6))
+    elevacion_ft = fields.Integer('Elevación (ft AMSL)')
 
     # Estación AEMET convencional más próxima
     station_code = fields.Char('Cód. Estación AEMET', size=10)
@@ -303,6 +304,11 @@ class LeulitMeteoIcaoReference(models.Model):
 
         _logger.info("CheckWX sync: %d estaciones españolas encontradas", len(estaciones))
 
+        # Cargar inventario AEMET una sola vez para buscar estación más próxima
+        from .leulit_meteo_aemet_service import AemetOpenDataService
+        aemet_key = ICP.get_param('leulit_meteo.aemet_api_key', '')
+        inventario_aemet = AemetOpenDataService.get_inventario_estaciones(aemet_key) if aemet_key else []
+
         # Sincronizar BD
         creados = actualizados = 0
 
@@ -311,6 +317,14 @@ class LeulitMeteoIcaoReference(models.Model):
             lon = info['lon']
             fir = _fir_heuristic(lat or None, lon or None)
 
+            station_code = station_nombre = station_dist = None
+            if inventario_aemet and lat and lon:
+                nearest, dist_km = AemetOpenDataService.find_nearest_station(lat, lon, inventario_aemet)
+                if nearest:
+                    station_code = nearest.get('indicativo')
+                    station_nombre = nearest.get('nombre')
+                    station_dist = dist_km
+
             rec = self.search([('icao', '=', icao)], limit=1)
             vals = {
                 'nombre': info['nombre'],
@@ -318,8 +332,12 @@ class LeulitMeteoIcaoReference(models.Model):
                 'tiene_metar_propio': True,
                 'latitud': lat,
                 'longitud': lon,
+                'elevacion_ft': info.get('elevation_ft') or 0,
                 'proveedor_oficial': 'aemet',
                 'auto_resolved': False,
+                'station_code': station_code,
+                'station_nombre': station_nombre,
+                'station_distancia_km': station_dist or 0.0,
             }
             if rec:
                 if not rec.tiene_metar_propio:
@@ -385,12 +403,25 @@ class LeulitMeteoIcaoReference(models.Model):
             "AviationWeather sync: %d estaciones LE*/GC* con METAR/TAF encontradas",
             len(estaciones))
 
+        from .leulit_meteo_aemet_service import AemetOpenDataService
+        ICP = self.env['ir.config_parameter'].sudo()
+        aemet_key = ICP.get_param('leulit_meteo.aemet_api_key', '')
+        inventario_aemet = AemetOpenDataService.get_inventario_estaciones(aemet_key) if aemet_key else []
+
         creados = actualizados = 0
 
         for icao, info in estaciones.items():
             lat = info['lat']
             lon = info['lon']
             fir = _fir_heuristic(lat or None, lon or None)
+
+            station_code = station_nombre = station_dist = None
+            if inventario_aemet and lat and lon:
+                nearest, dist_km = AemetOpenDataService.find_nearest_station(lat, lon, inventario_aemet)
+                if nearest:
+                    station_code = nearest.get('indicativo')
+                    station_nombre = nearest.get('nombre')
+                    station_dist = dist_km
 
             rec = self.search([('icao', '=', icao)], limit=1)
             vals = {
@@ -399,8 +430,12 @@ class LeulitMeteoIcaoReference(models.Model):
                 'tiene_metar_propio': True,
                 'latitud': lat,
                 'longitud': lon,
+                'elevacion_ft': info.get('elevation_ft') or 0,
                 'proveedor_oficial': 'aemet',
                 'auto_resolved': False,
+                'station_code': station_code,
+                'station_nombre': station_nombre,
+                'station_distancia_km': station_dist or 0.0,
             }
             if rec:
                 if not rec.tiene_metar_propio:
@@ -495,11 +530,13 @@ class LeulitMeteoIcaoReference(models.Model):
         # 1. Coordenadas del OACI via OpenAIP
         airport_info = None
         lat = lon = None
+        elevation_ft = 0
         if openaip_key:
             airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
             if airport_info:
                 lat = airport_info.get('lat')
                 lon = airport_info.get('lon')
+                elevation_ft = int(airport_info.get('elevation_ft') or 0)
 
         # 2. ¿El propio OACI tiene METAR en CheckWX?
         ref_icao = None
@@ -516,6 +553,8 @@ class LeulitMeteoIcaoReference(models.Model):
                 if lat is None:
                     lat = station_info.get('lat')
                     lon = station_info.get('lon')
+                if not elevation_ft:
+                    elevation_ft = int(station_info.get('elevation_ft') or 0)
                 # Verificar si realmente tiene METAR
                 test_metar = CheckWXService.get_metar(icao, checkwx_key)
                 if test_metar:
@@ -575,6 +614,7 @@ class LeulitMeteoIcaoReference(models.Model):
             'ref_distancia_km': ref_dist_km if not tiene_metar else 0.0,
             'latitud': lat or 0.0,
             'longitud': lon or 0.0,
+            'elevacion_ft': elevation_ft,
             'station_code': station_code,
             'station_nombre': station_nombre_str,
             'station_distancia_km': station_dist or 0.0,

@@ -99,12 +99,14 @@ class AviationWeatherService:
                     icao = (st.findtext('station_id') or '').upper().strip()
                     if not icao:
                         continue
+                    elev_m = float(st.findtext('elevation_m') or 0)
                     result[icao] = {
                         'nombre': (st.findtext('site') or icao).strip(),
                         'lat': float(st.findtext('latitude') or 0),
                         'lon': float(st.findtext('longitude') or 0),
                         'has_metar': has_metar,
                         'has_taf': has_taf,
+                        'elevation_ft': int(elev_m * 3.28084),
                     }
             except Exception as exc:
                 _logger.error("ADDS stations %s*: %s", prefix, exc)
