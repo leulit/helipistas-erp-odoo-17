@@ -166,7 +166,7 @@
                                             <table border="1" class="">
                                                 <span t-esc="silabus['name']"/>                                                                                                        
                                                 <br/>
-                                                <i><span style="font-size:8px"><b  style="font-size:8px">Comentario:</b><span t-esc="silabus['comentario']"/></span></i>
+                                                <i><span style="font-size:8px"><b  style="font-size:8px">Comentario:</b><span t-out="silabus['comentario']"/></span></i>
                                             </table>
                                         </td>
                                         <td nowrap="1"><span t-esc="silabus['fecha']"/></td>
