@@ -165,7 +165,7 @@ Consultar Windy/Open-Meteo (ver flujos anteriores)
 
 Pensado para rutas de vuelo recurrentes.
 
-### 2.4 Obtener METAR / TAF / SIGMET (proveedor pluggable)
+### 2.4 Botón "Obtener briefing" — flujo completo
 
 Modelo: `leulit.meteo.metar`. Capa de proveedores: `MetarProvider` (interfaz) + `AemetMetarProvider` (implementación actual). Referencia de aeródromos: `leulit.meteo.icao.reference`. Cliente HTTP: `AemetOpenDataService`. Parser: `leulit_meteo_metar_parser`.
 
@@ -173,50 +173,171 @@ Modelo: `leulit.meteo.metar`. Capa de proveedores: `MetarProvider` (interfaz) + 
 [Form] provider = "aemet", icao = "LEUL"   (helipuerto sin METAR propio)
    │
    ▼
-Usuario pulsa "Obtener briefing" → action_obtener_briefing()
+Usuario pulsa "Obtener briefing"
    │
    ▼
-Modelo resuelve provider:
-   get_provider(self.provider)  → AemetMetarProvider
+action_obtener_briefing()
+   ├─ Valida: icao_code presente, 4 letras, alfabético
+   └─ get_provider(self.provider) → AemetMetarProvider
    │
    ▼
 AemetMetarProvider.get_observation(env, icao_code='LEUL')
    │
    ▼
-env['leulit.meteo.icao.reference'].resolve('LEUL')
-   → icao_consultar='LELL', fir='LECB', usa_referencia=True,
-     ref_nombre='Sabadell'
-   (si no está en tabla: icao_consultar=icao_code, fir=None,
-    usa_referencia=False — sin SIGMET disponible)
-   │
-   ├─► AemetOpenDataService.get_message('METAR', 'LELL', api_key)
-   │       → GET .../mensajes/tipomensaje/METAR/id/LELL?api_key=JWT
-   │       → GET <URL datos>  (texto plano RAW)
-   │
-   ├─► AemetOpenDataService.get_message('TAF', 'LELL', api_key)
-   │       → idem para TAF
-   │
-   └─► AemetOpenDataService.get_message('SIGMET', 'LECB', api_key)
-           → GET .../mensajes/tipomensaje/SIGMET/id/LECB?api_key=JWT
-           → GET <URL datos>  (o None si fir es None)
+leulit.meteo.icao.reference.resolve('LEUL')
+   → icao_consultar='LELL', fir='LECB', usa_referencia=True, ref_nombre='Sabadell'
+   (si OACI no está en tabla: icao_consultar=icao_code, fir=None,
+    usa_referencia=False — SIGMET no disponible)
    │
    ▼
-parse_metar(raw_metar)   (best-effort, no altera el RAW)
-   → observation_time, wind_direction/speed/gust, visibility_m,
-     temperatura, dewpoint, qnh
+── RAMA PRINCIPAL: AEMET OpenData ──────────────────────────────────────────
+   │
+   │  Para cada mensaje, AemetOpenDataService usa el patrón 2 llamadas:
+   │    ① _request_meta()  → GET .../mensajes/tipomensaje/{TIPO}/id/{OACI}?api_key=JWT
+   │                         ← JSON con campo "datos" (URL temporal preautenticada)
+   │    ② _fetch_text()    → GET <URL datos>
+   │                         ← texto plano RAW (METAR / TAF / SIGMET)
+   │
+   ├─► get_message('METAR',  'LELL', api_key)  → raw_metar  (o None)
+   ├─► get_message('TAF',    'LELL', api_key)  → raw_taf    (o None)
+   └─► get_message('SIGMET', 'LECB', api_key)  → raw_sigmet (o None si fir=None)
    │
    ▼
-Provider devuelve dict normalizado al modelo
+¿AEMET devolvió datos?
+   │
+   ├─ SÍ ─────────────────────────────────────────────────────────────────►─┐
+   │                                                                         │
+   └─ NO → FALLBACK 1: CheckWX ─────────────────────────────────────────────┤
+              CheckWXService.get_metar(icao_consultar)                       │
+              CheckWXService.get_taf(icao_consultar)                         │
+              GET https://api.checkwx.com/metar/{OACI}?token=<key>          │
+              GET https://api.checkwx.com/taf/{OACI}?token=<key>            │
+                                                                             │
+              ¿hay station_code en el registro?                              │
+                 SÍ → FALLBACK 2: METAR sintético de estación AEMET ────────┤
+                        get_observaciones_estacion(station_code)             │
+                        latest_observation() → observación más reciente      │
+                        build_metar_synthetic() → raw_metar_est              │
+                        (texto NO oficial, identificado como "SYN")          │
+                 NO → sin datos adicionales                                  │
+                                                                             ▼
+                                                              ┌──────────────────────────┐
+                                                              │ dict normalizado del      │
+                                                              │ proveedor:                │
+                                                              │   raw_metar, raw_taf,     │
+                                                              │   raw_sigmet, raw_metar_est│
+                                                              │   fir_code, usa_referencia│
+                                                              │   ref_icao, ref_nombre    │
+                                                              │   station_name            │
+                                                              └──────────────┬───────────┘
+   │                                                                         │
+   └─────────────────────────────────────────────────────────────────────────┘
    │
    ▼
-Modelo escribe los campos en el registro:
-   raw_metar / raw_taf / raw_sigmet  (textos oficiales AEMET, sin alterar)
-   fir_code, usa_referencia, ref_icao, ref_nombre, station_name
-   campos numéricos decodificados (best-effort)
+parse_metar(raw_metar)   (best-effort, nunca altera el RAW)
+   → observation_time, wind_direction, wind_speed_kt, wind_gust_kt,
+     visibility_m, temperatura, dewpoint, qnh
    │
    ▼
-Vista muestra aviso informativo si usa_referencia=True
+_write_observacion(data)
+   Escribe en el registro leulit.meteo.metar:
+   · raw_metar, raw_taf, raw_sigmet   (textos oficiales, sin alterar — válidos AESA)
+   · raw_metar_est                    (sintético AEMET, si disponible)
+   · fir_code, usa_referencia, ref_icao, ref_nombre, station_name
+   · observation_time, temperatura, dewpoint, wind_*, visibility_m, qnh
+   · fecha_consulta = now()
+   [campos computados: edad_datos_minutos, estado_datos se recalculan solos]
+   │
+   ▼
+Notificación de éxito + recarga del formulario
+Vista: aviso informativo visible si usa_referencia=True
 ```
+
+**Campos leídos:** `icao_code`, `provider`, `station_code` (del registro); `leulit_meteo.aemet_api_key`, `leulit_meteo.checkwx_api_key` (de `ir.config_parameter`); tabla `leulit.meteo.icao.reference` (tiene_metar_propio, ref_icao, fir, station_code).
+
+**Campos escritos:** todos los listados en `_write_observacion` arriba. El RAW prevalece siempre; los campos numéricos son auxiliares.
+
+---
+
+### 2.5 Integración con leulit.vuelo
+
+El módulo `leulit_vuelo` hereda de `leulit_meteo` para añadir meteorología automática al parte de vuelo. El registro `leulit.meteo.metar` creado en el flujo 2.4 se vincula al vuelo vía `Many2one`.
+
+#### 2.5.1 Obtención manual de meteorología
+
+```
+[leulit.vuelo — formulario del parte]
+   │
+   ▼
+Usuario pulsa "Obtener meteorología salida"
+   │
+   ▼
+action_obtener_meteo_salida()
+   ├─ Lee: vuelo.aerodromo_salida_id.codigo_oaci  (ej. 'LEUL')
+   │
+   └─ Opción A — método simplificado (recomendado):
+        self.env['leulit.meteo.metar'].briefing_oaci(icao)
+        → busca/crea registro leulit.meteo.metar para ese OACI
+        → ejecuta el flujo completo de la sección 2.4
+        → devuelve: {record_id, raw_metar, raw_taf, raw_metar_est,
+                      historico, observation_time}
+
+      Opción B — método clásico:
+        self.env['leulit.meteo.metar'].obtener_metar(
+            icao_code=icao, provider='aemet', persistir=True)
+        → ejecuta el flujo completo de la sección 2.4
+        → devuelve dict completo del proveedor + record_id
+   │
+   ▼
+vuelo.metar_salida_id = data['record_id']
+   │
+   ▼
+_compute_estado_meteo()  [campo computado; se recalcula automáticamente]
+   (ver sección 2.5.2)
+```
+
+#### 2.5.2 Evaluación automática de condiciones (campo computado)
+
+```
+metar_salida_id modificado
+   │
+   ▼
+_compute_estado_meteo()
+   ├─ Lee umbrales: LeulitMeteoUmbralConfig.get_umbrales(env)
+   ├─ Lee del METAR vinculado:
+   │     wind_speed_kt, wind_gust_kt, visibility_m
+   │
+   └─ Clasifica → estado_meteo:
+        'nogo'     si viento > umbral_nogo
+                   OR rachas > umbral_nogo
+                   OR visibilidad < min_nogo
+        'marginal' si viento > umbral_marginal
+                   OR rachas > umbral_marginal
+                   OR visibilidad < min_marginal
+        'ok'       dentro de límites aceptables
+        'sin_datos' si metar_salida_id está vacío o sin observación
+```
+
+#### 2.5.3 Campos añadidos a leulit.vuelo
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `metar_salida_id` | Many2one → `leulit.meteo.metar` | METAR del aeródromo de salida |
+| `estado_meteo` | Selection (computado, stored) | Resultado de la evaluación de condiciones |
+
+**Campos leídos:** `aerodromo_salida_id.codigo_oaci`; umbrales de configuración; `metar_salida_id.wind_speed_kt`, `.wind_gust_kt`, `.visibility_m`.
+
+**Campos escritos:** `metar_salida_id` (ID del registro METAR creado/actualizado); `estado_meteo` (computado automáticamente al cambiar `metar_salida_id`).
+
+#### 2.5.4 Automatización opcional en autorización de vuelo
+
+```
+action_autorizar_vuelo()
+   ├─ action_obtener_meteo_salida()   (silenciando errores de red)
+   └─ vuelo.state = 'autorizado'
+```
+
+Permite que la meteorología se capture de forma transparente al autorizar, sin que el usuario tenga que pulsar el botón explícitamente.
 
 ---
 

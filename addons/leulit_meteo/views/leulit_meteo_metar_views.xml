@@ -101,12 +101,20 @@
 
                     <notebook>
                         <page string="METAR" name="metar">
+                            <group>
+                                <field name="provider" readonly="1"
+                                       widget="badge" string="Fuente"/>
+                            </group>
                             <field name="raw_metar" nolabel="1"
                                    widget="text"
                                    placeholder="Pulse 'Obtener briefing' para traer el METAR oficial..."/>
                         </page>
 
                         <page string="TAF" name="taf">
+                            <group>
+                                <field name="provider" readonly="1"
+                                       widget="badge" string="Fuente"/>
+                            </group>
                             <field name="raw_taf" nolabel="1"
                                    widget="text"
                                    placeholder="Pulse 'Obtener briefing' para traer el TAF oficial..."/>
