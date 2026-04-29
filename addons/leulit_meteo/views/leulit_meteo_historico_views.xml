@@ -9,8 +9,7 @@
                   decoration-muted="not raw_metar"
                   default_order="fecha_obtencion desc">
                 <field name="icao"/>
-                <field name="observation_time" string="Obs. (UTC)"/>
-                <field name="observation_time_local" string="Obs. (Madrid)" optional="show"/>
+                <field name="observation_time_local" string="Observación (Madrid)"/>
                 <field name="edad_datos" string="Actualización"/>
                 <field name="fuente_metar" widget="badge"
                        decoration-success="fuente_metar == 'aemet'"
@@ -20,9 +19,10 @@
                        decoration-success="fuente_taf == 'aemet'"
                        decoration-info="fuente_taf == 'checkwx'"
                        decoration-muted="fuente_taf == 'ninguno'"/>
-                <field name="fecha_obtencion" string="Obtenido (UTC)" optional="show"/>
+                <field name="fecha_obtencion_local" string="Obtenido (Madrid)" optional="show"/>
+                <field name="observation_time" string="Obs. (UTC)" optional="hide"/>
+                <field name="fecha_obtencion" string="Obtenido (UTC)" optional="hide"/>
                 <field name="icao_consultar" optional="show"/>
-                <field name="usa_referencia" widget="boolean_toggle" readonly="1" optional="show"/>
                 <field name="ref_icao" optional="show"/>
                 <field name="raw_metar" optional="hide"/>
                 <field name="raw_taf" optional="hide"/>
@@ -42,16 +42,16 @@
                     </div>
                     <group>
                         <group string="Observación">
-                            <field name="observation_time" string="UTC"/>
                             <field name="observation_time_local" string="Madrid" readonly="1"/>
+                            <field name="observation_time" string="UTC"/>
+                            <field name="fecha_obtencion_local" string="Obtenido (Madrid)" readonly="1"/>
                             <field name="fecha_obtencion" string="Obtenido (UTC)"/>
                         </group>
                         <group string="Origen">
                             <field name="icao_reference_id"/>
                             <field name="icao_consultar"/>
-                            <field name="usa_referencia"/>
-                            <field name="ref_icao" invisible="not usa_referencia"/>
-                            <field name="ref_nombre" invisible="not usa_referencia"/>
+                            <field name="ref_icao"/>
+                            <field name="ref_nombre"/>
                             <field name="proveedor"/>
                         </group>
                         <group string="Fuentes">

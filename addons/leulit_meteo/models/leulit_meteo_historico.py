@@ -56,8 +56,11 @@ class LeulitMeteoHistorico(models.Model):
         string='Actualización', compute='_compute_edad_datos',
         help='Tiempo transcurrido desde la observación.')
     observation_time_local = fields.Char(
-        string='Observación (Madrid)', compute='_compute_observation_time_local',
+        string='Observación (Madrid)', compute='_compute_tiempos_local',
         help='Hora de observación en hora local de Madrid.')
+    fecha_obtencion_local = fields.Char(
+        string='Obtenido (Madrid)', compute='_compute_tiempos_local',
+        help='Fecha de obtención en hora local de Madrid.')
 
     @api.depends('observation_time')
     def _compute_edad_datos(self):
@@ -76,20 +79,29 @@ class LeulitMeteoHistorico(models.Model):
             else:
                 rec.edad_datos = False
 
-    @api.depends('observation_time')
-    def _compute_observation_time_local(self):
+    @api.depends('observation_time', 'fecha_obtencion')
+    def _compute_tiempos_local(self):
         tz = pytz.timezone(_TZ_MADRID)
         for rec in self:
             if rec.observation_time:
-                dt_local = rec.observation_time.replace(tzinfo=pytz.utc).astimezone(tz)
-                rec.observation_time_local = dt_local.strftime('%d/%m %H:%M %Z')
+                dt = rec.observation_time.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.observation_time_local = dt.strftime('%d/%m/%Y %H:%M %Z')
             else:
                 rec.observation_time_local = False
+            if rec.fecha_obtencion:
+                dt = rec.fecha_obtencion.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.fecha_obtencion_local = dt.strftime('%d/%m/%Y %H:%M %Z')
+            else:
+                rec.fecha_obtencion_local = False
 
     @api.depends('icao', 'observation_time')
     def _compute_display_name(self):
+        tz = pytz.timezone(_TZ_MADRID)
         for record in self:
             label = record.icao or '?'
             if record.observation_time:
-                label += f" - {record.observation_time.strftime('%d/%m %H:%MZ')}"
+                utc_str = record.observation_time.strftime('%d/%m %H:%MZ')
+                dt_local = record.observation_time.replace(tzinfo=pytz.utc).astimezone(tz)
+                local_str = dt_local.strftime('%H:%M %Z')
+                label += f" - {utc_str} ({local_str})"
             record.display_name = label
