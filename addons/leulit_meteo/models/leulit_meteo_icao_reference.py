@@ -356,6 +356,85 @@ class LeulitMeteoIcaoReference(models.Model):
             },
         }
 
+    # ---------- Sincronización AviationWeather.gov ----------
+
+    @api.model
+    def action_sincronizar_desde_aviationweather(self):
+        """Obtiene estaciones LE*/GC* con METAR o TAF desde aviationweather.gov (sin API key).
+
+        Usa el endpoint ADDS (XML station2_0) con fallback a bbox JSON.
+        Solo procesa estaciones con prefijo LE* (España peninsular + Baleares)
+        o GC* (Canarias) que tengan capacidad METAR o TAF declarada.
+
+        Lógica BD idéntica a CheckWX:
+        - Crea registros nuevos con tiene_metar_propio=True.
+        - Actualiza nombre y coordenadas de los ya existentes.
+        - No toca registros con tiene_metar_propio=False (helipuertos / refs manuales).
+        - Elimina los tiene_metar_propio=True que ya no aparecen en la fuente.
+        """
+        from .leulit_meteo_aviation_weather_service import AviationWeatherService
+
+        estaciones = AviationWeatherService.get_stations_spain()
+
+        if not estaciones:
+            raise UserError(_(
+                'aviationweather.gov no devolvió ninguna estación española con METAR o TAF.\n'
+                'Comprueba la conexión a internet y vuelve a intentarlo.'))
+
+        _logger.info(
+            "AviationWeather sync: %d estaciones LE*/GC* con METAR/TAF encontradas",
+            len(estaciones))
+
+        creados = actualizados = 0
+
+        for icao, info in estaciones.items():
+            lat = info['lat']
+            lon = info['lon']
+            fir = _fir_heuristic(lat or None, lon or None)
+
+            rec = self.search([('icao', '=', icao)], limit=1)
+            vals = {
+                'nombre': info['nombre'],
+                'fir': fir,
+                'tiene_metar_propio': True,
+                'latitud': lat,
+                'longitud': lon,
+                'proveedor_oficial': 'aemet',
+                'auto_resolved': False,
+            }
+            if rec:
+                if not rec.tiene_metar_propio:
+                    continue   # helipuerto / ref manual — no tocar
+                rec.sudo().write(vals)
+                actualizados += 1
+            else:
+                self.sudo().create({'icao': icao, 'proxima_actualizacion': False, **vals})
+                creados += 1
+
+        icao_oficiales = set(estaciones.keys())
+        obsoletos = self.search([
+            ('tiene_metar_propio', '=', True),
+            ('icao', 'not in', list(icao_oficiales)),
+        ])
+        borrados = len(obsoletos)
+        obsoletos.sudo().unlink()
+
+        _logger.info(
+            "AviationWeather sync completado: %d creados, %d actualizados, %d eliminados",
+            creados, actualizados, borrados)
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Aeródromos de referencia actualizados'),
+                'message': _('%d añadidos · %d actualizados · %d eliminados') % (
+                    creados, actualizados, borrados),
+                'type': 'success',
+                'sticky': True,
+            },
+        }
+
     # ---------- API pública ----------
 
     @api.model

@@ -14,7 +14,7 @@ Guía de instalación, configuración inicial y verificación del módulo de met
   pip install requests
   ```
 
-- **Acceso a Internet** desde el servidor Odoo (consultas a Open-Meteo, Windy, AEMET, OpenAIP y CheckWX) y desde el navegador del usuario (CDN `unpkg.com` para Leaflet).
+- **Acceso a Internet** desde el servidor Odoo (consultas a Open-Meteo, Windy, AEMET, OpenAIP, CheckWX y aviationweather.gov) y desde el navegador del usuario (CDN `unpkg.com` para Leaflet).
 
 No se requiere instalar Leaflet manualmente: el módulo lo declara vía CDN en sus assets.
 
@@ -73,19 +73,20 @@ Usada para obtener coordenadas y nombre oficial de un aeródromo cuando se pide 
 
 Sin esta clave, la auto-resolución de OACIs desconocidos usa solo CheckWX para las coordenadas.
 
-### 3.4. CheckWX API Key (recomendada para auto-resolución y sincronización)
+### 3.4. CheckWX API Key (opcional — solo para auto-resolución de OACIs desconocidos)
 
 Usada para:
 - Verificar si un OACI tiene METAR propio.
-- Encontrar el aeródromo con METAR oficial más cercano (radio 150 km).
-- Sincronizar la tabla de aeródromos de referencia con la lista oficial española.
+- Encontrar el aeródromo con METAR oficial más cercano (radio 150 km) cuando se auto-resuelve un OACI desconocido.
+
+> **Nota:** la sincronización de aeródromos de referencia ya **no requiere** esta clave; el botón "Actualizar aeródromos de referencia" usa aviationweather.gov (NOAA/FAA, sin API key).
 
 1. Registrarse en <https://www.checkwxapi.com/> y obtener la API key.
 2. En Odoo: **Meteorología → Configuración → API Keys**.
 3. Pegar la clave en **CheckWX API Key**.
 4. Pulsar **Validar API Key** y luego **Guardar**.
 
-Sin esta clave, la auto-resolución y la sincronización de aeródromos no están disponibles.
+Sin esta clave, la auto-resolución de OACIs desconocidos usará solo OpenAIP para las coordenadas y no podrá identificar el aeródromo con METAR más cercano.
 
 ### 3.5. Parámetros: cron y notificaciones de error
 
@@ -93,7 +94,7 @@ En `Meteorología → Configuración → Parámetros` (wizard `leulit.meteo.para
 
 - **Actualización automática de METAR activa**: activa/desactiva el cron que descarga METAR/TAF de todos los aeródromos de referencia cada 10 minutos y los almacena en el histórico.
 - **Email(s) para notificación de errores**: dirección(es) separadas por coma a las que se enviarán avisos si el cron encuentra errores. Si se deja vacío, no se envían notificaciones.
-- **Actualizar aeródromos de referencia**: botón que consulta CheckWX para sincronizar la lista oficial de aeródromos españoles con METAR (requiere CheckWX API Key).
+- **Actualizar aeródromos de referencia**: botón que consulta aviationweather.gov (NOAA/FAA, sin API key) para sincronizar la lista de aeródromos españoles LE*/GC* con METAR o TAF.
 
 ---
 

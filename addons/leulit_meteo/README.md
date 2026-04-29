@@ -13,7 +13,7 @@ Módulo Odoo para consulta meteorológica orientada a operaciones aeronáuticas:
 - Briefings **METAR + TAF + SIGMET oficiales** de AEMET OpenData (texto RAW intacto, válido a efectos legales/AESA). Sistema de aeródromos de referencia (`leulit.meteo.icao.reference`) para resolver FIR y redirigir helipuertos sin METAR propio al aeródromo cercano. Arquitectura de proveedores pluggable: añadir nuevas fuentes (NOAA, etc.) no requiere tocar el modelo ni las vistas.
 - **Auto-resolución de OACIs desconocidos**: cuando se pide un briefing para un OACI no registrado, el sistema consulta automáticamente OpenAIP (coordenadas) y CheckWX (METAR más cercano) para crear el registro de referencia sin intervención manual.
 - **Histórico automático** (`leulit.meteo.historico`): cron cada 10 min que descarga y almacena METAR/TAF de todos los aeródromos activos.
-- **Sincronización de la tabla de aeródromos** desde CheckWX: botón en Parámetros que actualiza la lista oficial de aeródromos españoles con METAR.
+- **Sincronización de la tabla de aeródromos** desde aviationweather.gov (NOAA/FAA): botón en Parámetros que actualiza la lista oficial de aeródromos españoles con METAR o TAF. No requiere API key.
 - Histórico de consultas vinculable a otros módulos (vuelos, operaciones, etc.) mediante Many2one.
 
 ## APIs externas
@@ -27,8 +27,8 @@ Swagger AEMET → https://opendata.aemet.es/dist/index.html?
 | Windy Embed | `https://embed.windy.com/embed2.html` | No | Iframe público con visualización animada. |
 | AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | Mensajes oficiales METAR/TAF/SIGMET por OACI (METAR/TAF) y por FIR (SIGMET). Patrón 2 llamadas: endpoint → URL `datos` con texto plano. RAW intacto (sin alterar). |
 | OpenAIP | `https://api.openaip.net/api` | Sí | Resolución de aeródromos por OACI: coordenadas y nombre. Usado en auto-resolución. |
-| CheckWX | `https://api.checkwx.com` | Sí | METAR/TAF de aeródromos internacionales; búsqueda del aeródromo con METAR más cercano por radio. Usado en auto-resolución y sincronización. |
-| Aviation Weather | `https://aviationweather.gov/api/data` | No | METAR/TAF globales de NOAA/FAA. API pública gratuita. |
+| CheckWX | `https://api.checkwx.com` | Sí | METAR/TAF de aeródromos internacionales; búsqueda del aeródromo con METAR más cercano por radio. Usado en auto-resolución de OACIs desconocidos. |
+| Aviation Weather | `https://aviationweather.gov/api/data` / ADDS | No | METAR/TAF globales y listado de estaciones de NOAA/FAA. API pública gratuita (sin key). Fuente principal de sincronización de aeródromos. |
 
 ## Modelos principales
 
@@ -82,7 +82,7 @@ Controla el cron de actualización automática y las notificaciones de error. Pa
 - `leulit_meteo.email_errores` — dirección(es) de correo para avisos de error del cron.
 - Activa/desactiva el cron `cron_actualizar_metar_referencia` (cada 10 min por defecto).
 
-El botón **Actualizar aeródromos de referencia** (en Parámetros) descarga desde CheckWX la lista oficial de aeródromos españoles con METAR y sincroniza la tabla `leulit.meteo.icao.reference`.
+El botón **Actualizar aeródromos de referencia** (en Parámetros) descarga desde aviationweather.gov (NOAA/FAA, sin API key) la lista de aeródromos españoles LE*/GC* con METAR o TAF y sincroniza la tabla `leulit.meteo.icao.reference`.
 
 ## Instalación abreviada
 

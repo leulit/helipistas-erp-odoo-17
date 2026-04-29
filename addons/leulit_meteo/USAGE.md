@@ -10,7 +10,7 @@ Manual práctico de uso del módulo `leulit_meteo`. Para instalación consulta `
 4. [Reportes METAR](#4-reportes-metar)
 5. [Aeródromos de Referencia y auto-resolución](#5-aeródromos-de-referencia-y-auto-resolución)
 6. [Histórico automático de METAR](#6-histórico-automático-de-metar)
-7. [Sincronización de aeródromos desde CheckWX](#7-sincronización-de-aeródromos-desde-checkwx)
+7. [Sincronización de aeródromos desde aviationweather.gov](#7-sincronización-de-aeródromos-desde-aviationweathergov)
 8. [Añadir un nuevo proveedor](#8-añadir-un-nuevo-proveedor)
 9. [Filtros y búsquedas habituales](#9-filtros-y-búsquedas-habituales)
 10. [Integración programática](#10-integración-programática)
@@ -143,18 +143,18 @@ El cron `cron_actualizar_metar_referencia` se ejecuta cada 10 minutos y descarga
 | `fuente_metar` / `fuente_taf` | Proveedor que entregó el dato (aemet, checkwx, ninguno) |
 | `usa_referencia` | `True` si los datos vienen del `ref_icao` |
 
-## 7. Sincronización de aeródromos desde CheckWX
+## 7. Sincronización de aeródromos desde aviationweather.gov
 
-En **Meteorología → Configuración → Parámetros**, pulsar el botón **Actualizar aeródromos de referencia** (requiere CheckWX API Key configurada).
+En **Meteorología → Configuración → Parámetros**, pulsar el botón **Actualizar aeródromos de referencia**. **No requiere API key.**
 
 El proceso:
 
-1. Consulta CheckWX con dos búsquedas por radio: Península+Baleares (centro 40.0,-3.7, radio 400 nm) y Canarias (centro 28.1,-15.4, radio 200 nm).
-2. Filtra solo aeródromos con prefijo LE* o GC* y `country_code = ES`.
+1. Consulta aviationweather.gov (NOAA/FAA) para obtener todas las estaciones LE* y GC* que declaran capacidad METAR o TAF. Usa primero el endpoint ADDS clásico (XML con `site_type`) y, si falla, cae al API nuevo con bounding box sobre Península y Canarias.
+2. Filtra solo aeródromos con prefijo LE* (España peninsular + Baleares) o GC* (Canarias) que tengan `<METAR>` o `<TAF>` en su `site_type`.
 3. **Crea** registros nuevos con `tiene_metar_propio = True` y `proxima_actualizacion = None` (el cron los procesará en su siguiente ejecución).
 4. **Actualiza** nombre y coordenadas de los ya existentes con `tiene_metar_propio = True`.
 5. **No toca** registros con `tiene_metar_propio = False` (helipuertos y refs manuales).
-6. **Elimina** los registros con `tiene_metar_propio = True` que ya no aparecen en CheckWX.
+6. **Elimina** los registros con `tiene_metar_propio = True` que ya no aparecen en la fuente.
 
 Resultado: la notificación muestra el número de aeródromos añadidos, actualizados y eliminados.
 

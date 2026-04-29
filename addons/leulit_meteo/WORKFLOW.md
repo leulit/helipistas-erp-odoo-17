@@ -332,26 +332,30 @@ Para cada ref en la lista:
 
 ---
 
-### 2.6 Sincronización de aeródromos desde CheckWX
+### 2.6 Sincronización de aeródromos desde aviationweather.gov
 
-Botón en `Meteorología → Configuración → Parámetros`. Método: `leulit.meteo.icao.reference.action_sincronizar_desde_checkwx()`.
+Botón en `Meteorología → Configuración → Parámetros`. Método: `leulit.meteo.icao.reference.action_sincronizar_desde_aviationweather()`. **No requiere API key.**
 
 ```
 [Admin pulsa "Actualizar aeródromos de referencia"]
    │
    ▼
-Lee leulit_meteo.checkwx_api_key (lanza UserError si vacía)
+AviationWeatherService.get_stations_spain()
+   │
+   ├─ Intento 1 — ADDS dataserver_current (XML station2_0):
+   │     GET https://www.aviationweather.gov/adds/dataserver_current/httpparam
+   │         ?dataSource=stations&requestType=retrieve&format=xml&stationString=LE*
+   │     GET ...&stationString=GC*
+   │     Filtra: site_type contiene <METAR> o <TAF>
+   │
+   └─ Intento 2 (fallback bbox, si ADDS devuelve vacío):
+         GET https://aviationweather.gov/api/data/metar?bbox=-10,35,5,44.5&format=json
+         GET https://aviationweather.gov/api/data/taf?bbox=-10,35,5,44.5&format=json
+         (ídem para Canarias bbox=-18.5,27,-13,30)
+         Filtra: icao startswith 'LE' o 'GC'
    │
    ▼
-CheckWXService.get_nearest_metar(40.0, -3.7, 400nm, key)   # Península+Baleares
-CheckWXService.get_nearest_metar(28.1, -15.4, 200nm, key)  # Canarias
-   → Lista de estaciones con ICAO, nombre, lat, lon, country_code
-   │
-   ▼
-Filtra: icao startswith 'LE' o 'GC', country_code in ('ES', '')
-   │
-   ▼
-Para cada estación española:
+Para cada estación española con METAR o TAF:
    ├─ Asigna FIR por heurística de coordenadas
    ├─ ¿Existe registro con ese OACI?
    │     SÍ y tiene_metar_propio=True  → actualiza nombre, coords, fir
@@ -361,7 +365,7 @@ Para cada estación española:
    │                                       el cron lo procesa en su siguiente ejecución)
    │
    ▼
-Elimina registros con tiene_metar_propio=True que ya no están en CheckWX
+Elimina registros con tiene_metar_propio=True que ya no aparecen en la fuente
    │
    ▼
 Notificación: "X añadidos · Y actualizados · Z eliminados"
@@ -471,8 +475,9 @@ Ver [INTEGRACION_VUELO.md](INTEGRACION_VUELO.md) para la implementación complet
 | `OpenMeteoService` | `https://api.open-meteo.com/v1/forecast` | GET | Sin API key |
 | `WindyService` | `https://api.windy.com/api/point-forecast/v2` | POST | Requiere windy_api_key |
 | `AemetOpenDataService` | `https://opendata.aemet.es/opendata/api/...` (+ URL `datos`) | GET×2 | Patrón 2 llamadas; requiere aemet_api_key |
-| `CheckWXService` | `https://api.checkwx.com` | GET | METAR/TAF/station + nearest; requiere checkwx_api_key |
+| `CheckWXService` | `https://api.checkwx.com` | GET | METAR/TAF/station + nearest; requiere checkwx_api_key. Solo auto-resolución. |
 | `OpenAIPService` | `https://api.openaip.net/api` | GET | Coordenadas y nombre por OACI; requiere openaip_api_key |
+| `AviationWeatherService` | `https://aviationweather.gov` (ADDS + `/api/data`) | GET | Sin API key. METAR/TAF globales y listado de estaciones LE*/GC*. Fuente principal de sincronización. |
 
 ### Modelos Odoo
 
@@ -509,13 +514,15 @@ Confusión habitual: ambos parecen "el mapa", pero hacen cosas opuestas.
 | Windy REST | `https://api.windy.com/api/point-forecast/v2` | Sí | Windyty SE | Punto-forecast por waypoint |
 | Windy Embed (iframe) | `https://embed.windy.com/embed2.html` | No | Windyty SE | Visualización rica con overlay |
 | AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | AEMET (España) | Mensajes oficiales METAR/TAF/SIGMET. RAW intacto. |
-| CheckWX | `https://api.checkwx.com` | Sí | CheckWX | METAR/TAF internacional + búsqueda de aeródromo más cercano. |
-| OpenAIP | `https://api.openaip.net/api` | Sí | OpenAIP | Coordenadas y nombre oficial de aeródromo por OACI. |
+| Aviation Weather | `https://aviationweather.gov` (ADDS + `/api/data`) | No | NOAA/FAA | Listado de estaciones LE*/GC* con METAR/TAF (sincronización). METAR/TAF globales. |
+| CheckWX | `https://api.checkwx.com` | Sí | CheckWX | Auto-resolución de OACIs desconocidos: verificación METAR propio y búsqueda del aeródromo más cercano. |
+| OpenAIP | `https://api.openaip.net/api` | Sí | OpenAIP | Coordenadas y nombre oficial de aeródromo por OACI (auto-resolución). |
 
 Notas:
 
 - **AEMET OpenData** usa un patrón de dos llamadas: la primera devuelve un JSON con un campo `datos` que es a su vez una URL temporal donde están los datos reales.
-- **CheckWX** y **OpenAIP** solo se usan en auto-resolución de OACIs desconocidos y en sincronización de aeródromos. No son necesarias para el flujo básico AEMET.
+- **aviationweather.gov** es la fuente principal de sincronización de la tabla de aeródromos. No requiere API key. Usa el endpoint ADDS clásico (XML `station2_0`) con fallback al API nuevo por bounding box.
+- **CheckWX** y **OpenAIP** solo se usan en auto-resolución de OACIs desconocidos. No son necesarias para el flujo básico AEMET ni para la sincronización de aeródromos.
 
 ---
 

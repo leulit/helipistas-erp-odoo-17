@@ -32,7 +32,7 @@ class LeulitMeteoParams(models.TransientModel):
 
     def action_sincronizar_icao_espana(self):
         """Delega la sincronización de aeródromos de referencia en el modelo correspondiente."""
-        return self.env['leulit.meteo.icao.reference'].action_sincronizar_desde_checkwx()
+        return self.env['leulit.meteo.icao.reference'].action_sincronizar_desde_aviationweather()
 
     def action_save(self):
         self.ensure_one()
