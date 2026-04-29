@@ -363,6 +363,9 @@ class LeulitMeteoMetar(models.Model):
                 - ``raw_metar_est`` (str|None)
                 - ``historico`` (bool) — True si viene de la BD sin actualizar
                 - ``observation_time`` (datetime UTC|None)
+                - ``provider`` (str) — proveedor usado ('aemet', 'checkwx', ...)
+                - ``metar_icao`` (str) — OACI del que procede el METAR/TAF
+                - ``usa_referencia`` (bool) — True si metar_icao ≠ icao_code
             o ``None`` si no hay datos disponibles.
         """
         if not icao_code:
@@ -402,6 +405,9 @@ class LeulitMeteoMetar(models.Model):
                     'raw_metar_est': record.raw_metar_est,
                     'historico': True,
                     'observation_time': record.observation_time,
+                    'provider': record.provider,
+                    'metar_icao': record.ref_icao if record.usa_referencia else record.icao_code,
+                    'usa_referencia': record.usa_referencia,
                 }
 
         # ── Modo actual: busca/crea registro y llama a la API ───────────────
@@ -431,6 +437,9 @@ class LeulitMeteoMetar(models.Model):
             'raw_metar_est': record.raw_metar_est,
             'historico': False,
             'observation_time': record.observation_time,
+            'provider': record.provider,
+            'metar_icao': record.ref_icao if record.usa_referencia else record.icao_code,
+            'usa_referencia': record.usa_referencia,
         }
 
     @api.depends('icao_code', 'observation_time')
