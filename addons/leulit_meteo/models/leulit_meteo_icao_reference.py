@@ -2,7 +2,8 @@
 import logging
 import math
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -74,6 +75,12 @@ class LeulitMeteoIcaoReference(models.Model):
         help='True si este registro fue creado automáticamente por el '
              'sistema al encontrar un OACI desconocido.')
 
+    proxima_actualizacion = fields.Datetime(
+        'Próxima actualización (UTC)', readonly=True,
+        help='Momento estimado en que se espera el siguiente METAR. '
+             'El cron solo procesa este aeródromo cuando la hora actual '
+             'es igual o posterior a este valor.')
+
     notas = fields.Text()
 
     historico_count = fields.Integer(
@@ -105,7 +112,8 @@ class LeulitMeteoIcaoReference(models.Model):
 
     @api.model
     def action_actualizar_metar_cron(self):
-        """Cron cada 2 h: obtiene METAR/TAF de todos los aeródromos de referencia y guarda histórico."""
+        """Cron cada 10 min: procesa solo los aeródromos cuya próxima actualización ya ha llegado."""
+        from datetime import timedelta
         from .leulit_meteo_metar_provider import get_provider
 
         prov = get_provider('aemet')
@@ -113,8 +121,17 @@ class LeulitMeteoIcaoReference(models.Model):
             _logger.error("Cron METAR: proveedor 'aemet' no disponible")
             return
 
-        refs = self.search([])
-        _logger.info("Cron METAR: actualizando %d aeródromos de referencia", len(refs))
+        ahora = fields.Datetime.now()
+        # Solo aeródromos que nunca se han actualizado o cuya próxima actualización ya pasó
+        refs = self.search([
+            '|',
+            ('proxima_actualizacion', '=', False),
+            ('proxima_actualizacion', '<=', ahora),
+        ])
+        if not refs:
+            return
+
+        _logger.info("Cron METAR: %d aeródromo(s) pendientes de actualización", len(refs))
         Historico = self.env['leulit.meteo.historico']
         errores = []
 
@@ -123,6 +140,7 @@ class LeulitMeteoIcaoReference(models.Model):
                 data = prov.get_observation(self.env, icao_code=ref.icao)
                 if not data:
                     _logger.warning("Cron METAR: sin datos para %s", ref.icao)
+                    # Reintentar en 10 min (próxima ejecución del cron)
                     continue
 
                 obs_time = data.get('observation_time')
@@ -134,9 +152,14 @@ class LeulitMeteoIcaoReference(models.Model):
                         ('observation_time', '=', obs_time),
                     ], limit=1)
                     if existe:
+                        # METAR no ha cambiado; posponer próxima comprobación 15 min
+                        ref.sudo().write({
+                            'proxima_actualizacion': obs_time + timedelta(minutes=35),
+                        })
                         _logger.debug(
-                            "Cron METAR: %s ya tiene registro para %s, omitiendo",
-                            ref.icao, obs_time)
+                            "Cron METAR: %s sin cambios (%s), próxima a las %s",
+                            ref.icao, obs_time,
+                            (obs_time + timedelta(minutes=35)).strftime('%H:%MZ'))
                         continue
 
                 provider_code = data.get('provider') or 'aemet'
@@ -147,7 +170,7 @@ class LeulitMeteoIcaoReference(models.Model):
                     'raw_taf': data.get('raw_taf'),
                     'raw_sigmet': data.get('raw_sigmet'),
                     'observation_time': obs_time,
-                    'fecha_obtencion': fields.Datetime.now(),
+                    'fecha_obtencion': ahora,
                     'fuente_metar': provider_code if data.get('raw_metar') else 'ninguno',
                     'fuente_taf': provider_code if data.get('raw_taf') else 'ninguno',
                     'usa_referencia': bool(data.get('usa_referencia')),
@@ -155,7 +178,17 @@ class LeulitMeteoIcaoReference(models.Model):
                     'ref_nombre': data.get('ref_nombre'),
                     'proveedor': provider_code,
                 })
-                _logger.info("Cron METAR: histórico guardado para %s (%s)", ref.icao, obs_time)
+
+                # Calcular próxima actualización: obs_time + 30 min (ciclo METAR) + 5 min margen
+                if obs_time:
+                    proxima = obs_time + timedelta(minutes=35)
+                    ref.sudo().write({'proxima_actualizacion': proxima})
+                    _logger.info(
+                        "Cron METAR: histórico guardado para %s (%s), próxima a las %s",
+                        ref.icao, obs_time, proxima.strftime('%H:%MZ'))
+                else:
+                    _logger.info("Cron METAR: histórico guardado para %s (sin obs_time)", ref.icao)
+
             except Exception as exc:
                 _logger.error("Cron METAR: error en %s: %s", ref.icao, exc)
                 errores.append((ref.icao, str(exc)))
@@ -206,6 +239,117 @@ class LeulitMeteoIcaoReference(models.Model):
             _logger.info("Cron METAR: notificación de errores enviada a %s", email_to)
         except Exception as exc:
             _logger.error("Cron METAR: fallo al enviar notificación de errores: %s", exc)
+
+    # ---------- Sincronización CheckWX ----------
+
+    @api.model
+    def action_sincronizar_desde_checkwx(self):
+        """Descarga la lista oficial de estaciones METAR de España (CheckWX) y sincroniza la tabla.
+
+        Usa dos llamadas por radio desde CheckWX:
+          · Centro Península + Baleares  (40.0, -3.7)  r=400 nm
+          · Canarias                     (28.1, -15.4) r=200 nm
+        Solo procesa estaciones con ICAO prefijo LE* o GC* y country_code ES.
+
+        Lógica BD:
+        - Crea registros nuevos con tiene_metar_propio=True y proxima_actualizacion=None
+          (el cron los procesa en su siguiente ejecución).
+        - Actualiza nombre y coordenadas de los ya existentes con tiene_metar_propio=True.
+        - No toca registros con tiene_metar_propio=False (helipuertos / refs manuales).
+        - Elimina los tiene_metar_propio=True que ya no aparecen en CheckWX.
+        """
+        from .leulit_meteo_checkwx_service import CheckWXService
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
+        if not checkwx_key:
+            raise UserError(_('Configura primero la API Key de CheckWX en Configuración → API Keys.'))
+
+        def _es_espanol(icao, country):
+            return (bool(icao) and
+                    (icao.startswith('LE') or icao.startswith('GC')) and
+                    country in ('ES', ''))
+
+        # 2 llamadas por radio: Península+Baleares y Canarias
+        CENTROS = [
+            (40.0, -3.7, 400),   # Península + Baleares
+            (28.1, -15.4, 200),  # Canarias
+        ]
+
+        estaciones = {}   # icao -> {nombre, lat, lon}
+        for lat_c, lon_c, radius_nm in CENTROS:
+            candidatos = CheckWXService.get_nearest_metar(lat_c, lon_c, radius_nm, checkwx_key)
+            for c in candidatos:
+                icao = (c.get('icao') or '').upper().strip()
+                country = (c.get('country_code') or '').upper().strip()
+                if not _es_espanol(icao, country):
+                    continue
+                if icao not in estaciones:
+                    estaciones[icao] = {
+                        'nombre': (c.get('name') or icao).strip(),
+                        'lat': float(c.get('lat') or 0.0),
+                        'lon': float(c.get('lon') or 0.0),
+                    }
+
+        if not estaciones:
+            raise UserError(
+                _('CheckWX no devolvió estaciones españolas. '
+                  'Verifica la API Key o inténtalo en unos minutos.'))
+
+        _logger.info("CheckWX sync: %d estaciones españolas encontradas", len(estaciones))
+
+        # Sincronizar BD
+        creados = actualizados = 0
+
+        for icao, info in estaciones.items():
+            lat = info['lat']
+            lon = info['lon']
+            fir = _fir_heuristic(lat or None, lon or None)
+
+            rec = self.search([('icao', '=', icao)], limit=1)
+            vals = {
+                'nombre': info['nombre'],
+                'fir': fir,
+                'tiene_metar_propio': True,
+                'latitud': lat,
+                'longitud': lon,
+                'proveedor_oficial': 'aemet',
+                'auto_resolved': False,
+            }
+            if rec:
+                if not rec.tiene_metar_propio:
+                    continue   # helipuerto / ref manual — no tocar
+                rec.sudo().write(vals)
+                actualizados += 1
+            else:
+                # proxima_actualizacion=False → el cron lo procesará en su próxima ejecución
+                self.sudo().create({'icao': icao, 'proxima_actualizacion': False, **vals})
+                creados += 1
+
+        # Eliminar los que ya no están en la lista oficial
+        icao_oficiales = set(estaciones.keys())
+        obsoletos = self.search([
+            ('tiene_metar_propio', '=', True),
+            ('icao', 'not in', list(icao_oficiales)),
+        ])
+        borrados = len(obsoletos)
+        obsoletos.sudo().unlink()
+
+        _logger.info(
+            "CheckWX sync completado: %d creados, %d actualizados, %d eliminados",
+            creados, actualizados, borrados)
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Aeródromos de referencia actualizados'),
+                'message': _('%d añadidos · %d actualizados · %d eliminados') % (
+                    creados, actualizados, borrados),
+                'type': 'success',
+                'sticky': True,
+            },
+        }
 
     # ---------- API pública ----------
 

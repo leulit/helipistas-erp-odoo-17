@@ -6,6 +6,14 @@
         <field name="model">leulit.meteo.params</field>
         <field name="arch" type="xml">
             <form string="Parámetros Meteorología">
+                <header>
+                    <button name="action_sincronizar_icao_espana"
+                            string="Actualizar aeródromos de referencia"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-refresh"
+                            confirm="Se consultará CheckWX para obtener la lista oficial de aeródromos españoles con METAR. Los que ya no estén en la lista serán eliminados junto con su histórico. ¿Continuar?"/>
+                </header>
                 <sheet>
                     <group string="Actualización automática METAR">
                         <div colspan="2" class="text-muted" style="margin-bottom:12px;">
@@ -22,8 +30,7 @@
                             para no recibir notificaciones.
                         </div>
                         <field name="email_errores"
-                               placeholder="control@ejemplo.com"
-                               widget="email"/>
+                               placeholder="control@ejemplo.com, otro@ejemplo.com"/>
                     </group>
                 </sheet>
                 <footer>

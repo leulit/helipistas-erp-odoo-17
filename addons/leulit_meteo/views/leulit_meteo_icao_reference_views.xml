@@ -18,6 +18,7 @@
                 <field name="proveedor_oficial" widget="badge" optional="show"/>
                 <field name="station_code" optional="show"/>
                 <field name="station_distancia_km" optional="hide"/>
+                <field name="proxima_actualizacion" optional="show"/>
                 <field name="auto_resolved" widget="boolean_toggle" readonly="1"/>
             </tree>
         </field>

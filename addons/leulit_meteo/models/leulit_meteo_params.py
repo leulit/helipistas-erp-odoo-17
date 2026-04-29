@@ -9,10 +9,10 @@ class LeulitMeteoParams(models.TransientModel):
     PARAM_EMAIL_ERRORES = 'leulit_meteo.email_errores'
 
     email_errores = fields.Char(
-        string='Email para notificación de errores',
-        help='Dirección de correo a la que se enviarán avisos cuando la '
-             'actualización automática de METAR encuentre errores. '
-             'Si se deja vacío no se enviarán notificaciones.')
+        string='Email(s) para notificación de errores',
+        help='Dirección(es) de correo separadas por coma. '
+             'Se enviarán avisos cuando la actualización automática de METAR '
+             'encuentre errores. Si se deja vacío no se enviarán notificaciones.')
 
     cron_activo = fields.Boolean(
         string='Actualización automática de METAR activa',
@@ -29,6 +29,10 @@ class LeulitMeteoParams(models.TransientModel):
             raise_if_not_found=False)
         res['cron_activo'] = bool(cron and cron.active)
         return res
+
+    def action_sincronizar_icao_espana(self):
+        """Delega la sincronización de aeródromos de referencia en el modelo correspondiente."""
+        return self.env['leulit.meteo.icao.reference'].action_sincronizar_desde_checkwx()
 
     def action_save(self):
         self.ensure_one()
