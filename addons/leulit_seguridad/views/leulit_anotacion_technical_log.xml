@@ -85,7 +85,7 @@
                                 </group>
                             </group>
                             <group colspan="2">
-                                <field name="anotacion" readonly="estado in ['pending', 'closed'] or is_operational" colspan="2"/>
+                                <field name="anotacion" readonly="estado in ['pending', 'closed'] or is_operational" force_save="1" colspan="2"/>
                             </group>
                         </group>
                         <group>
