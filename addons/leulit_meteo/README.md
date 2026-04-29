@@ -28,6 +28,7 @@ Swagger AEMET → https://opendata.aemet.es/dist/index.html?
 | AEMET OpenData | `https://opendata.aemet.es/opendata` | Sí (JWT) | Mensajes oficiales METAR/TAF/SIGMET por OACI (METAR/TAF) y por FIR (SIGMET). Patrón 2 llamadas: endpoint → URL `datos` con texto plano. RAW intacto (sin alterar). |
 | OpenAIP | `https://api.openaip.net/api` | Sí | Resolución de aeródromos por OACI: coordenadas y nombre. Usado en auto-resolución. |
 | CheckWX | `https://api.checkwx.com` | Sí | METAR/TAF de aeródromos internacionales; búsqueda del aeródromo con METAR más cercano por radio. Usado en auto-resolución y sincronización. |
+| Aviation Weather | `https://aviationweather.gov/api/data` | No | METAR/TAF globales de NOAA/FAA. API pública gratuita. |
 
 ## Modelos principales
 
@@ -50,6 +51,7 @@ Servicios REST:
 - `models/leulit_meteo_aemet_service.py` — `AemetOpenDataService`.
 - `models/leulit_meteo_checkwx_service.py` — `CheckWXService` (METAR/TAF/station internacional + búsqueda por radio).
 - `models/leulit_meteo_openaip_service.py` — `OpenAIPService` (coordenadas y nombre de aeródromo por OACI).
+- `models/leulit_meteo_aviation_weather_service.py` — `AviationWeatherService` (METAR/TAF de aviationweather.gov, API pública NOAA/FAA sin key).
 
 ## Menú principal en Odoo
 
@@ -64,13 +66,14 @@ La configuración está en `Meteorología → Configuración`, con dos wizards d
 
 ### API Keys (`leulit.meteo.config`)
 
-Gestiona las claves de las cuatro APIs externas con key y un botón de validación por cada una. Parámetros del sistema escritos:
+Gestiona las claves de los servicios externos. Cada servicio tiene su propia pestaña con descripción, campo de clave y botón "Probar conexión". Parámetros del sistema escritos:
 
 - `leulit_meteo.windy_api_key`
 - `leulit_meteo.windy_model` (gfs, ecmwf, icon, iconEu, nam)
 - `leulit_meteo.aemet_api_key`
 - `leulit_meteo.openaip_api_key`
 - `leulit_meteo.checkwx_api_key`
+- `leulit_meteo.aviation_weather_api_key` (opcional — API pública sin clave)
 
 ### Parámetros (`leulit.meteo.params`)
 

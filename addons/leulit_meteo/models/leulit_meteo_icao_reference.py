@@ -265,6 +265,12 @@ class LeulitMeteoIcaoReference(models.Model):
         if not checkwx_key:
             raise UserError(_('Configura primero la API Key de CheckWX en Configuración → API Keys.'))
 
+        # Validar la API Key antes de intentar la sincronización completa
+        if not CheckWXService.validate_api_key(checkwx_key):
+            raise UserError(_(
+                'La API Key de CheckWX no es válida o no hay conexión con el servicio.\n'
+                'Comprueba la key en Configuración → API Keys y que tengas acceso a internet.'))
+
         # Obtener todas las estaciones españolas (LE* y GC*) directamente por país.
         # Se usa el endpoint /v2/station/country/ES, que devuelve estaciones registradas
         # independientemente de si tienen METAR activo en este momento. Esto es más fiable
@@ -273,9 +279,11 @@ class LeulitMeteoIcaoReference(models.Model):
         candidatos_es = CheckWXService.get_stations_by_country('ES', checkwx_key)
 
         estaciones = {}   # icao -> {nombre, lat, lon}
+        sin_prefijo = 0
         for c in candidatos_es:
             icao = (c.get('icao') or '').upper().strip()
             if not (icao.startswith('LE') or icao.startswith('GC')):
+                sin_prefijo += 1
                 continue
             if icao not in estaciones:
                 estaciones[icao] = {
@@ -284,10 +292,14 @@ class LeulitMeteoIcaoReference(models.Model):
                     'lon': float(c.get('lon') or 0.0),
                 }
 
+        _logger.info(
+            "CheckWX sync: %d candidatos ES, %d con prefijo LE/GC, %d descartados por prefijo",
+            len(candidatos_es), len(estaciones), sin_prefijo)
+
         if not estaciones:
-            raise UserError(
-                _('CheckWX no devolvió estaciones españolas. '
-                  'Verifica la API Key o inténtalo en unos minutos.'))
+            raise UserError(_(
+                'CheckWX devolvió %d estaciones para ES pero ninguna con prefijo LE* o GC*.\n'
+                'Revisa los logs del servidor para más detalle.') % len(candidatos_es))
 
         _logger.info("CheckWX sync: %d estaciones españolas encontradas", len(estaciones))
 

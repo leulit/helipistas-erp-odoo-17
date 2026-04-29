@@ -7,6 +7,7 @@ from . import leulit_meteo_windy_service
 from . import leulit_meteo_aemet_service
 from . import leulit_meteo_openaip_service
 from . import leulit_meteo_checkwx_service
+from . import leulit_meteo_aviation_weather_service
 
 # Aeródromos de referencia (necesario antes del proveedor AEMET, que
 # llama a env['leulit.meteo.icao.reference'].resolve()).
