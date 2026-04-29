@@ -115,8 +115,8 @@ class AviationWeatherService:
         """Fallback: bbox sobre Peninsula+Baleares y Canarias usando el API nuevo."""
         result = {}
         bboxes = [
-            (-10.0, 35.0, 5.0, 44.5),   # Peninsula + Baleares
-            (-18.5, 27.0, -13.0, 30.0),  # Canarias
+            (35.0, -10.0, 44.5, 5.0),    # Peninsula + Baleares (minLat, minLon, maxLat, maxLon)
+            (27.0, -18.5, 30.0, -13.0),  # Canarias
         ]
         for bbox in bboxes:
             for datasource in ('metar', 'taf'):

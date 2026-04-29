@@ -347,11 +347,13 @@ AviationWeatherService.get_stations_spain()
    │         ?dataSource=stations&requestType=retrieve&format=xml&stationString=LE*
    │     GET ...&stationString=GC*
    │     Filtra: site_type contiene <METAR> o <TAF>
+   │     ⚠ Este endpoint devuelve HTTP 403 desde 2025; el fallback bbox es el camino efectivo.
    │
    └─ Intento 2 (fallback bbox, si ADDS devuelve vacío):
-         GET https://aviationweather.gov/api/data/metar?bbox=-10,35,5,44.5&format=json
-         GET https://aviationweather.gov/api/data/taf?bbox=-10,35,5,44.5&format=json
-         (ídem para Canarias bbox=-18.5,27,-13,30)
+         GET https://aviationweather.gov/api/data/metar?bbox=35,-10,44.5,5&format=json
+         GET https://aviationweather.gov/api/data/taf?bbox=35,-10,44.5,5&format=json
+         (ídem para Canarias bbox=27,-18.5,30,-13)
+         Formato bbox: minLat,minLon,maxLat,maxLon
          Filtra: icao startswith 'LE' o 'GC'
    │
    ▼

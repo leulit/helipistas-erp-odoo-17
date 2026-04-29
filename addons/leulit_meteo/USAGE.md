@@ -149,8 +149,8 @@ En **Meteorología → Configuración → Parámetros**, pulsar el botón **Actu
 
 El proceso:
 
-1. Consulta aviationweather.gov (NOAA/FAA) para obtener todas las estaciones LE* y GC* que declaran capacidad METAR o TAF. Usa primero el endpoint ADDS clásico (XML con `site_type`) y, si falla, cae al API nuevo con bounding box sobre Península y Canarias.
-2. Filtra solo aeródromos con prefijo LE* (España peninsular + Baleares) o GC* (Canarias) que tengan `<METAR>` o `<TAF>` en su `site_type`.
+1. Consulta aviationweather.gov (NOAA/FAA) para obtener todas las estaciones LE* y GC* que declaran capacidad METAR o TAF. Intenta primero el endpoint ADDS clásico (XML con `site_type`); si falla (desde 2025 devuelve HTTP 403), cae al API nuevo por bounding box `(minLat,minLon,maxLat,maxLon)` sobre Península y Canarias.
+2. Filtra aeródromos con prefijo LE* (España peninsular + Baleares) o GC* (Canarias).
 3. **Crea** registros nuevos con `tiene_metar_propio = True` y `proxima_actualizacion = None` (el cron los procesará en su siguiente ejecución).
 4. **Actualiza** nombre y coordenadas de los ya existentes con `tiene_metar_propio = True`.
 5. **No toca** registros con `tiene_metar_propio = False` (helipuertos y refs manuales).
