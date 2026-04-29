@@ -104,6 +104,12 @@
                             <group>
                                 <field name="provider" readonly="1"
                                        widget="badge" string="Fuente"/>
+                                <field name="ref_icao" readonly="1"
+                                       string="OACI consultado"
+                                       invisible="not usa_referencia"/>
+                                <field name="icao_code" readonly="1"
+                                       string="OACI consultado"
+                                       invisible="usa_referencia"/>
                             </group>
                             <field name="raw_metar" nolabel="1"
                                    widget="text"
@@ -114,6 +120,12 @@
                             <group>
                                 <field name="provider" readonly="1"
                                        widget="badge" string="Fuente"/>
+                                <field name="ref_icao" readonly="1"
+                                       string="OACI consultado"
+                                       invisible="not usa_referencia"/>
+                                <field name="icao_code" readonly="1"
+                                       string="OACI consultado"
+                                       invisible="usa_referencia"/>
                             </group>
                             <field name="raw_taf" nolabel="1"
                                    widget="text"

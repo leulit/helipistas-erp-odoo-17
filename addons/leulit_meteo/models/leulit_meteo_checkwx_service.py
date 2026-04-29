@@ -109,6 +109,38 @@ class CheckWXService:
         return results
 
     @classmethod
+    def get_stations_by_country(cls, country_code, api_key):
+        """Devuelve lista de {'icao','name','lat','lon','country_code'} de un país.
+
+        Usa /v2/station/country/{code}. Devuelve todas las estaciones registradas
+        independientemente de si tienen METAR activo en este momento.
+        """
+        data = cls._get(f"/v2/station/country/{country_code.upper()}", api_key)
+        if not data or not data.get('data'):
+            return []
+        results = []
+        for item in data['data']:
+            icao = (item.get('icao') or '').upper().strip()
+            if not icao:
+                continue
+            coords = item.get('geometry', {}).get('coordinates')
+            lat = item.get('latitude', {}).get('decimal')
+            lon = item.get('longitude', {}).get('decimal')
+            if coords and len(coords) >= 2:
+                lon = float(coords[0])
+                lat = float(coords[1])
+            if lat is None or lon is None:
+                continue
+            results.append({
+                'icao': icao,
+                'name': item.get('name', ''),
+                'lat': float(lat),
+                'lon': float(lon),
+                'country_code': item.get('country', {}).get('code', ''),
+            })
+        return results
+
+    @classmethod
     def validate_api_key(cls, api_key):
         data = cls._get("/v2/station/LEMD", api_key)
         return data is not None

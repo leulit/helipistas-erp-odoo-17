@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_leulit_meteo_params_form" model="ir.ui.view">
+        <field name="name">leulit.meteo.params.form</field>
+        <field name="model">leulit.meteo.params</field>
+        <field name="arch" type="xml">
+            <form string="Parámetros Meteorología">
+                <header>
+                    <button name="action_sincronizar_icao_espana"
+                            string="Actualizar aeródromos de referencia"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-refresh"
+                            confirm="Se consultará CheckWX para obtener la lista oficial de aeródromos españoles con METAR. Los que ya no estén en la lista serán eliminados junto con su histórico. ¿Continuar?"/>
+                </header>
+                <sheet>
+                    <group string="Actualización automática METAR">
+                        <div colspan="2" class="text-muted" style="margin-bottom:12px;">
+                            Cuando está activa, el sistema descarga automáticamente los datos
+                            METAR y TAF de todos los aeródromos de referencia cada 2 horas
+                            y los guarda en el histórico.
+                        </div>
+                        <field name="cron_activo" widget="boolean_toggle"/>
+                    </group>
+                    <group string="Notificaciones de error">
+                        <div colspan="2" class="text-muted" style="margin-bottom:12px;">
+                            Si se produce algún error durante la actualización automática
+                            se enviará un correo a la dirección indicada. Déjalo vacío
+                            para no recibir notificaciones.
+                        </div>
+                        <field name="email_errores"
+                               placeholder="control@ejemplo.com, otro@ejemplo.com"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_save"
+                            string="Guardar"
+                            type="object"
+                            class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leulit_meteo_params" model="ir.actions.act_window">
+        <field name="name">Parámetros Meteorología</field>
+        <field name="res_model">leulit.meteo.params</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_leulit_meteo_params_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
