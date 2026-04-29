@@ -102,6 +102,7 @@ class AemetMetarProvider(MetarProvider):
             icao_consultar, bool(raw_metar), bool(raw_taf), bool(raw_sigmet))
 
         # Si AEMET no tiene datos → intentar CheckWX para el mismo ICAO
+        checkwx_key = None
         if not (raw_metar or raw_taf):
             checkwx_key = self._get_checkwx_key(env)
             if checkwx_key:
@@ -110,6 +111,44 @@ class AemetMetarProvider(MetarProvider):
                 _logger.info(
                     "AEMET.get_observation: CheckWX directo %s → metar=%s taf=%s",
                     icao_consultar, bool(raw_metar), bool(raw_taf))
+
+        # Último recurso: buscar aeródromo de referencia más próximo
+        if not (raw_metar or raw_taf) and not usa_referencia:
+            lat = ref.get('latitud')
+            lon = ref.get('longitud')
+            _logger.info(
+                "AEMET.get_observation: %s sin datos, buscando aeródromo próximo "
+                "(lat=%s lon=%s)", icao_consultar, lat, lon)
+            nearest = env['leulit.meteo.icao.reference'].sudo()._resolve_nearest(
+                icao_consultar,
+                lat=lat if lat else None,
+                lon=lon if lon else None,
+                exclude_icao=icao_consultar,
+            )
+            if nearest and nearest.get('icao_consultar'):
+                new_icao = nearest['icao_consultar']
+                raw_metar = AemetOpenDataService.get_message('METAR', new_icao, api_key)
+                raw_taf = AemetOpenDataService.get_message('TAF', new_icao, api_key)
+                if not (raw_metar or raw_taf):
+                    if not checkwx_key:
+                        checkwx_key = self._get_checkwx_key(env)
+                    if checkwx_key:
+                        raw_metar = CheckWXService.get_metar(new_icao, checkwx_key)
+                        raw_taf = CheckWXService.get_taf(new_icao, checkwx_key)
+                if raw_metar or raw_taf:
+                    icao_consultar = new_icao
+                    usa_referencia = True
+                    ref_nombre = nearest['ref_nombre']
+                    ref_distancia_km = nearest['ref_distancia_km']
+                    fir = nearest['fir'] or fir
+                    station_name = nearest['ref_nombre'] or new_icao
+                    # Actualizar SIGMET con la FIR correcta si cambió
+                    if not raw_sigmet and fir:
+                        raw_sigmet = AemetOpenDataService.get_message(
+                            'SIGMET', fir, api_key)
+                    _logger.info(
+                        "AEMET.get_observation: usando aeródromo próximo %s (%.1f km)",
+                        new_icao, ref_distancia_km or 0)
 
         if not (raw_metar or raw_taf or raw_sigmet):
             return None

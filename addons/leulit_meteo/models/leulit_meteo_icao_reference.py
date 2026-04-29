@@ -398,38 +398,41 @@ class LeulitMeteoIcaoReference(models.Model):
         return self._resolve_nearest(icao_up)
 
     @api.model
-    def _resolve_nearest(self, icao):
-        """Encuentra el aeródromo de referencia más próximo al ICAO desconocido.
+    def _resolve_nearest(self, icao, lat=None, lon=None, exclude_icao=None):
+        """Encuentra el aeródromo de referencia más próximo al ICAO dado.
 
-        Obtiene coordenadas del ICAO via OpenAIP (fallback CheckWX) y busca
-        el registro más cercano en la tabla por distancia haversine.
+        Si lat/lon no se proporcionan, los obtiene via OpenAIP (fallback CheckWX).
         No crea ningún registro nuevo.
+        exclude_icao: ICAO a excluir del resultado (para evitar devolver el mismo).
         """
-        from .leulit_meteo_openaip_service import OpenAIPService
-        from .leulit_meteo_checkwx_service import CheckWXService
+        if lat is None or lon is None:
+            from .leulit_meteo_openaip_service import OpenAIPService
+            from .leulit_meteo_checkwx_service import CheckWXService
 
-        ICP = self.env['ir.config_parameter'].sudo()
-        openaip_key = ICP.get_param('leulit_meteo.openaip_api_key', '')
-        checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
+            ICP = self.env['ir.config_parameter'].sudo()
+            openaip_key = ICP.get_param('leulit_meteo.openaip_api_key', '')
+            checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
 
-        lat = lon = None
-        if openaip_key:
-            info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
-            if info:
-                lat = info.get('lat')
-                lon = info.get('lon')
+            if openaip_key:
+                info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
+                if info:
+                    lat = info.get('lat')
+                    lon = info.get('lon')
 
-        if lat is None and checkwx_key:
-            station_info = CheckWXService.get_station(icao, checkwx_key)
-            if station_info:
-                lat = station_info.get('lat')
-                lon = station_info.get('lon')
+            if (lat is None) and checkwx_key:
+                station_info = CheckWXService.get_station(icao, checkwx_key)
+                if station_info:
+                    lat = station_info.get('lat')
+                    lon = station_info.get('lon')
 
         if lat is None:
             _logger.warning("_resolve_nearest %s: no se obtuvieron coordenadas", icao)
             return None
 
-        all_refs = self.search([('latitud', '!=', 0.0), ('longitud', '!=', 0.0)])
+        domain = [('latitud', '!=', 0.0), ('longitud', '!=', 0.0)]
+        if exclude_icao:
+            domain.append(('icao', '!=', exclude_icao.upper()))
+        all_refs = self.search(domain)
         best = None
         best_dist = float('inf')
         for ref in all_refs:

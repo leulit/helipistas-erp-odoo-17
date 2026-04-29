@@ -186,39 +186,29 @@ class LeulitMeteoMetar(models.Model):
     # ---------- Acciones de UI ----------
 
     def action_obtener_briefing(self):
-        """Trae METAR + TAF + SIGMET del proveedor y los aplica."""
+        """Obtiene METAR/TAF/SIGMET del histórico y los aplica al registro."""
         self.ensure_one()
         if not self.icao_code:
             raise UserError(_('Debe indicar un código OACI.'))
-        if len(self.icao_code) != 4 or not self.icao_code.isalpha():
+        icao = self.icao_code.upper().strip()
+        if len(icao) != 4 or not icao.isalpha():
             raise UserError(_(
-                'El código OACI debe tener exactamente 4 letras '
-                '(ej: LEMD).'))
+                'El código OACI debe tener exactamente 4 letras (ej: LEMD).'))
 
-        prov = get_provider(self.provider)
-        if not prov:
-            raise UserError(_(
-                'Proveedor METAR no disponible: %s') % self.provider)
-
-        data = prov.get_observation(
-            self.env,
-            icao_code=self.icao_code,
-            station_code=self.station_code or None,
-        )
+        data = self.briefing_oaci(icao)
         if not data:
             raise UserError(_(
-                'No se han podido obtener datos del proveedor "%(prov)s" '
-                'para %(icao)s. Verifique el OACI, la conexión y la '
-                'configuración del proveedor.'
-            ) % {'prov': prov.label, 'icao': self.icao_code})
+                'No hay datos históricos disponibles para %(icao)s. '
+                'Los datos se actualizan automáticamente cada 30 minutos.'
+            ) % {'icao': icao})
 
         self._write_observacion(data)
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': prov.label,
-                'message': _('Briefing obtenido para %s') % self.icao_code,
+                'title': _('Briefing obtenido'),
+                'message': _('METAR/TAF para %s') % icao,
                 'type': 'success',
                 'sticky': False,
                 'next': {
@@ -318,140 +308,104 @@ class LeulitMeteoMetar(models.Model):
 
     @api.model
     def briefing_oaci(self, icao_code, provider='aemet', fecha=None):
-        """Busca o crea el reporte METAR para el OACI y devuelve el briefing.
+        """Devuelve el briefing METAR/TAF/SIGMET para un OACI en una fecha.
 
-        Reutilizable desde cualquier módulo::
+        Fuente única de datos: siempre lee de ``leulit.meteo.historico``.
+        El cron mantiene el histórico actualizado cada ~30 min.
 
-            # Datos actuales
-            result = self.env['leulit.meteo.metar'].briefing_oaci('LEUL')
-
-            # Datos históricos (busca en BD, no llama a la API)
-            from datetime import datetime
-            result = self.env['leulit.meteo.metar'].briefing_oaci(
-                'LEUL', fecha=datetime(2026, 4, 27, 14, 30))
+        Resolución del OACI:
+        - Si está en la tabla de referencia → usa su histórico directamente.
+        - Si NO está → localiza el aeródromo de referencia más próximo
+          (via coordenadas OpenAIP/CheckWX) y usa su histórico.
 
         Args:
-            icao_code: código OACI de 4 letras (ej. 'LEUL').
-            provider: proveedor a usar si se crea el registro. Solo se aplica
-                en modo actual; ignorado en modo histórico.
-            fecha: datetime UTC opcional. Si se indica y corresponde a más de
-                30 minutos en el pasado, activa el **modo histórico**: busca
-                en la BD el registro con ``observation_time`` más cercano a
-                esa fecha (máx. 2 horas de diferencia) sin llamar a la API.
-                Las APIs de los proveedores no ofrecen datos históricos.
+            icao_code: código OACI de 4 letras.
+            provider: ignorado (mantenido por compatibilidad).
+            fecha: datetime UTC (o string ISO). Si None, usa la hora actual.
+                   Devuelve el registro histórico más reciente con
+                   ``observation_time <= fecha``.
 
         Returns:
-            dict con claves:
-                - ``record_id`` (int)
-                - ``raw_metar`` (str|None)
-                - ``raw_taf`` (str|None)
-                - ``raw_metar_est`` (str|None)
-                - ``historico`` (bool) — True si viene de la BD sin actualizar
-                - ``observation_time`` (datetime UTC|None)
-                - ``provider`` (str) — proveedor usado ('aemet', 'checkwx', ...)
-                - ``metar_icao`` (str) — OACI del que procede el METAR/TAF
-                - ``usa_referencia`` (bool) — True si metar_icao ≠ icao_code
-            o ``None`` si no hay datos disponibles.
+            dict compatible con ``_write_observacion`` o ``None`` si no hay datos.
         """
+        from .leulit_meteo_metar_parser import parse_metar
+
         if not icao_code:
             return None
         icao = icao_code.upper().strip()
 
-        # ── Modo histórico ──────────────────────────────────────────────────
-        if fecha is not None:
-            from datetime import timedelta
-            if isinstance(fecha, str):
-                fecha = fields.Datetime.from_string(fecha)
-            ahora = fields.Datetime.now()
-            if (ahora - fecha) > timedelta(minutes=30):
-                # 1. Buscar en histórico automático (leulit.meteo.historico)
-                Hist = self.env['leulit.meteo.historico']
-                hist = Hist.search([
-                    ('icao', '=', icao),
-                    ('observation_time', '<=', fecha),
-                ], order='observation_time desc', limit=1)
-                if not hist:
-                    hist = Hist.search([
-                        ('icao', '=', icao),
-                        ('observation_time', '>=', fecha),
-                    ], order='observation_time asc', limit=1)
-                if hist and hist.observation_time:
-                    diff_seg = abs((hist.observation_time - fecha).total_seconds())
-                    if diff_seg <= 7200:
-                        return {
-                            'record_id': None,
-                            'raw_metar': hist.raw_metar,
-                            'raw_taf': hist.raw_taf,
-                            'raw_metar_est': None,
-                            'raw_sigmet': hist.raw_sigmet,
-                            'historico': True,
-                            'observation_time': hist.observation_time,
-                            'provider': hist.proveedor or 'aemet',
-                            'metar_icao': hist.ref_icao if hist.usa_referencia else hist.icao,
-                            'usa_referencia': hist.usa_referencia,
-                            'fuente_metar': hist.fuente_metar,
-                            'fuente_taf': hist.fuente_taf,
-                        }
+        if fecha is None:
+            fecha = fields.Datetime.now()
+        elif isinstance(fecha, str):
+            fecha = fields.Datetime.from_string(fecha)
 
-                # 2. Fallback: buscar en reportes manuales (leulit.meteo.metar)
-                record = self.search([
-                    ('icao_code', '=', icao),
-                    ('active', '=', True),
-                    ('observation_time', '<=', fecha),
-                ], order='observation_time desc', limit=1)
-                if not record:
-                    record = self.search([
-                        ('icao_code', '=', icao),
-                        ('active', '=', True),
-                        ('observation_time', '>=', fecha),
-                    ], order='observation_time asc', limit=1)
-                if not record or not record.observation_time:
-                    return None
-                diff_seg = abs((record.observation_time - fecha).total_seconds())
-                if diff_seg > 7200:
-                    return None
-                return {
-                    'record_id': record.id,
-                    'raw_metar': record.raw_metar,
-                    'raw_taf': record.raw_taf,
-                    'raw_metar_est': record.raw_metar_est,
-                    'historico': True,
-                    'observation_time': record.observation_time,
-                    'provider': record.provider,
-                    'metar_icao': record.ref_icao if record.usa_referencia else record.icao_code,
-                    'usa_referencia': record.usa_referencia,
-                }
+        Ref = self.env['leulit.meteo.icao.reference'].sudo()
+        Hist = self.env['leulit.meteo.historico'].sudo()
 
-        # ── Modo actual: busca/crea registro y llama a la API ───────────────
-        record = self.search(
-            [('icao_code', '=', icao), ('active', '=', True)],
-            order='fecha_consulta desc',
-            limit=1,
-        )
-        if not record:
-            record = self.create({'provider': provider, 'icao_code': icao})
+        # Resolver OACI → aeródromo de referencia
+        ref_rec = Ref.search([('icao', '=', icao)], limit=1)
+        usa_referencia = False
+        ref_icao_val = ref_nombre_val = ref_distancia_km_val = fir = None
 
-        prov = get_provider(record.provider)
-        if not prov:
-            raise UserError(
-                _('Proveedor METAR no disponible: %s') % record.provider)
+        if ref_rec:
+            ref_id = ref_rec.id
+            fir = ref_rec.fir
+            station_name = ref_rec.nombre or icao
+        else:
+            nearest = Ref._resolve_nearest(icao)
+            if not nearest:
+                return None
+            nearest_icao = nearest['icao_consultar']
+            nearest_ref = Ref.search([('icao', '=', nearest_icao)], limit=1)
+            if not nearest_ref:
+                return None
+            ref_id = nearest_ref.id
+            usa_referencia = True
+            ref_icao_val = nearest_icao
+            ref_nombre_val = nearest['ref_nombre']
+            ref_distancia_km_val = nearest['ref_distancia_km']
+            fir = nearest['fir']
+            station_name = nearest['ref_nombre'] or nearest_icao
 
-        data = prov.get_observation(self.env, icao_code=icao)
-        if not data:
+        # Histórico más reciente anterior (o igual) a fecha
+        hist = Hist.search([
+            ('icao_reference_id', '=', ref_id),
+            ('observation_time', '<=', fecha),
+        ], order='observation_time desc', limit=1)
+
+        if not hist:
             return None
 
-        record._write_observacion(data)
+        derived = parse_metar(hist.raw_metar) if hist.raw_metar else {}
 
         return {
-            'record_id': record.id,
-            'raw_metar': record.raw_metar,
-            'raw_taf': record.raw_taf,
-            'raw_metar_est': record.raw_metar_est,
-            'historico': False,
-            'observation_time': record.observation_time,
-            'provider': record.provider,
-            'metar_icao': record.ref_icao if record.usa_referencia else record.icao_code,
-            'usa_referencia': record.usa_referencia,
+            'record_id': None,
+            'historico': True,
+            'provider': hist.proveedor or 'aemet',
+            'metar_icao': ref_icao_val or icao,
+            'fuente_metar': hist.fuente_metar,
+            'fuente_taf': hist.fuente_taf,
+            # campos para _write_observacion
+            'station_name': station_name,
+            'fir_code': fir,
+            'ref_icao': ref_icao_val,
+            'ref_nombre': ref_nombre_val,
+            'ref_distancia_km': ref_distancia_km_val,
+            'usa_referencia': usa_referencia,
+            'raw_metar': hist.raw_metar,
+            'raw_taf': hist.raw_taf,
+            'raw_sigmet': hist.raw_sigmet,
+            'observation_time': hist.observation_time,
+            'temperatura': derived.get('temperatura'),
+            'dewpoint': derived.get('dewpoint'),
+            'wind_direction': derived.get('wind_direction'),
+            'wind_speed_kt': derived.get('wind_speed_kt'),
+            'wind_gust_kt': derived.get('wind_gust_kt'),
+            'visibility_m': derived.get('visibility_m'),
+            'qnh': derived.get('qnh'),
+            'humidity': None,
+            'pressure': None,
+            'precipitation': None,
         }
 
     @api.depends('icao_code', 'observation_time')
