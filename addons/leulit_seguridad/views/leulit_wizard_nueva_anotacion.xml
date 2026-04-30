@@ -9,6 +9,7 @@
                 <form string="Nueva Anotación Log Book">
                     <group>
                         <field name="helicoptero_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="tipo_helicoptero" invisible="1"/>
                         <field name="fecha"/>
                         <field name="hora_limite" placeholder="HH:MM"/>
                         <field name="vuelo_id" options="{'no_create': True, 'no_open': True}"/>
@@ -24,9 +25,9 @@
                             <field name="instalar_headsets_qty"/>
                             <field name="instalar_cineflex"/>
                             <field name="instalar_lidar_system"/>
-                            <field name="instalar_tyler"/>
-                            <field name="instalar_gss"/>
-                            <field name="instalar_af120"/>
+                            <field name="instalar_tyler" invisible="tipo_helicoptero != 'R44'"/>
+                            <field name="instalar_gss" invisible="tipo_helicoptero != 'R44'"/>
+                            <field name="instalar_af120" invisible="tipo_helicoptero != 'EC120B'"/>
                         </group>
                         <group string="Remove">
                             <field name="remover_dual_control"/>
@@ -37,9 +38,9 @@
                             <field name="remover_headsets_qty"/>
                             <field name="remover_cineflex"/>
                             <field name="remover_lidar_system"/>
-                            <field name="remover_tyler"/>
-                            <field name="remover_gss"/>
-                            <field name="remover_af120"/>
+                            <field name="remover_tyler" invisible="tipo_helicoptero != 'R44'"/>
+                            <field name="remover_gss" invisible="tipo_helicoptero != 'R44'"/>
+                            <field name="remover_af120" invisible="tipo_helicoptero != 'EC120B'"/>
                         </group>
                     </group>
                     <group string="Annotation">

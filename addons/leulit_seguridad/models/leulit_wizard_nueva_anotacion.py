@@ -17,6 +17,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
         'leulit.helicoptero', 'Helicopter',
         required=True, domain="[('baja','=',False)]"
     )
+    tipo_helicoptero = fields.Selection(related='helicoptero_id.tipo', string='Type', store=False)
     fecha = fields.Date('Date', required=True, default=fields.Date.today)
     rol_informa = fields.Selection(
         [('1', 'Pilot'), ('2', 'Mechanic'), ('3', 'CAMO'), ('4', 'Others')],

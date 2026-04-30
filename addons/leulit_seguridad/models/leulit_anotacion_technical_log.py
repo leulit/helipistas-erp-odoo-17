@@ -113,6 +113,7 @@ class leulit_anotacion_technical_log(models.Model):
     rol_informa = fields.Selection([('1','Pilot'),('2','Mechanic'),('3','CAMO'),('4','Others')],'')
     lugar = fields.Char('Place')
     helicoptero_id = fields.Many2one('leulit.helicoptero', 'Helicopter', required=True, domain="[('baja','=',False)]")
+    tipo_helicoptero = fields.Selection(related='helicoptero_id.tipo', string='Type', store=False)
 
     fecha_cierre = fields.Date('Closing date')
     cerrado_por = fields.Many2one('res.partner', 'Closed by', readonly=True)
