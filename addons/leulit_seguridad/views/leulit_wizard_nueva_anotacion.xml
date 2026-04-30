@@ -26,6 +26,7 @@
                             <field name="instalar_gss"/>
                             <field name="instalar_cineflex"/>
                             <field name="instalar_lidar_system"/>
+                            <field name="instalar_af120"/>
                         </group>
                         <group string="Remove">
                             <field name="remover_dual_control"/>
@@ -38,6 +39,7 @@
                             <field name="remover_gss"/>
                             <field name="remover_cineflex"/>
                             <field name="remover_lidar_system"/>
+                            <field name="remover_af120"/>
                         </group>
                     </group>
                     <group string="Annotation">

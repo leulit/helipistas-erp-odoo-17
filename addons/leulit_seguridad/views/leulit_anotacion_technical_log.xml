@@ -70,6 +70,7 @@
                                     <field name="install_gss"/>
                                     <field name="install_cineflex"/>
                                     <field name="install_lidar_system"/>
+                                    <field name="install_af120"/>
                                 </group>
                                 <group string="Remove" readonly="estado in ['pending', 'closed']">
                                     <field name="remove_dual_control"/>
@@ -82,6 +83,7 @@
                                     <field name="remove_gss"/>
                                     <field name="remove_cineflex"/>
                                     <field name="remove_lidar_system"/>
+                                    <field name="remove_af120"/>
                                 </group>
                             </group>
                             <group colspan="2">

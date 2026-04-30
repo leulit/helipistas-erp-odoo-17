@@ -35,6 +35,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
     instalar_gss = fields.Boolean('GSS')
     instalar_cineflex = fields.Boolean('Cineflex')
     instalar_lidar_system = fields.Boolean('Lidar system')
+    instalar_af120 = fields.Boolean('AF120')
 
     remover_dual_control = fields.Boolean('Dual control')
     remover_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
@@ -46,6 +47,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
     remover_gss = fields.Boolean('GSS')
     remover_cineflex = fields.Boolean('Cineflex')
     remover_lidar_system = fields.Boolean('Lidar system')
+    remover_af120 = fields.Boolean('AF120')
 
     anotacion = fields.Text('Annotation')
     calendar_event_id = fields.Many2one(comodel_name="calendar.event", string="Evento planificación")
@@ -73,6 +75,8 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
                 items.append('Cineflex')
             if self.instalar_lidar_system:
                 items.append('Lidar system')
+            if self.instalar_af120:
+                items.append('AF120')
 
         if mode == 'remove':
             if self.remover_floats:
@@ -95,6 +99,8 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
                 items.append('Cineflex')
             if self.remover_lidar_system:
                 items.append('Lidar system')
+            if self.remover_af120:
+                items.append('AF120')
         return items
 
     def _validate_hora(self):
@@ -139,10 +145,10 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
         'helicoptero_id', 'fecha', 'vuelo_id', 'hora_limite',
         'instalar_floats', 'instalar_dual_control', 'instalar_cargo_hook_mirror', 'instalar_life_raft',
         'instalar_life_vests_qty', 'instalar_headsets_qty',
-        'instalar_tyler', 'instalar_gss', 'instalar_cineflex', 'instalar_lidar_system',
+        'instalar_tyler', 'instalar_gss', 'instalar_cineflex', 'instalar_lidar_system', 'instalar_af120',
         'remover_floats', 'remover_dual_control', 'remover_cargo_hook_mirror', 'remover_life_raft',
         'remover_life_vests_qty', 'remover_headsets_qty',
-        'remover_tyler', 'remover_gss', 'remover_cineflex', 'remover_lidar_system',
+        'remover_tyler', 'remover_gss', 'remover_cineflex', 'remover_lidar_system', 'remover_af120',
     )
     def _onchange_anotacion_operacional(self):
         self.anotacion = self._build_operational_annotation()
@@ -177,6 +183,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
             'install_gss': self.instalar_gss,
             'install_cineflex': self.instalar_cineflex,
             'install_lidar_system': self.instalar_lidar_system,
+            'install_af120': self.instalar_af120,
             'remove_dual_control': self.remover_dual_control,
             'remove_cargo_hook_mirror': self.remover_cargo_hook_mirror,
             'remove_floats': self.remover_floats,
@@ -187,6 +194,7 @@ class leulit_wizard_nueva_anotacion(models.TransientModel):
             'remove_gss': self.remover_gss,
             'remove_cineflex': self.remover_cineflex,
             'remove_lidar_system': self.remover_lidar_system,
+            'remove_af120': self.remover_af120,
         })
         return {
             'type': 'ir.actions.act_window',
