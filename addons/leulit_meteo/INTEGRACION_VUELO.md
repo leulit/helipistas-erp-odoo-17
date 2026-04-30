@@ -6,54 +6,26 @@ Este documento muestra cómo vincular la consulta meteorológica automática al 
 
 ## 1. Modelo — añadir el campo METAR al parte de vuelo
 
+La integración usa `briefing_oaci` como único punto de entrada (ver sección 1.1).
+`briefing_oaci` devuelve `record_id=None`; los datos se almacenan directamente como campos de texto en el parte.
+
 ```python
 # addons/leulit_vuelo/models/leulit_vuelo.py
 
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 
 
 class LeulitVuelo(models.Model):
     _inherit = 'leulit.vuelo'
 
-    metar_salida_id = fields.Many2one(
-        'leulit.meteo.metar',
-        string='Meteorología (salida)',
-        readonly=True,
-        help='METAR/TAF registrado en el momento de la autorización del vuelo.')
-
-    estado_meteo = fields.Selection(
-        [('ok', 'Condiciones aceptables'),
-         ('marginal', 'Condiciones marginales'),
-         ('nogo', 'Por debajo de mínimos'),
-         ('sin_datos', 'Sin datos meteorológicos')],
-        string='Estado meteorológico',
-        compute='_compute_estado_meteo',
-        store=True)
-
-    @api.depends('metar_salida_id.wind_speed_kt',
-                 'metar_salida_id.wind_gust_kt',
-                 'metar_salida_id.visibility_m')
-    def _compute_estado_meteo(self):
-        from odoo.addons.leulit_meteo.models.leulit_meteo_umbral_config import LeulitMeteoUmbralConfig
-        u = LeulitMeteoUmbralConfig.get_umbrales(self.env)
-        for vuelo in self:
-            metar = vuelo.metar_salida_id
-            if not metar or not metar.raw_metar:
-                vuelo.estado_meteo = 'sin_datos'
-                continue
-            viento = metar.wind_speed_kt or 0
-            rachas = metar.wind_gust_kt or 0
-            visibilidad = metar.visibility_m or 0
-            if viento > u['viento_nogo'] or rachas > u['rachas_nogo'] or visibilidad < u['vis_nogo']:
-                vuelo.estado_meteo = 'nogo'
-            elif viento > u['viento_marginal'] or rachas > u['rachas_marginal'] or visibilidad < u['vis_marginal']:
-                vuelo.estado_meteo = 'marginal'
-            else:
-                vuelo.estado_meteo = 'ok'
+    meteo_raw_metar = fields.Text(string='METAR', readonly=True)
+    meteo_raw_taf = fields.Text(string='TAF', readonly=True)
+    meteo_observation_time = fields.Datetime(string='Hora observación (UTC)', readonly=True)
+    meteo_icao = fields.Char(string='OACI meteorología', readonly=True)
 
     def action_obtener_meteo_salida(self):
-        """Obtiene el METAR/TAF del aeródromo de salida y lo vincula al parte."""
+        """Obtiene el briefing meteorológico del aeródromo de salida y lo almacena."""
         for vuelo in self:
             icao = (
                 vuelo.aerodromo_salida_id.codigo_oaci
@@ -63,25 +35,26 @@ class LeulitVuelo(models.Model):
             if not icao:
                 raise UserError(_('El aeródromo de salida no tiene código OACI configurado.'))
 
-            data = self.env['leulit.meteo.metar'].obtener_metar(
-                icao_code=icao,
-                provider='aemet',
-                persistir=True,
-            )
-            if not data:
+            result = self.env['leulit.meteo.metar'].briefing_oaci(icao)
+            if not result:
                 raise UserError(_(
                     'No se pudo obtener información meteorológica para %s. '
                     'Verifique la conexión y la configuración del proveedor.'
                 ) % icao)
 
-            vuelo.metar_salida_id = data['record_id']
+            vuelo.write({
+                'meteo_raw_metar': result['raw_metar'],
+                'meteo_raw_taf': result['raw_taf'],
+                'meteo_observation_time': result['observation_time'],
+                'meteo_icao': result['metar_icao'],
+            })
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _('Meteorología actualizada'),
-                'message': _('METAR/TAF obtenido para %s') % icao,
+                'message': _('Briefing obtenido para %s') % icao,
                 'type': 'success',
                 'sticky': False,
             },
@@ -90,9 +63,9 @@ class LeulitVuelo(models.Model):
 
 ---
 
-## 1.1 API simplificada: `briefing_oaci`
+## 1.1 API: `briefing_oaci`
 
-`briefing_oaci` es el punto de entrada recomendado cuando otro módulo necesita obtener el briefing de un OACI y recibir directamente los campos principales: METAR oficial y TAF oficial.
+`briefing_oaci` es el punto de entrada para obtener el briefing de un OACI desde cualquier módulo. Devuelve METAR oficial, TAF oficial y el registro vinculado.
 
 ### Firma
 
@@ -143,8 +116,8 @@ Las APIs de AEMET y CheckWX **no proporcionan datos históricos** — solo devue
 3. Si lo encuentra → devuelve sus datos + historico=True sin llamar a la API
 ```
 
-> El histórico solo tiene datos si en su momento se guardaron registros con `persistir=True`
-> o mediante el botón "Obtener briefing" del formulario.
+> `briefing_oaci` lee siempre de `leulit.meteo.historico`. Ese modelo lo alimenta el cron
+> (`action_actualizar_metar_cron`) cada ~30 min. Sin cron activo no hay datos históricos.
 
 ### Ejemplo mínimo
 
@@ -166,51 +139,6 @@ elif result is None:
     _logger.warning("Sin datos históricos para LEUL en esa fecha")
 ```
 
-### Integración en el parte de vuelo (versión simplificada)
-
-Reemplaza el uso de `obtener_metar` de la sección 1 por `briefing_oaci` para obtener un código más directo:
-
-```python
-def action_obtener_meteo_salida(self):
-    for vuelo in self:
-        icao = (
-            vuelo.aerodromo_salida_id.codigo_oaci
-            if vuelo.aerodromo_salida_id
-            else None
-        )
-        if not icao:
-            raise UserError(_('El aeródromo de salida no tiene código OACI configurado.'))
-
-        result = self.env['leulit.meteo.metar'].briefing_oaci(icao)
-        if not result:
-            raise UserError(_(
-                'No se pudo obtener información meteorológica para %s. '
-                'Verifique la conexión y la configuración del proveedor.'
-            ) % icao)
-
-        vuelo.metar_salida_id = result['record_id']
-        # result['raw_metar'], result['raw_taf']
-        # disponibles si se necesitan en el mismo flujo
-
-    return {
-        'type': 'ir.actions.client',
-        'tag': 'display_notification',
-        'params': {
-            'title': _('Meteorología actualizada'),
-            'message': _('Briefing obtenido para %s') % icao,
-            'type': 'success',
-            'sticky': False,
-        },
-    }
-```
-
-### Cuándo usar cada función
-
-| Función | Úsala cuando… |
-|---|---|
-| `briefing_oaci(icao)` | Quieres el briefing listo para mostrar (METAR + TAF + est.) y reutilizar el registro existente |
-| `obtener_metar(icao, persistir=True)` | Necesitas el dict completo del proveedor (todos los campos numéricos, coordenadas, etc.) o quieres crear siempre un registro nuevo |
-
 ---
 
 ## 2. Vista — botón y campos meteorológicos en el parte de vuelo
@@ -230,31 +158,15 @@ def action_obtener_meteo_salida(self):
 </header>
 
 <!-- Añadir una página o grupo en el form -->
-<page string="Meteorología" name="page_meteo">
-    <group>
-        <field name="estado_meteo" widget="badge"
-               decoration-success="estado_meteo == 'ok'"
-               decoration-warning="estado_meteo == 'marginal'"
-               decoration-danger="estado_meteo in ('nogo', 'sin_datos')"/>
+<page string="Meteorología" name="page_meteo"
+      attrs="{'invisible': [('meteo_raw_metar', '=', False)]}">
+    <group string="METAR / TAF de salida">
+        <field name="meteo_icao" string="OACI" readonly="1"/>
+        <field name="meteo_observation_time" string="Hora observación (UTC)" readonly="1"/>
     </group>
-
-    <group string="METAR / TAF de salida" attrs="{'invisible': [('metar_salida_id', '=', False)]}">
-        <field name="metar_salida_id" readonly="1"/>
-        <field name="metar_salida_id.observation_time" string="Hora observación (UTC)" readonly="1"/>
-        <field name="metar_salida_id.edad_datos_minutos" string="Antigüedad (min)" readonly="1"/>
-        <field name="metar_salida_id.estado_datos" string="Frescura" readonly="1"/>
-        <field name="metar_salida_id.wind_direction" string="Viento dirección (°)" readonly="1"/>
-        <field name="metar_salida_id.wind_speed_kt" string="Viento velocidad (kt)" readonly="1"/>
-        <field name="metar_salida_id.wind_gust_kt" string="Rachas (kt)" readonly="1"/>
-        <field name="metar_salida_id.visibility_m" string="Visibilidad (m)" readonly="1"/>
-        <field name="metar_salida_id.qnh" string="QNH (hPa)" readonly="1"/>
-        <field name="metar_salida_id.temperatura" string="Temperatura (°C)" readonly="1"/>
-    </group>
-
-    <group string="Textos oficiales" attrs="{'invisible': [('metar_salida_id', '=', False)]}">
-        <field name="metar_salida_id.raw_metar" string="METAR" readonly="1" widget="text"/>
-        <field name="metar_salida_id.raw_taf" string="TAF" readonly="1" widget="text"/>
-        <field name="metar_salida_id.raw_sigmet" string="SIGMET" readonly="1" widget="text"/>
+    <group string="Textos oficiales">
+        <field name="meteo_raw_metar" string="METAR" readonly="1" widget="text"/>
+        <field name="meteo_raw_taf" string="TAF" readonly="1" widget="text"/>
     </group>
 </page>
 ```
@@ -281,11 +193,7 @@ def action_autorizar_vuelo(self):
 
 ## 4. Permisos necesarios
 
-En `security/ir.model.access.csv` de `leulit_vuelo`, asegurarse de que el perfil de piloto/operaciones tiene acceso de lectura a `leulit.meteo.metar`:
-
-```csv
-access_leulit_meteo_metar_vuelo_user,leulit.meteo.metar vuelo user,model_leulit_meteo_metar,leulit_vuelo.group_vuelo_user,1,0,0,0
-```
+Los campos `meteo_*` son columnas del propio modelo `leulit.vuelo`, por lo que no se necesita acceso adicional a modelos de `leulit_meteo`. Solo hay que asegurarse de que el perfil de piloto/operaciones tiene permiso de escritura sobre `leulit.vuelo` para que el botón pueda guardar los datos.
 
 ---
 
@@ -308,11 +216,9 @@ Con esta integración, cada parte de vuelo almacena:
 
 | Campo | Valor ejemplo | Significado |
 |---|---|---|
-| `metar_salida_id` | METAR-0042 | Referencia al registro meteorológico |
-| `estado_meteo` | `ok` | Evaluación automática respecto a umbrales del OM |
-| `raw_metar` | `LELL 271430Z 12009KT CAVOK 23/12 Q1017` | Texto oficial sin alterar |
-| `observation_time` | 27/04/2026 14:30 UTC | Hora de la observación |
-| `fecha_consulta` | 27/04/2026 15:05 UTC | Momento en que se solicitó |
-| `edad_datos_minutos` | 35 min | Frescura en el momento de la autorización |
+| `meteo_icao` | `LEUL` | OACI del que procede el briefing |
+| `meteo_raw_metar` | `LEUL 271430Z 12009KT CAVOK 23/12 Q1017` | Texto METAR oficial sin alterar |
+| `meteo_raw_taf` | `TAF LEUL …` | Texto TAF oficial sin alterar |
+| `meteo_observation_time` | 27/04/2026 14:30 UTC | Hora de la observación METAR |
 
 Esto permite demostrar ante AESA que **existió una consulta meteorológica documentada y trazable** antes de la autorización del vuelo.
