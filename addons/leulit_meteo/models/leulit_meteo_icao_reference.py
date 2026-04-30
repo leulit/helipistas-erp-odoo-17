@@ -70,6 +70,14 @@ class LeulitMeteoIcaoReference(models.Model):
         'Próxima actualización (Madrid)', compute='_compute_proxima_actualizacion_local',
         readonly=True)
 
+    ultima_ejecucion_cron = fields.Datetime(
+        'Última ejecución cron (UTC)', readonly=True,
+        help='Momento en que el cron procesó por última vez este aeródromo, '
+             'independientemente del resultado.')
+    ultima_ejecucion_cron_local = fields.Char(
+        'Última ejecución cron (Madrid)', compute='_compute_ultima_ejecucion_local',
+        readonly=True)
+
     notas = fields.Text()
 
     historico_count = fields.Integer(
@@ -99,6 +107,16 @@ class LeulitMeteoIcaoReference(models.Model):
             else:
                 rec.proxima_actualizacion_utc = False
                 rec.proxima_actualizacion_local = False
+
+    @api.depends('ultima_ejecucion_cron')
+    def _compute_ultima_ejecucion_local(self):
+        tz = pytz.timezone(_TZ_MADRID)
+        for rec in self:
+            if rec.ultima_ejecucion_cron:
+                dt = rec.ultima_ejecucion_cron.replace(tzinfo=pytz.utc).astimezone(tz)
+                rec.ultima_ejecucion_cron_local = dt.strftime('%d/%m/%Y %H:%M %Z')
+            else:
+                rec.ultima_ejecucion_cron_local = False
 
     # ---------- Acciones UI ----------
 
@@ -148,10 +166,13 @@ class LeulitMeteoIcaoReference(models.Model):
         errores = []
 
         for ref in refs:
+            ref.sudo().write({'ultima_ejecucion_cron': ahora})
             try:
                 data = prov.get_observation(self.env, icao_code=ref.icao)
                 if not data:
                     _logger.warning("Cron METAR: sin datos para %s", ref.icao)
+                    # Evitar bucle infinito: reintentar en 10 min aunque no haya datos.
+                    ref.sudo().write({'proxima_actualizacion': ahora + timedelta(minutes=10)})
                     continue
 
                 obs_time = data.get('observation_time')
@@ -203,6 +224,7 @@ class LeulitMeteoIcaoReference(models.Model):
                 tb_str = _traceback.format_exc()
                 _logger.error("Cron METAR: error en %s: %s", ref.icao, exc)
                 errores.append((ref.icao, str(exc), tb_str))
+                ref.sudo().write({'proxima_actualizacion': ahora + timedelta(minutes=10)})
 
         if errores:
             self._cron_notificar_errores(errores)
@@ -328,6 +350,7 @@ class LeulitMeteoIcaoReference(models.Model):
                     'nombre': (c.get('name') or icao).strip(),
                     'lat': float(c.get('lat') or 0.0),
                     'lon': float(c.get('lon') or 0.0),
+                    'elevation_ft': c.get('elevation_ft') or 0,
                 }
 
         _logger.info(

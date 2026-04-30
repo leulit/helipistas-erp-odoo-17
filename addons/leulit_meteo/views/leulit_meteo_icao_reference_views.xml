@@ -11,6 +11,7 @@
                 <field name="fir"/>
                 <field name="proveedor_oficial" widget="badge"/>
                 <field name="proxima_actualizacion_local"/>
+                <field name="ultima_ejecucion_cron_local" optional="show" string="Últ. ejecución cron"/>
                 <field name="elevacion_ft"/>
             </tree>
         </field>
@@ -48,6 +49,9 @@
                             <field name="latitud" readonly="1"/>
                             <field name="longitud" readonly="1"/>
                             <field name="elevacion_ft"/>
+                        </group>
+                        <group string="Estado cron">
+                            <field name="ultima_ejecucion_cron_local" readonly="1"/>
                             <field name="proxima_actualizacion_local" readonly="1"/>
                             <field name="proxima_actualizacion_utc" readonly="1"/>
                         </group>
