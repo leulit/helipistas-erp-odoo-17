@@ -9,9 +9,9 @@
                 <field name="icao"/>
                 <field name="nombre"/>
                 <field name="fir"/>
-                <field name="proveedor_oficial" widget="badge" optional="show"/>
-                <field name="proxima_actualizacion" optional="show"/>
-                <field name="elevacion_ft" optional="hide"/>
+                <field name="proveedor_oficial" widget="badge"/>
+                <field name="proxima_actualizacion_local"/>
+                <field name="elevacion_ft"/>
             </tree>
         </field>
     </record>
