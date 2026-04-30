@@ -22,10 +22,10 @@
                             <field name="instalar_life_raft"/>
                             <field name="instalar_life_vests_qty"/>
                             <field name="instalar_headsets_qty"/>
-                            <field name="instalar_tyler"/>
-                            <field name="instalar_gss"/>
                             <field name="instalar_cineflex"/>
                             <field name="instalar_lidar_system"/>
+                            <field name="instalar_tyler"/>
+                            <field name="instalar_gss"/>
                             <field name="instalar_af120"/>
                         </group>
                         <group string="Remove">
@@ -35,10 +35,10 @@
                             <field name="remover_life_raft"/>
                             <field name="remover_life_vests_qty"/>
                             <field name="remover_headsets_qty"/>
-                            <field name="remover_tyler"/>
-                            <field name="remover_gss"/>
                             <field name="remover_cineflex"/>
                             <field name="remover_lidar_system"/>
+                            <field name="remover_tyler"/>
+                            <field name="remover_gss"/>
                             <field name="remover_af120"/>
                         </group>
                     </group>
