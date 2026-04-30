@@ -113,7 +113,7 @@ class leulitVueloScripts(models.Model):
             new_cr.commit()
             vuelo.calculosFuel('velocidadprevista')
             new_cr.commit()
-            vuelo.getMeteo()
+            vuelo.action_obtener_meteo_salida()
             vuelo.getNotam()
             new_cr.commit()
 
