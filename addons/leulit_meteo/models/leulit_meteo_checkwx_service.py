@@ -24,8 +24,11 @@ class CheckWXService:
                 timeout=cls.TIMEOUT)
             if r.status_code == 404:
                 return None
+            if r.status_code == 401:
+                _logger.error("CheckWX %s -> HTTP 401 (API Key inválida o sin permisos)", path)
+                return None
             if r.status_code != 200:
-                _logger.warning("CheckWX %s -> HTTP %s", path, r.status_code)
+                _logger.warning("CheckWX %s -> HTTP %s: %s", path, r.status_code, r.text[:200])
                 return None
             return r.json()
         except Exception as exc:
@@ -65,12 +68,14 @@ class CheckWXService:
             lat = float(coords[1])
         if lat is None or lon is None:
             return None
+        elev = item.get('elevation', {})
         return {
             'icao': item.get('icao', icao).upper(),
             'name': item.get('name', ''),
             'lat': float(lat),
             'lon': float(lon),
             'country_code': item.get('country', {}).get('code', ''),
+            'elevation_ft': int(elev.get('feet') or 0) if elev else 0,
         }
 
     @classmethod
@@ -99,12 +104,14 @@ class CheckWXService:
                 slat = float(coords[1])
             if slat is None or slon is None:
                 continue
+            selev = station.get('elevation', {})
             results.append({
                 'icao': icao.upper(),
                 'name': station.get('name', ''),
                 'lat': float(slat),
                 'lon': float(slon),
                 'country_code': station.get('country', {}).get('code', ''),
+                'elevation_ft': int(selev.get('feet') or 0) if selev else 0,
             })
         return results
 
@@ -117,9 +124,17 @@ class CheckWXService:
         """
         data = cls._get(f"/v2/station/country/{country_code.upper()}", api_key)
         if not data or not data.get('data'):
+            _logger.warning(
+                "CheckWX get_stations_by_country(%s): sin datos (data=%s)",
+                country_code, bool(data))
             return []
+        raw_items = data['data']
+        _logger.info(
+            "CheckWX get_stations_by_country(%s): %d estaciones recibidas de la API",
+            country_code, len(raw_items))
         results = []
-        for item in data['data']:
+        sin_coords = 0
+        for item in raw_items:
             icao = (item.get('icao') or '').upper().strip()
             if not icao:
                 continue
@@ -130,14 +145,24 @@ class CheckWXService:
                 lon = float(coords[0])
                 lat = float(coords[1])
             if lat is None or lon is None:
+                sin_coords += 1
                 continue
+            ielev = item.get('elevation', {})
             results.append({
                 'icao': icao,
                 'name': item.get('name', ''),
                 'lat': float(lat),
                 'lon': float(lon),
                 'country_code': item.get('country', {}).get('code', ''),
+                'elevation_ft': int(ielev.get('feet') or 0) if ielev else 0,
             })
+        if sin_coords:
+            _logger.debug(
+                "CheckWX get_stations_by_country(%s): %d estaciones descartadas por falta de coords",
+                country_code, sin_coords)
+        _logger.info(
+            "CheckWX get_stations_by_country(%s): %d estaciones con coords válidas",
+            country_code, len(results))
         return results
 
     @classmethod

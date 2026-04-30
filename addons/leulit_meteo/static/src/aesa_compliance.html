@@ -31,8 +31,8 @@
 <div class="meta">
   <p><strong>Organización:</strong> Leulit</p>
   <p><strong>Sistema:</strong> ERP Leulit — módulo <code>leulit_meteo</code></p>
-  <p><strong>Versión del documento:</strong> 1.0</p>
-  <p><strong>Fecha:</strong> 2026-04-27</p>
+  <p><strong>Versión del documento:</strong> 1.1</p>
+  <p><strong>Fecha:</strong> 2026-04-29</p>
 </div>
 
 <hr>
@@ -64,18 +64,36 @@
       <td><strong>AEMET OpenData</strong></td>
       <td>METAR, TAF, SIGMET oficiales</td>
       <td>Agencia Estatal de Meteorología (AEMET) — organismo público adscrito al Ministerio para la Transición Ecológica</td>
-      <td>Aeródromos con servicio MET activo en España</td>
+      <td>Aeródromos con servicio MET activo en España. Requiere API key.</td>
     </tr>
     <tr>
       <td><strong>CheckWX</strong></td>
       <td>METAR, TAF</td>
       <td>Agregador de datos NOAA/ICAO de distribución global</td>
-      <td>Aeródromos sin servicio AEMET directo o fuera de España</td>
+      <td>Aeródromos sin servicio AEMET directo o fuera de España. Requiere API key.</td>
+    </tr>
+    <tr>
+      <td><strong>AviationWeather (aviationweather.gov)</strong></td>
+      <td>METAR, TAF</td>
+      <td>NOAA / FAA — servicio meteorológico aeronáutico público de Estados Unidos</td>
+      <td>Fuente de respaldo pública sin API key. Cobertura global para aeródromos con código ICAO.</td>
+    </tr>
+    <tr>
+      <td><strong>Windy API (api.windy.com)</strong></td>
+      <td>Pronóstico meteorológico puntual y por ruta (temperatura, viento, precipitación, nubes)</td>
+      <td>Windy.com — proveedor comercial de pronósticos basados en modelos NWP (GFS, ECMWF, etc.)</td>
+      <td>Consultas de pronóstico sobre un punto geográfico o una ruta. Requiere API key. No sustituye al METAR/TAF oficial.</td>
+    </tr>
+    <tr>
+      <td><strong>OpenAIP (api.core.openaip.net)</strong></td>
+      <td>Datos de aeródromos y espacio aéreo (coordenadas, elevación, código ICAO)</td>
+      <td>OpenAIP — base de datos colaborativa de aviación general de cobertura global</td>
+      <td>Resolución automática de código ICAO y búsqueda de aeródromos próximos por coordenadas. No proporciona datos meteorológicos. Requiere API key.</td>
     </tr>
   </tbody>
 </table>
 
-<p>Los mensajes METAR y TAF se almacenan en el sistema <strong>sin ninguna modificación</strong> respecto al texto publicado por la fuente oficial. El campo <code>raw_metar</code> y <code>raw_taf</code> contienen el texto exacto recibido de AEMET u CheckWX y no puede ser editado por ningún usuario.</p>
+<p>Los mensajes METAR y TAF se almacenan en el sistema <strong>sin ninguna modificación</strong> respecto al texto publicado por la fuente oficial. Los campos <code>raw_metar</code> y <code>raw_taf</code> contienen el texto exacto recibido de la fuente seleccionada y no pueden ser editados por ningún usuario.</p>
 
 <hr>
 
@@ -171,7 +189,7 @@
   <li><strong>Creación y consulta</strong> de nuevos reportes: perfil de usuario estándar.</li>
   <li><strong>Configuración</strong> (API keys, aeródromos de referencia): perfil de administrador únicamente.</li>
 </ul>
-<p>Las API keys de acceso a AEMET y CheckWX se almacenan cifradas en la base de datos y no son accesibles desde la interfaz de usuario una vez guardadas.</p>
+<p>Las API keys de acceso a AEMET, CheckWX, Windy y OpenAIP se almacenan cifradas en la base de datos y no son accesibles desde la interfaz de usuario una vez guardadas. La fuente AviationWeather (NOAA/FAA) es pública y no requiere API key.</p>
 
 <hr>
 

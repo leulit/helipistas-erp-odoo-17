@@ -28,11 +28,16 @@ class OpenAIPService:
         coords = item.get('geometry', {}).get('coordinates')
         if not coords or len(coords) < 2:
             return None
+        elev = item.get('elevation', {})
+        elev_val = elev.get('value') or 0
+        elev_unit = (elev.get('unit') or 'FT').upper()
+        elev_ft = int(float(elev_val) * 3.28084) if elev_unit == 'M' else int(float(elev_val))
         return {
             'icao': item.get('icaoCode') or '',
             'name': item.get('name') or '',
             'lat': float(coords[1]),
             'lon': float(coords[0]),
+            'elevation_ft': elev_ft,
         }
 
     @classmethod

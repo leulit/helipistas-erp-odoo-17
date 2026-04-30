@@ -1,73 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Form view for Meteorología configuration wizard -->
     <record id="view_leulit_meteo_config_form" model="ir.ui.view">
         <field name="name">leulit.meteo.config.form</field>
         <field name="model">leulit.meteo.config</field>
         <field name="arch" type="xml">
-            <form string="Configuración Meteorología">
-                <header>
-                    <button name="action_validate_windy_key"
-                            string="Validar Windy"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-check-circle"/>
-                    <button name="action_validate_aemet_key"
-                            string="Validar AEMET"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-check-circle"/>
-                    <button name="action_validate_openaip_key"
-                            string="Validar OpenAIP"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-check-circle"/>
-                    <button name="action_validate_checkwx_key"
-                            string="Validar CheckWX"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-check-circle"/>
-                </header>
+            <form string="Configuración API Keys">
                 <sheet>
-                    <group string="Windy">
-                        <div colspan="2" class="text-muted">
-                            API de modelos meteorológicos avanzados (GFS, ECMWF, ICON...).
-                            Obtén tu API Key en
-                            <a href="https://api.windy.com/keys" target="_blank">api.windy.com/keys</a>.
-                        </div>
-                        <field name="windy_api_key" password="True" placeholder="Tu API Key de Windy"/>
-                        <field name="windy_model" widget="radio"/>
-                    </group>
-                    <group string="AEMET OpenData">
-                        <div colspan="2" class="text-muted">
-                            API pública de la Agencia Estatal de Meteorología (España),
-                            usada para los reportes METAR sintéticos.
-                            Solicita tu API Key (JWT) en
-                            <a href="https://opendata.aemet.es/centrodedescargas/altaUsuario" target="_blank">opendata.aemet.es</a>.
-                        </div>
-                        <field name="aemet_api_key" password="True" placeholder="Tu API Key de AEMET"/>
-                    </group>
-                    <group string="OpenAIP">
-                        <div colspan="2" class="text-muted">
-                            Resolución de aeródromos por OACI y búsqueda por proximidad.
-                            Necesario para la auto-resolución de OACIs desconocidos.
-                            Regístrate en <a href="https://www.openaip.net/" target="_blank">openaip.net</a>.
-                        </div>
-                        <field name="openaip_api_key" password="True" placeholder="Tu API Key de OpenAIP"/>
-                    </group>
-                    <group string="CheckWX">
-                        <div colspan="2" class="text-muted">
-                            METAR/TAF/Station de aeródromos internacionales.
-                            Necesario para validar si un OACI emite METAR oficial.
-                            Regístrate en <a href="https://www.checkwxapi.com/" target="_blank">checkwxapi.com</a>.
-                        </div>
-                        <field name="checkwx_api_key" password="True" placeholder="Tu API Key de CheckWX"/>
-                    </group>
+                    <notebook>
+
+                        <!-- ══════════════════════════════ WINDY ══════════════════════════════ -->
+                        <page string="Windy" name="page_windy">
+                            <group>
+                                <div colspan="2" class="text-muted mb-2">
+                                    Modelos meteorológicos avanzados (GFS, ECMWF, ICON...) para
+                                    previsión de viento, nubes y precipitación. Obtén tu clave en
+                                    <a href="https://api.windy.com/keys" target="_blank">api.windy.com/keys</a>.
+                                </div>
+                                <field name="windy_api_key"
+                                       password="True"
+                                       placeholder="Pega aquí tu API Key de Windy"/>
+                                <field name="windy_model" widget="radio"/>
+                                <div colspan="2" class="mt-2">
+                                    <button name="action_validate_windy_key"
+                                            string="Probar conexión"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- ══════════════════════════════ AEMET ══════════════════════════════ -->
+                        <page string="AEMET" name="page_aemet">
+                            <group>
+                                <div colspan="2" class="text-muted mb-2">
+                                    API pública de la Agencia Estatal de Meteorología de España.
+                                    Se usa para obtener METAR sintéticos de aeródromos nacionales.
+                                    Solicita tu clave (JWT) en
+                                    <a href="https://opendata.aemet.es/centrodedescargas/altaUsuario" target="_blank">opendata.aemet.es</a>.
+                                </div>
+                                <field name="aemet_api_key"
+                                       password="True"
+                                       placeholder="Pega aquí tu API Key de AEMET"/>
+                                <div colspan="2" class="mt-2">
+                                    <button name="action_validate_aemet_key"
+                                            string="Probar conexión"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- ═════════════════════════════ OpenAIP ════════════════════════════ -->
+                        <page string="OpenAIP" name="page_openaip">
+                            <group>
+                                <div colspan="2" class="text-muted mb-2">
+                                    Base de datos global de aeródromos. Se usa para resolver
+                                    coordenadas de OACIs desconocidos y búsquedas por proximidad.
+                                    Regístrate en
+                                    <a href="https://www.openaip.net/" target="_blank">openaip.net</a>.
+                                </div>
+                                <field name="openaip_api_key"
+                                       password="True"
+                                       placeholder="Pega aquí tu API Key de OpenAIP"/>
+                                <div colspan="2" class="mt-2">
+                                    <button name="action_validate_openaip_key"
+                                            string="Probar conexión"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- ═════════════════════════════ CheckWX ════════════════════════════ -->
+                        <page string="CheckWX" name="page_checkwx">
+                            <group>
+                                <div colspan="2" class="text-muted mb-2">
+                                    METAR, TAF e información de estaciones de aeródromos
+                                    internacionales. Necesario para validar si un OACI emite
+                                    METAR oficial y para la sincronización de aeródromos de
+                                    referencia. Regístrate en
+                                    <a href="https://www.checkwxapi.com/" target="_blank">checkwxapi.com</a>.
+                                </div>
+                                <field name="checkwx_api_key"
+                                       password="True"
+                                       placeholder="Pega aquí tu API Key de CheckWX"/>
+                                <div colspan="2" class="mt-2">
+                                    <button name="action_validate_checkwx_key"
+                                            string="Probar conexión"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </group>
+                        </page>
+
+                        <!-- ══════════════════════════ Aviation Weather ═══════════════════════ -->
+                        <page string="Aviation Weather" name="page_aviation_weather">
+                            <group>
+                                <div colspan="2" class="text-muted mb-2">
+                                    API pública de NOAA/FAA
+                                    (<a href="https://aviationweather.gov" target="_blank">aviationweather.gov</a>).
+                                    Proporciona METAR y TAF globales sin necesidad de clave.
+                                    El campo de API Key es opcional para posibles planes futuros
+                                    de acceso premium.
+                                </div>
+                                <field name="aviation_weather_api_key"
+                                       password="True"
+                                       placeholder="Opcional — la API es pública sin clave"/>
+                                <div colspan="2" class="mt-2">
+                                    <button name="action_validate_aviation_weather"
+                                            string="Probar conexión"
+                                            type="object"
+                                            class="btn-secondary"
+                                            icon="fa-plug"/>
+                                </div>
+                            </group>
+                        </page>
+
+                    </notebook>
                 </sheet>
                 <footer>
                     <button name="action_save"
-                            string="Guardar API Keys"
+                            string="Guardar"
                             type="object"
                             class="btn-primary"/>
                 </footer>

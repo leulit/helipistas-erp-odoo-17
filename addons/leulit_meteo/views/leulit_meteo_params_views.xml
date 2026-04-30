@@ -12,7 +12,7 @@
                             type="object"
                             class="btn-secondary"
                             icon="fa-refresh"
-                            confirm="Se consultará CheckWX para obtener la lista oficial de aeródromos españoles con METAR. Los que ya no estén en la lista serán eliminados junto con su histórico. ¿Continuar?"/>
+                            confirm="Se consultará aviationweather.gov (NOAA/FAA) para obtener la lista oficial de aeródromos españoles con METAR y TAF. Los que ya no estén en la lista serán eliminados junto con su histórico. ¿Continuar?"/>
                 </header>
                 <sheet>
                     <group string="Actualización automática METAR">

@@ -14,7 +14,7 @@ Guía de instalación, configuración inicial y verificación del módulo de met
   pip install requests
   ```
 
-- **Acceso a Internet** desde el servidor Odoo (consultas a Open-Meteo, Windy, AEMET, OpenAIP y CheckWX) y desde el navegador del usuario (CDN `unpkg.com` para Leaflet).
+- **Acceso a Internet** desde el servidor Odoo (consultas a Open-Meteo, Windy, AEMET, OpenAIP, CheckWX y aviationweather.gov) y desde el navegador del usuario (CDN `unpkg.com` para Leaflet).
 
 No se requiere instalar Leaflet manualmente: el módulo lo declara vía CDN en sus assets.
 
@@ -62,30 +62,29 @@ Para descargar METAR + TAF + SIGMET oficiales de AEMET OpenData.
 
 > **Nota:** el RAW del METAR/TAF/SIGMET se guarda **sin modificación** (válido a efectos de AESA).
 
-### 3.3. OpenAIP API Key (recomendada para auto-resolución de OACIs)
+### 3.3. OpenAIP API Key (recomendada para resolución de OACIs desconocidos)
 
-Usada para obtener coordenadas y nombre oficial de un aeródromo cuando se pide un briefing para un OACI no registrado en la tabla de referencia.
+Usada para obtener coordenadas de un aeródromo o helipuerto cuando se pide un briefing para un OACI no registrado en la tabla de referencia (fuente primaria).
 
 1. Registrarse en <https://www.openaip.net/> y obtener la API key.
 2. En Odoo: **Meteorología → Configuración → API Keys**.
 3. Pegar la clave en **OpenAIP API Key**.
 4. Pulsar **Validar API Key** y luego **Guardar**.
 
-Sin esta clave, la auto-resolución de OACIs desconocidos usa solo CheckWX para las coordenadas.
+Sin esta clave, la resolución de OACIs desconocidos usa CheckWX como fuente de coordenadas.
 
-### 3.4. CheckWX API Key (recomendada para auto-resolución y sincronización)
+### 3.4. CheckWX API Key (opcional — fallback de coordenadas para OACIs desconocidos)
 
-Usada para:
-- Verificar si un OACI tiene METAR propio.
-- Encontrar el aeródromo con METAR oficial más cercano (radio 150 km).
-- Sincronizar la tabla de aeródromos de referencia con la lista oficial española.
+Usada como fuente alternativa de coordenadas cuando OpenAIP no devuelve resultado para un OACI desconocido.
+
+> **Nota:** la sincronización de aeródromos de referencia ya **no requiere** esta clave; el botón "Actualizar aeródromos de referencia" usa aviationweather.gov (NOAA/FAA, sin API key).
 
 1. Registrarse en <https://www.checkwxapi.com/> y obtener la API key.
 2. En Odoo: **Meteorología → Configuración → API Keys**.
 3. Pegar la clave en **CheckWX API Key**.
 4. Pulsar **Validar API Key** y luego **Guardar**.
 
-Sin esta clave, la auto-resolución y la sincronización de aeródromos no están disponibles.
+Sin esta clave, la resolución de OACIs desconocidos depende exclusivamente de OpenAIP para obtener las coordenadas.
 
 ### 3.5. Parámetros: cron y notificaciones de error
 
@@ -93,7 +92,7 @@ En `Meteorología → Configuración → Parámetros` (wizard `leulit.meteo.para
 
 - **Actualización automática de METAR activa**: activa/desactiva el cron que descarga METAR/TAF de todos los aeródromos de referencia cada 10 minutos y los almacena en el histórico.
 - **Email(s) para notificación de errores**: dirección(es) separadas por coma a las que se enviarán avisos si el cron encuentra errores. Si se deja vacío, no se envían notificaciones.
-- **Actualizar aeródromos de referencia**: botón que consulta CheckWX para sincronizar la lista oficial de aeródromos españoles con METAR (requiere CheckWX API Key).
+- **Actualizar aeródromos de referencia**: botón que consulta aviationweather.gov (NOAA/FAA, sin API key) para sincronizar la lista de aeródromos españoles LE*/GC* con METAR o TAF.
 
 ---
 
@@ -109,7 +108,7 @@ En `Meteorología → Configuración → Parámetros` (wizard `leulit.meteo.para
 
 3. **AEMET (si se configuró)**: en **Reportes METAR**, crear un registro con OACI `LEMD` (proveedor por defecto: AEMET) y pulsar **Obtener briefing**. Debe rellenarse el RAW del METAR, el TAF y los SIGMET vigentes para la FIR LECM.
 
-4. **Auto-resolución**: en **Reportes METAR**, pedir briefing de un OACI que no esté en la tabla de referencia (con OpenAIP y CheckWX configurados). El sistema debe crear automáticamente el registro en **Aeródromos de Referencia** y devolver el METAR del aeródromo cercano.
+4. **Resolución de OACI desconocido**: en **Reportes METAR**, pedir briefing de un OACI que no esté en la tabla de referencia (con OpenAIP y/o CheckWX configurados). El sistema debe obtener las coordenadas del OACI, encontrar el aeródromo más cercano en la tabla de referencia y devolver su METAR/TAF, sin crear ningún registro nuevo.
 
 5. **Windy (si se configuró)**: abrir una consulta existente, cambiar **Fuente de Datos** a **Windy** y pulsar **Consultar Windy**. Deben llegar los datos del modelo seleccionado.
 
@@ -118,9 +117,9 @@ En `Meteorología → Configuración → Parámetros` (wizard `leulit.meteo.para
 ## 5. Limitaciones conocidas
 
 - **Sin caché en consultas manuales**: cada acción de usuario consulta la API en directo. El cron sí almacena en `leulit.meteo.historico`.
-- **Aeródromos de Referencia**: la tabla se puede sembrar manualmente o mediante la sincronización desde CheckWX. Para añadir helipuertos sin METAR propio de forma manual, edítela desde **Meteorología → Aeródromos de Referencia** (solo administradores).
+- **Aeródromos de Referencia**: la tabla contiene únicamente aeródromos con METAR/TAF real. Se puede poblar manualmente o mediante la sincronización desde aviationweather.gov. Los helipuertos y puntos sin servicio MET propio no se añaden a esta tabla; cuando se solicita un briefing para uno de ellos, el sistema los resuelve en tiempo real buscando el aeródromo más cercano.
 - **Open-Meteo**: aunque su uso es libre y sin clave, mantiene límites suaves para uso comercial intensivo.
-- **Auto-resolución sin coordenadas**: si no se dispone de OpenAIP ni CheckWX key y el OACI no está en la tabla, no se puede determinar el aeródromo de referencia automáticamente.
+- **Sin coordenadas disponibles**: si no se dispone de OpenAIP ni CheckWX key y el OACI no está en la tabla, no se pueden obtener las coordenadas necesarias para localizar el aeródromo más cercano.
 
 ---
 
@@ -139,7 +138,7 @@ Ir a **Meteorología → Configuración → API Keys** y pegar el JWT de AEMET (
 - Las claves recién emitidas pueden tardar unos minutos en activarse en el servicio de AEMET. Esperar y reintentar.
 
 ### "No se han podido obtener datos de AEMET para …"
-AEMET puede no estar publicando METAR/TAF para ese OACI en este momento (aeródromo cerrado, sin servicio MET). Si el OACI corresponde a un helipuerto sin METAR propio, asegúrese de que está dado de alta en **Aeródromos de Referencia** con `tiene_metar_propio = False` y un `ref_icao` correcto.
+AEMET puede no estar publicando METAR/TAF para ese OACI en este momento (aeródromo cerrado, sin servicio MET). Si el OACI corresponde a un helipuerto o punto sin METAR propio, el sistema buscará automáticamente el aeródromo más cercano en la tabla de referencia usando las coordenadas obtenidas de OpenAIP o CheckWX; no es necesario crear ningún registro manual para este punto.
 
 ### "API Key de Windy no válida"
 - Comprobar que la clave se ha copiado entera y sin espacios.
