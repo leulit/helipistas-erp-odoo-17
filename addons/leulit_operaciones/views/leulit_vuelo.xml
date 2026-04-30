@@ -719,6 +719,7 @@
                                     <div class="d-flex flex-wrap">
                                         <div class="card p-2 m-2">
                                             <separator class="border-bottom" string="Meteo"/>
+                                            <h4 >(Reports are pulled from AEMET, the offical source for aviation weather)</h4>
                                             <group col="4">
                                                 <field name="indicativometeo" mode="edit"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
                                                 <button name="action_obtener_meteo_salida" type="object" string="Obtener meteo" class="oe_edit_only btn btn-info btn-sm"  invisible="((estado in ['postvuelo', 'cerrado', 'cancelado']))"  />
@@ -1459,7 +1460,7 @@
                                 <div class="d-flex flex-wrap">
                                     <div class="card p-2 m-2">
                                         <separator class="border-bottom" string="Meteo"/>
-                                        <h4 >(Reports are pulled from aviationweather.gov, the offical source for aviation weather)</h4>
+                                        <h4 >(Reports are pulled from AEMET, the offical source for aviation weather)</h4>
                                         <group col="4">
                                             <field name="indicativometeo" mode="edit"  readonly="estado in ('postvuelo', 'cerrado', 'cancelado')"/>
                                             <button name="action_obtener_meteo_salida" type="object" string="Obtener meteo" class="oe_edit_only btn btn-info btn-sm"  invisible="((estado in ['postvuelo', 'cerrado', 'cancelado']))"  />
