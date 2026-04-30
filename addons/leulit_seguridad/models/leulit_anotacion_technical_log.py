@@ -139,11 +139,11 @@ class leulit_anotacion_technical_log(models.Model):
     install_life_raft = fields.Boolean('Life raft')
     install_life_vests_qty = fields.Integer('Life vests qty')
     install_headsets_qty = fields.Integer('Headsets qty')
-    install_tyler = fields.Boolean('Tyler')
-    install_gss = fields.Boolean('GSS')
+    install_tyler = fields.Boolean('Tyler', help="Tyler universal mount for attaching cameras to the R44/R44II — left side.")
+    install_gss = fields.Boolean('GSS', help="Gyro-Stabilized Systems. ZatzWorks R44M-001 Utility Camera Mount — forward mount, for attaching cameras to the R44/R44II - right side.")
     install_cineflex = fields.Boolean('Cineflex')
     install_lidar_system = fields.Boolean('Lidar system')
-    install_af120 = fields.Boolean('AF120')
+    install_af120 = fields.Boolean('AF120', help="Air Film Camera Systems AF120 Left Side Universal Camera Mount for EC120B.")
 
     remove_dual_control = fields.Boolean('Dual control')
     remove_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
@@ -151,11 +151,11 @@ class leulit_anotacion_technical_log(models.Model):
     remove_life_raft = fields.Boolean('Life raft')
     remove_life_vests_qty = fields.Integer('Life vests qty')
     remove_headsets_qty = fields.Integer('Headsets qty')
-    remove_tyler = fields.Boolean('Tyler')
-    remove_gss = fields.Boolean('GSS')
+    remove_tyler = fields.Boolean('Tyler', help="Tyler universal mount for attaching cameras to the R44/R44II — left side.")
+    remove_gss = fields.Boolean('GSS', help="Gyro-Stabilized Systems. ZatzWorks R44M-001 Utility Camera Mount — forward mount, for attaching cameras to the R44/R44II - right side.")
     remove_cineflex = fields.Boolean('Cineflex')
     remove_lidar_system = fields.Boolean('Lidar system')
-    remove_af120 = fields.Boolean('AF120')
+    remove_af120 = fields.Boolean('AF120', help="Air Film Camera Systems AF120 Left Side Universal Camera Mount for EC120B.")
 
     def _get_operational_items(self, mode):
         items = []
