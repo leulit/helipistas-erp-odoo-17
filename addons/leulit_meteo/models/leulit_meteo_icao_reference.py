@@ -152,13 +152,15 @@ class LeulitMeteoIcaoReference(models.Model):
                         ('observation_time', '=', obs_time),
                     ], limit=1)
                     if existe:
-                        ref.sudo().write({
-                            'proxima_actualizacion': obs_time + timedelta(minutes=35),
-                        })
+                        # Si obs_time + 35min ya está en el pasado (AEMET no ha emitido
+                        # nuevo METAR aún), reintentar en 5 min para no quedar bloqueados.
+                        proxima = obs_time + timedelta(minutes=35)
+                        if proxima <= ahora:
+                            proxima = ahora + timedelta(minutes=5)
+                        ref.sudo().write({'proxima_actualizacion': proxima})
                         _logger.debug(
                             "Cron METAR: %s sin cambios (%s), próxima a las %s",
-                            ref.icao, obs_time,
-                            (obs_time + timedelta(minutes=35)).strftime('%H:%MZ'))
+                            ref.icao, obs_time, proxima.strftime('%H:%MZ'))
                         continue
 
                 provider_code = data.get('provider') or 'aemet'
