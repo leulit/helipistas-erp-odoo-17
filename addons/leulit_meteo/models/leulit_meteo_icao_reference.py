@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
 import math
+import traceback as _traceback
 
 import pytz
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from .leulit_meteo_notifier import meteo_notify_error
 
 _logger = logging.getLogger(__name__)
 
@@ -122,6 +124,14 @@ class LeulitMeteoIcaoReference(models.Model):
         prov = get_provider('aemet')
         if not prov:
             _logger.error("Cron METAR: proveedor 'aemet' no disponible")
+            meteo_notify_error(
+                self.env,
+                'Cron METAR — registro de proveedores',
+                RuntimeError("El proveedor 'aemet' no está registrado. "
+                             "Verifica que el módulo leulit_meteo esté correctamente instalado."),
+                contexto={'Proveedor requerido': 'aemet',
+                          'Método': 'action_actualizar_metar_cron'},
+            )
             return
 
         ahora = fields.Datetime.now()
@@ -190,48 +200,91 @@ class LeulitMeteoIcaoReference(models.Model):
                     _logger.info("Cron METAR: histórico guardado para %s (sin obs_time)", ref.icao)
 
             except Exception as exc:
+                tb_str = _traceback.format_exc()
                 _logger.error("Cron METAR: error en %s: %s", ref.icao, exc)
-                errores.append((ref.icao, str(exc)))
+                errores.append((ref.icao, str(exc), tb_str))
 
         if errores:
             self._cron_notificar_errores(errores)
 
     @api.model
     def _cron_notificar_errores(self, errores):
-        """Envía email de notificación de errores del cron al email configurado en Parámetros."""
+        """Envía email con los errores del cron al email configurado en Parámetros.
+
+        Cada elemento de ``errores`` es una tupla ``(icao, error_msg, traceback_str)``.
+        """
         email_to = self.env['ir.config_parameter'].sudo().get_param(
             'leulit_meteo.email_errores', '')
         if not email_to:
             return
 
+        def _esc(s):
+            return (str(s)
+                    .replace('&', '&amp;')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;'))
+
         ahora = fields.Datetime.now().strftime('%d/%m/%Y %H:%M UTC')
-        filas = ''.join(
-            f'<tr>'
-            f'<td style="padding:6px 12px;border:1px solid #ddd;">{icao}</td>'
-            f'<td style="padding:6px 12px;border:1px solid #ddd;color:#c00;">{error}</td>'
-            f'</tr>'
-            for icao, error in errores
-        )
+
+        filas = ''
+        for item in errores:
+            icao = item[0]
+            error_msg = item[1]
+            tb_str = item[2] if len(item) > 2 else None
+
+            tb_html = ''
+            if tb_str:
+                tb_html = (
+                    '<details style="margin-top:6px;">'
+                    '<summary style="cursor:pointer;color:#666;font-size:11px;">'
+                    '&#9656; Traceback completo</summary>'
+                    '<pre style="background:#f8f8f8;border:1px solid #eee;padding:8px;'
+                    'font-size:10px;font-family:monospace;margin:4px 0 0;'
+                    'white-space:pre-wrap;word-break:break-all;">'
+                    + _esc(tb_str) + '</pre></details>'
+                )
+
+            filas += (
+                f'<tr>'
+                f'<td style="padding:6px 12px;border:1px solid #ddd;vertical-align:top;'
+                f'white-space:nowrap;">{_esc(icao)}</td>'
+                f'<td style="padding:6px 12px;border:1px solid #ddd;vertical-align:top;'
+                f'color:#b00;">{_esc(error_msg)}{tb_html}</td>'
+                f'</tr>'
+            )
+
         body = f"""
-            <p>La tarea de actualización automática de METAR
-            ({ahora}) ha encontrado errores en
-            <strong>{len(errores)}</strong> aeródromo(s):</p>
-            <table style="border-collapse:collapse;margin:12px 0;">
-                <thead>
-                    <tr style="background:#f5f5f5;">
-                        <th style="padding:6px 12px;border:1px solid #ddd;">OACI</th>
-                        <th style="padding:6px 12px;border:1px solid #ddd;">Error</th>
-                    </tr>
-                </thead>
-                <tbody>{filas}</tbody>
-            </table>
-            <p style="color:#888;font-size:12px;">
-                Mensaje automático del módulo de Meteorología.
-            </p>
-        """
+<div style="font-family:sans-serif;max-width:720px;">
+  <div style="background:#b00;color:#fff;padding:10px 18px;border-radius:4px 4px 0 0;">
+    <strong>Errores en actualizaci&#243;n autom&#225;tica de METAR</strong>
+  </div>
+  <div style="border:1px solid #ddd;border-top:none;padding:16px 18px;background:#fff;">
+    <p style="margin:0 0 12px;">
+      La tarea de actualizaci&#243;n autom&#225;tica de METAR ({ahora})
+      ha encontrado errores en <strong>{len(errores)}</strong> aer&#243;dromo(s):
+    </p>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:12px;">
+      <thead>
+        <tr style="background:#f5f5f5;">
+          <th style="padding:6px 12px;border:1px solid #ddd;text-align:left;">OACI</th>
+          <th style="padding:6px 12px;border:1px solid #ddd;text-align:left;">Error</th>
+        </tr>
+      </thead>
+      <tbody>{filas}</tbody>
+    </table>
+  </div>
+  <div style="padding:8px 18px;background:#f5f5f5;border:1px solid #ddd;border-top:none;
+              font-size:11px;color:#888;border-radius:0 0 4px 4px;">
+    Mensaje autom&#225;tico del m&#243;dulo de Meteorolog&#237;a (leulit_meteo).
+  </div>
+</div>"""
+
         try:
             self.env['mail.mail'].sudo().create({
-                'subject': f'[METAR] Errores en actualización automática ({len(errores)} aeródromo(s))',
+                'subject': (
+                    f'[METAR] Errores en actualización automática '
+                    f'({len(errores)} aeródromo(s))'
+                ),
                 'body_html': body,
                 'email_to': email_to,
                 'auto_delete': True,

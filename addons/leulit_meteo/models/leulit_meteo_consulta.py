@@ -2,10 +2,13 @@
 
 import logging
 import json
+import traceback as _traceback
+
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from .leulit_meteo_service import OpenMeteoService
 from .leulit_meteo_windy_service import WindyService
+from .leulit_meteo_notifier import meteo_notify_error
 
 _logger = logging.getLogger(__name__)
 
@@ -248,34 +251,51 @@ class LeulitMeteoConsulta(models.Model):
     def action_consultar_clima_actual(self):
         """Consulta el clima actual desde la API"""
         self.ensure_one()
-        
+
         if not self.latitud or not self.longitud:
             raise UserError(_('Debe especificar latitud y longitud para realizar la consulta.'))
-        
-        # Llamar a la API
-        data = OpenMeteoService.get_current_weather(self.latitud, self.longitud)
-        
-        if not data or 'current' not in data:
-            raise UserError(_('No se pudo obtener información meteorológica. Verifique la conexión a internet y los datos de ubicación.'))
-        
-        # Actualizar campos con los datos obtenidos
-        current = data['current']
-        self.write({
-            'tipo_consulta': 'actual',
-            'fecha_consulta': fields.Datetime.now(),
-            'temperatura': current.get('temperature_2m'),
-            'sensacion_termica': current.get('apparent_temperature'),
-            'humedad': current.get('relative_humidity_2m'),
-            'precipitacion': current.get('precipitation', 0.0),
-            'codigo_clima': current.get('weather_code'),
-            'cobertura_nubes': current.get('cloud_cover'),
-            'velocidad_viento': current.get('wind_speed_10m'),
-            'direccion_viento': current.get('wind_direction_10m'),
-            'rachas_viento': current.get('wind_gusts_10m'),
-        })
-        
-        _logger.info(f'Consulta meteorológica actualizada: {self.codigo} - {self.ubicacion}')
-        
+
+        try:
+            data = OpenMeteoService.get_current_weather(self.latitud, self.longitud)
+
+            if not data or 'current' not in data:
+                raise UserError(_(
+                    'No se pudo obtener información meteorológica. '
+                    'Verifique la conexión a internet y los datos de ubicación.'))
+
+            current = data['current']
+            self.write({
+                'tipo_consulta': 'actual',
+                'fecha_consulta': fields.Datetime.now(),
+                'temperatura': current.get('temperature_2m'),
+                'sensacion_termica': current.get('apparent_temperature'),
+                'humedad': current.get('relative_humidity_2m'),
+                'precipitacion': current.get('precipitation', 0.0),
+                'codigo_clima': current.get('weather_code'),
+                'cobertura_nubes': current.get('cloud_cover'),
+                'velocidad_viento': current.get('wind_speed_10m'),
+                'direccion_viento': current.get('wind_direction_10m'),
+                'rachas_viento': current.get('wind_gusts_10m'),
+            })
+        except UserError:
+            raise
+        except Exception as exc:
+            meteo_notify_error(
+                self.env,
+                'Consulta clima actual (Open-Meteo)',
+                exc,
+                traceback_str=_traceback.format_exc(),
+                contexto={
+                    'Consulta': self.codigo,
+                    'Ubicación': self.ubicacion,
+                    'Latitud': self.latitud,
+                    'Longitud': self.longitud,
+                },
+            )
+            raise UserError(_('Error al consultar el clima actual: %s') % exc) from exc
+
+        _logger.info('Consulta meteorológica actualizada: %s - %s', self.codigo, self.ubicacion)
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -284,32 +304,48 @@ class LeulitMeteoConsulta(models.Model):
                 'message': _('Datos meteorológicos actualizados correctamente.'),
                 'type': 'success',
                 'sticky': False,
-            }
+            },
         }
     
     def action_consultar_pronostico(self):
         """Consulta el pronóstico meteorológico desde la API"""
         self.ensure_one()
-        
+
         if not self.latitud or not self.longitud:
             raise UserError(_('Debe especificar latitud y longitud para realizar la consulta.'))
-        
-        # Llamar a la API
-        data = OpenMeteoService.get_forecast(self.latitud, self.longitud, days=7)
-        
-        if not data or 'daily' not in data:
-            raise UserError(_('No se pudo obtener el pronóstico meteorológico. Verifique la conexión a internet y los datos de ubicación.'))
-        
-        # Guardar los datos del pronóstico como JSON
-        import json
-        self.write({
-            'tipo_consulta': 'pronostico',
-            'fecha_consulta': fields.Datetime.now(),
-            'datos_pronostico': json.dumps(data, indent=2),
-        })
-        
-        _logger.info(f'Pronóstico meteorológico obtenido: {self.codigo} - {self.ubicacion}')
-        
+
+        try:
+            data = OpenMeteoService.get_forecast(self.latitud, self.longitud, days=7)
+
+            if not data or 'daily' not in data:
+                raise UserError(_(
+                    'No se pudo obtener el pronóstico meteorológico. '
+                    'Verifique la conexión a internet y los datos de ubicación.'))
+
+            self.write({
+                'tipo_consulta': 'pronostico',
+                'fecha_consulta': fields.Datetime.now(),
+                'datos_pronostico': json.dumps(data, indent=2),
+            })
+        except UserError:
+            raise
+        except Exception as exc:
+            meteo_notify_error(
+                self.env,
+                'Consulta pronóstico (Open-Meteo)',
+                exc,
+                traceback_str=_traceback.format_exc(),
+                contexto={
+                    'Consulta': self.codigo,
+                    'Ubicación': self.ubicacion,
+                    'Latitud': self.latitud,
+                    'Longitud': self.longitud,
+                },
+            )
+            raise UserError(_('Error al obtener el pronóstico: %s') % exc) from exc
+
+        _logger.info('Pronóstico meteorológico obtenido: %s - %s', self.codigo, self.ubicacion)
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -318,28 +354,42 @@ class LeulitMeteoConsulta(models.Model):
                 'message': _('Pronóstico meteorológico obtenido correctamente.'),
                 'type': 'success',
                 'sticky': False,
-            }
+            },
         }
     
     def action_consultar_windy(self):
         """Consulta datos desde Windy API"""
         self.ensure_one()
-        
-        # Obtener configuración
+
         api_key = self.env['ir.config_parameter'].sudo().get_param('leulit_meteo.windy_api_key')
         model = self.env['ir.config_parameter'].sudo().get_param('leulit_meteo.windy_model', 'gfs')
-        
+
         if not api_key:
             raise UserError(_('Configure la API Key de Windy en Ajustes > Meteorología'))
-        
-        if self.es_polilinea and self.puntos_ids:
-            # Consultar polilínea
-            return self._consultar_windy_polilinea(api_key, model)
-        elif self.latitud and self.longitud:
-            # Consultar punto único
-            return self._consultar_windy_punto(api_key, model)
-        else:
-            raise UserError(_('Debe especificar latitud/longitud o definir puntos de ruta'))
+
+        try:
+            if self.es_polilinea and self.puntos_ids:
+                return self._consultar_windy_polilinea(api_key, model)
+            elif self.latitud and self.longitud:
+                return self._consultar_windy_punto(api_key, model)
+            else:
+                raise UserError(_('Debe especificar latitud/longitud o definir puntos de ruta'))
+        except UserError:
+            raise
+        except Exception as exc:
+            meteo_notify_error(
+                self.env,
+                'Consulta Windy',
+                exc,
+                traceback_str=_traceback.format_exc(),
+                contexto={
+                    'Consulta': self.codigo,
+                    'Ubicación': self.ubicacion,
+                    'Modelo Windy': model,
+                    'Es polilínea': self.es_polilinea,
+                },
+            )
+            raise UserError(_('Error al consultar Windy: %s') % exc) from exc
     
     def _consultar_windy_punto(self, api_key, model):
         """Consulta Windy para un punto único"""

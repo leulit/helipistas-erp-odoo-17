@@ -347,8 +347,9 @@ class LeulitMeteoMetar(models.Model):
     def briefing_oaci(self, icao_code, provider='aemet', fecha=None):
         """Devuelve el briefing METAR/TAF/SIGMET para un OACI en una fecha.
 
-        Fuente única de datos: siempre lee de ``leulit.meteo.historico``.
-        El cron mantiene el histórico actualizado cada ~30 min.
+        Fuente primaria: ``leulit.meteo.historico`` (mantenido por el cron cada ~30 min).
+        Fallback: si no hay datos en histórico, hace fetch en tiempo real igual que el
+        cron y guarda el resultado en histórico para futuras consultas.
 
         Resolución del OACI:
         - Si está en la tabla de referencia → usa su histórico directamente.
@@ -411,7 +412,63 @@ class LeulitMeteoMetar(models.Model):
         ], order='observation_time desc', limit=1)
 
         if not hist:
-            return None
+            # Sin datos en histórico → fetch en tiempo real (igual que el cron)
+            prov = get_provider('aemet')
+            if not prov:
+                return None
+            data = prov.get_observation(self.env, icao_code=icao)
+            if not data:
+                return None
+            ahora = fields.Datetime.now()
+            obs_time = data.get('observation_time')
+            provider_code = data.get('provider') or 'aemet'
+            Hist.create({
+                'icao_reference_id': ref_id,
+                'icao_consultar': data.get('icao_consultar') or icao,
+                'raw_metar': data.get('raw_metar'),
+                'raw_taf': data.get('raw_taf'),
+                'raw_sigmet': data.get('raw_sigmet'),
+                'observation_time': obs_time,
+                'fecha_obtencion': ahora,
+                'fuente_metar': provider_code if data.get('raw_metar') else 'ninguno',
+                'fuente_taf': provider_code if data.get('raw_taf') else 'ninguno',
+                'usa_referencia': bool(data.get('usa_referencia')),
+                'ref_icao': data.get('ref_icao'),
+                'ref_nombre': data.get('ref_nombre'),
+                'proveedor': provider_code,
+            })
+            _logger.info(
+                "briefing_oaci: %s sin histórico, datos obtenidos en tiempo real (%s)",
+                icao, obs_time)
+            derived_rt = parse_metar(data.get('raw_metar')) if data.get('raw_metar') else {}
+            return {
+                'record_id': None,
+                'historico': False,
+                'provider': provider_code,
+                'metar_icao': data.get('icao_consultar') or icao,
+                'fuente_metar': provider_code if data.get('raw_metar') else 'ninguno',
+                'fuente_taf': provider_code if data.get('raw_taf') else 'ninguno',
+                'station_name': data.get('station_name') or station_name,
+                'fir_code': data.get('fir_code') or fir,
+                'ref_icao': data.get('ref_icao') or ref_icao_val,
+                'ref_nombre': data.get('ref_nombre') or ref_nombre_val,
+                'ref_distancia_km': data.get('ref_distancia_km') or ref_distancia_km_val,
+                'usa_referencia': bool(data.get('usa_referencia')) or usa_referencia,
+                'raw_metar': data.get('raw_metar'),
+                'raw_taf': data.get('raw_taf'),
+                'raw_sigmet': data.get('raw_sigmet'),
+                'observation_time': obs_time,
+                'temperatura': derived_rt.get('temperatura'),
+                'dewpoint': derived_rt.get('dewpoint'),
+                'wind_direction': derived_rt.get('wind_direction'),
+                'wind_speed_kt': derived_rt.get('wind_speed_kt'),
+                'wind_gust_kt': derived_rt.get('wind_gust_kt'),
+                'visibility_m': derived_rt.get('visibility_m'),
+                'qnh': derived_rt.get('qnh'),
+                'humidity': None,
+                'pressure': None,
+                'precipitation': None,
+            }
 
         derived = parse_metar(hist.raw_metar) if hist.raw_metar else {}
 
