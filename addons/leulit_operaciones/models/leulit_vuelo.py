@@ -1424,78 +1424,129 @@ class leulit_vuelo(models.Model):
             item.isroldireccion = False
     
     
-    def getMeteo(self):
-        self.indicativometeo = self.indicativometeo.replace(" ","")
-        indicativos = self.indicativometeo.split(',')
-        horallegadaprevista = self.horallegadaprevista
-        horallegada = self.horallegada
-        horasalida = self.utc_horasalida
-        fechavuelo = self.fechavuelo
-        estado = self.estado
-        timestampstart = None
+    # def getMeteo(self):
+    #     self.indicativometeo = self.indicativometeo.replace(" ","")
+    #     indicativos = self.indicativometeo.split(',')
+    #     horallegadaprevista = self.horallegadaprevista
+    #     horallegada = self.horallegada
+    #     horasalida = self.utc_horasalida
+    #     fechavuelo = self.fechavuelo
+    #     estado = self.estado
+    #     timestampstart = None
         
-        # strhoraend = utilitylib.leulit_float_time_to_str(horasalida)
-        tira = ("{0} {1}").format(fechavuelo, horasalida)
-        timpestampend = datetime.strptime(tira, "%Y-%m-%d %H:%M").strftime("%Y-%m-%dT%H:%M:%S+0000")
+    #     # strhoraend = utilitylib.leulit_float_time_to_str(horasalida)
+    #     tira = ("{0} {1}").format(fechavuelo, horasalida)
+    #     timpestampend = datetime.strptime(tira, "%Y-%m-%d %H:%M").strftime("%Y-%m-%dT%H:%M:%S+0000")
 
-        # strhorastart = utilitylib.leulit_float_time_to_str(horasalida)
-        tira = ("{0} {1}").format(fechavuelo, horasalida)
-        objtimestart = datetime.strptime(tira, "%Y-%m-%d %H:%M") - timedelta(hours=1)
-        timestampstart = objtimestart.strftime("%Y-%m-%dT%H:%M:%S+0000")
+    #     # strhorastart = utilitylib.leulit_float_time_to_str(horasalida)
+    #     tira = ("{0} {1}").format(fechavuelo, horasalida)
+    #     objtimestart = datetime.strptime(tira, "%Y-%m-%d %H:%M") - timedelta(hours=1)
+    #     timestampstart = objtimestart.strftime("%Y-%m-%dT%H:%M:%S+0000")
 
-        meteotext = []
-        for indicativo in indicativos:
-            try:
-                indicativo = indicativo.upper()
-                url = "https://www.aviationweather.gov/cgi-bin/data/dataserver.php?dataSource=metars&requestType=retrieve&format=xml&startTime={0}&endTime={1}&stationString={2}"
-                url = (url).format(timestampstart,timpestampend,indicativo)
-                _logger.error('getmeteo --> %r',url)
-                response = urllib3.PoolManager().request("GET",url)
-                reddit = etree.fromstring(response.data)
-                meteotext.append( ("Indicativo {0}\n").format( indicativo ) )
-                for item in reddit.xpath('/response/data/METAR'):
-                    raw_text = item.xpath("./raw_text/text()")[0]
-                    observation_time = item.xpath("./observation_time/text()")[0]
-                    temp_c = item.xpath("./temp_c/text()")[0]
-                    wind_dir_degrees = item.xpath("./wind_dir_degrees/text()")[0]
-                    wind_speed_kt = item.xpath("./wind_speed_kt/text()")[0]
-                    visibility_statute_mi = item.xpath("./visibility_statute_mi/text()")[0]
-                    flight_category = item.xpath("./flight_category/text()")[0] if item.xpath("./flight_category/text()") else ""
-                    elevation_m = item.xpath("./elevation_m/text()")[0]
-                    try:
-                        sky_cover = item.find("./sky_condition").attrib['sky_cover']
-                    except Exception as e:
-                        sky_cover = ''
+    #     meteotext = []
+    #     for indicativo in indicativos:
+    #         try:
+    #             indicativo = indicativo.upper()
+    #             url = "https://www.aviationweather.gov/cgi-bin/data/dataserver.php?dataSource=metars&requestType=retrieve&format=xml&startTime={0}&endTime={1}&stationString={2}"
+    #             url = (url).format(timestampstart,timpestampend,indicativo)
+    #             _logger.error('getmeteo --> %r',url)
+    #             response = urllib3.PoolManager().request("GET",url)
+    #             reddit = etree.fromstring(response.data)
+    #             meteotext.append( ("Indicativo {0}\n").format( indicativo ) )
+    #             for item in reddit.xpath('/response/data/METAR'):
+    #                 raw_text = item.xpath("./raw_text/text()")[0]
+    #                 observation_time = item.xpath("./observation_time/text()")[0]
+    #                 temp_c = item.xpath("./temp_c/text()")[0]
+    #                 wind_dir_degrees = item.xpath("./wind_dir_degrees/text()")[0]
+    #                 wind_speed_kt = item.xpath("./wind_speed_kt/text()")[0]
+    #                 visibility_statute_mi = item.xpath("./visibility_statute_mi/text()")[0]
+    #                 flight_category = item.xpath("./flight_category/text()")[0] if item.xpath("./flight_category/text()") else ""
+    #                 elevation_m = item.xpath("./elevation_m/text()")[0]
+    #                 try:
+    #                     sky_cover = item.find("./sky_condition").attrib['sky_cover']
+    #                 except Exception as e:
+    #                     sky_cover = ''
 
-                    try:
-                        cloud_base_ft_agl = item.find("./sky_condition").attrib['cloud_base_ft_agl']
-                    except Exception as e:
-                        cloud_base_ft_agl = ''
+    #                 try:
+    #                     cloud_base_ft_agl = item.find("./sky_condition").attrib['cloud_base_ft_agl']
+    #                 except Exception as e:
+    #                     cloud_base_ft_agl = ''
 
-                    tira = "{0}\n" \
-                            "Time: {1}\n" \
-                            "Temperature: {2}\n" \
-                            "Wind dir degrees: {3}\n" \
-                            "Wind speed: {4} kt" \
-                            "Visibility Statute: {5} mi\n" \
-                            "Flight category: {6}\n" \
-                            "Elevation: {7} mi\n" \
-                            "Sky cover: {8}\n" \
-                            "Cloud base ft agl: {9}\n" \
-                            "-----------------------\n"
-                    tira = (tira).format(raw_text, observation_time,temp_c,wind_dir_degrees,wind_speed_kt,visibility_statute_mi,flight_category,elevation_m,sky_cover,cloud_base_ft_agl)
-                    meteotext.append(tira)
-                meteotext.append("\n\n==============================\n\n")
-            except urllib3.exceptions.HTTPError as e:
-                meteotext.append(("{0}\n{1}").format(indicativo, e.read()))
-            except Exception as e:
-                _logger.warning('getMeteo error para indicativo %s: %s', indicativo, e)
-                meteotext.append(("Indicativo {0}\nError al obtener datos meteorologicos: {1}\n\n==============================\n\n").format(indicativo, e))
-        meteotext = "".join(meteotext)
-        self.meteo = meteotext
+    #                 tira = "{0}\n" \
+    #                         "Time: {1}\n" \
+    #                         "Temperature: {2}\n" \
+    #                         "Wind dir degrees: {3}\n" \
+    #                         "Wind speed: {4} kt" \
+    #                         "Visibility Statute: {5} mi\n" \
+    #                         "Flight category: {6}\n" \
+    #                         "Elevation: {7} mi\n" \
+    #                         "Sky cover: {8}\n" \
+    #                         "Cloud base ft agl: {9}\n" \
+    #                         "-----------------------\n"
+    #                 tira = (tira).format(raw_text, observation_time,temp_c,wind_dir_degrees,wind_speed_kt,visibility_statute_mi,flight_category,elevation_m,sky_cover,cloud_base_ft_agl)
+    #                 meteotext.append(tira)
+    #             meteotext.append("\n\n==============================\n\n")
+    #         except urllib3.exceptions.HTTPError as e:
+    #             meteotext.append(("{0}\n{1}").format(indicativo, e.read()))
+    #         except Exception as e:
+    #             _logger.warning('getMeteo error para indicativo %s: %s', indicativo, e)
+    #             meteotext.append(("Indicativo {0}\nError al obtener datos meteorologicos: {1}\n\n==============================\n\n").format(indicativo, e))
+    #     meteotext = "".join(meteotext)
+    #     self.meteo = meteotext
 
-    
-    
+    def action_obtener_meteo_salida(self):
+        self.ensure_one()
+        icaos = [i.strip().upper() for i in (self.indicativometeo or '').split(',') if i.strip()]
+        if not icaos:
+            raise UserError(_('Introduce un indicativo OACI en el campo "Indicativo meteo".'))
+
+        MetarModel = self.env['leulit.meteo.metar']
+        bloques_meteo = []
+        primer_resultado = None
+        sin_datos = []
+
+        for icao in icaos:
+            result = MetarModel.briefing_oaci(icao, fecha=self.fechasalida)
+            if not result:
+                sin_datos.append(icao)
+                continue
+
+            if primer_resultado is None:
+                primer_resultado = result
+
+            raw_metar = result.get('raw_metar') or ''
+            raw_taf = result.get('raw_taf') or ''
+            bloque = '\n\n'.join(filter(None, [raw_metar, raw_taf]))
+            if bloque:
+                bloques_meteo.append(bloque)
+
+        if primer_resultado is None:
+            raise UserError(_(
+                'No hay datos meteorológicos disponibles para %s. '
+                'Comprueba que el cron de actualización METAR está activo.'
+            ) % ', '.join(icaos))
+
+        vals = {
+            'meteo': '\n\n==============================\n\n'.join(bloques_meteo) or False,
+        }
+        self.write(vals)
+
+        icaos_ok = [i for i in icaos if i not in sin_datos]
+        mensaje = _('Meteorología obtenida para %s') % ', '.join(icaos_ok)
+        if sin_datos:
+            mensaje += _(' | Sin datos: %s') % ', '.join(sin_datos)
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Meteorología actualizada'),
+                'message': mensaje,
+                'type': 'warning' if sin_datos else 'success',
+                'sticky': bool(sin_datos),
+            },
+        }
+
     @api.onchange('helicoptero_id')
     def onchange_helicoptero(self):
         warning = {}
@@ -2090,10 +2141,29 @@ class leulit_vuelo(models.Model):
 
     @api.onchange('verificado')
     def cambio_numtripulantes_verificado(self):
-        if self.verificado: 
+        if self.verificado:
             self.numtripulacion = 2
         else:
             self.numtripulacion = 1
+
+    @api.onchange('lugarsalida', 'lugarllegada')
+    def _onchange_lugares_indicativo_meteo(self):
+        _ICAO_PLACEHOLDER = {'ZZZZ', 'XXXX', 'AAAA', 'NNNN'}
+
+        def es_icao(name):
+            if not name or len(name) != 4 or not name.isalpha():
+                return False
+            return name.upper() not in _ICAO_PLACEHOLDER
+
+        indicativos = []
+        for helipuerto in (self.lugarsalida, self.lugarllegada):
+            if helipuerto and es_icao(helipuerto.name):
+                icao = helipuerto.name.upper()
+                if icao not in indicativos:
+                    indicativos.append(icao)
+
+        if indicativos:
+            self.indicativometeo = ','.join(indicativos)
 
     @api.depends('fechavuelo')
     def _is_last_30_days(self):

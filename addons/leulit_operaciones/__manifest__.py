@@ -9,7 +9,8 @@
     "depends": [
         "leulit",
         "leulit_parte_145",
-        "leulit_tarea"
+        "leulit_tarea",
+        "leulit_meteo"
     ],
     "data": [
         "security.xml",
