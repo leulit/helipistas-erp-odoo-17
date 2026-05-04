@@ -266,6 +266,10 @@ class LeulitMeteoMetar(models.Model):
     def _write_observacion(self, data):
         """Aplica un dict normalizado del proveedor al registro."""
         self.ensure_one()
+        # Las coordenadas del aeródromo se cachean desde OpenAIP; solo
+        # sobreescribir si el proveedor las devuelve explícitamente.
+        lat_proveedor = data.get('latitude')
+        lon_proveedor = data.get('longitude')
         self.write({
             'station_code': data.get('station_code') or self.station_code,
             'station_name': data.get('station_name'),
@@ -288,8 +292,8 @@ class LeulitMeteoMetar(models.Model):
             'qnh': data.get('qnh'),
             'pressure': data.get('pressure'),
             'precipitation': data.get('precipitation'),
-            'latitud': data.get('latitude'),
-            'longitud': data.get('longitude'),
+            'latitud': lat_proveedor if lat_proveedor is not None else self.latitud,
+            'longitud': lon_proveedor if lon_proveedor is not None else self.longitud,
             'elevation': data.get('elevation'),
             'ref_distancia_km': data.get('ref_distancia_km'),
         })
@@ -352,9 +356,13 @@ class LeulitMeteoMetar(models.Model):
         cron y guarda el resultado en histórico para futuras consultas.
 
         Resolución del OACI:
-        - Si está en la tabla de referencia → usa su histórico directamente.
-        - Si NO está → localiza el aeródromo de referencia más próximo
-          (via coordenadas OpenAIP/CheckWX) y usa su histórico.
+        1. Coordenadas: se leen de un registro leulit.meteo.metar existente.
+           Si no hay, se consultan via OpenAIP/CheckWX y se almacena el
+           resultado en leulit.meteo.metar para evitar llamadas futuras.
+        2. Referencia: si el OACI está en leulit.meteo.icao.reference se usa
+           directamente; si no, se localiza el más próximo por coordenadas.
+        3. Datos: se devuelven del histórico; si no hay, se hace fetch en
+           tiempo real y se guarda en histórico.
 
         Args:
             icao_code: código OACI de 4 letras.
@@ -367,6 +375,8 @@ class LeulitMeteoMetar(models.Model):
             dict compatible con ``_write_observacion`` o ``None`` si no hay datos.
         """
         from .leulit_meteo_metar_parser import parse_metar
+        from .leulit_meteo_openaip_service import OpenAIPService
+        from .leulit_meteo_checkwx_service import CheckWXService
 
         if not icao_code:
             return None
@@ -379,8 +389,57 @@ class LeulitMeteoMetar(models.Model):
 
         Ref = self.env['leulit.meteo.icao.reference'].sudo()
         Hist = self.env['leulit.meteo.historico'].sudo()
+        MetarRec = self.env['leulit.meteo.metar'].sudo()
 
-        # Resolver OACI → aeródromo de referencia
+        # ── PASO 1: coordenadas del aeródromo ───────────────────────────────
+        # Reutilizar coordenadas guardadas en leulit.meteo.metar.
+        # Si no existen, obtenerlas de OpenAIP/CheckWX y guardarlas.
+        lat = lon = airport_name_ext = None
+
+        existing_coords = MetarRec.search(
+            [('icao_code', '=', icao),
+             ('latitud', '!=', 0.0),
+             ('longitud', '!=', 0.0)],
+            order='id desc', limit=1)
+        if existing_coords:
+            lat = existing_coords.latitud
+            lon = existing_coords.longitud
+            airport_name_ext = existing_coords.station_name
+
+        if not lat:
+            ICP = self.env['ir.config_parameter'].sudo()
+            openaip_key = ICP.get_param('leulit_meteo.openaip_api_key', '')
+            checkwx_key = ICP.get_param('leulit_meteo.checkwx_api_key', '')
+
+            airport_info = None
+            if openaip_key:
+                airport_info = OpenAIPService.get_airport_by_icao(icao, openaip_key)
+            if not airport_info and checkwx_key:
+                airport_info = CheckWXService.get_station(icao, checkwx_key)
+
+            if airport_info:
+                lat = airport_info.get('lat')
+                lon = airport_info.get('lon')
+                airport_name_ext = airport_info.get('name') or icao
+                # Guardar coords: actualizar registro existente sin coords o crear uno nuevo.
+                if lat and lon:
+                    existing_any = MetarRec.search(
+                        [('icao_code', '=', icao)], order='id desc', limit=1)
+                    if existing_any:
+                        if not existing_any.latitud:
+                            existing_any.write({'latitud': lat, 'longitud': lon})
+                            if airport_name_ext and not existing_any.station_name:
+                                existing_any.write({'station_name': airport_name_ext})
+                    else:
+                        MetarRec.create({
+                            'icao_code': icao,
+                            'station_name': airport_name_ext,
+                            'latitud': lat,
+                            'longitud': lon,
+                            'provider': 'aemet',
+                        })
+
+        # ── PASO 2: Resolver OACI → aeródromo de referencia ─────────────────
         ref_rec = Ref.search([('icao', '=', icao)], limit=1)
         usa_referencia = False
         ref_icao_val = ref_nombre_val = ref_distancia_km_val = fir = None
@@ -390,7 +449,12 @@ class LeulitMeteoMetar(models.Model):
             fir = ref_rec.fir
             station_name = ref_rec.nombre or icao
         else:
-            nearest = Ref._resolve_nearest(icao)
+            if not lat or not lon:
+                _logger.warning(
+                    "briefing_oaci %s: no está en tabla de referencia y sin "
+                    "coordenadas (OpenAIP/CheckWX sin resultados).", icao)
+                return None
+            nearest = Ref._resolve_nearest(icao, lat=lat, lon=lon)
             if not nearest:
                 return None
             nearest_icao = nearest['icao_consultar']
@@ -403,7 +467,7 @@ class LeulitMeteoMetar(models.Model):
             ref_nombre_val = nearest['ref_nombre']
             ref_distancia_km_val = nearest['ref_distancia_km']
             fir = nearest['fir']
-            station_name = nearest['ref_nombre'] or nearest_icao
+            station_name = airport_name_ext or nearest['ref_nombre'] or nearest_icao
 
         # Histórico más reciente anterior (o igual) a fecha
         hist = Hist.search([

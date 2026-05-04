@@ -41,31 +41,61 @@ class OpenAIPService:
         }
 
     @classmethod
+    def _match_icao_in_items(cls, items, icao_up):
+        """Busca icao_up en una lista de ítems de la API. Devuelve parsed o None."""
+        for item in items:
+            parsed = cls._parse_airport(item)
+            if not parsed:
+                continue
+            # Comprobar todos los campos donde OpenAIP puede guardar el ICAO
+            for field in ('icaoCode', 'icao', 'oaci', 'code'):
+                if (item.get(field) or '').upper() == icao_up:
+                    parsed['icao'] = icao_up
+                    return parsed
+        return None
+
+    @classmethod
     def get_airport_by_icao(cls, icao, api_key):
-        """Devuelve {'icao', 'name', 'lat', 'lon'} o None."""
+        """Devuelve {'icao', 'name', 'lat', 'lon'} o None.
+
+        Estrategia:
+        1. Filtro ?icaoCode= (la API puede ignorarlo y devolver ítems sin ICAO).
+        2. Búsqueda ?search= si el filtro no devolvió match exacto.
+        """
         if not icao or not api_key:
             return None
         icao_up = icao.upper().strip()
         try:
+            # ── Intento 1: filtro icaoCode ───────────────────────────────────
             r = requests.get(
                 f"{cls.BASE_URL}/airports",
                 headers=cls._headers(api_key),
                 params={"icaoCode": icao_up, "limit": 10},
                 timeout=cls.TIMEOUT)
-            if r.status_code != 200:
-                _logger.warning("OpenAIP %s -> HTTP %s", icao, r.status_code)
-                return None
-            items = r.json().get('items') or []
-            # La API puede ignorar el filtro icaoCode; verificar cada resultado
-            for item in items:
-                parsed = cls._parse_airport(item)
-                if parsed and parsed.get('icao', '').upper() == icao_up:
-                    return parsed
+            if r.status_code == 200:
+                items = r.json().get('items') or []
+                result = cls._match_icao_in_items(items, icao_up)
+                if result:
+                    return result
+                _logger.debug(
+                    "OpenAIP ?icaoCode=%s: %d ítems sin match exacto", icao, len(items))
+
+            # ── Intento 2: búsqueda por texto ────────────────────────────────
+            r2 = requests.get(
+                f"{cls.BASE_URL}/airports",
+                headers=cls._headers(api_key),
+                params={"search": icao_up, "limit": 10},
+                timeout=cls.TIMEOUT)
+            if r2.status_code == 200:
+                items2 = r2.json().get('items') or []
+                result = cls._match_icao_in_items(items2, icao_up)
+                if result:
+                    _logger.info(
+                        "OpenAIP get_airport_by_icao(%s): encontrado via ?search=", icao)
+                    return result
+
             _logger.warning(
-                "OpenAIP get_airport_by_icao(%s): ningún resultado coincide "
-                "(devolvió %d items, icaos=%s)",
-                icao, len(items),
-                [i.get('icaoCode', '') for i in items[:3]])
+                "OpenAIP get_airport_by_icao(%s): sin match en icaoCode ni search", icao)
             return None
         except Exception as exc:
             _logger.error("OpenAIP get_airport_by_icao(%s): %s", icao, exc)
