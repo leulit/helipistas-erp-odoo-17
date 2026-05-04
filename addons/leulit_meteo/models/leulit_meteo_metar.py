@@ -472,20 +472,26 @@ class LeulitMeteoMetar(models.Model):
 
         derived = parse_metar(hist.raw_metar) if hist.raw_metar else {}
 
+        # Si el ICAO estaba en la tabla de referencia pero el cron determinó
+        # que sus datos provienen de otro aeródromo (ej. LEBL), propagarlo.
+        resolved_ref_icao = ref_icao_val or hist.ref_icao or None
+        resolved_ref_nombre = ref_nombre_val or hist.ref_nombre or None
+        resolved_usa_ref = usa_referencia or bool(hist.usa_referencia)
+
         return {
             'record_id': None,
             'historico': True,
             'provider': hist.proveedor or 'aemet',
-            'metar_icao': ref_icao_val or icao,
+            'metar_icao': resolved_ref_icao or icao,
             'fuente_metar': hist.fuente_metar,
             'fuente_taf': hist.fuente_taf,
             # campos para _write_observacion
             'station_name': station_name,
             'fir_code': fir,
-            'ref_icao': ref_icao_val,
-            'ref_nombre': ref_nombre_val,
+            'ref_icao': resolved_ref_icao,
+            'ref_nombre': resolved_ref_nombre,
             'ref_distancia_km': ref_distancia_km_val,
-            'usa_referencia': usa_referencia,
+            'usa_referencia': resolved_usa_ref,
             'raw_metar': hist.raw_metar,
             'raw_taf': hist.raw_taf,
             'raw_sigmet': hist.raw_sigmet,
