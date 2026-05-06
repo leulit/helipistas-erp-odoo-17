@@ -17,6 +17,7 @@ from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
 from .leulit_meteo_aemet_service import AemetOpenDataService
+from .leulit_meteo_aviation_weather_service import AviationWeatherService
 from .leulit_meteo_checkwx_service import CheckWXService
 from .leulit_meteo_metar_parser import parse_metar
 from .leulit_meteo_metar_provider import MetarProvider, register_provider
@@ -101,8 +102,17 @@ class AemetMetarProvider(MetarProvider):
             "AEMET.get_observation: AEMET directo para %s → metar=%s taf=%s sigmet=%s",
             icao_consultar, bool(raw_metar), bool(raw_taf), bool(raw_sigmet))
 
-        # Si AEMET no tiene datos → intentar CheckWX para el mismo ICAO
+        # Si AEMET no tiene datos → intentar AviationWeather (gratuito, sin límite diario)
         checkwx_key = None
+        if not (raw_metar or raw_taf):
+            raw_metar = AviationWeatherService.get_metar(icao_consultar)
+            raw_taf = AviationWeatherService.get_taf(icao_consultar)
+            if raw_metar or raw_taf:
+                _logger.info(
+                    "AEMET.get_observation: AviationWeather %s → metar=%s taf=%s",
+                    icao_consultar, bool(raw_metar), bool(raw_taf))
+
+        # Si AviationWeather tampoco tiene datos → intentar CheckWX (límite diario)
         if not (raw_metar or raw_taf):
             checkwx_key = self._get_checkwx_key(env)
             if checkwx_key:
@@ -129,6 +139,13 @@ class AemetMetarProvider(MetarProvider):
                 new_icao = nearest['icao_consultar']
                 raw_metar = AemetOpenDataService.get_message('METAR', new_icao, api_key)
                 raw_taf = AemetOpenDataService.get_message('TAF', new_icao, api_key)
+                if not (raw_metar or raw_taf):
+                    raw_metar = AviationWeatherService.get_metar(new_icao)
+                    raw_taf = AviationWeatherService.get_taf(new_icao)
+                    if raw_metar or raw_taf:
+                        _logger.info(
+                            "AEMET.get_observation: AviationWeather próximo %s → metar=%s taf=%s",
+                            new_icao, bool(raw_metar), bool(raw_taf))
                 if not (raw_metar or raw_taf):
                     if not checkwx_key:
                         checkwx_key = self._get_checkwx_key(env)

@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
 import requests
 
 _logger = logging.getLogger(__name__)
+
+# Circuit breaker: cuando CheckWX devuelve 429, se bloquea hasta medianoche UTC.
+# Variable de módulo (se resetea al reiniciar el servidor, lo cual es aceptable).
+_rate_limited_until = None
 
 
 class CheckWXService:
@@ -10,12 +15,26 @@ class CheckWXService:
     TIMEOUT = 15
 
     @classmethod
+    def is_rate_limited(cls):
+        """True si el circuit breaker está activo (límite diario agotado)."""
+        global _rate_limited_until
+        if _rate_limited_until and datetime.datetime.utcnow() < _rate_limited_until:
+            return True
+        return False
+
+    @classmethod
     def _headers(cls, api_key):
         return {"X-API-KEY": api_key, "Accept": "application/json"}
 
     @classmethod
     def _get(cls, path, api_key):
+        global _rate_limited_until
         if not api_key:
+            return None
+        if cls.is_rate_limited():
+            _logger.debug(
+                "CheckWX %s: omitido — límite diario activo hasta %s UTC",
+                path, _rate_limited_until.strftime('%H:%M'))
             return None
         try:
             r = requests.get(
@@ -26,6 +45,17 @@ class CheckWXService:
                 return None
             if r.status_code == 401:
                 _logger.error("CheckWX %s -> HTTP 401 (API Key inválida o sin permisos)", path)
+                return None
+            if r.status_code == 429:
+                # Bloquear hasta medianoche UTC del día siguiente
+                tomorrow = (datetime.datetime.utcnow().replace(
+                    hour=0, minute=0, second=0, microsecond=0)
+                    + datetime.timedelta(days=1))
+                _rate_limited_until = tomorrow
+                _logger.warning(
+                    "CheckWX %s -> HTTP 429: límite diario agotado. "
+                    "Bloqueando todas las llamadas CheckWX hasta %s UTC",
+                    path, tomorrow.strftime('%Y-%m-%d %H:%M'))
                 return None
             if r.status_code != 200:
                 _logger.warning("CheckWX %s -> HTTP %s: %s", path, r.status_code, r.text[:200])

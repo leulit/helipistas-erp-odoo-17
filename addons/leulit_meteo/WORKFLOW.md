@@ -224,11 +224,19 @@ leulit.meteo.icao.reference.resolve('LEUL')
    │
    ├─ SÍ ─────────────────────────────────────────────────────────────────►─┐
    │                                                                         │
-   └─ NO → FALLBACK: CheckWX ───────────────────────────────────────────────┤
-              CheckWXService.get_metar(icao_consultar)                       │
-              CheckWXService.get_taf(icao_consultar)                         │
-              GET https://api.checkwx.com/metar/{OACI}?token=<key>          │
-              GET https://api.checkwx.com/taf/{OACI}?token=<key>            │
+   └─ NO → FALLBACK 1: AviationWeather (gratuito, sin límite) ─────────────┤
+              AviationWeatherService.get_metar(icao_consultar)               │
+              AviationWeatherService.get_taf(icao_consultar)                 │
+              GET https://aviationweather.gov/api/data/metar?ids={OACI}      │
+              GET https://aviationweather.gov/api/data/taf?ids={OACI}        │
+              │                                                               │
+              └─ NO → FALLBACK 2: CheckWX (límite diario, circuit breaker) ─┤
+                         CheckWXService.get_metar(icao_consultar)            │
+                         CheckWXService.get_taf(icao_consultar)              │
+                         Si responde 429 → bloquea todas las llamadas        │
+                         CheckWX hasta medianoche UTC (circuit breaker)      │
+                         GET https://api.checkwx.com/metar/{OACI}           │
+                         GET https://api.checkwx.com/taf/{OACI}             │
                                                                              ▼
                                                               ┌──────────────────────────┐
                                                               │ dict normalizado del      │
@@ -259,6 +267,8 @@ _write_observacion(data)
 Notificación de éxito + recarga del formulario
 Vista: aviso informativo visible si usa_referencia=True
 ```
+
+**Cadena de fallback (en orden):** AEMET OpenData → AviationWeather.gov (gratis) → CheckWX (límite diario con circuit breaker).
 
 **Campos leídos:** `icao_code`, `provider` (del registro); `leulit_meteo.aemet_api_key`, `leulit_meteo.checkwx_api_key`, `leulit_meteo.openaip_api_key` (de `ir.config_parameter`); tabla `leulit.meteo.icao.reference` (icao, fir, latitud, longitud).
 
