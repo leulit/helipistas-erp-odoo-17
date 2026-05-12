@@ -2,22 +2,29 @@
 from odoo import models, _
 from odoo.exceptions import UserError
 
+_LOST_MSG = _(
+    "Para marcar el lead «%s» como perdido debes usar el botón "
+    "«Perdido» del encabezado e indicar el motivo de pérdida y "
+    "la nota de cierre."
+)
+
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
     def write(self, vals):
-        # Si se intenta archivar (marcar como perdido) sin motivo de pérdida, bloquearlo.
-        # El botón "Perdido" del header envía lost_reason_id en el mismo write, por lo que
-        # no se bloquea. La statusbar y el kanban no lo envían, por lo que sí se bloquean.
+        # --- Caso 1: archivado directo (active=False) sin motivo ---
         if 'active' in vals and not vals['active']:
             for lead in self.filtered('active'):
-                has_reason = vals.get('lost_reason_id') or lead.lost_reason_id
-                if not has_reason:
-                    raise UserError(_(
-                        "Para marcar el lead «%s» como perdido debes usar el botón "
-                        "«Perdido» del encabezado e indicar el motivo de pérdida y "
-                        "la nota de cierre.",
-                        lead.name,
-                    ))
+                if not vals.get('lost_reason_id') and not lead.lost_reason_id:
+                    raise UserError(_LOST_MSG % lead.name)
+
+        # --- Caso 2: cambio de etapa a una etapa marcada como is_lost ---
+        if 'stage_id' in vals and not vals.get('lost_reason_id'):
+            new_stage = self.env['crm.stage'].browse(vals['stage_id'])
+            if new_stage.is_lost:
+                for lead in self:
+                    if not lead.lost_reason_id:
+                        raise UserError(_LOST_MSG % lead.name)
+
         return super().write(vals)
