@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mgmtsystem_hazard_tree_leulit" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.tree.leulit</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_tree"/>
+        <field name="arch" type="xml">
+            <field name="risk_type_id" position="attributes">
+                <attribute name="string">Peligro</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_mgmtsystem_hazard_filter_leulit" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.filter.leulit</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_filter"/>
+        <field name="arch" type="xml">
+            <field name="risk_type_id" position="attributes">
+                <attribute name="string">Peligro</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_mgmtsystem_hazard_form_leulit" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.form.leulit</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_form"/>
+        <field name="arch" type="xml">
+            <field name="risk_type_id" position="attributes">
+                <attribute name="string">Peligro</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>
