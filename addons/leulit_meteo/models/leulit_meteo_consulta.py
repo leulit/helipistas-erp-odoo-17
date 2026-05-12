@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import json
 import traceback as _traceback
 
@@ -9,8 +8,6 @@ from odoo.exceptions import UserError
 from .leulit_meteo_service import OpenMeteoService
 from .leulit_meteo_windy_service import WindyService
 from .leulit_meteo_notifier import meteo_notify_error
-
-_logger = logging.getLogger(__name__)
 
 
 class LeulitMeteoConsulta(models.Model):
@@ -294,8 +291,6 @@ class LeulitMeteoConsulta(models.Model):
             )
             raise UserError(_('Error al consultar el clima actual: %s') % exc) from exc
 
-        _logger.info('Consulta meteorológica actualizada: %s - %s', self.codigo, self.ubicacion)
-
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -343,8 +338,6 @@ class LeulitMeteoConsulta(models.Model):
                 },
             )
             raise UserError(_('Error al obtener el pronóstico: %s') % exc) from exc
-
-        _logger.info('Pronóstico meteorológico obtenido: %s - %s', self.codigo, self.ubicacion)
 
         return {
             'type': 'ir.actions.client',
@@ -408,8 +401,6 @@ class LeulitMeteoConsulta(models.Model):
             'rachas_viento': data.get('viento_rachas'),
         })
         
-        _logger.info(f'Consulta Windy actualizada: {self.codigo} - {self.ubicacion}')
-        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -456,8 +447,6 @@ class LeulitMeteoConsulta(models.Model):
             'fuente_datos': 'windy',
             'fecha_consulta': fields.Datetime.now(),
         })
-        
-        _logger.info(f'Consulta Windy polilínea actualizada: {self.codigo} - {len(results)} puntos')
         
         return {
             'type': 'ir.actions.client',

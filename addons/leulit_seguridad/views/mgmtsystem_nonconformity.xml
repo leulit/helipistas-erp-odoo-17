@@ -69,6 +69,7 @@
                             <field name="partner_id" readonly="state not in ('draft', 'analysis')" invisible="1"/>
                             <field name="reference" readonly="state not in 'draft'" />
                             <field name="origin_ids" widget="many2many_tags" readonly="state not in ('draft', 'analysis')" />
+                            <field name="risk_type_id" readonly="state not in ('draft', 'analysis')" />
                         </group>
                         <group name="meta">
                             <field name="responsible_user_id" readonly="state not in ('draft', 'analysis')" />

@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import requests
-from datetime import datetime
-
-_logger = logging.getLogger(__name__)
 
 
 class OpenMeteoService:
     """Servicio para conectar con la API de Open-Meteo"""
-    
+
     BASE_URL = "https://api.open-meteo.com/v1"
-    
+
     @staticmethod
     def get_current_weather(latitude, longitude):
         """
         Obtiene el clima actual para una ubicación específica
-        
+
         Args:
             latitude (float): Latitud de la ubicación
             longitude (float): Longitud de la ubicación
-            
+
         Returns:
             dict: Datos meteorológicos o None si hay error
         """
@@ -34,28 +30,25 @@ class OpenMeteoService:
                           'wind_direction_10m,wind_gusts_10m',
                 'timezone': 'auto'
             }
-            
+
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
-            
-            data = response.json()
-            _logger.info(f"Datos meteorológicos obtenidos para lat={latitude}, lon={longitude}")
-            return data
-            
-        except requests.exceptions.RequestException as e:
-            _logger.error(f"Error al consultar Open-Meteo API: {str(e)}")
+
+            return response.json()
+
+        except requests.exceptions.RequestException:
             return None
-    
+
     @staticmethod
     def get_forecast(latitude, longitude, days=7):
         """
         Obtiene el pronóstico meteorológico para varios días
-        
+
         Args:
             latitude (float): Latitud de la ubicación
             longitude (float): Longitud de la ubicación
             days (int): Número de días de pronóstico (1-16)
-            
+
         Returns:
             dict: Datos de pronóstico o None si hay error
         """
@@ -70,26 +63,23 @@ class OpenMeteoService:
                 'timezone': 'auto',
                 'forecast_days': min(days, 16)
             }
-            
+
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
-            
-            data = response.json()
-            _logger.info(f"Pronóstico obtenido para lat={latitude}, lon={longitude}, días={days}")
-            return data
-            
-        except requests.exceptions.RequestException as e:
-            _logger.error(f"Error al consultar pronóstico Open-Meteo: {str(e)}")
+
+            return response.json()
+
+        except requests.exceptions.RequestException:
             return None
-    
+
     @staticmethod
     def get_weather_description(weather_code):
         """
         Convierte el código de clima WMO en descripción legible
-        
+
         Args:
             weather_code (int): Código WMO del clima
-            
+
         Returns:
             str: Descripción del clima en español
         """

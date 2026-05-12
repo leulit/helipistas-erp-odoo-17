@@ -6,10 +6,7 @@ puede llamar cuando tiene acceso a ``env``.  Lee el destinatario de
 ``leulit_meteo.email_errores`` (ir.config_parameter).  Si está vacío no hace
 nada (falla silenciosa con log).
 """
-import logging
 from odoo import fields
-
-_logger = logging.getLogger(__name__)
 
 PARAM_EMAIL_ERRORES = 'leulit_meteo.email_errores'
 
@@ -32,9 +29,6 @@ def meteo_notify_error(env, componente, error, traceback_str=None, contexto=None
     """
     email_to = env['ir.config_parameter'].sudo().get_param(PARAM_EMAIL_ERRORES, '')
     if not email_to:
-        _logger.debug(
-            "meteo_notify_error: email_errores no configurado; error en '%s' no notificado.",
-            componente)
         return
 
     ahora = fields.Datetime.now().strftime('%d/%m/%Y %H:%M UTC')
@@ -115,8 +109,5 @@ def meteo_notify_error(env, componente, error, traceback_str=None, contexto=None
             'email_to': email_to,
             'auto_delete': True,
         }).send()
-        _logger.info(
-            "meteo_notify_error: notificacion enviada a %s [%s]",
-            email_to, componente)
-    except Exception as exc:
-        _logger.error("meteo_notify_error: fallo al enviar email: %s", exc)
+    except Exception:
+        pass

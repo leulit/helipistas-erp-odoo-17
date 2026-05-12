@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-import logging
 import xml.etree.ElementTree as ET
 
 import requests
-
-_logger = logging.getLogger(__name__)
 
 _BASE_URL = "https://aviationweather.gov/api/data"
 _ADDS_URL = "https://www.aviationweather.gov/adds/dataserver_current/httpparam"
@@ -27,12 +24,10 @@ class AviationWeatherService:
                 params={'ids': icao.upper(), 'format': 'raw'},
                 timeout=_TIMEOUT)
             if r.status_code != 200:
-                _logger.warning("AviationWeather METAR %s -> HTTP %s", icao, r.status_code)
                 return None
             text = r.text.strip()
             return text if text else None
-        except Exception as exc:
-            _logger.error("AviationWeather METAR %s: %s", icao, exc)
+        except Exception:
             return None
 
     @classmethod
@@ -44,12 +39,10 @@ class AviationWeatherService:
                 params={'ids': icao.upper(), 'format': 'raw'},
                 timeout=_TIMEOUT)
             if r.status_code != 200:
-                _logger.warning("AviationWeather TAF %s -> HTTP %s", icao, r.status_code)
                 return None
             text = r.text.strip()
             return text if text else None
-        except Exception as exc:
-            _logger.error("AviationWeather TAF %s: %s", icao, exc)
+        except Exception:
             return None
 
     @classmethod
@@ -63,7 +56,6 @@ class AviationWeatherService:
         """
         result = cls._get_stations_adds()
         if not result:
-            _logger.warning("AviationWeather ADDS sin resultados; intentando bbox")
             result = cls._get_stations_bbox()
         return result
 
@@ -84,7 +76,6 @@ class AviationWeatherService:
                     timeout=_TIMEOUT,
                 )
                 if r.status_code != 200:
-                    _logger.warning("ADDS stations %s* -> HTTP %s", prefix, r.status_code)
                     continue
                 root = ET.fromstring(r.content)
                 data_el = root.find('data')
@@ -108,8 +99,8 @@ class AviationWeatherService:
                         'has_taf': has_taf,
                         'elevation_ft': int(elev_m * 3.28084),
                     }
-            except Exception as exc:
-                _logger.error("ADDS stations %s*: %s", prefix, exc)
+            except Exception:
+                pass
         return result
 
     @classmethod
@@ -146,8 +137,8 @@ class AviationWeatherService:
                             'has_taf': False,
                         })
                         entry[f'has_{datasource}'] = True
-                except Exception as exc:
-                    _logger.error("bbox %s %s: %s", datasource, bbox, exc)
+                except Exception:
+                    pass
         return result
 
     @classmethod
@@ -159,6 +150,5 @@ class AviationWeatherService:
                 params={'ids': 'LEMD', 'format': 'raw'},
                 timeout=_TIMEOUT)
             return r.status_code == 200
-        except Exception as exc:
-            _logger.warning("AviationWeather validate: %s", exc)
+        except Exception:
             return False

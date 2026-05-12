@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-import logging
-
 import pytz
 
 from odoo import api, fields, models
-
-_logger = logging.getLogger(__name__)
 
 _TZ_MADRID = 'Europe/Madrid'
 

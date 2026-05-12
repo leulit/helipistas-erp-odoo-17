@@ -17,11 +17,8 @@ Campos que intenta extraer:
     * qnh               (hPa; ``Q####`` directo, ``A####`` -> conversión)
 """
 
-import logging
 import re
 from datetime import datetime, timezone
-
-_logger = logging.getLogger(__name__)
 
 
 # El primer "token" útil tras el ICAO es la fecha/hora DDHHMMZ.
@@ -179,8 +176,7 @@ def parse_metar(raw_metar, now=None):
             result['dewpoint'] = _parse_temp(m.group(2))
 
         result['qnh'] = _parse_qnh(text_clean)
-    except Exception as exc:  # noqa: BLE001
-        # Best-effort: no podemos romper el flujo por un parseo.
-        _logger.debug("parse_metar fallo silencioso: %s", exc)
+    except Exception:  # noqa: BLE001
+        pass
 
     return result

@@ -28,10 +28,7 @@ AESA. El parseo derivado (temperatura, viento, ...) se hace en el módulo
 """
 
 import json
-import logging
 import requests
-
-_logger = logging.getLogger(__name__)
 
 
 class AemetOpenDataService:
@@ -45,25 +42,7 @@ class AemetOpenDataService:
     @classmethod
     def _log_estado(cls, path, estado, descripcion):
         """Log unificado para los códigos de estado AEMET (HTTP o JSON)."""
-        try:
-            estado_int = int(estado) if estado is not None else None
-        except (TypeError, ValueError):
-            estado_int = None
-        if estado_int == 401:
-            _logger.warning(
-                "AEMET %s -> 401 Unauthorized: API key inválida o no "
-                "autorizada (%s)", path, descripcion)
-        elif estado_int == 404:
-            _logger.warning(
-                "AEMET %s -> 404 Not Found: recurso no encontrado (%s)",
-                path, descripcion)
-        elif estado_int == 429:
-            _logger.warning(
-                "AEMET %s -> 429 Too Many Requests: límite de peticiones "
-                "excedido. Reintenta más tarde (%s)", path, descripcion)
-        else:
-            _logger.error(
-                "AEMET %s -> estado %s: %s", path, estado, descripcion)
+        pass
 
     @classmethod
     def _request_meta(cls, path, api_key, params=None):
@@ -73,7 +52,6 @@ class AemetOpenDataService:
         el Centro de Descargas de AEMET, ver ejemplo de curl en la web).
         """
         if not api_key:
-            _logger.error("AEMET API key no configurada")
             return None
 
         url = f"{cls.BASE_URL}{path}"
@@ -105,11 +83,9 @@ class AemetOpenDataService:
                 return payload
             cls._log_estado(path, estado, payload.get('descripcion'))
             return None
-        except requests.exceptions.RequestException as exc:
-            _logger.error("Error llamando AEMET %s: %s", path, exc)
+        except requests.exceptions.RequestException:
             return None
         except ValueError:
-            _logger.error("Respuesta AEMET no JSON en %s", path)
             return None
 
     @classmethod
@@ -145,9 +121,7 @@ class AemetOpenDataService:
             # texto plano. Devolvemos el texto tal cual; el parser ya
             # trabaja con ello.
             return text.strip() or None
-        except requests.exceptions.RequestException as exc:
-            _logger.error("Error descargando datos AEMET %s: %s",
-                          datos_url, exc)
+        except requests.exceptions.RequestException:
             return None
 
     @classmethod
@@ -163,12 +137,9 @@ class AemetOpenDataService:
             response.raise_for_status()
             text = cls._decode_response(response)
             return json.loads(text)
-        except requests.exceptions.RequestException as exc:
-            _logger.error("Error descargando datos AEMET %s: %s",
-                          datos_url, exc)
+        except requests.exceptions.RequestException:
             return None
         except ValueError:
-            _logger.error("Datos AEMET no JSON: %s", datos_url)
             return None
 
     # ---------- API pública ----------
@@ -230,8 +201,7 @@ class AemetOpenDataService:
             import json as _json
             data = _json.loads(text)
             return data if isinstance(data, list) else None
-        except Exception as exc:
-            _logger.error("AEMET inventario estaciones: %s", exc)
+        except Exception:
             return None
 
     @classmethod
@@ -253,8 +223,7 @@ class AemetOpenDataService:
             import json as _json
             data = _json.loads(text)
             return data if isinstance(data, list) else None
-        except Exception as exc:
-            _logger.error("AEMET observacion %s: %s", idema, exc)
+        except Exception:
             return None
 
     @classmethod
