@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Renombrar menús -->
+    <record id="mgmtsystem_hazard.menu_mgmtsystem_configuration_hazards" model="ir.ui.menu">
+        <field name="name">Análisis de Riesgos</field>
+    </record>
+    <record id="mgmtsystem_hazard.menu_open_hazard" model="ir.ui.menu">
+        <field name="name">Análisis de Riesgos</field>
+    </record>
+
+    <!-- Herencia desde el formulario base: título y sustitución de medidas de control por acciones -->
+    <record id="view_mgmtsystem_hazard_form_leulit_base" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.form.leulit.base</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard.view_mgmtsystem_hazard_form"/>
+        <field name="arch" type="xml">
+            <form string="Hazard" position="attributes">
+                <attribute name="string">Análisis de Riesgos</attribute>
+            </form>
+            <xpath expr="//page[@string='Control Measures']" position="replace">
+                <page string="Acciones" name="actions">
+                    <field name="action_ids" nolabel="1">
+                        <tree>
+                            <field name="reference" />
+                            <field name="name" />
+                            <field name="type_action" />
+                            <field name="user_id" />
+                            <field name="date_deadline" />
+                            <field name="stage_id" />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Herencia desde el formulario de risk: etiqueta "Peligro" en risk_type_id -->
+    <record id="view_mgmtsystem_hazard_form_leulit" model="ir.ui.view">
+        <field name="name">mgmtsystem.hazard.form.leulit</field>
+        <field name="model">mgmtsystem.hazard</field>
+        <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_form"/>
+        <field name="arch" type="xml">
+            <field name="risk_type_id" position="attributes">
+                <attribute name="string">Peligro</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- Herencia tree: etiqueta "Peligro" en columna risk_type_id -->
     <record id="view_mgmtsystem_hazard_tree_leulit" model="ir.ui.view">
         <field name="name">mgmtsystem.hazard.tree.leulit</field>
         <field name="model">mgmtsystem.hazard</field>
@@ -12,21 +59,11 @@
         </field>
     </record>
 
+    <!-- Herencia filtro: etiqueta "Peligro" en risk_type_id -->
     <record id="view_mgmtsystem_hazard_filter_leulit" model="ir.ui.view">
         <field name="name">mgmtsystem.hazard.filter.leulit</field>
         <field name="model">mgmtsystem.hazard</field>
         <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_filter"/>
-        <field name="arch" type="xml">
-            <field name="risk_type_id" position="attributes">
-                <attribute name="string">Peligro</attribute>
-            </field>
-        </field>
-    </record>
-
-    <record id="view_mgmtsystem_hazard_form_leulit" model="ir.ui.view">
-        <field name="name">mgmtsystem.hazard.form.leulit</field>
-        <field name="model">mgmtsystem.hazard</field>
-        <field name="inherit_id" ref="mgmtsystem_hazard_risk.view_mgmtsystem_hazard_form"/>
         <field name="arch" type="xml">
             <field name="risk_type_id" position="attributes">
                 <attribute name="string">Peligro</attribute>
