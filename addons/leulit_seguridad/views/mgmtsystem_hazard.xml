@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Renombrar menús -->
-    <record id="mgmtsystem_hazard.menu_mgmtsystem_configuration_hazards" model="ir.ui.menu">
-        <field name="name">Análisis de Riesgos</field>
-    </record>
-    <record id="mgmtsystem_hazard.menu_open_hazard" model="ir.ui.menu">
-        <field name="name">Análisis de Riesgos</field>
-    </record>
-
     <!-- Herencia desde el formulario base: título y sustitución de medidas de control por acciones -->
     <record id="view_mgmtsystem_hazard_form_leulit_base" model="ir.ui.view">
         <field name="name">mgmtsystem.hazard.form.leulit.base</field>

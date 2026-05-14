@@ -3,7 +3,7 @@
 
     <menuitem
         id="menu_mgmtsystem_configuration_hazards"
-        name="Hazards"
+        name="Análisis de Riesgos"
         parent="mgmtsystem.menu_mgmtsystem_configuration"
         groups="mgmtsystem.group_mgmtsystem_manager"
         sequence="10"
