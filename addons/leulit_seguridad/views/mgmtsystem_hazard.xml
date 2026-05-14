@@ -15,9 +15,9 @@
         <field name="model">mgmtsystem.hazard</field>
         <field name="inherit_id" ref="mgmtsystem_hazard.view_mgmtsystem_hazard_form"/>
         <field name="arch" type="xml">
-            <form string="Hazard" position="attributes">
+            <xpath expr="//form" position="attributes">
                 <attribute name="string">Análisis de Riesgos</attribute>
-            </form>
+            </xpath>
             <xpath expr="//page[@string='Control Measures']" position="replace">
                 <page string="Acciones" name="actions">
                     <field name="action_ids" nolabel="1">
