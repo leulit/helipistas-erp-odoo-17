@@ -19,7 +19,7 @@
                 <attribute name="string">Análisis de Riesgos</attribute>
             </xpath>
             <xpath expr="//page[field[@name='control_measure_ids']]" position="replace">
-                <page string="Acciones" name="actions">
+                <page string="Medidas mitigadoras" name="actions">
                     <field name="action_ids" nolabel="1">
                         <tree>
                             <field name="reference" />
