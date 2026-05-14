@@ -59,7 +59,7 @@
       <field name="name">mgmtsystem.hazard.form</field>
       <field name="model">mgmtsystem.hazard</field>
       <field name="arch" type="xml">
-        <form string="Hazard">
+        <form string="Análisis de Riesgo">
           <sheet>
             <group colspan="4" col="4">
             <field name="name" />
@@ -98,7 +98,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="open_mgmtsystem_hazard_list">
-      <field name="name">Hazards</field>
+      <field name="name">Análisis de Riesgos</field>
       <field name="res_model">mgmtsystem.hazard</field>
       <field name="view_mode">tree,form</field>
       <field name="view_id" ref="view_mgmtsystem_hazard_tree" />
