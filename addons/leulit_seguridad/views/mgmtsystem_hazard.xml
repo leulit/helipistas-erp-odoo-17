@@ -62,5 +62,18 @@
             </field>
         </field>
     </record>
+    
+    <!-- Actualiza la acción existente del addon original (no crea una nueva) -->
+    <record id="mgmtsystem_hazard.open_mgmtsystem_hazard_list" model="ir.actions.act_window">
+        <field name="name">Análisis de Riesgos</field>
+        <field name="view_id" ref="view_mgmtsystem_hazard_tree_leulit" />
+        <field name="search_view_id" ref="view_mgmtsystem_hazard_filter_leulit" />
+    </record>
+
+    <!-- Actualiza el nombre del menú existente -->
+    <record id="mgmtsystem_hazard.menu_open_hazard" model="ir.ui.menu">
+        <field name="name">Análisis de Riesgos</field>
+    </record>
+
 
 </odoo>

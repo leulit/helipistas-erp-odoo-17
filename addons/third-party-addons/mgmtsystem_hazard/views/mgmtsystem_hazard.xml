@@ -3,7 +3,7 @@
 
     <menuitem
         id="menu_mgmtsystem_configuration_hazards"
-        name="Análisis de Riesgos"
+        name="Hazards"
         parent="mgmtsystem.menu_mgmtsystem_configuration"
         groups="mgmtsystem.group_mgmtsystem_manager"
         sequence="10"
@@ -59,7 +59,7 @@
       <field name="name">mgmtsystem.hazard.form</field>
       <field name="model">mgmtsystem.hazard</field>
       <field name="arch" type="xml">
-        <form string="Análisis de Riesgo">
+        <form string="Hazard">
           <sheet>
             <group colspan="4" col="4">
             <field name="name" />
@@ -98,7 +98,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="open_mgmtsystem_hazard_list">
-      <field name="name">Análisis de Riesgos</field>
+      <field name="name">Hazards</field>
       <field name="res_model">mgmtsystem.hazard</field>
       <field name="view_mode">tree,form</field>
       <field name="view_id" ref="view_mgmtsystem_hazard_tree" />
