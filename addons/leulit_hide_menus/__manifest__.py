@@ -11,7 +11,8 @@
         'mail',
         'calendar',
         'project',
-        'leulit',  # <-- DEPENDENCIA AÑADIDA. Reemplaza 'leulit' si el módulo tiene otro nombre.
+        'crm',
+        'leulit',
     ],
     'data': [
         'views/hide_menus.xml',

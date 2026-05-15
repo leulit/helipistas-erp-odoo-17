@@ -6,7 +6,7 @@
               name="Meteorología"
               sequence="60"
               web_icon="leulit,static/description/meteorologia_.png"
-              groups="leulit.RBase"/>
+              groups="leulit.RolIT_developer"/>
 
     <!-- Submenú Consultas Clima -->
     <menuitem id="menu_leulit_meteo_consultas"
