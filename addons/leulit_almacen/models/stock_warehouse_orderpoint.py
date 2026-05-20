@@ -19,7 +19,7 @@ class StockWarehouseOrderpoint(models.Model):
             qty = 0
             if item.product_id:
                 for x in item.product_id.optional_product_ids:
-                    pn_equiv += x.default_code + "; "
+                    pn_equiv += (x.default_code or '') + "; "
                     qty += x.qty_available
             item.str_product_opcionales = pn_equiv
             item.qty_opcionales = qty
