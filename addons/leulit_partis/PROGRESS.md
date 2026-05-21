@@ -17,6 +17,20 @@
 
 ## Cambios Recientes
 
+### 2026-05-21: Inventario de Equipos IT y correcciones de instalación
+- ✅ **Corregidas 2 referencias de modelo rotas en seguridad** (`security/ir_model_access_new.xml`)
+  - `model_mgmtsystem_risk_bulk_create_wizard` → `model_mgmtsystem_risk_bulk_wizard`
+  - `model_mgmtsystem_risk_bulk_apply_wizard` → `model_mgmtsystem_risk_bulk_apply_controls_wizard`
+  - Estos External IDs incorrectos bloqueaban la instalación del módulo
+- ✅ **Añadida dependencia `leulit`** al `__manifest__.py` (grupo de seguridad RBase)
+- ✅ **Nuevo inventario de equipos IT** (modelo `leulit.partis.equipment`)
+  - Registro de ordenadores, portátiles, tablets, móviles, servidores, equipos de red y periféricos
+  - Campos de seguridad SGSI: cifrado de disco, antivirus/EDR, estado de parcheo
+  - Gestión de ciclo de vida: fecha de compra, fin de garantía, estado del equipo
+  - Asignación a empleado/departamento y vínculo al activo de información SGSI
+  - Vistas tree/form/search con filtros (sin cifrado, sin antivirus, garantía caducada) y chatter
+  - Menú "Inventario de Equipos IT" y permisos para usuarios, managers y RBase
+
 ### 2025-12-15: Sistema de Auditoría y Trazabilidad Completo
 - ✅ **Implementada integración completa con auditlog** (IS.D.OR.305)
   - Dependencia añadida al módulo `auditlog` de OCA

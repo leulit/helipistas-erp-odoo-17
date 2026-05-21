@@ -77,6 +77,25 @@ El módulo se estructura en **cuatro módulos funcionales** principales:
 - IS.D.OR.215(b) - Clasificación de activos
 - IS.D.OR.215(c) - Responsabilidad sobre activos
 
+**Inventario de Equipos IT (IS.D.OR.215):**
+
+**Modelo:** `leulit.partis.equipment`
+
+Complementa la gestión de activos con un inventario detallado del hardware
+informático (ordenadores de sobremesa, portátiles, tablets, móviles, servidores,
+equipos de red y periféricos). Cada equipo registra:
+
+- Identificación: código de inventario único, fabricante, modelo y número de serie
+- Asignación: usuario, departamento y ubicación física
+- Ciclo de vida: fecha de compra, fin de garantía y estado (en servicio, almacén,
+  reparación, retirado)
+- Controles de seguridad SGSI: cifrado de disco, antivirus/EDR y estado de parcheo
+- Vínculo opcional al activo de información SGSI (`mgmtsystem.hazard`) asociado
+
+Aporta evidencia directa del inventario de equipos y del estado de sus controles
+de seguridad, soportando los requisitos de gestión de activos PART-IS y la
+identificación de equipos sin cifrado, sin antivirus o con garantía caducada.
+
 #### **B) Análisis de Riesgos (IS.D.OR.205)**
 
 **Modelo:** `mgmtsystem.hazard` (extendido para análisis de riesgos)

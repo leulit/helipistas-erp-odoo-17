@@ -10,6 +10,7 @@
     "license": "AGPL-3",
     "images": ["static/description/icon.png"],
     "depends": [
+        "leulit",                  # Grupo de seguridad RBase
         "mgmtsystem",              # Base OCA para sistemas de gestión
         "mgmtsystem_hazard",       # Usado para modelar activos de información
         "mgmtsystem_hazard_risk",  # Usado para análisis de riesgos SGSI
@@ -30,6 +31,7 @@
         # Vistas básicas (sin campos personalizados de workflow)
         "views/mgmtsystem_dashboard_views.xml",
         "views/mgmtsystem_asset_views.xml",
+        "views/leulit_partis_equipment_views.xml",
         "views/mgmtsystem_risk_base_views.xml",  # Vistas base de riesgos (tree, search, form básico)
         "views/mgmtsystem_catalog_views.xml",
         "views/mgmtsystem_document_views.xml",

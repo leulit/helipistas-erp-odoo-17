@@ -1,3 +1,4 @@
+from . import leulit_partis_equipment
 from . import mgmtsystem_asset
 from . import mgmtsystem_audit_report
 from . import mgmtsystem_catalogs

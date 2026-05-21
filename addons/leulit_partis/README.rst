@@ -17,6 +17,10 @@ Características
 * Registro estructurado de estrategias de tratamiento PART-IS y cálculo del riesgo residual.
 * Reportabilidad del SGSI alineada con IS.D.OR.205 e IS.D.OR.210.
 * Integración con ``mgmtsystem.document`` para manuales y evidencias PART-IS.
+* Inventario de equipos IT (modelo ``leulit.partis.equipment``): registro de ordenadores,
+  portátiles, tablets, móviles, servidores y equipos de red, con control de cifrado,
+  antivirus/EDR, estado de parcheo, garantía y vínculo al activo de información SGSI.
+  Accesible desde el menú **Inventario de Equipos IT**.
 
 Instalación
 ===========
