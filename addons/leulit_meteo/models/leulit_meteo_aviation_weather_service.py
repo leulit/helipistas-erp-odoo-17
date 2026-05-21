@@ -56,15 +56,78 @@ class AviationWeatherService:
     def get_stations_spain(cls):
         """Estaciones españolas (LE*, GC*) que tienen METAR o TAF.
 
-        Consulta el endpoint ADDS de aviationweather.gov (sin API key).
-        Devuelve dict {icao: {'nombre', 'lat', 'lon', 'has_metar', 'has_taf'}}.
-        Intenta primero el ADDS clásico (XML con site_type) y, si falla,
-        cae al endpoint nuevo con bounding-box.
+        Combina dos fuentes de aviationweather.gov (sin API key):
+        1. ADDS station database (estaciones registradas con flags METAR/TAF)
+        2. Observaciones METAR/TAF reales (detecta estaciones activas no registradas en el ADDS,
+           por ejemplo LELL que tiene METAR pero no aparece en el station database)
+        Fallback: bounding-box si ambas fuentes fallan.
+        Devuelve dict {icao: {'nombre', 'lat', 'lon', 'has_metar', 'has_taf', 'elevation_ft'}}.
         """
         result = cls._get_stations_adds()
+
+        obs = cls._get_stations_from_metars()
+        nuevas = {icao: info for icao, info in obs.items() if icao not in result}
+        if nuevas:
+            _logger.info(
+                "AviationWeather: %d estación(es) adicional(es) vía observaciones METAR/TAF: %s",
+                len(nuevas), ', '.join(sorted(nuevas.keys())))
+            result.update(nuevas)
+
         if not result:
-            _logger.warning("AviationWeather ADDS sin resultados; intentando bbox")
+            _logger.warning("AviationWeather ADDS+obs sin resultados; intentando bbox")
             result = cls._get_stations_bbox()
+        return result
+
+    @classmethod
+    def _get_stations_from_metars(cls):
+        """Descubre estaciones activas consultando observaciones METAR/TAF reales.
+
+        Complementa _get_stations_adds() encontrando aeródromos que emiten METAR o TAF
+        pero no están registrados en la base de datos de estaciones ADDS.
+        """
+        result = {}
+        for prefix in ('LE', 'GC'):
+            for datasource, flag in (('metars', 'has_metar'), ('tafs', 'has_taf')):
+                hours = '2' if datasource == 'metars' else '24'
+                tag = 'METAR' if datasource == 'metars' else 'TAF'
+                try:
+                    r = requests.get(
+                        _ADDS_URL,
+                        params={
+                            'dataSource': datasource,
+                            'requestType': 'retrieve',
+                            'format': 'xml',
+                            'stationString': f'{prefix}*',
+                            'hoursBeforeNow': hours,
+                            'mostRecentForEachStation': 'constraint',
+                        },
+                        timeout=_TIMEOUT,
+                    )
+                    if r.status_code != 200:
+                        _logger.warning("stations_from_%s %s* -> HTTP %s", datasource, prefix, r.status_code)
+                        continue
+                    root = ET.fromstring(r.content)
+                    data_el = root.find('data')
+                    if data_el is None:
+                        continue
+                    for obs in data_el.findall(tag):
+                        icao = (obs.findtext('station_id') or '').upper().strip()
+                        if not icao:
+                            continue
+                        lat = float(obs.findtext('latitude') or 0)
+                        lon = float(obs.findtext('longitude') or 0)
+                        elev_m = float(obs.findtext('elevation_m') or 0)
+                        entry = result.setdefault(icao, {
+                            'nombre': icao,
+                            'lat': lat,
+                            'lon': lon,
+                            'has_metar': False,
+                            'has_taf': False,
+                            'elevation_ft': int(elev_m * 3.28084),
+                        })
+                        entry[flag] = True
+                except Exception as exc:
+                    _logger.error("stations_from_%s %s*: %s", datasource, prefix, exc)
         return result
 
     @classmethod

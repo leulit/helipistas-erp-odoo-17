@@ -9,6 +9,7 @@
                 <field name="icao"/>
                 <field name="nombre"/>
                 <field name="fir"/>
+                <field name="fuente_sincronizacion" widget="badge" optional="show"/>
                 <field name="proveedor_oficial" widget="badge"/>
                 <field name="proxima_actualizacion_local"/>
                 <field name="ultima_ejecucion_cron_local" optional="show" string="Últ. ejecución cron"/>
@@ -44,6 +45,7 @@
                         <group string="Identificación">
                             <field name="fir"/>
                             <field name="proveedor_oficial" readonly="1"/>
+                            <field name="fuente_sincronizacion" readonly="1"/>
                         </group>
                         <group string="Coordenadas">
                             <field name="latitud" readonly="1"/>
@@ -94,9 +96,18 @@
                         domain="[('fir','=','LECB')]"/>
                 <filter string="FIR Canarias (GCCC)" name="filter_gccc"
                         domain="[('fir','=','GCCC')]"/>
+                <separator/>
+                <filter string="AviationWeather.gov" name="filter_aw"
+                        domain="[('fuente_sincronizacion','=','aviationweather')]"/>
+                <filter string="CheckWX" name="filter_checkwx"
+                        domain="[('fuente_sincronizacion','=','checkwx')]"/>
+                <filter string="Manual" name="filter_manual"
+                        domain="[('fuente_sincronizacion','=','manual')]"/>
                 <group expand="0" string="Agrupar por">
                     <filter string="FIR" name="group_fir"
                             context="{'group_by': 'fir'}"/>
+                    <filter string="Fuente" name="group_fuente"
+                            context="{'group_by': 'fuente_sincronizacion'}"/>
                     <filter string="Proveedor" name="group_proveedor"
                             context="{'group_by': 'proveedor_oficial'}"/>
                 </group>

@@ -78,6 +78,13 @@ class LeulitMeteoIcaoReference(models.Model):
         'Última ejecución cron (Madrid)', compute='_compute_ultima_ejecucion_local',
         readonly=True)
 
+    fuente_sincronizacion = fields.Selection([
+        ('aviationweather', 'AviationWeather.gov'),
+        ('checkwx', 'CheckWX'),
+        ('manual', 'Manual'),
+    ], string='Fuente', default='manual',
+       help='Servicio del que se obtuvo este aeródromo en la última sincronización.')
+
     notas = fields.Text()
 
     historico_count = fields.Integer(
@@ -379,6 +386,7 @@ class LeulitMeteoIcaoReference(models.Model):
                 'longitud': lon,
                 'elevacion_ft': info.get('elevation_ft') or 0,
                 'proveedor_oficial': 'aemet',
+                'fuente_sincronizacion': 'checkwx',
             }
             if rec:
                 rec.sudo().write(vals)
@@ -444,6 +452,7 @@ class LeulitMeteoIcaoReference(models.Model):
                 'longitud': lon,
                 'elevacion_ft': info.get('elevation_ft') or 0,
                 'proveedor_oficial': 'aemet',
+                'fuente_sincronizacion': 'aviationweather',
             }
             if rec:
                 rec.sudo().write(vals)
