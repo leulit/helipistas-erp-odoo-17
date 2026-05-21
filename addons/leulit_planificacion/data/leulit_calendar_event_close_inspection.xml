@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_send_close_inspection_email" model="ir.cron">
+            <field name="name">LEULIT - Enviar email para cerrar inspección de eventos tipo SPO en la anterior semana</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="state">code</field>
+            <field name="code">model.close_inspection()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall" eval="-1"/>
+        </record>
+
+        <record id="email_template_close_inspection_event" model="mail.template">
+            <field name="name">Notificación de Cierre de Inspección para Eventos SPO</field>
+            <field name="model_id" ref="model_calendar_event"/>
+            <field name="subject">Cerrar inspección para el evento: {{object.name}}</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">ops@helipistas.com</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>
+                        El evento programado es de tipo <strong><t t-out="object.type_event.name or 'Indefinido'"/></strong>.
+                    </p>
+                    <p>
+                        <strong>Nombre del evento:</strong> <t t-out="object.name"/><br/>
+                        
+                        <t t-if="not object.recurrence_id">
+                            <strong>Fecha y hora de inicio:</strong>
+                            <t t-out="format_datetime(dt=object.start, tz='Europe/Madrid', dt_format='medium', lang_code='es_ES')"/>
+                        </t>
+                        
+                        <t t-if="object.recurrence_id">
+                            <strong>Primer evento de la serie:</strong>
+                            <t t-out="format_datetime(dt=object.recurrence_id.dtstart, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/><br/>
+                            
+                            <strong>Último evento de la serie:</strong>
+                            <t t-out="format_datetime(dt=object.recurrence_id.dtstop, tz='Europe/Madrid', dt_format='short', lang_code='es_ES')"/>
+                        </t>
+                    </p>
+                    <br/>
+                    <p>
+                        Por favor, proceda a enviar el mail de cierre de inspección al cliente correspondiente para este evento.
+                    </p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

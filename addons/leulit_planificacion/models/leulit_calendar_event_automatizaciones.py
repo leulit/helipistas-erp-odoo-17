@@ -84,6 +84,23 @@ class leulit_calendar_event(models.Model):
                     item.email_cerrar_permisos = True
 
 
+    def close_inspection(self):
+        fecha_start = fields.Datetime.now() - timedelta(days=7)
+        tipos_evento = self.env['leulit.tipo_planificacion'].search([('tipo_actividad','in',['SPO'])])
+        template = self.env.ref('leulit_planificacion.email_template_close_inspection_event', raise_if_not_found=False)
+        if template:
+            # _logger.error('template')
+            for item in self.search([('cancelado','=',False),('start', '>=', fecha_start),('start', '<=', fields.Datetime.now()),('type_event','in',tipos_evento.ids)]):
+                # _logger.error('item  --> %r',item)
+                if item.recurrence_id:
+                    if item.recurrence_id.base_event_id.id == item.id:
+                        template.send_mail(item.id, force_send=True)
+                        item.email_cerrar_permisos = True
+                else:
+                    template.send_mail(item.id, force_send=True)
+                    item.email_cerrar_permisos = True
+
+
     def potencial_aeronaves(self):
         fecha_end = fields.Datetime.now() + relativedelta(months=1)
         fecha_hoy = fields.Datetime.now()

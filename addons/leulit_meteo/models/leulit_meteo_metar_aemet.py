@@ -11,8 +11,6 @@ Se apoya en la tabla ``leulit.meteo.icao.reference`` para:
     * Sustituir un OACI desconocido por el aeródromo de referencia más próximo.
 """
 
-import logging
-
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
@@ -21,8 +19,6 @@ from .leulit_meteo_aviation_weather_service import AviationWeatherService
 from .leulit_meteo_checkwx_service import CheckWXService
 from .leulit_meteo_metar_parser import parse_metar
 from .leulit_meteo_metar_provider import MetarProvider, register_provider
-
-_logger = logging.getLogger(__name__)
 
 
 @register_provider
@@ -61,12 +57,9 @@ class AemetMetarProvider(MetarProvider):
             return None
         api_key = self._get_api_key(env)
         icao_in = icao_code.upper().strip()
-        _logger.info("AEMET.get_observation: inicio para icao_in=%s", icao_in)
 
         ref = env['leulit.meteo.icao.reference'].sudo().resolve(icao_in)
         if ref is None:
-            _logger.warning(
-                "AEMET provider: OACI %s no resuelto; consultando directo sin FIR.", icao_in)
             ref = {
                 'icao_consultar': icao_in,
                 'fir': None,
@@ -82,12 +75,7 @@ class AemetMetarProvider(MetarProvider):
         usa_referencia = ref['usa_referencia']
         ref_nombre = ref['ref_nombre']
         station_name = ref.get('nombre') or icao_consultar
-        proveedor_oficial = ref.get('proveedor_oficial', 'aemet')
         ref_distancia_km = ref.get('ref_distancia_km')
-        _logger.info(
-            "AEMET.get_observation: resolve(%s) → icao_consultar=%s "
-            "usa_referencia=%s fir=%s proveedor_oficial=%s",
-            icao_in, icao_consultar, usa_referencia, fir, proveedor_oficial)
 
         # --- METAR/TAF/SIGMET oficiales ---
         raw_metar = AemetOpenDataService.get_message(
@@ -98,19 +86,12 @@ class AemetMetarProvider(MetarProvider):
             AemetOpenDataService.get_message('SIGMET', fir, api_key)
             if fir else None
         )
-        _logger.info(
-            "AEMET.get_observation: AEMET directo para %s → metar=%s taf=%s sigmet=%s",
-            icao_consultar, bool(raw_metar), bool(raw_taf), bool(raw_sigmet))
 
         # Si AEMET no tiene datos → intentar AviationWeather (gratuito, sin límite diario)
         checkwx_key = None
         if not (raw_metar or raw_taf):
             raw_metar = AviationWeatherService.get_metar(icao_consultar)
             raw_taf = AviationWeatherService.get_taf(icao_consultar)
-            if raw_metar or raw_taf:
-                _logger.info(
-                    "AEMET.get_observation: AviationWeather %s → metar=%s taf=%s",
-                    icao_consultar, bool(raw_metar), bool(raw_taf))
 
         # Si AviationWeather tampoco tiene datos → intentar CheckWX (límite diario)
         if not (raw_metar or raw_taf):
@@ -118,17 +99,11 @@ class AemetMetarProvider(MetarProvider):
             if checkwx_key:
                 raw_metar = CheckWXService.get_metar(icao_consultar, checkwx_key)
                 raw_taf = CheckWXService.get_taf(icao_consultar, checkwx_key)
-                _logger.info(
-                    "AEMET.get_observation: CheckWX directo %s → metar=%s taf=%s",
-                    icao_consultar, bool(raw_metar), bool(raw_taf))
 
         # Último recurso: buscar aeródromo de referencia más próximo
         if not (raw_metar or raw_taf) and not usa_referencia:
             lat = ref.get('latitud')
             lon = ref.get('longitud')
-            _logger.info(
-                "AEMET.get_observation: %s sin datos, buscando aeródromo próximo "
-                "(lat=%s lon=%s)", icao_consultar, lat, lon)
             nearest = env['leulit.meteo.icao.reference'].sudo()._resolve_nearest(
                 icao_consultar,
                 lat=lat if lat else None,
@@ -142,10 +117,6 @@ class AemetMetarProvider(MetarProvider):
                 if not (raw_metar or raw_taf):
                     raw_metar = AviationWeatherService.get_metar(new_icao)
                     raw_taf = AviationWeatherService.get_taf(new_icao)
-                    if raw_metar or raw_taf:
-                        _logger.info(
-                            "AEMET.get_observation: AviationWeather próximo %s → metar=%s taf=%s",
-                            new_icao, bool(raw_metar), bool(raw_taf))
                 if not (raw_metar or raw_taf):
                     if not checkwx_key:
                         checkwx_key = self._get_checkwx_key(env)
@@ -163,9 +134,6 @@ class AemetMetarProvider(MetarProvider):
                     if not raw_sigmet and fir:
                         raw_sigmet = AemetOpenDataService.get_message(
                             'SIGMET', fir, api_key)
-                    _logger.info(
-                        "AEMET.get_observation: usando aeródromo próximo %s (%.1f km)",
-                        new_icao, ref_distancia_km or 0)
 
         if not (raw_metar or raw_taf or raw_sigmet):
             return None

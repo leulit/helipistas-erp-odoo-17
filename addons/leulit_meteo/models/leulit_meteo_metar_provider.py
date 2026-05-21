@@ -39,9 +39,6 @@ Esquema normalizado que devuelve ``get_observation``:
 """
 
 import abc
-import logging
-
-_logger = logging.getLogger(__name__)
 
 #: Registro {code: instancia} de proveedores disponibles
 _PROVIDERS = {}
@@ -53,9 +50,6 @@ def register_provider(cls):
     if not instance.code:
         raise ValueError(
             f"Provider {cls.__name__} no tiene atributo 'code' definido")
-    if instance.code in _PROVIDERS:
-        _logger.warning("Provider METAR '%s' redefinido por %s",
-                        instance.code, cls.__name__)
     _PROVIDERS[instance.code] = instance
     return cls
 

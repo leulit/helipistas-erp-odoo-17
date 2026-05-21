@@ -155,9 +155,9 @@
                     font-weight:normal;
                 }
                 td{
-                    vertical-align: middle
+                    vertical-align: middle;
                 }
-            </style>      
+            </style>
         </template>
 
         <template id="leulit_20221003_1001_informe">

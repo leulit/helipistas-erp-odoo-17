@@ -10,8 +10,6 @@ AESA). Los campos numéricos decodificados son auxiliares para mostrar
 una tabla; ante duda, prevalece el RAW.
 """
 
-import logging
-
 import pytz
 
 from odoo import _, api, fields, models
@@ -20,8 +18,6 @@ from odoo.exceptions import UserError
 from .leulit_meteo_metar_provider import get_provider, provider_selection
 
 _TZ_MADRID = 'Europe/Madrid'
-
-_logger = logging.getLogger(__name__)
 
 
 class LeulitMeteoMetar(models.Model):
@@ -450,9 +446,6 @@ class LeulitMeteoMetar(models.Model):
             station_name = ref_rec.nombre or icao
         else:
             if not lat or not lon:
-                _logger.warning(
-                    "briefing_oaci %s: no está en tabla de referencia y sin "
-                    "coordenadas (OpenAIP/CheckWX sin resultados).", icao)
                 return None
             nearest = Ref._resolve_nearest(icao, lat=lat, lon=lon)
             if not nearest:
@@ -501,9 +494,6 @@ class LeulitMeteoMetar(models.Model):
                 'ref_nombre': data.get('ref_nombre'),
                 'proveedor': provider_code,
             })
-            _logger.info(
-                "briefing_oaci: %s sin histórico, datos obtenidos en tiempo real (%s)",
-                icao, obs_time)
             derived_rt = parse_metar(data.get('raw_metar')) if data.get('raw_metar') else {}
             return {
                 'record_id': None,

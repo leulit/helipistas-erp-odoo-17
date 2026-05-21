@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
 import math
 import requests
-
-_logger = logging.getLogger(__name__)
 
 
 def _haversine(lat1, lon1, lat2, lon2):
@@ -77,8 +74,6 @@ class OpenAIPService:
                 result = cls._match_icao_in_items(items, icao_up)
                 if result:
                     return result
-                _logger.debug(
-                    "OpenAIP ?icaoCode=%s: %d ítems sin match exacto", icao, len(items))
 
             # ── Intento 2: búsqueda por texto ────────────────────────────────
             r2 = requests.get(
@@ -90,15 +85,10 @@ class OpenAIPService:
                 items2 = r2.json().get('items') or []
                 result = cls._match_icao_in_items(items2, icao_up)
                 if result:
-                    _logger.info(
-                        "OpenAIP get_airport_by_icao(%s): encontrado via ?search=", icao)
                     return result
 
-            _logger.warning(
-                "OpenAIP get_airport_by_icao(%s): sin match en icaoCode ni search", icao)
             return None
-        except Exception as exc:
-            _logger.error("OpenAIP get_airport_by_icao(%s): %s", icao, exc)
+        except Exception:
             return None
 
     @classmethod
@@ -122,11 +112,9 @@ class OpenAIPService:
                 },
                 timeout=cls.TIMEOUT)
             if r.status_code != 200:
-                _logger.warning("OpenAIP near(%s,%s) -> HTTP %s", lat, lon, r.status_code)
                 return []
             items = r.json().get('items') or []
-        except Exception as exc:
-            _logger.error("OpenAIP get_airports_near: %s", exc)
+        except Exception:
             return []
 
         results = []

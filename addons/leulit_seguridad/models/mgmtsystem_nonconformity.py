@@ -1,4 +1,3 @@
-
 from odoo import _, api, fields, models, registry
 import logging
 import threading
@@ -37,6 +36,7 @@ class MgmtsystemNonconformity(models.Model):
         "Origin",
         required=False,
     )
+    risk_type_id = fields.Many2one("mgmtsystem.hazard.risk.type", string="Peligro")
 
     def write(self, vals):
         create_date = vals.pop("create_date", None)

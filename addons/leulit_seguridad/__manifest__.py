@@ -10,7 +10,8 @@
         "leulit",
         "leulit_operaciones",
         "leulit_taller",
-        "mgmtsystem_audit"
+        "mgmtsystem_audit",
+        "mgmtsystem_hazard_risk"
     ],
     "data": [
         "groups.xml",
@@ -32,6 +33,7 @@
         "views/leulit_procedure_audit_question.xml",
         "views/mgmtsystem_nonconformity.xml",
         "views/mgmtsystem_action.xml",
+        "views/mgmtsystem_hazard.xml",
         "menu.xml"
     ],
     "demo": [],

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-import logging
 import requests
-
-_logger = logging.getLogger(__name__)
 
 # Circuit breaker: cuando CheckWX devuelve 429, se bloquea hasta medianoche UTC.
 # Variable de módulo (se resetea al reiniciar el servidor, lo cual es aceptable).
@@ -32,9 +29,6 @@ class CheckWXService:
         if not api_key:
             return None
         if cls.is_rate_limited():
-            _logger.debug(
-                "CheckWX %s: omitido — límite diario activo hasta %s UTC",
-                path, _rate_limited_until.strftime('%H:%M'))
             return None
         try:
             r = requests.get(
@@ -44,7 +38,6 @@ class CheckWXService:
             if r.status_code == 404:
                 return None
             if r.status_code == 401:
-                _logger.error("CheckWX %s -> HTTP 401 (API Key inválida o sin permisos)", path)
                 return None
             if r.status_code == 429:
                 # Bloquear hasta medianoche UTC del día siguiente
@@ -52,17 +45,11 @@ class CheckWXService:
                     hour=0, minute=0, second=0, microsecond=0)
                     + datetime.timedelta(days=1))
                 _rate_limited_until = tomorrow
-                _logger.warning(
-                    "CheckWX %s -> HTTP 429: límite diario agotado. "
-                    "Bloqueando todas las llamadas CheckWX hasta %s UTC",
-                    path, tomorrow.strftime('%Y-%m-%d %H:%M'))
                 return None
             if r.status_code != 200:
-                _logger.warning("CheckWX %s -> HTTP %s: %s", path, r.status_code, r.text[:200])
                 return None
             return r.json()
-        except Exception as exc:
-            _logger.error("CheckWX %s: %s", path, exc)
+        except Exception:
             return None
 
     @classmethod
@@ -154,16 +141,9 @@ class CheckWXService:
         """
         data = cls._get(f"/v2/station/country/{country_code.upper()}", api_key)
         if not data or not data.get('data'):
-            _logger.warning(
-                "CheckWX get_stations_by_country(%s): sin datos (data=%s)",
-                country_code, bool(data))
             return []
         raw_items = data['data']
-        _logger.info(
-            "CheckWX get_stations_by_country(%s): %d estaciones recibidas de la API",
-            country_code, len(raw_items))
         results = []
-        sin_coords = 0
         for item in raw_items:
             icao = (item.get('icao') or '').upper().strip()
             if not icao:
@@ -175,7 +155,6 @@ class CheckWXService:
                 lon = float(coords[0])
                 lat = float(coords[1])
             if lat is None or lon is None:
-                sin_coords += 1
                 continue
             ielev = item.get('elevation', {})
             results.append({
@@ -186,13 +165,6 @@ class CheckWXService:
                 'country_code': item.get('country', {}).get('code', ''),
                 'elevation_ft': int(ielev.get('feet') or 0) if ielev else 0,
             })
-        if sin_coords:
-            _logger.debug(
-                "CheckWX get_stations_by_country(%s): %d estaciones descartadas por falta de coords",
-                country_code, sin_coords)
-        _logger.info(
-            "CheckWX get_stations_by_country(%s): %d estaciones con coords válidas",
-            country_code, len(results))
         return results
 
     @classmethod

@@ -39,6 +39,7 @@
         "data/leulit_calendar_event_close_sale_order.xml",
         "data/leulit_calendar_event_notify_formacion_interna.xml",
         "data/leulit_calendar_event_potencial_aeronaves.xml",
+        "data/leulit_calendar_event_close_inspection.xml",
         "menu.xml"
     ],
     'assets': {

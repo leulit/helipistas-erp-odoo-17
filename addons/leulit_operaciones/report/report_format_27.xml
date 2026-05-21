@@ -2,70 +2,6 @@
 <odoo>
     <data>
 
-        <template id="leulit_20250507_1537_report_header">
-            <div style="width:100%;" class="header">
-                <t t-call="leulit_operaciones.leulit_20250507_1537_report_css"/>
-                <table class="fullwidth">
-                    <tr>
-                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
-                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                            <i>Fecha creación documento</i><br/>
-                            <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>
-                        </td>
-                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                            <t t-if="hashcode">
-                                <i>Firmado por:</i><br/>
-                                <i><span t-esc="firmado_por"/></i>
-                            </t>
-                        </td>
-                        <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
-                            <t t-if="hashcode">
-                                <i>CSV/CID</i><br/>
-                                <span t-esc="hashcode"/>
-                            </t>
-                            <t t-if="not hashcode">
-                                <i>Referencia</i><br/>
-                                <span t-esc="hashcode_interno"/>
-                            </t>
-                        </td>
-                        <td class="noborde" style="font-size:8px; width:50%; white-space: nowrap; text-align:center">
-                            <table align="right">
-                                <tr>
-                                    <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
-                                    <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0012</td>
-                                    <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
-                                    <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.0.0</td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-                <table class="fullwidth">
-                    <tr>
-                        <td colspan="3" class="noborde" style="font-size:8px;text-align:center">
-                            Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:14px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/><br/><span>ES.CAMO.005</span>
-                        </td>
-                        <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
-                            <span><b>REVISION SEMANAL<br/>EC120</b></span>
-                        </td>
-                        <td  style="font-size:14px; white-space: nowrap; text-align:center; width:33%;">
-                            <span>Formato 27</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  style="font-size:14px; white-space: nowrap; text-align:center">
-                            <span>Ed.4 Rev.9<br/>26/05/2025</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-
         <template id="leulit_20250507_1537_report_css">
             <meta charset="utf-8"/>
             <style>
@@ -143,9 +79,66 @@
         <template id="leulit_report_formato_27_informe">
             <t t-call="web.html_container">
                 <div class="page">
-				    <t t-call="leulit_operaciones.leulit_20250507_1537_report_header"/>
-				    <t t-call="leulit_operaciones.leulit_20250507_1537_report_css"/>
-                    <div class="row">
+                    <t t-call="leulit_operaciones.leulit_20250507_1537_report_css"/>
+				    <div style="width:100%;" class="row">
+                        <table class="fullwidth">
+                            <tr>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">(c) Helipistas</td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <i>Fecha creación documento</i><br/>
+                                    <i><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y')"/></i>
+                                </td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <t t-if="hashcode">
+                                        <i>Firmado por:</i><br/>
+                                        <i><span t-esc="firmado_por"/></i>
+                                    </t>
+                                </td>
+                                <td class="noborde" style="font-size:8px; white-space: nowrap; text-align:center">
+                                    <t t-if="hashcode">
+                                        <i>CSV/CID</i><br/>
+                                        <span t-esc="hashcode"/>
+                                    </t>
+                                    <t t-if="not hashcode">
+                                        <i>Referencia</i><br/>
+                                        <span t-esc="hashcode_interno"/>
+                                    </t>
+                                </td>
+                                <td class="noborde" style="font-size:8px; width:50%; white-space: nowrap; text-align:center">
+                                    <table align="right">
+                                        <tr>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Código:</b></td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">HLP-DOC-0012</td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde"><b>Versión:</b></td>
+                                            <td style="font-size:8px; white-space: nowrap; text-align:center" class="noborde">1.0.0</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="fullwidth">
+                            <tr>
+                                <td colspan="3" class="noborde" style="font-size:8px;text-align:center">
+                                    Cualquier copia total o parcial de este documento se considera copia no controlada y siempre deberá ser contrastada con la información vigente en la intranet. (https://erp.helipistas.com/verifycsv)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  style="font-size:14px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                    <img t-att-src="'data:image/png;base64,%s' % logo_hlp" style="width:auto;height:50px;"/><br/><span>ES.CAMO.005</span>
+                                </td>
+                                <td  style="font-size:20px; white-space: nowrap; text-align:center; width:33%;" rowspan="2">
+                                    <span><b>REVISION SEMANAL<br/>EC120</b></span>
+                                </td>
+                                <td  style="font-size:14px; white-space: nowrap; text-align:center; width:33%;">
+                                    <span>Formato 27</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  style="font-size:14px; white-space: nowrap; text-align:center">
+                                    <span>Ed.4 Rev.9<br/>26/05/2025</span>
+                                </td>
+                            </tr>
+                        </table>
                         <table class="fullwidth">
                             <thead>
                                 <tr>

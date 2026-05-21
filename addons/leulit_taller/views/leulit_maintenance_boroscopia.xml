@@ -30,7 +30,7 @@
                     <separator string="Datos Boroscopia"/>
                     <group col="4">
                         <field name="task" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"/>
-                        <field name="mecanico" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))" />
+                        <field name="mecanico" options="{'no_create': True, 'create': False, 'edit': False, 'no_open':true}"  readonly="((estado != 'borrador'))" required="True"/>
                         <field name="lugar"  readonly="((estado != 'borrador'))" />
                         <field name="fecha"  readonly="((estado != 'borrador'))" />
                         <field name="inspeccion_motor"/>
