@@ -338,19 +338,20 @@ Botón en `Meteorología → Configuración → Parámetros`. Método: `leulit.m
    ▼
 AviationWeatherService.get_stations_spain()
    │
-   ├─ Intento 1 — ADDS dataserver_current (XML station2_0):
-   │     GET https://www.aviationweather.gov/adds/dataserver_current/httpparam
-   │         ?dataSource=stations&requestType=retrieve&format=xml&stationString=LE*
-   │     GET ...&stationString=GC*
-   │     Filtra: site_type contiene <METAR> o <TAF>
-   │     ⚠ Este endpoint devuelve HTTP 403 desde 2025; el fallback bbox es el camino efectivo.
+   ├─ Paso 1 — Seed local AIP España (candidatos):
+   │     Lee addons/leulit_meteo/data/aerodromos_es_seed.csv
+   │     Fuente oficial: AIP España (ENAIRE, sección AD 0.6). Sin descarga de internet.
+   │     53 aeródromos españoles (LE*/GC*) con nombre, lat, lon, elevation_ft
+   │     Actualizar el CSV cuando ENAIRE publique un nuevo ciclo AIRAC.
    │
-   └─ Intento 2 (fallback bbox, si ADDS devuelve vacío):
-         GET https://aviationweather.gov/api/data/metar?bbox=35,-10,44.5,5&format=json
-         GET https://aviationweather.gov/api/data/taf?bbox=35,-10,44.5,5&format=json
-         (ídem para Canarias bbox=27,-18.5,30,-13)
-         Formato bbox: minLat,minLon,maxLat,maxLon
-         Filtra: icao startswith 'LE' o 'GC'
+   └─ Paso 2 — NOAA OPMET batch (verifica disponibilidad real de METAR/TAF):
+         GET https://aviationweather.gov/api/data/metar?ids=LEMD,LEBL,...&format=json
+         GET https://aviationweather.gov/api/data/taf?ids=LEMD,LEBL,...&format=json
+         (todos los candidatos en una sola request; NOAA admite ~200 ICAOs en la URL)
+         Resultado: set de ICAOs con METAR reciente + set con TAF
+         Se incluyen TODOS los ICAOs del seed; has_metar/has_taf marca disponibilidad.
+         Si NOAA no responde (fallo de red), se asumen has_metar=True, has_taf=True.
+         Coords y nombre provienen siempre del seed local (trazabilidad AIP).
    │
    ▼
 Para cada estación española con METAR o TAF:
@@ -474,7 +475,7 @@ Ver [INTEGRACION_VUELO.md](INTEGRACION_VUELO.md) para la implementación complet
 | `AemetOpenDataService` | `https://opendata.aemet.es/opendata/api/...` (+ URL `datos`) | GET×2 | Patrón 2 llamadas; requiere aemet_api_key |
 | `CheckWXService` | `https://api.checkwx.com` | GET | Coordenadas por OACI (fallback en `_resolve_nearest`); requiere checkwx_api_key. |
 | `OpenAIPService` | `https://api.openaip.net/api` | GET | Coordenadas por OACI (fuente primaria en `_resolve_nearest`); requiere openaip_api_key. |
-| `AviationWeatherService` | `https://aviationweather.gov` (ADDS + `/api/data`) | GET | Sin API key. METAR/TAF globales y listado de estaciones LE*/GC*. Fuente principal de sincronización. |
+| `AviationWeatherService` | `https://aviationweather.gov/api/data` | GET | Sin API key. METAR/TAF globales y verificación de estaciones LE*/GC*. Candidatos desde seed local AIP España. Fuente principal de sincronización. |
 
 ### Modelos Odoo
 
@@ -518,7 +519,7 @@ Confusión habitual: ambos parecen "el mapa", pero hacen cosas opuestas.
 Notas:
 
 - **AEMET OpenData** usa un patrón de dos llamadas: la primera devuelve un JSON con un campo `datos` que es a su vez una URL temporal donde están los datos reales.
-- **aviationweather.gov** es la fuente principal de sincronización de la tabla de aeródromos. No requiere API key. Usa el endpoint ADDS clásico (XML `station2_0`) con fallback al API nuevo por bounding box.
+- **aviationweather.gov** es la fuente de verificación de la tabla de aeródromos. No requiere API key. Los candidatos provienen del seed local `data/aerodromos_es_seed.csv` curado desde AIP España (ENAIRE); NOAA confirma en batch cuáles emiten METAR/TAF realmente (has_metar/has_taf).
 - **CheckWX** y **OpenAIP** solo se usan en `_resolve_nearest()` para OACIs desconocidos (obtención de coordenadas). No son necesarias para el flujo básico AEMET ni para la sincronización de aeródromos.
 
 ---
