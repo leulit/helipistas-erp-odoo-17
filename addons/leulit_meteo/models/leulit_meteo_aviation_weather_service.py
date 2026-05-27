@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-import xml.etree.ElementTree as ET
+import csv
+import logging
+import os
 
 import requests
 
+_logger = logging.getLogger(__name__)
+
 _BASE_URL = "https://aviationweather.gov/api/data"
-_ADDS_URL = "https://www.aviationweather.gov/adds/dataserver_current/httpparam"
 _TIMEOUT = 30
+_SEED_PATH = os.path.join(
+    os.path.dirname(__file__), '..', 'data', 'aerodromos_es_seed.csv'
+)
 
 
 class AviationWeatherService:
@@ -47,162 +53,114 @@ class AviationWeatherService:
 
     @classmethod
     def get_stations_spain(cls):
-        """Estaciones españolas (LE*, GC*) que tienen METAR o TAF.
+        """Estaciones españolas con servicio METAR o TAF.
 
-        Combina dos fuentes de aviationweather.gov (sin API key):
-        1. ADDS station database (estaciones registradas con flags METAR/TAF)
-        2. Observaciones METAR/TAF reales (detecta estaciones activas no registradas en el ADDS,
-           por ejemplo LELL que tiene METAR pero no aparece en el station database)
-        Fallback: bounding-box si ambas fuentes fallan.
-        Devuelve dict {icao: {'nombre', 'lat', 'lon', 'has_metar', 'has_taf', 'elevation_ft'}}.
+        Fuentes:
+        1. Seed CSV local curado desde AIP España (ENAIRE): lista oficial de
+           aeródromos con coordenadas verificadas contra OPMET WMO (NOAA).
+        2. NOAA /api/data/metar y /api/data/taf con todos los ICAOs en batch
+           para marcar disponibilidad real de METAR/TAF.
+
+        Devuelve dict {icao: {'nombre', 'lat', 'lon', 'has_metar', 'has_taf',
+        'elevation_ft'}} incluyendo TODOS los del seed. Si NOAA falla por
+        problemas de red, devuelve el seed completo con has_metar=True y
+        has_taf=True (mejor mantener funcionalidad que perder estaciones por
+        fallo transitorio).
         """
-        result = cls._get_stations_adds()
+        seed = cls._load_seed()
+        if not seed:
+            _logger.warning(
+                "AviationWeather: seed vacío o no encontrado en %s", _SEED_PATH
+            )
+            return {}
 
-        obs = cls._get_stations_from_metars()
-        nuevas = {icao: info for icao, info in obs.items() if icao not in result}
-        if nuevas:
-            _logger.info(
-                "AviationWeather: %d estación(es) adicional(es) vía observaciones METAR/TAF: %s",
-                len(nuevas), ', '.join(sorted(nuevas.keys())))
-            result.update(nuevas)
+        ids_str = ','.join(sorted(seed.keys()))
+        metar_set = cls._query_noaa_ids('metar', ids_str)
+        taf_set = cls._query_noaa_ids('taf', ids_str)
 
-        if not result:
-            result = cls._get_stations_bbox()
+        noaa_vacio = not metar_set and not taf_set
+        if noaa_vacio:
+            _logger.warning(
+                "AviationWeather: NOAA no devolvió datos (fallo de red?). "
+                "Usando seed completo con has_metar=True, has_taf=True."
+            )
+
+        result = {}
+        for icao, info in seed.items():
+            result[icao] = {
+                'nombre': info['nombre'],
+                'lat': info['lat'],
+                'lon': info['lon'],
+                'elevation_ft': info['elevation_ft'],
+                'has_metar': True if noaa_vacio else (icao in metar_set),
+                'has_taf': True if noaa_vacio else (icao in taf_set),
+            }
+
+        _logger.info(
+            "AviationWeather: %d estaciones en seed → %d con METAR / %d con TAF (NOAA).",
+            len(seed),
+            sum(1 for v in result.values() if v['has_metar']),
+            sum(1 for v in result.values() if v['has_taf']),
+        )
         return result
 
     @classmethod
-    def _get_stations_from_metars(cls):
-        """Descubre estaciones activas consultando observaciones METAR/TAF reales.
-
-        Complementa _get_stations_adds() encontrando aeródromos que emiten METAR o TAF
-        pero no están registrados en la base de datos de estaciones ADDS.
-        """
-        result = {}
-        for prefix in ('LE', 'GC'):
-            for datasource, flag in (('metars', 'has_metar'), ('tafs', 'has_taf')):
-                hours = '2' if datasource == 'metars' else '24'
-                tag = 'METAR' if datasource == 'metars' else 'TAF'
-                try:
-                    r = requests.get(
-                        _ADDS_URL,
-                        params={
-                            'dataSource': datasource,
-                            'requestType': 'retrieve',
-                            'format': 'xml',
-                            'stationString': f'{prefix}*',
-                            'hoursBeforeNow': hours,
-                            'mostRecentForEachStation': 'constraint',
-                        },
-                        timeout=_TIMEOUT,
-                    )
-                    if r.status_code != 200:
-                        _logger.warning("stations_from_%s %s* -> HTTP %s", datasource, prefix, r.status_code)
-                        continue
-                    root = ET.fromstring(r.content)
-                    data_el = root.find('data')
-                    if data_el is None:
-                        continue
-                    for obs in data_el.findall(tag):
-                        icao = (obs.findtext('station_id') or '').upper().strip()
-                        if not icao:
-                            continue
-                        lat = float(obs.findtext('latitude') or 0)
-                        lon = float(obs.findtext('longitude') or 0)
-                        elev_m = float(obs.findtext('elevation_m') or 0)
-                        entry = result.setdefault(icao, {
-                            'nombre': icao,
-                            'lat': lat,
-                            'lon': lon,
-                            'has_metar': False,
-                            'has_taf': False,
-                            'elevation_ft': int(elev_m * 3.28084),
-                        })
-                        entry[flag] = True
-                except Exception as exc:
-                    _logger.error("stations_from_%s %s*: %s", datasource, prefix, exc)
-        return result
-
-    @classmethod
-    def _get_stations_adds(cls):
-        """ADDS dataserver_current con stationString=LE*,GC* (XML station2_0)."""
-        result = {}
-        for prefix in ('LE', 'GC'):
-            try:
-                r = requests.get(
-                    _ADDS_URL,
-                    params={
-                        'dataSource': 'stations',
-                        'requestType': 'retrieve',
-                        'format': 'xml',
-                        'stationString': f'{prefix}*',
-                    },
-                    timeout=_TIMEOUT,
-                )
-                if r.status_code != 200:
+    def _load_seed(cls):
+        """Carga el seed CSV local. Devuelve dict {icao: {'nombre', 'lat', 'lon', 'elevation_ft'}}."""
+        seed_path = os.path.normpath(_SEED_PATH)
+        try:
+            with open(seed_path, encoding='utf-8', newline='') as f:
+                lines = [l for l in f if not l.startswith('#') and l.strip()]
+            reader = csv.DictReader(lines)
+            result = {}
+            for row in reader:
+                icao = (row.get('icao') or '').strip().upper()
+                if not icao:
                     continue
-                root = ET.fromstring(r.content)
-                data_el = root.find('data')
-                if data_el is None:
-                    continue
-                for st in data_el.findall('Station'):
-                    site_type = st.find('site_type')
-                    has_metar = site_type is not None and site_type.find('METAR') is not None
-                    has_taf = site_type is not None and site_type.find('TAF') is not None
-                    if not (has_metar or has_taf):
-                        continue
-                    icao = (st.findtext('station_id') or '').upper().strip()
-                    if not icao:
-                        continue
-                    elev_m = float(st.findtext('elevation_m') or 0)
-                    result[icao] = {
-                        'nombre': (st.findtext('site') or icao).strip(),
-                        'lat': float(st.findtext('latitude') or 0),
-                        'lon': float(st.findtext('longitude') or 0),
-                        'has_metar': has_metar,
-                        'has_taf': has_taf,
-                        'elevation_ft': int(elev_m * 3.28084),
-                    }
-            except Exception:
-                pass
-        return result
+                try:
+                    lat = float(row.get('latitud') or 0)
+                    lon = float(row.get('longitud') or 0)
+                    elevation_ft = int(float(row.get('elevacion_ft') or 0))
+                except (ValueError, TypeError):
+                    lat, lon, elevation_ft = 0.0, 0.0, 0
+                result[icao] = {
+                    'nombre': (row.get('nombre') or icao).strip(),
+                    'lat': lat,
+                    'lon': lon,
+                    'elevation_ft': elevation_ft,
+                }
+            return result
+        except FileNotFoundError:
+            _logger.error("AviationWeather: seed no encontrado en %s", seed_path)
+            return {}
+        except Exception as exc:
+            _logger.error("AviationWeather: error leyendo seed: %s", exc)
+            return {}
 
     @classmethod
-    def _get_stations_bbox(cls):
-        """Fallback: bbox sobre Peninsula+Baleares y Canarias usando el API nuevo."""
-        result = {}
-        bboxes = [
-            (35.0, -10.0, 44.5, 5.0),    # Peninsula + Baleares (minLat, minLon, maxLat, maxLon)
-            (27.0, -18.5, 30.0, -13.0),  # Canarias
-        ]
-        for bbox in bboxes:
-            for datasource in ('metar', 'taf'):
-                try:
-                    r = requests.get(
-                        f"{_BASE_URL}/{datasource}",
-                        params={
-                            'bbox': ','.join(str(v) for v in bbox),
-                            'format': 'json',
-                        },
-                        timeout=_TIMEOUT,
-                    )
-                    if r.status_code != 200:
-                        continue
-                    items = r.json() if isinstance(r.json(), list) else []
-                    for item in items:
-                        icao = (item.get('icaoId') or item.get('stationId') or '').upper().strip()
-                        if not icao or not (icao.startswith('LE') or icao.startswith('GC')):
-                            continue
-                        entry = result.setdefault(icao, {
-                            'nombre': item.get('name', icao).strip(),
-                            'lat': float(item.get('lat') or item.get('latitude') or 0),
-                            'lon': float(item.get('lon') or item.get('longitude') or 0),
-                            'has_metar': False,
-                            'has_taf': False,
-                        })
-                        entry[f'has_{datasource}'] = True
-                except Exception:
-                    pass
-        return result
+    def _query_noaa_ids(cls, datasource, ids_str):
+        """Consulta NOAA /api/data/{datasource} con lista de ICAOs. Devuelve set de ICAOs con datos."""
+        try:
+            r = requests.get(
+                f"{_BASE_URL}/{datasource}",
+                params={'ids': ids_str, 'format': 'json'},
+                timeout=_TIMEOUT,
+            )
+            if r.status_code != 200:
+                _logger.warning("AviationWeather: NOAA %s → HTTP %s", datasource, r.status_code)
+                return set()
+            items = r.json()
+            if not isinstance(items, list):
+                return set()
+            result = set()
+            for item in items:
+                icao = (item.get('icaoId') or item.get('stationId') or '').upper().strip()
+                if icao:
+                    result.add(icao)
+            return result
+        except Exception as exc:
+            _logger.error("AviationWeather: error consultando NOAA %s: %s", datasource, exc)
+            return set()
 
     @classmethod
     def validate(cls):
