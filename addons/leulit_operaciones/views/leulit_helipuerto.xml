@@ -67,6 +67,7 @@
                                     <field name="telefono"/>
                                     <field name="municipio"/>
                                     <field name="direccion"/>
+                                    <field name="administracion"/>
                                     <field name="tz"/>
                                 </group>
                             </group>

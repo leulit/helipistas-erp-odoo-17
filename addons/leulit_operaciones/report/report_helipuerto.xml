@@ -139,6 +139,10 @@
                                 <td class="fieldvalue"><span t-esc="direccion"/></td>
                             </tr>
                             <tr>
+                                <td class="literal">Administración del aeródromo/helipuerto:</td>
+                                <td class="fieldvalue"><span t-esc="administracion"/></td>
+                            </tr>
+                            <tr>
                                 <td class="literal">Teléfono:</td>
                                 <td class="fieldvalue"><span t-esc="telefono"/></td>
                             </tr>

@@ -76,6 +76,7 @@ class leulit_helipuerto(models.Model):
     descripcion = fields.Char('Nombre',  required=True)
     municipio = fields.Char('Ciudad/Provincia', required=True)
     direccion = fields.Text('Dirección', required=True)
+    administracion = fields.Text('Administración del aeródromo/helipuerto')
     telefono = fields.Char('Teléfono', required=True)
     hayjeta1 = fields.Boolean('Combustible JET A1')
     hayavgas = fields.Boolean('Combustible AVGAS')
@@ -192,6 +193,7 @@ class leulit_helipuerto(models.Model):
                 'longitud': self.long,
                 'elevacion': self.elevacion,
                 'direccion': '%s, %s' % (self.direccion, self.municipio),
+                'administracion': self.administracion if self.administracion else 'N/A',
                 'telefono': self.telefono,
                 'combus': combus,
                 'asistencia_tierra': self.asistencia_tierra,
