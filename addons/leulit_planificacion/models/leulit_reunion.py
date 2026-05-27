@@ -63,7 +63,7 @@ class leulit_reunion(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Create Task',
-            'res_model': 'leulit.wizard_claim_create_task',
+            'res_model': 'leulit.wizard_reunion_create_task',
             'view_mode': 'form',
             'view_id': view.id if view else False,
             'target': 'new',
