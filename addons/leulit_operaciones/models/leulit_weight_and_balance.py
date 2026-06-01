@@ -494,24 +494,31 @@ class leulit_weight_and_balance(models.Model):
                     values_to_write[key+"_long_moment"] = 0
                     values_to_write[key+"_lat_moment"] = 0
         
+        # Leer momentos del combustible desde values_to_write (recién calculados en el bucle),
+        # no desde self (BD), que en el primer guardado tiene 0 si el onchange nunca se disparó.
+        fl_long = values_to_write.get('fuellanding_long_moment', self.fuellanding_long_moment)
+        fl_lat  = values_to_write.get('fuellanding_lat_moment',  self.fuellanding_lat_moment)
+        ft_long = values_to_write.get('fueltakeoff_long_moment', self.fueltakeoff_long_moment)
+        ft_lat  = values_to_write.get('fueltakeoff_lat_moment',  self.fueltakeoff_lat_moment)
+
         # Calcular takeoff values
         values_to_write['takeoff_gw'] = total - self.fuellanding
-        values_to_write['takeoff_gw_long_moment'] = total_longmoment - self.fuellanding_long_moment
-        values_to_write['takeoff_gw_lat_moment'] = total_latmoment - self.fuellanding_lat_moment
+        values_to_write['takeoff_gw_long_moment'] = total_longmoment - fl_long
+        values_to_write['takeoff_gw_lat_moment'] = total_latmoment - fl_lat
         values_to_write['takeoff_gw_long_arm'] = (values_to_write['takeoff_gw_long_moment'] / values_to_write['takeoff_gw']) if values_to_write['takeoff_gw'] > 0 else 0.0
         values_to_write['takeoff_gw_lat_arm'] = (values_to_write['takeoff_gw_lat_moment'] / values_to_write['takeoff_gw']) if values_to_write['takeoff_gw'] > 0 else 0.0
-        
+
         # Calcular landing values
         values_to_write['landing_gw'] = total - self.fueltakeoff
-        values_to_write['landing_gw_long_moment'] = total_longmoment - self.fueltakeoff_long_moment
-        values_to_write['landing_gw_lat_moment'] = total_latmoment - self.fueltakeoff_lat_moment
+        values_to_write['landing_gw_long_moment'] = total_longmoment - ft_long
+        values_to_write['landing_gw_lat_moment'] = total_latmoment - ft_lat
         values_to_write['landing_gw_long_arm'] = (values_to_write['landing_gw_long_moment'] / values_to_write['landing_gw']) if values_to_write['landing_gw'] > 0 else 0.0
         values_to_write['landing_gw_lat_arm'] = (values_to_write['landing_gw_lat_moment'] / values_to_write['landing_gw']) if values_to_write['landing_gw'] > 0 else 0.0
 
         # Calcular mass without fuel
         values_to_write['maswithoutfuel'] = total - self.fuellanding - self.fueltakeoff
-        values_to_write['maswithoutfuel_long_moment'] = total_longmoment - self.fuellanding_long_moment - self.fueltakeoff_long_moment
-        values_to_write['maswithoutfuel_lat_moment'] = total_latmoment - self.fuellanding_lat_moment - self.fueltakeoff_lat_moment
+        values_to_write['maswithoutfuel_long_moment'] = total_longmoment - fl_long - ft_long
+        values_to_write['maswithoutfuel_lat_moment'] = total_latmoment - fl_lat - ft_lat
         values_to_write['maswithoutfuel_long_arm'] = (values_to_write['maswithoutfuel_long_moment'] / values_to_write['maswithoutfuel']) if values_to_write['maswithoutfuel'] > 0 else 0.0
         values_to_write['maswithoutfuel_lat_arm'] = (values_to_write['maswithoutfuel_lat_moment'] / values_to_write['maswithoutfuel']) if values_to_write['maswithoutfuel'] > 0 else 0.0
         
