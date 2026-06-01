@@ -203,7 +203,7 @@ class WizardReunionCreateTask(models.TransientModel):
             "name": self.name,
             "project_id": self.project_id.id or False,
             "date_deadline": self.date_deadline or False,
-            "user_id": self.user_id.id or False,
+            "user_ids": [(6, 0, [self.user_id.id])] if self.user_id else [],
             "company_id": self.company_id.id,
             "partner_id": self.partner_id.id,
         })
