@@ -12,8 +12,7 @@
                     <header>
                         <button name="finalizar_reunion" type="object" string="Finalizar Reunión"
                              invisible="((end_meeting))"  class="oe_right oe_highlight"/>
-                        <button name="create_task" type="object" string="Crear Tarea"
-                             invisible="((not end_meeting))"  class="oe_right oe_highlight"/>
+                        <button name="create_task" type="object" string="Crear Tarea" class="oe_right oe_highlight"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
