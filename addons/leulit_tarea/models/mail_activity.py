@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from datetime import datetime
 from odoo import models, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -23,7 +24,13 @@ class MailActivity(models.Model):
             parent = parent_model.browse(activity.res_id)
             if not parent.exists() or not parent.date_deadline:
                 continue
-            if activity.date_deadline > parent.date_deadline:
+            act_dl = activity.date_deadline
+            par_dl = parent.date_deadline
+            if isinstance(act_dl, datetime):
+                act_dl = act_dl.date()
+            if isinstance(par_dl, datetime):
+                par_dl = par_dl.date()
+            if act_dl > par_dl:
                 tipo = _("tarea") if activity.res_model == 'project.task' else _("acción")
                 raise ValidationError(_(
                     "La fecha de vencimiento de la actividad (%s) no puede ser posterior "
