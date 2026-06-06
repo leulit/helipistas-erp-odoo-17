@@ -116,6 +116,8 @@ class LeulitMaintenanceFormOne(models.Model):
         self.estado = 'firmado'
 
     def set_estado_pendiente_firma(self):
+        if not self.part_45 and not self.other_regulation:
+            raise UserError('Debe marcar al menos una de las casillas de regulación para poder firmar el Form One.')
         self.estado = 'pendiente'
 
     def comprobar_estado_wo_form_one(self, request):
