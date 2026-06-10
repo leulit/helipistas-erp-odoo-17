@@ -31,6 +31,7 @@
         "views/leulit_event_resource_by_day.xml",
         "views/mail_activity.xml",
         "views/project_task.xml",
+        "views/leulit_helicoptero.xml",
         "views/leulit_wizard_create_event_from_task.xml",
         "data/leulit_calendar_event_open_permission.xml",
         "data/leulit_calendar_event_close_permission.xml",

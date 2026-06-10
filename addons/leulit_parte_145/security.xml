@@ -5,6 +5,42 @@
         <field name="model_id" ref="model_leulit_helicoptero"/>
         <field name="group_id" ref="leulit.RBase"/>
         <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_helicoptero_access_hide" model="ir.model.access">
+        <field name="name">Helicoptero Access RBase_hide</field>
+        <field name="model_id" ref="model_leulit_helicoptero"/>
+        <field name="group_id" ref="leulit.RBase_hide"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_helicoptero_access_gestor" model="ir.model.access">
+        <field name="name">Helicoptero Access ROperaciones_gestor</field>
+        <field name="model_id" ref="model_leulit_helicoptero"/>
+        <field name="group_id" ref="leulit.ROperaciones_gestor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_helicoptero_access_taller" model="ir.model.access">
+        <field name="name">Helicoptero Access RTaller_base</field>
+        <field name="model_id" ref="model_leulit_helicoptero"/>
+        <field name="group_id" ref="leulit.RTaller_base"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+    <record id="leulit_helicoptero_access_camo" model="ir.model.access">
+        <field name="name">Helicoptero Access RCAMO_base</field>
+        <field name="model_id" ref="model_leulit_helicoptero"/>
+        <field name="group_id" ref="leulit.RCAMO_base"/>
+        <field name="perm_read" eval="1"/>
         <field name="perm_create" eval="1"/>
         <field name="perm_write" eval="1"/>
         <field name="perm_unlink" eval="1"/>

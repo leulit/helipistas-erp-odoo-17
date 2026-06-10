@@ -19,7 +19,7 @@ class leulit_calendar_event(models.Model):
     _inherit = 'calendar.event'
 
 
-    _BOMBEROS_TYPES = frozenset({'Campaña bomberos', 'Operador Campaña bomberos'})
+    _BOMBEROS_TYPES = frozenset({'campaña bomberos', 'operador campaña bomberos'})
 
     @api.model_create_multi
     def create(self, vals_list):

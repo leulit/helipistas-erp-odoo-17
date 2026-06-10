@@ -199,5 +199,14 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
+    <record id="leulit_helicoptero_access_planificador" model="ir.model.access">
+        <field name="name">Helicoptero Access RPlanificacion_planner</field>
+        <field name="model_id" ref="leulit_parte_145.model_leulit_helicoptero"/>
+        <field name="group_id" ref="RPlanificacion_planner"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 
 </odoo>

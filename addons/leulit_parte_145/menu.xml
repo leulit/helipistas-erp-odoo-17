@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- Menu Operaciones -->
-    <menuitem 
+    <menuitem
         id="leulit_20201103_1049_menuitem"
         name="Aeronaves"
         parent="leulit.leulit_20200618_1104_menuitem"

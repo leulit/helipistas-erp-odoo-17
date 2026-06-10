@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_helicoptero_planificacion_form">
+            <field name="name">leulit_helicoptero_planificacion_form</field>
+            <field name="model">leulit.helicoptero</field>
+            <field name="inherit_id" ref="leulit_parte_145.leulit_20200626_1201_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">user_has_group('leulit.RBase_hide') or user_has_group('leulit.ROperaciones_gestor') or user_has_group('leulit.RTaller_base') or user_has_group('leulit.RCAMO_base') or user_has_group('leulit_planificacion.RPlanificacion_planner')</attribute>
+                </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="readonly">not (user_has_group('leulit.RBase_hide') or user_has_group('leulit.ROperaciones_gestor') or user_has_group('leulit.RTaller_base') or user_has_group('leulit.RCAMO_base') or user_has_group('leulit_planificacion.RPlanificacion_planner'))</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem
+            id="leulit_parte_145.leulit_20201103_1049_menuitem"
+            groups="leulit.ROperaciones_piloto,leulit.RCampaña_piloto,leulit_planificacion.RPlanificacion_planner"
+        />
+
+    </data>
+</odoo>
