@@ -215,3 +215,11 @@ class leulit_helicoptero(models.Model):
     last_parte_id = fields.Many2one('leulit.vuelo', compute='_compute_last_parte', string='Último parte', store=False)
     date_last_parte = fields.Date(compute='_compute_last_parte', string='Fecha último parte', store=False)
     llegada_last_parte = fields.Many2one('leulit.helipuerto', compute='_compute_last_parte', string='Llegada último parte', store=False)
+    can_edit = fields.Boolean(compute='_compute_can_edit', string='Puede editar', store=False)
+
+    def _compute_can_edit(self):
+        can = self.user_has_groups(
+            'leulit.RBase_hide,leulit.ROperaciones_gestor,leulit.RTaller_base,leulit.RCAMO_base'
+        )
+        for rec in self:
+            rec.can_edit = can

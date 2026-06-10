@@ -6,12 +6,13 @@
             <field name="name">leulit_20200626_1201_form</field>
             <field name="model">leulit.helicoptero</field>
             <field name="arch" type="xml">
-                <form string="Helicóptero" create="user_has_group('leulit.RBase_hide') or user_has_group('leulit.ROperaciones_gestor') or user_has_group('leulit.RTaller_base') or user_has_group('leulit.RCAMO_base')">
+                <form string="Helicóptero">
                     <sheet>
                         <field name="id" invisible="1"/>
                         <field name="baja" invisible="1"/>
+                        <field name="can_edit" invisible="1"/>
                         <!-- DATOS GENERALES -->
-                        <notebook readonly="not (user_has_group('leulit.RBase_hide') or user_has_group('leulit.ROperaciones_gestor') or user_has_group('leulit.RTaller_base') or user_has_group('leulit.RCAMO_base'))">
+                        <notebook readonly="not can_edit">
                             <page string="Datos Generales">
                                 <group col="8">
                                     <field name="ctrlmantenimiento" />
