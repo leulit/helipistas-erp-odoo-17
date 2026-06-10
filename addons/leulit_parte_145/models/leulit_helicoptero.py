@@ -20,7 +20,7 @@ class leulit_helicoptero(models.Model):
                 [('estado', '=', 'cerrado'), ('helicoptero_id', '=', item.id)],
                 limit=1, order='fechavuelo DESC'
             )
-            item.last_parte_id = vuelo
+            item.last_parte_id = vuelo.id if vuelo else False
             item.date_last_parte = vuelo.fechavuelo if vuelo else False
             item.llegada_last_parte = vuelo.lugarllegada.id if vuelo and vuelo.lugarllegada else False
     
