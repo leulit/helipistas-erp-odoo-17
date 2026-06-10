@@ -2,10 +2,9 @@
 <odoo>
     <data>
 
-        <menuitem
-            id="leulit_parte_145.leulit_20201103_1049_menuitem"
-            groups="leulit.ROperaciones_piloto,leulit.RCampaña_piloto,leulit_planificacion.RPlanificacion_planner"
-        />
+        <record id="leulit_parte_145.leulit_20201103_1049_menuitem" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4, ref('RPlanificacion_planner'))]"/>
+        </record>
 
     </data>
 </odoo>
