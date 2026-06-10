@@ -19,12 +19,31 @@ class leulit_calendar_event(models.Model):
     _inherit = 'calendar.event'
 
 
+    _BOMBEROS_TYPES = frozenset({'Campaña bomberos', 'Operador Campaña bomberos'})
+
     @api.model_create_multi
     def create(self, vals_list):
         # Iterar sobre cada conjunto de valores
         for vals in vals_list:
             self._check_event_permissions(vals)  # Comprobar permisos para cada registro
-        return super(leulit_calendar_event, self).create(vals_list)
+        records = super(leulit_calendar_event, self).create(vals_list)
+        records._auto_update_name_for_bomberos()
+        return records
+
+
+    def _auto_update_name_for_bomberos(self):
+        for event in self:
+            if not event.type_event:
+                continue
+            if (event.type_event.name or '').strip().lower() not in self._BOMBEROS_TYPES:
+                continue
+            base_name = event.name or ''
+            if ' — ' in base_name:
+                base_name = base_name.rsplit(' — ', 1)[0]
+            partner = event.partner_ids[:1]
+            new_name = '{} — {}'.format(base_name, partner.name) if partner else base_name
+            if new_name != event.name:
+                event.with_context(skip_validation=True).write({'name': new_name})
 
 
     def _resource_fields_values(self, resource_fields):
@@ -48,7 +67,10 @@ class leulit_calendar_event(models.Model):
             return super(leulit_calendar_event, self).write(vals)
         for record in self:
             record._check_event_permissions(vals)
-        return super(leulit_calendar_event, self).write(vals)
+        result = super(leulit_calendar_event, self).write(vals)
+        if 'partner_ids' in vals or 'type_event' in vals:
+            self._auto_update_name_for_bomberos()
+        return result
 
 
     def _check_event_permissions(self, vals):

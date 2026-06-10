@@ -128,9 +128,12 @@
             <field name="arch" type="xml">
                 <tree string="Helicópteros" create="false" edit="false">
                     <field name="name" />
+                    <field name="modelo"/>
                     <field name="statemachine"/>
                     <field name="semaforo" widget="semaforo_char" string=""/>
                     <field name="strhoras_remanente"/>
+                    <field name="date_last_parte"/>
+                    <field name="llegada_last_parte"/>
                 </tree>
             </field>
         </record>

@@ -13,6 +13,14 @@ class leulit_helicoptero(models.Model):
     _name = "leulit.helicoptero"
     _description = "leulit_helicoptero"
     _inherit = ['mail.thread']
+
+    def _compute_last_parte(self):
+        for item in self:
+            vuelo = self.env['leulit.vuelo'].search(
+                [('estado', '=', 'cerrado'), ('helicoptero_id', '=', item.id)],
+                limit=1, order='fechavuelo DESC'
+            )
+            item.last_parte_id = vuelo
     
     
     @api.onchange('fechalastWB')
@@ -202,4 +210,6 @@ class leulit_helicoptero(models.Model):
     is_privado = fields.Boolean('Privado')
     pformacion_id = fields.Many2one('leulit.helicoptero', 'Perfil Formación', readonly=False)
     ubicacion = fields.Many2one('stock.location', 'Ubicación')
-    
+    last_parte_id = fields.Many2one('leulit.vuelo', compute='_compute_last_parte', string='Último parte', store=False)
+    date_last_parte = fields.Date(related='last_parte_id.fechavuelo', string='Fecha último parte', store=False)
+    llegada_last_parte = fields.Many2one('leulit.helipuerto', related='last_parte_id.lugarllegada', string='Llegada último parte', store=False)
