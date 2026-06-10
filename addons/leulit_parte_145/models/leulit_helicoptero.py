@@ -21,6 +21,8 @@ class leulit_helicoptero(models.Model):
                 limit=1, order='fechavuelo DESC'
             )
             item.last_parte_id = vuelo
+            item.date_last_parte = vuelo.fechavuelo if vuelo else False
+            item.llegada_last_parte = vuelo.lugarllegada.id if vuelo and vuelo.lugarllegada else False
     
     
     @api.onchange('fechalastWB')
@@ -211,5 +213,5 @@ class leulit_helicoptero(models.Model):
     pformacion_id = fields.Many2one('leulit.helicoptero', 'Perfil Formación', readonly=False)
     ubicacion = fields.Many2one('stock.location', 'Ubicación')
     last_parte_id = fields.Many2one('leulit.vuelo', compute='_compute_last_parte', string='Último parte', store=False)
-    date_last_parte = fields.Date(related='last_parte_id.fechavuelo', string='Fecha último parte', store=False)
-    llegada_last_parte = fields.Many2one('leulit.helipuerto', related='last_parte_id.lugarllegada', string='Llegada último parte', store=False)
+    date_last_parte = fields.Date(compute='_compute_last_parte', string='Fecha último parte', store=False)
+    llegada_last_parte = fields.Many2one('leulit.helipuerto', compute='_compute_last_parte', string='Llegada último parte', store=False)
