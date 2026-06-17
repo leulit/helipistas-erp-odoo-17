@@ -35,7 +35,4 @@ class StockLot(models.Model):
                 'email_values': email_values,
                 'values_flag': True if len(email_values) > 0 else False,
             }
-            email_to = ['almacen@icarus-manteniment.com', 'otecnica@helipistas.com', 'ops@helipistas.com']
-            for email in email_to:
-                email_context['email_to'] = email
-                template.with_context(email_context).send_mail(self.env.user.id, force_send=True)
+            template.with_context(email_context).send_mail(self.env.user.id, force_send=True)
