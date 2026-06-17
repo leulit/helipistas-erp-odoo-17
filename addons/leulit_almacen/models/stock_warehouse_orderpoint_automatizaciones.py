@@ -27,7 +27,8 @@ class StockWarehouseOrderpoint(models.Model):
             # _logger.error('template')
             for item in self.search([]):
                 if item.qty_on_hand + item.qty_opcionales < item.product_min_qty:
-                    name = '['+item.product_id.default_code+'] '+item.product_id.name
+                    code = item.product_id.default_code or ''
+                    name = ('['+code+'] ' if code else '') + item.product_id.name
                     email_values[name] = {
                         'qty': item.qty_on_hand + item.qty_opcionales,
                         'min_qty': item.product_min_qty,
