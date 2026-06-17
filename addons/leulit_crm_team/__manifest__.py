@@ -22,7 +22,6 @@
     'data': [
         'security/crm_security_groups.xml',
         'security/crm_security_rules.xml',
-        # 'views/crm_stage_views.xml',
     ],
     'installable': True,
     'application': False,
