@@ -145,6 +145,7 @@ class leulit_anotacion_technical_log(models.Model):
     install_cineflex = fields.Boolean('Cineflex')
     install_lidar_system = fields.Boolean('Lidar system')
     install_af120 = fields.Boolean('AF120', help="Air Film Camera Systems AF120 Left Side Universal Camera Mount for EC120B.")
+    install_airfilm = fields.Boolean('Airfilm')
 
     remove_dual_control = fields.Boolean('Dual control')
     remove_cargo_hook_mirror = fields.Boolean('Cargo hook and mirror')
@@ -157,6 +158,7 @@ class leulit_anotacion_technical_log(models.Model):
     remove_cineflex = fields.Boolean('Cineflex')
     remove_lidar_system = fields.Boolean('Lidar system')
     remove_af120 = fields.Boolean('AF120', help="Air Film Camera Systems AF120 Left Side Universal Camera Mount for EC120B.")
+    remove_airfilm = fields.Boolean('Airfilm')
 
     def _get_operational_items(self, mode):
         items = []
@@ -183,6 +185,8 @@ class leulit_anotacion_technical_log(models.Model):
                 items.append('Lidar system')
             if self.install_af120:
                 items.append('AF120')
+            if self.install_airfilm:
+                items.append('Airfilm')
         if mode == 'remove':
             if self.remove_floats:
                 items.append('floats')
@@ -206,6 +210,8 @@ class leulit_anotacion_technical_log(models.Model):
                 items.append('Lidar system')
             if self.remove_af120:
                 items.append('AF120')
+            if self.remove_airfilm:
+                items.append('Airfilm')
         return items
 
     def _build_operational_annotation(self):
@@ -235,10 +241,10 @@ class leulit_anotacion_technical_log(models.Model):
         'is_operational', 'fecha', 'flight_id', 'deadline_time',
         'install_floats', 'install_dual_control', 'install_cargo_hook_mirror', 'install_life_raft',
         'install_life_vests_qty', 'install_headsets_qty',
-        'install_tyler', 'install_gss', 'install_cineflex', 'install_lidar_system', 'install_af120',
+        'install_tyler', 'install_gss', 'install_cineflex', 'install_lidar_system', 'install_af120', 'install_airfilm',
         'remove_floats', 'remove_dual_control', 'remove_cargo_hook_mirror', 'remove_life_raft',
         'remove_life_vests_qty', 'remove_headsets_qty',
-        'remove_tyler', 'remove_gss', 'remove_cineflex', 'remove_lidar_system', 'remove_af120',
+        'remove_tyler', 'remove_gss', 'remove_cineflex', 'remove_lidar_system', 'remove_af120', 'remove_airfilm',
     )
     def _onchange_build_annotation(self):
         if not self.is_operational:

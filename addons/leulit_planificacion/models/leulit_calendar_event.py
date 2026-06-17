@@ -45,6 +45,22 @@ class leulit_calendar_event(models.Model):
             if new_name != event.name:
                 event.with_context(skip_validation=True).write({'name': new_name})
 
+    def action_backfill_bomberos_names(self):
+        events = self.env['calendar.event'].search([
+            ('type_event.name', 'in', ['Campaña bomberos', 'Operador Campaña bomberos']),
+            ('start', '>=', fields.Date.today()),
+        ])
+        events._auto_update_name_for_bomberos()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Actualización completada',
+                'message': '{} eventos actualizados.'.format(len(events)),
+                'type': 'success',
+            }
+        }
+
 
     def _resource_fields_values(self, resource_fields):
         resource_commands = []

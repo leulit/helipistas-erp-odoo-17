@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, _
+from odoo import models, fields, _
 from odoo.exceptions import UserError
 
 _LOST_MSG = _(
@@ -11,6 +11,8 @@ _LOST_MSG = _(
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
+
+    medium_id = fields.Many2one(required=True)
 
     def write(self, vals):
         # --- Caso 1: archivado directo (active=False) sin motivo ---

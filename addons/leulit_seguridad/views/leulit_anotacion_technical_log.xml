@@ -72,6 +72,7 @@
                                     <field name="install_tyler" invisible="tipo_helicoptero != 'R44'"/>
                                     <field name="install_gss" invisible="tipo_helicoptero != 'R44'"/>
                                     <field name="install_af120" invisible="tipo_helicoptero != 'EC120B'"/>
+                                    <field name="install_airfilm"/>
                                 </group>
                                 <group string="Remove" readonly="estado in ['pending', 'closed']">
                                     <field name="remove_dual_control"/>
@@ -85,6 +86,7 @@
                                     <field name="remove_tyler" invisible="tipo_helicoptero != 'R44'"/>
                                     <field name="remove_gss" invisible="tipo_helicoptero != 'R44'"/>
                                     <field name="remove_af120" invisible="tipo_helicoptero != 'EC120B'"/>
+                                    <field name="remove_airfilm"/>
                                 </group>
                             </group>
                             <group colspan="2">
