@@ -1,4 +1,5 @@
 from odoo import _, api, fields, models, registry
+from odoo.exceptions import ValidationError
 import logging
 import threading
 
@@ -8,6 +9,36 @@ _logger = logging.getLogger(__name__)
 class MgmtsystemNonconformity(models.Model):
     _inherit = "mgmtsystem.nonconformity"
 
+    motivo_cierre = fields.Text(string="Motivo de Cierre")
+
+    @api.constrains("stage_id")
+    def _check_close_with_evaluation(self):
+        for nc in self:
+            if nc.state == "done":
+                if not nc.motivo_cierre:
+                    raise ValidationError(
+                        _("El Motivo de Cierre es obligatorio para cerrar la No Conformidad. "
+                          "Utilice el botón 'Cerrar NC'.")
+                    )
+                if not nc.immediate_action_id:
+                    raise ValidationError(
+                        _("La Acción Inmediata es obligatoria para cerrar la No Conformidad. "
+                          "Utilice el botón 'Cerrar NC'.")
+                    )
+
+    def action_abrir_wizard_cerrar(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Cerrar No Conformidad"),
+            "res_model": "leulit.wizard.cerrar.nc",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_nc_id": self.id,
+                "default_immediate_action_id": self.immediate_action_id.id or False,
+            },
+        }
 
     @api.depends("description")
     def _compute_short_description(self):

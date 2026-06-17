@@ -55,6 +55,11 @@
         <field name="arch" type="xml">
             <form string="Non-Conformity">
                 <header>
+                    <button name="action_abrir_wizard_cerrar"
+                            string="Cerrar NC"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state in ('done', 'cancel')" />
                     <field name="stage_id" widget="statusbar" options="{'clickable': 1}" />
                     <field name="state" invisible="True" />
                 </header>
@@ -124,6 +129,10 @@
 
                             <group name="effectiveness_review" invisible="state not in 'open' and state not in 'done'" string="Revisión de Efectividad">
                                 <field name="evaluation_comments" readonly="state not in 'open'" nolabel="1" colspan="2" placeholder="Comentarios de Evaluación" />
+                            </group>
+
+                            <group name="cierre_rapido" invisible="state != 'done'" string="Cierre">
+                                <field name="motivo_cierre" readonly="1" nolabel="1" colspan="2" />
                             </group>
                         </page>
                         <page string="Auditorías relacionadas" groups="mgmtsystem.group_mgmtsystem_auditor">

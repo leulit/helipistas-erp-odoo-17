@@ -17,3 +17,4 @@ from . import mgmtsystem_action
 from . import mgmtsystem_hazard
 from . import leulit_wizard_nueva_anotacion
 from . import leulit_wizard_asign_anotacion
+from . import leulit_wizard_cerrar_nc
