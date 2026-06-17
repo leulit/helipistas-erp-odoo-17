@@ -28,7 +28,8 @@ class StockWarehouseOrderpoint(models.Model):
             for item in self.search([]):
                 if item.qty_on_hand + item.qty_opcionales < item.product_min_qty:
                     code = item.product_id.default_code or ''
-                    name = ('['+code+'] ' if code else '') + item.product_id.name
+                    product_name = item.product_id.name or item.product_id.display_name or str(item.product_id.id)
+                    name = ('['+code+'] ' if code else '') + product_name
                     email_values[name] = {
                         'qty': item.qty_on_hand + item.qty_opcionales,
                         'min_qty': item.product_min_qty,
