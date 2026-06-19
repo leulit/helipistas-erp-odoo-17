@@ -48,5 +48,5 @@ class leulit_curso_template(models.Model):
     @api.constrains('ato_mi', 'ato_mo', 'aoc', 'ttaa', 'lci', 'camo', 'p_145', 'nco')
     def _check_at_least_one_boolean(self):
         for record in self:
-            if not (record.ato_mo or record.ato_mi or record.aoc or record.ttaa or record.lci or record.camo or record.p_145):
+            if not (record.ato_mo or record.ato_mi or record.aoc or record.ttaa or record.lci or record.camo or record.p_145 or record.nco):
                 raise ValidationError(_("Debe marcar al menos uno de los siguientes campos: AOC, LCI, ATO MO, ATO MI, TTAA, NCO, CAMO o Parte 145."))
