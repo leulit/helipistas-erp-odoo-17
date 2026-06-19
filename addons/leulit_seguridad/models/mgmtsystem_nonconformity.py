@@ -13,18 +13,20 @@ class MgmtsystemNonconformity(models.Model):
 
     @api.constrains("stage_id")
     def _check_close_with_evaluation(self):
-        for nc in self:
-            if nc.state == "done":
-                if not nc.motivo_cierre:
-                    raise ValidationError(
-                        _("El Motivo de Cierre es obligatorio para cerrar la No Conformidad. "
-                          "Utilice el botón 'Cerrar NC'.")
-                    )
-                if not nc.immediate_action_id:
-                    raise ValidationError(
-                        _("La Acción Inmediata es obligatoria para cerrar la No Conformidad. "
-                          "Utilice el botón 'Cerrar NC'.")
-                    )
+        cierre_rapido = self.filtered(
+            lambda nc: nc.state == "done" and nc.motivo_cierre
+        )
+        for nc in cierre_rapido:
+            if not nc.immediate_action_id:
+                raise ValidationError(
+                    _("La Acción Inmediata es obligatoria para cerrar la No Conformidad "
+                      "con el botón 'Cerrar NC'.")
+                )
+
+        # Para el resto (flujo normal de estados), se mantiene la validación original
+        resto = self - cierre_rapido
+        if resto:
+            super(MgmtsystemNonconformity, resto)._check_close_with_evaluation()
 
     def action_abrir_wizard_cerrar(self):
         self.ensure_one()
