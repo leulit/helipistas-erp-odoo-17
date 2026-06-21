@@ -20,6 +20,7 @@
             <field name="subject">Aviso: límite de actividad aérea superado</field>
             <field name="email_from">erp@helipistas.com</field>
             <field name="email_to">{{ ctx.get('mail_to') }}</field>
+            <field name="email_cc">ops@helipistas.com</field>
             <field name="body_html" type="html">
                 <div>
                     <p>Se ha detectado que se ha superado el tiempo máximo de actividad aérea permitido.</p>
