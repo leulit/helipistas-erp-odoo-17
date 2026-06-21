@@ -16,6 +16,7 @@
     "data": [
         "groups.xml",
         "security.xml",
+        "data/leulit_actividad_aerea_excedida_cron.xml",
         "views/leulit_actividad_base.xml",
         "views/leulit_actividad_base_mes.xml",
         "views/leulit_actividad_base_year.xml",

@@ -284,3 +284,49 @@ class ActividadAerea(models.Model):
 
     def detalle_dias_mes(self):
         return self.detalle_timerange(self._str_dias_mes)
+
+
+    @api.model
+    def _cron_check_actividad_aerea_excedida(self):
+        '''
+        Aviso diario por email a los empleados que el día anterior han superado
+        el tiempo máximo de actividad aérea permitido, con el detalle de las
+        líneas de actividad (leulit.item_actividad_aerea) que componen el total.
+        '''
+        fecha = fields.Date.today() - timedelta(days=1)
+        template = self.env.ref('leulit_actividad.email_template_actividad_aerea_excedida', raise_if_not_found=False)
+        if not template:
+            return
+
+        registros = self.search([('fecha', '=', fecha)])
+        excedidos = registros.filtered(lambda r: round(r.tiempo, 2) > round(r.max_duracion, 2))
+
+        for partner in excedidos.mapped('partner'):
+            if not partner.email:
+                _logger.warning("Actividad aérea excedida el %s para %s pero no tiene email configurado", fecha, partner.name)
+                continue
+
+            dias = []
+            for registro in excedidos.filtered(lambda r: r.partner == partner):
+                lineas = self.env['leulit.item_actividad_aerea'].search([
+                    ('actividad_aerea', '=', registro.id),
+                ], order='inicio ASC')
+                dias.append({
+                    'fecha': registro.fecha,
+                    'tiempo': registro.tiempo,
+                    'max_duracion': registro.max_duracion,
+                    'exceso': registro.tiempo - registro.max_duracion,
+                    'lineas': [{
+                        'tipo_actividad': linea.tipo_actividad or '',
+                        'descripcion': linea.descripcion or '',
+                        'inicio': utilitylib.leulit_float_time_to_str(linea.inicio),
+                        'fin': utilitylib.leulit_float_time_to_str(linea.fin),
+                        'tiempo': linea.tiempo,
+                    } for linea in lineas],
+                })
+
+            email_context = {
+                'mail_to': partner.email,
+                'dias': dias,
+            }
+            template.with_context(email_context).send_mail(self.env.user.id, force_send=True)
