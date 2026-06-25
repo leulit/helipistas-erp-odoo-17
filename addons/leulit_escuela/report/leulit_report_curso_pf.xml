@@ -128,6 +128,7 @@
                                         <span style="font-size:15px"><b style="font-size:15px">Alumno:</b><span t-esc="alumno_nombre"/></span><br/>
                                         <span t-esc="curso['name']"/> - <span t-esc="curso['tiempo']"/> ( Contenido teórico )<br/>
                                         <b>válido desde: <span t-esc="curso['valido_desde']"/> hasta <span t-esc="curso['valido_hasta']"/></b>
+                                        <t t-if="curso['comentario_template']"><br/><b>Comentario:</b> <span t-esc="curso['comentario_template']"/></t>
                                     </th>
                                 </tr>
                                 <tr>
@@ -216,6 +217,7 @@
                                         <span style="font-size:15px"><b style="font-size:15px">Alumno:</b><span t-esc="alumno_nombre"/></span><br/>
                                         <span t-esc="curso['name']"/> ( Contenido práctico )<br/>
                                         <b>válido desde: <span t-esc="curso['valido_desde']"/> hasta <span t-esc="curso['valido_hasta']"/></b>
+                                        <t t-if="curso['comentario_template']"><br/><b>Comentario:</b> <span t-esc="curso['comentario_template']"/></t>
                                     </th>
                                 </tr>
                                 <tr>

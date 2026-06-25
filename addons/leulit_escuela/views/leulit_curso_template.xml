@@ -31,6 +31,9 @@
                             <field name="camo"/>
                             <field name="p_145"/>
                         </group>
+                        <group col="2">
+                            <field name="comentario"/>
+                        </group>
                         <button name="action_create_revision" type="object" string="Crear Edición/Revision" class="oe_highlight"/>
                         <group col="2">
                             <field name="revisiones">

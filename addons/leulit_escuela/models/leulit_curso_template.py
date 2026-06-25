@@ -43,6 +43,7 @@ class leulit_curso_template(models.Model):
     lci = fields.Boolean('LCI')
     camo = fields.Boolean('CAMO')
     p_145 = fields.Boolean('Parte 145')
+    comentario = fields.Text('Comentario')
     revisiones = fields.One2many(comodel_name='leulit.curso', inverse_name='template_id', string='Revisiones')
 
     @api.constrains('ato_mi', 'ato_mo', 'aoc', 'ttaa', 'lci', 'camo', 'p_145', 'nco')

@@ -108,17 +108,17 @@ class leulit_actividad_16bravo_dia(models.Model):
 
 
 
-    def _has_ato(self):       
-        valor = False    
-        for item in self:            
+    def _has_ato(self):
+        valor = False
+        for item in self:
             for actividad in item.actividades_16bravo:
                 if actividad.ato and actividad.escuela:
                     valor = True
             item.has_ato = valor
 
 
-    def _tiempo_aa(self):       
-        for item in self:            
+    def _tiempo_aa(self):
+        for item in self:
             tiempo = 0.0
             _logger.error("-AA--> _tiempo_aa = %r",item)
             for actividad in item.actividades_16bravo:
@@ -150,12 +150,12 @@ class leulit_actividad_16bravo_dia(models.Model):
                             leulit_vuelo.piloto_supervisor_id = {1}
                         )
             '''.format(item.fecha, item.partner.id)
-            row = utilitylib.runQueryReturnOne(self._cr, sql)        
+            row = utilitylib.runQueryReturnOne(self._cr, sql)
             item.time_flight_range1_plan = row['total']
 
     
     fecha = fields.Date('Fecha', index=True)
-    fecha_inicio = fields.Datetime('Fecha inico')
+    fecha_inicio = fields.Datetime('Fecha inicio')
     fecha_fin = fields.Datetime('Fecha fin')
     prevista = fields.Boolean('Prevista')
     partner = fields.Many2one('res.partner', 'Partner', ondelete='restrict', index=True)
@@ -167,7 +167,7 @@ class leulit_actividad_16bravo_dia(models.Model):
     tiempo_act = fields.Float("Tiempo actividad")
     tiempo_desc_parcial = fields.Float("Tiempo descanso_parcial actividad aérea")
     tiempo_amplia = fields.Float("Tiempo amplicación actividad aérea", digits=(16, 2))
-    tiempo_aa = fields.Float(compute=_tiempo_aa, store=False, string="Tiempo Act. Aérea")  
+    tiempo_aa = fields.Float(compute=_tiempo_aa, store=False, string="Tiempo Act. Aérea")
 
     max_duracion = fields.Float("Duración máxima actividad", digits=(16, 2))
     actividades_16bravo = fields.One2many('leulit.actividad_16bravo', 'actividad_16bravo_dia_id', 'Actividad 16bravo día')
@@ -177,7 +177,7 @@ class leulit_actividad_16bravo_dia(models.Model):
     valid_dias_trabajados_mes = fields.Char('Días trabajados mes ok')
 
     valid_activity_time = fields.Char(string='Tiempo actividad aérea valido')
-    has_ato = fields.Boolean(compute=_has_ato, store=False, string="ATO")    
+    has_ato = fields.Boolean(compute=_has_ato, store=False, string="ATO")
 
     #time_flight_range1 = fields.Float(string="TV 28d",type="float", digits=(16, 2))    
     time_flight_range1 = fields.Float(compute=_time_flight_range1,string="TV 28d",store=False, digits=(16, 2))
@@ -185,7 +185,7 @@ class leulit_actividad_16bravo_dia(models.Model):
     time_flight_range2 = fields.Float(string="TV 12 m.",type="float", digits=(16, 2))
     valid_time_flight_range2 = fields.Char('12 m. ok')
     time_flight_range3 = fields.Float(string="TV 3 m.",type="float", digits=(16, 2))
-    valid_time_flight_range3 = fields.Char('3 m. ok')    
+    valid_time_flight_range3 = fields.Char('3 m. ok')
 
     dias_tabajados_mes = fields.Integer('Dias Tr. mes')
     valid_dias_tabajados_mes = fields.Char('Días trabajados mes ok')

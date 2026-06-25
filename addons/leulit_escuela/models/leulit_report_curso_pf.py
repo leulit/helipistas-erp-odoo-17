@@ -39,6 +39,7 @@ class leulit_report_curso_pf(models.AbstractModel):
                 objdatos = {
                     'id': curso.id,
                     'name': curso.name,
+                    'comentario_template': curso.template_id.comentario if curso.template_id else '',
                     'silabus_teoria': [],
                     'silabus_practica': [],
                     'tiempo' : "00:00",
