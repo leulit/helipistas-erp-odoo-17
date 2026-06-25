@@ -21,6 +21,9 @@
                 <xpath expr="//label[@for='commitment_date']" position="attributes">
                     <attribute name="string">Fecha de entrega/servicio</attribute>
                 </xpath>
+                <xpath expr="//field[@name='commitment_date']" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='date_order']" position="after">
                     <label for="commitment_date" position="move"/>
                     <field name="commitment_date" position="move"/>
