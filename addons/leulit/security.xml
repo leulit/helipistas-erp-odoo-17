@@ -11,6 +11,16 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
+    <record id="leulit_20260630_1210_access_permission" model="ir.model.access">
+        <field name="name">hr.employee.public RContabilidad_Adjunto_base</field>
+        <field name="model_id" ref="hr.model_hr_employee_public"/>
+        <field name="group_id" ref="RContabilidad_Adjunto_base"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
     <record id="leulit_20210519_1325_access_permission" model="ir.model.access">
         <field name="name">leulit historial circular</field>
         <field name="model_id" ref="model_leulit_historial_circular"/>
