@@ -107,7 +107,7 @@
                 id="leulit_20260630_1200_menuitem"
                 name="Informes de gastos"
                 parent="leulit_20201014_1008_menuitem"
-                action="hr_expense.action_hr_expense_sheet_all"
+                action="leulit_20260630_1200_action"
                 sequence="2"
                 groups="RContabilidad_Adjunto_base"
             />
