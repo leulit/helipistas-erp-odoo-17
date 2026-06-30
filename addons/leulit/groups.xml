@@ -187,6 +187,16 @@
         </record>
 
 
+        <record model="ir.module.category" id="contabilidad_adjunto_rol_category">
+            <field name="name">Rol Contabilidad Adjunto</field>
+            <field name="description">Rol Contabilidad Adjunto</field>
+        </record>
+        <record id="RContabilidad_Adjunto_base" model="res.groups">
+            <field name="name">Base</field>
+            <field name="category_id" ref="contabilidad_adjunto_rol_category"/>
+        </record>
+
+
 
         
     </data>

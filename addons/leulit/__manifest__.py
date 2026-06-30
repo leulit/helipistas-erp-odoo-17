@@ -29,6 +29,7 @@
     ],
     "data": [
         "groups.xml",
+        "roles_2026.xml",
         "security.xml",
         "paperformats.xml",
         "views/res_config_settings.xml",
