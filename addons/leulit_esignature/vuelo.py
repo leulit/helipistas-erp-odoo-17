@@ -375,6 +375,10 @@ class leulit_vuelo(models.Model):
             inicioitems = min(inicioitems, itemvul.horasalida)
             finitems = max(finitems, itemvul.horallegada)
         
+        _logger.error('############# verificar_actividad_aerea  -->  PARTNER: %s (id=%r)', partner.name, partner.id)
+        _logger.error('############# verificar_actividad_aerea  -->  VUELOS (%d):', len(items_vul))
+        for dbg_v in items_vul:
+            _logger.error('############# verificar_actividad_aerea  -->    [id=%r] salida=%r llegada=%r tipo=%r', dbg_v.id, dbg_v.horasalida, dbg_v.horallegada, dbg_v.tipo_actividad)
         _logger.error('############# verificar_actividad_aerea  -->  max_duracion %r',max_duracion)
         _logger.error('############# verificar_actividad_aerea  -->  tiempo_amplia %r',tiempo_amplia)
         _logger.error('############# verificar_actividad_aerea  -->  finitems %r',finitems)
