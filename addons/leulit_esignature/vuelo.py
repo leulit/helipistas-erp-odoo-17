@@ -330,13 +330,29 @@ class leulit_vuelo(models.Model):
     def verificar_actividad_aerea(self, fecha, partner):
         o_aa = self.env['leulit.actividad_aerea']
         o_vul = self.env['leulit.vuelo']
-        vuls = o_vul.search([('estado','=','cerrado'),('fechavuelo','=',fecha),'|','|','|',('piloto_id','=',partner.getPiloto()),('operador','=',partner.getOperador()),('verificado','=',partner.getPiloto()),('alumno','=',partner.getAlumno())], order="fechavuelo ASC, horasalida ASC")
-        if not partner.getOperador():
-            vuls = o_vul.search([('estado','=','cerrado'),('fechavuelo','=',fecha),'|','|',('piloto_id','=',partner.getPiloto()),('verificado','=',partner.getPiloto()),('alumno','=',partner.getAlumno())], order="fechavuelo ASC, horasalida ASC")
-        if vuls:
-            items_vul = o_vul.search(['|',('id','in',vuls.ids),('id','=',self.id)])
+        piloto_id = partner.getPiloto()
+        operador_id = partner.getOperador()
+        alumno_id = partner.getAlumno() if hasattr(partner, 'getAlumno') else None
+        # Solo añadir condiciones para roles que el partner realmente tiene,
+        # evitar None/False que en Odoo matchea "campo vacío" y recoge vuelos ajenos
+        role_clauses = []
+        if piloto_id:
+            role_clauses.append(('piloto_id', '=', piloto_id))
+            role_clauses.append(('verificado', '=', piloto_id))
+        if operador_id:
+            role_clauses.append(('operador', '=', operador_id))
+        if alumno_id:
+            role_clauses.append(('alumno', '=', alumno_id))
+        if role_clauses:
+            or_prefixes = ['|'] * (len(role_clauses) - 1)
+            domain = [('estado', '=', 'cerrado'), ('fechavuelo', '=', fecha)] + or_prefixes + role_clauses
+            vuls = o_vul.search(domain, order="horasalida ASC")
         else:
-            items_vul = o_vul.search([('id','=',self.id)])
+            vuls = o_vul.browse()
+        if vuls:
+            items_vul = (vuls | self).sorted(key=lambda v: v.horasalida)
+        else:
+            items_vul = self
         max_duracion = 0.0
         tiempo_desc_parcial = 0.0
         tiempo_amplia = 0.0
