@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Roles definidos en "Roles ERP Ed1 06_2026.xlsx" (auditoría EASA/calidad).
+            Grupos nuevos e independientes de los roles legacy (RBase_*, ROperaciones_*, etc.)
+            para permitir un traspaso manual y controlado de usuarios al nuevo esquema de roles.
+        -->
+        <record model="ir.module.category" id="roles_2026_category">
+            <field name="name">Roles ERP 2026</field>
+            <field name="description">Roles definidos en la matriz de permisos Roles ERP Ed1 06_2026</field>
+            <field name="sequence">6</field>
+        </record>
+
+        <record id="role_dr" model="res.groups">
+            <field name="name">DR - Director</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rs" model="res.groups">
+            <field name="name">RS - Responsable Seguridad</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rs_adjunto" model="res.groups">
+            <field name="name">Adjunto RS - Adjunto Seguridad</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rsi" model="res.groups">
+            <field name="name">RSI - Responsable Seguridad de la Información</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_it" model="res.groups">
+            <field name="name">IT - Desarrollo</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rov" model="res.groups">
+            <field name="name">ROV - Responsable Operaciones Vuelo</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_ret" model="res.groups">
+            <field name="name">RET - Responsable Entrenamientos en Tierra</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rot" model="res.groups">
+            <field name="name">ROT - Responsable Operaciones Tierra</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_ht" model="res.groups">
+            <field name="name">HT - Head Training (Director Escuela)</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_ctki" model="res.groups">
+            <field name="name">CTKI - Responsable Teórica Escuela</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rcc" model="res.groups">
+            <field name="name">RCC - Responsable Calidad</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_rcc_adjunto" model="res.groups">
+            <field name="name">Adjunto RCC - Adjunto Calidad</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_camo_responsable" model="res.groups">
+            <field name="name">Resp. CAMO - Responsable CAMO</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_camo" model="res.groups">
+            <field name="name">CAMO</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_145_responsable" model="res.groups">
+            <field name="name">Resp.145 - Responsable Parte 145</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_piloto_helipistas" model="res.groups">
+            <field name="name">Piloto Helipistas</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_piloto_campania" model="res.groups">
+            <field name="name">Piloto Campaña</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_operador_campania" model="res.groups">
+            <field name="name">Operador Campaña</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_piloto_externo" model="res.groups">
+            <field name="name">Piloto Externo (Privado)</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_profesor_escuela" model="res.groups">
+            <field name="name">Profesor Escuela</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_alumno" model="res.groups">
+            <field name="name">Alumno</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_comercial_externo" model="res.groups">
+            <field name="name">Comercial Externo</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_comercial" model="res.groups">
+            <field name="name">Comercial</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_contabilidad" model="res.groups">
+            <field name="name">Contabilidad</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_mecanico" model="res.groups">
+            <field name="name">Mecánico</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <record id="role_resp_almacen" model="res.groups">
+            <field name="name">Resp. Almacén</field>
+            <field name="category_id" ref="roles_2026_category"/>
+        </record>
+
+        <!--
+            DR tiene acceso total (AT) en prácticamente todas las filas del Excel.
+            En vez de repetir permisos en cada modelo/menú, hereda el resto de roles 2026.
+        -->
+        <record id="role_dr" model="res.groups">
+            <field name="implied_ids" eval="[(6, 0, [
+                ref('role_rs'), ref('role_rs_adjunto'), ref('role_rsi'), ref('role_it'),
+                ref('role_rov'), ref('role_ret'), ref('role_rot'), ref('role_ht'), ref('role_ctki'),
+                ref('role_rcc'), ref('role_rcc_adjunto'), ref('role_camo_responsable'), ref('role_camo'),
+                ref('role_145_responsable'), ref('role_piloto_helipistas'), ref('role_piloto_campania'),
+                ref('role_operador_campania'), ref('role_piloto_externo'), ref('role_profesor_escuela'),
+                ref('role_alumno'), ref('role_comercial_externo'), ref('role_comercial'),
+                ref('role_contabilidad'), ref('role_mecanico'), ref('role_resp_almacen'),
+            ])]"/>
+        </record>
+
+    </data>
+</odoo>
