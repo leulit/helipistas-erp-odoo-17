@@ -148,7 +148,7 @@ class Anomalia(models.Model):
                 'strairtime' : item.strairtime,
                 'estado' : item.estado,
 
-                'fechavuelo' : item.fechavuelo if item.fechavuelo else "N/A",
+                'fechavuelo' : item.vuelo_id.fechavuelo if item.vuelo_id and item.vuelo_id.fechavuelo else "N/A",
                 'lugarllegada' : item.lugarllegada.name if item.lugarllegada else "N/A",
                 'lugarsalida' : item.lugarsalida.name if item.lugarsalida else "N/A",
                 'horasalida' : item.horasalida if item.horasalida else "Unk.",
