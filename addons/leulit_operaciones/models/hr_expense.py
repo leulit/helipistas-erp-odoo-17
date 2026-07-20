@@ -37,8 +37,8 @@ class HrExpense(models.Model):
             if self.product_id.name == 'Plus Festivo/Nacional':
                 self.sudo().tax_ids = [(5, 0, 0)]
                 if self.employee_id:
-                    self.sudo().price_unit = self.employee_id.plus_festivo_nacional
-                    self.sudo().total_amount_currency = self.employee_id.plus_festivo_nacional
+                    self.sudo().price_unit = self.employee_id.sudo().plus_festivo_nacional
+                    self.sudo().total_amount_currency = self.employee_id.sudo().plus_festivo_nacional
 
 
     piloto_id = fields.Many2one(compute=_get_piloto, comodel_name="leulit.piloto", string="Piloto")
