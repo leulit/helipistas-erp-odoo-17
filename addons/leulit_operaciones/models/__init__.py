@@ -7,6 +7,7 @@ from . import ir_attachment
 from . import leulit_piloto_adjunto
 from . import sale_order
 from . import hr_expense
+from . import hr_employee
 from . import leulit_freelance_actividad_aerea
 from . import leulit_wizard_freelance_actividad_aerea
 from . import res_users

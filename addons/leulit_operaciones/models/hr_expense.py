@@ -14,12 +14,14 @@ class HrExpense(models.Model):
         for item in self:
             item.piloto_id = self.env['leulit.piloto'].search([('employee', '=', item.employee_id.id)], limit=1)
 
-    @api.depends('product_id')
+    @api.depends('product_id', 'piloto_id', 'employee_id')
     def _compute_is_dieta_pernocta(self):
         for item in self:
             item.is_dieta_pernocta = False
-            if item.piloto_id:
-                item.is_dieta_pernocta = item.product_id.name in ['Dieta con pernocta', 'Dieta sin pernocta', 'Plus Festivo/Nacional']
+            if item.product_id.name in ['Dieta con pernocta', 'Dieta sin pernocta'] and item.piloto_id:
+                item.is_dieta_pernocta = True
+            elif item.product_id.name == 'Plus Festivo/Nacional' and item.employee_id:
+                item.is_dieta_pernocta = True
 
     @api.onchange('product_id', 'date')
     def _onchange_product_id_date(self):
@@ -33,9 +35,9 @@ class HrExpense(models.Model):
                         self.sudo().price_unit = self.piloto_id.dieta_tb
                         self.sudo().total_amount_currency = self.piloto_id.dieta_tb
             if self.product_id.name == 'Plus Festivo/Nacional':
-                if self.piloto_id:
-                    self.sudo().price_unit = self.piloto_id.plus_activacion 
-                    self.sudo().total_amount_currency = self.piloto_id.plus_activacion 
+                if self.employee_id:
+                    self.sudo().price_unit = self.employee_id.plus_festivo_nacional
+                    self.sudo().total_amount_currency = self.employee_id.plus_festivo_nacional
 
 
     piloto_id = fields.Many2one(compute=_get_piloto, comodel_name="leulit.piloto", string="Piloto")

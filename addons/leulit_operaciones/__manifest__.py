@@ -22,6 +22,7 @@
         "views/leulit_piloto_adjunto.xml",
         "views/sale_order.xml",
         "views/hr_expense.xml",
+        "views/hr_employee.xml",
         "views/leulit_piloto.xml",
         "views/leulit_ruta.xml",
         "views/leulit_ruta_aerovia.xml",
