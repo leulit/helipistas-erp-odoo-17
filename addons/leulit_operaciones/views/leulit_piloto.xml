@@ -23,7 +23,6 @@
                             <field name="firma" widget="image" class="oe_avatar oe_left"/>
                             <field name="dieta_ta" groups="leulit.ROperaciones_gestor"/>
                             <field name="dieta_tb" groups="leulit.ROperaciones_gestor"/>
-                            <field name="plus_activacion" groups="leulit.ROperaciones_gestor"/>
                             <field name="supervisor_privados" groups="leulit.ROperaciones_gestor"/>
                         </group>
                         <notebook>
