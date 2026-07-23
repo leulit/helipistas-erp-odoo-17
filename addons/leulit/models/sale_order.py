@@ -33,10 +33,11 @@ class sale_order(models.Model):
     
     def action_confirm_without_delivery(self):
         self = self.with_context(skip_delivery=True)
-        if self._get_forbidden_state_confirm() & set(self.mapped('state')):
+        forbidden_states = {'sale', 'done', 'cancel'}
+        if forbidden_states & set(self.mapped('state')):
             raise UserError(_(
                 'It is not allowed to confirm an order in the following states: %s'
-            ) % (', '.join(self._get_forbidden_state_confirm())))
+            ) % (', '.join(forbidden_states)))
         for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
             order.message_subscribe([order.partner_id.id])
         self.write(self._prepare_confirmation_values())
