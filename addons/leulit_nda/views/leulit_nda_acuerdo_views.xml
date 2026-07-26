@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_nda_acuerdo_form_view" model="ir.ui.view">
+            <field name="name">leulit.nda.acuerdo.form</field>
+            <field name="model">leulit.nda.acuerdo</field>
+            <field name="arch" type="xml">
+                <form string="Acuerdo NDA">
+                    <sheet>
+                        <group>
+                            <field name="version"/>
+                            <field name="active"/>
+                        </group>
+                        <field name="contenido"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_nda_acuerdo_tree_view" model="ir.ui.view">
+            <field name="name">leulit.nda.acuerdo.tree</field>
+            <field name="model">leulit.nda.acuerdo</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="version"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="leulit_nda_acuerdo_action" model="ir.actions.act_window">
+            <field name="name">Acuerdo NDA</field>
+            <field name="res_model">leulit.nda.acuerdo</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="leulit_nda_acuerdo_menuitem"
+            name="Acuerdo NDA"
+            parent="leulit.leulit_20200818_1028_menuitem"
+            action="leulit_nda_acuerdo_action"
+            groups="leulit.RBase_hide"
+            sequence="90"
+        />
+
+    </data>
+</odoo>

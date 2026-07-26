@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="leulit_nda_acuerdo_inicial" model="leulit.nda.acuerdo">
+            <field name="version">0.1 (placeholder)</field>
+            <field name="contenido" type="html">
+                <div>
+                    <p><strong>[SUSTITUIR POR EL TEXTO LEGAL DEFINITIVO DEL ACUERDO DE CONFIDENCIALIDAD]</strong></p>
+                    <p>Este es un texto de ejemplo. Un administrador debe editar este contenido desde
+                    el menú Helipistas &gt; Acuerdo NDA antes de poner en producción el bloqueo de acceso.</p>
+                    <p>El presente acuerdo de confidencialidad (NDA) tiene por objeto establecer las
+                    condiciones bajo las cuales el usuario se compromete a mantener la confidencialidad
+                    de la información a la que tenga acceso en el desempeño de sus funciones.</p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

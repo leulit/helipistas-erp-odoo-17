@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="pagina_acuerdo" name="Acuerdo NDA">
+            <t t-call="web.frontend_layout">
+                <t t-set="no_header" t-value="True"/>
+                <t t-set="no_footer" t-value="True"/>
+                <div class="container py-5" style="max-width: 800px;">
+                    <div class="card" id="nda_acuerdo_page">
+                        <div class="card-body">
+                            <h2 class="mb-4">Acuerdo de Confidencialidad (NDA)</h2>
+                            <div class="nda_contenido mb-4" t-out="acuerdo.contenido"/>
+                            <div class="text-end">
+                                <button id="nda_btn_firmar" type="button" class="btn btn-primary">Firmar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nda_modal_overlay" class="nda_modal_overlay" style="display:none;">
+                    <div class="nda_modal_box">
+                        <div id="nda_modal_step_info">
+                            <p>En breve recibirás un email con un código de 6 cifras para firmar el acuerdo.</p>
+                            <p class="text-muted small">Enviando código...</p>
+                        </div>
+                        <div id="nda_modal_step_codigo" style="display:none;">
+                            <p>Introduce el código de 6 cifras que has recibido por email:</p>
+                            <input type="text" id="nda_input_codigo" class="form-control mb-3" maxlength="6" inputmode="numeric" autocomplete="one-time-code"/>
+                            <div id="nda_codigo_error" class="alert alert-danger" style="display:none;"></div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button id="nda_btn_verificar" type="button" class="btn btn-primary">Validar código</button>
+                            </div>
+                        </div>
+                        <div id="nda_modal_step_ok" style="display:none;">
+                            <p>NDA firmado correctamente. Recibirás el acuerdo firmado por email en breve.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <script type="text/javascript"><![CDATA[
+(function () {
+    "use strict";
+
+    function jsonRpc(url, params) {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                method: "call",
+                params: params || {},
+                id: Math.floor(Math.random() * 1000000000),
+            }),
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            if (data.error) {
+                throw new Error(
+                    (data.error.data && data.error.data.message) || data.error.message || "Error inesperado"
+                );
+            }
+            return data.result;
+        });
+    }
+
+    function showStep(stepId) {
+        ["nda_modal_step_info", "nda_modal_step_codigo", "nda_modal_step_ok"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.style.display = id === stepId ? "block" : "none";
+            }
+        });
+    }
+
+    function showError(message) {
+        var errorEl = document.getElementById("nda_codigo_error");
+        if (errorEl) {
+            errorEl.textContent = message;
+            errorEl.style.display = "block";
+        }
+    }
+
+    function hideError() {
+        var errorEl = document.getElementById("nda_codigo_error");
+        if (errorEl) {
+            errorEl.style.display = "none";
+        }
+    }
+
+    function init() {
+        var btnFirmar = document.getElementById("nda_btn_firmar");
+        var btnVerificar = document.getElementById("nda_btn_verificar");
+        var overlay = document.getElementById("nda_modal_overlay");
+        var input = document.getElementById("nda_input_codigo");
+
+        if (!btnFirmar || !overlay) {
+            return;
+        }
+
+        btnFirmar.addEventListener("click", function () {
+            overlay.style.display = "flex";
+            showStep("nda_modal_step_info");
+            btnFirmar.disabled = true;
+
+            jsonRpc("/nda/enviar_codigo").then(function (result) {
+                btnFirmar.disabled = false;
+                if (result && result.ok) {
+                    showStep("nda_modal_step_codigo");
+                    hideError();
+                    input.value = "";
+                    input.focus();
+                } else {
+                    overlay.style.display = "none";
+                    window.alert((result && result.error) || "No se ha podido enviar el código.");
+                }
+            }).catch(function (err) {
+                btnFirmar.disabled = false;
+                overlay.style.display = "none";
+                window.alert(err.message);
+            });
+        });
+
+        btnVerificar.addEventListener("click", function () {
+            var codigo = (input.value || "").trim();
+            hideError();
+            btnVerificar.disabled = true;
+
+            jsonRpc("/nda/verificar_codigo", { codigo: codigo }).then(function (result) {
+                btnVerificar.disabled = false;
+                if (result && result.ok) {
+                    showStep("nda_modal_step_ok");
+                    setTimeout(function () {
+                        window.location.href = "/web";
+                    }, 2500);
+                } else {
+                    showError((result && result.error) || "Código incorrecto. Vuelve a intentarlo o contacta con el administrador del sistema.");
+                }
+            }).catch(function (err) {
+                btnVerificar.disabled = false;
+                showError(err.message);
+            });
+        });
+
+        input.addEventListener("keydown", function (ev) {
+            if (ev.key === "Enter") {
+                btnVerificar.click();
+            }
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
+})();
+                ]]></script>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_nda_report" model="ir.actions.report">
+            <field name="name">Acuerdo NDA firmado</field>
+            <field name="model">res.users</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">leulit_nda.leulit_nda_report_template</field>
+            <field name="report_file">leulit_nda.leulit_nda_report_template</field>
+            <field name="print_report_name">'Acuerdo NDA firmado - %s' % (object.name or '')</field>
+        </record>
+
+        <template id="leulit_nda_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Acuerdo de Confidencialidad (NDA)</h2>
+                            <div t-out="env['leulit.nda.acuerdo'].sudo().get_current().contenido"/>
+                            <table class="table table-sm mt-4" style="width:100%;">
+                                <tr>
+                                    <td><strong>Firmante:</strong></td>
+                                    <td t-out="doc.name"/>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td t-out="doc.email"/>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha de firma:</strong></td>
+                                    <td t-out="doc.nda_fecha_firma"/>
+                                </tr>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

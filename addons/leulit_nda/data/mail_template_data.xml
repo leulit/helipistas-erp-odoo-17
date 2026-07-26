@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="mail_template_nda_codigo" model="mail.template">
+            <field name="name">NDA - Código de Seguridad</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Código de seguridad para firmar el acuerdo NDA</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-size: 13px;">
+                    <p>Estimado/a <t t-out="object.name"></t>,</p>
+                    <p>Su código de seguridad para firmar el acuerdo de confidencialidad (NDA) es: <strong><t t-out="object.nda_codigo"></t></strong></p>
+                    <p>Este código caduca en 15 minutos. Introdúzcalo en la página de firma para completar el proceso.</p>
+                    <p>Si usted no ha solicitado este código, ignore este mensaje o contacte con el administrador del sistema.</p>
+                    <p>Gracias,</p>
+                    <p>El equipo de Helipistas</p>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_nda_firmado" model="mail.template">
+            <field name="name">NDA - Acuerdo Firmado</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">Acuerdo NDA firmado</field>
+            <field name="email_from">erp@helipistas.com</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-size: 13px;">
+                    <p>Estimado/a <t t-out="object.name"></t>,</p>
+                    <p>Le confirmamos que ha firmado correctamente el acuerdo de confidencialidad (NDA) con fecha <t t-out="object.nda_fecha_firma"></t>.</p>
+                    <p>Adjunto encontrará el documento firmado en formato PDF.</p>
+                    <p>Gracias,</p>
+                    <p>El equipo de Helipistas</p>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>
