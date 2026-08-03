@@ -9,4 +9,5 @@
 /scripts
 .claude
 claude.md
+!CLAUDE.md
 .DS_Store

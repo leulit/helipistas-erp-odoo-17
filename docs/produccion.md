@@ -1,0 +1,205 @@
+# Instalación en servidor (AWS EC2)
+
+Este documento describe la instalación de producción del ERP en la instancia EC2 de AWS.
+
+## Resumen
+
+- **Orquestación:** Docker Compose
+- **Almacenamiento persistente:** EFS montado en `/efs/HELIPISTAS-ODOO-17`
+- **Definición de infraestructura en el repo:** [`dockerserver/`](../dockerserver) (`docker-compose.yml` + `Dockerfile`)
+
+> `dockerserver/` es la configuración de **producción** (rutas `/efs/...`, nginx + certbot). No confundir con `docker/`, que es el entorno de desarrollo local (volúmenes Docker nombrados, sin nginx).
+
+## Infraestructura AWS
+
+- **Instancia EC2:** `erp.helipistas.com` (`54.228.16.152`), tipo `t3.medium`, región `eu-west-1` (AZ `eu-west-1b`). Security groups: consultar consola AWS, no versionados aquí.
+- **Acceso SSH:** usuario `ec2-user`, key pair (`.pem`), directo a la IP anterior (sin bastion). La custodia de la clave privada no está documentada en este repo.
+- **EFS:** `fs-ec7152d9` (`eu-west-1`), montaje directo por NFSv4.1 (sin access point) vía `/etc/fstab`:
+  ```
+  fs-ec7152d9.efs.eu-west-1.amazonaws.com:/ /efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0
+  ```
+  `/efs/HELIPISTAS-ODOO-17/` es un subdirectorio de ese filesystem, montado en `/efs`; no hay un access point específico para él.
+- **Backups:** plan de AWS Backup, diario, retención 7 días, sobre el EFS completo (cubre `postgres/` y `filestore/`).
+
+## Ubicación de ficheros en el servidor
+
+Todo el estado persistente vive en el EFS, bajo `/efs/HELIPISTAS-ODOO-17/`:
+
+```
+/efs/HELIPISTAS-ODOO-17/
+├── docker-compose.yml                                    # copia desplegada de dockerserver/docker-compose.yml
+├── postgres/                                              # datos de PostgreSQL (PGDATA)
+├── odoo/
+│   ├── conf/                                              # odoo.conf montado en /etc/odoo dentro del contenedor
+│   ├── addons/
+│   │   └── helipistas-erp-odoo-17/addons/                 # checkout de este repo (carpeta addons/) → /mnt/extra-addons
+│   ├── filestore/                                         # ir.attachment / filestore de Odoo
+│   └── sessiones/                                         # sesiones de usuario
+├── nginx/
+│   ├── conf/default.conf                                  # config de nginx (no versionada en el repo)
+│   └── ssl/
+├── certbot/
+│   ├── www/                                                # webroot para el challenge HTTP-01
+│   └── conf/                                               # certificados Let's Encrypt (/etc/letsencrypt)
+```
+
+## Contenedores
+
+Definidos en [`dockerserver/docker-compose.yml`](../dockerserver/docker-compose.yml):
+
+| Servicio | Imagen | Contenedor | Puertos | Descripción |
+|---|---|---|---|---|
+| `postgresOdoo16` | `postgres:15` | `helipistas_postgres` | `5432:5432` | Base de datos |
+| `helipistas_odoo` | build local (`dockerserver/Dockerfile`, base `odoo:17.0`) | `helipistas_odoo` | `8069`, `8082`, `8072` | Odoo 17 |
+| `nginx` | `nginx:latest` | `helipistas_nginx` | `80`, `443` | Proxy inverso / TLS |
+| `certbot` | `certbot/certbot` | `helipistas_certbot` | — | Renovación automática de certificados (cada 12h) |
+| `helipistas_n8n` | `helipistas/n8n:1.0.0` | `helipistas_n8n` | `5678` | Automatizaciones (n8n) — acceso directo por IP:5678, ver nota abajo |
+| `metabase` | `metabase/metabase:latest` | `metabase_app` | `3000` | BI/analítica (Metabase) — acceso directo por IP:3000, ver nota abajo |
+
+Todos los servicios comparten la red bridge `helipistas_network`.
+
+### Imagen de Odoo (`dockerserver/Dockerfile`)
+
+- Base: `odoo:17.0`
+- Locale `es_ES.UTF-8` + fuentes `fonts-dejavu-core` (necesario para generación de PDFs/reports con caracteres en español)
+- Paquetes Python adicionales: `pypdf`, `pyqrcode`, `pyotp`, `pypng`
+
+### Variables de entorno del contenedor Odoo
+
+Definidas directamente en `docker-compose.yml` (no hay `.env` en el repo para producción):
+
+- `HOST=postgresOdoo16`, `USER=odoo`, `PASSWORD=helipistas@2025`
+- `ODOO_LONGPOLLING_PORT=8072`
+- `LANG=es_ES.UTF-8`, `LANGUAGE=es_ES:es`, `LC_ALL=es_ES.UTF-8`
+
+> La contraseña de PostgreSQL está en claro en el `docker-compose.yml`. Pendiente de mover a secret/`.env` si se quiere endurecer.
+
+## Addons
+
+El volumen `/efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17/addons` en el servidor corresponde a la carpeta [`addons/`](../addons) de este repositorio (checkout de la rama desplegada), montado en `/mnt/extra-addons` dentro del contenedor.
+
+Módulos propios: `leulit`, `leulit_actividad`, `leulit_almacen`, `leulit_calidad`, `leulit_camo`, `leulit_comercial`, `leulit_crm_team`, `leulit_encuestas`, `leulit_escuela`, `leulit_esignature`, `leulit_groups_manager`, `leulit_hide_menus`, `leulit_ia`, `leulit_meteo`, `leulit_nda`, `leulit_operaciones`, `leulit_parte_145`, `leulit_partis`, `leulit_planificacion`, `leulit_seguridad`, `leulit_taller`, `leulit_tarea`, `leulit_trabajador_externo`, `leulit_user_impersonate`, más `maintenance_equipment_changes` y `third-party-addons/`.
+
+## nginx: dominios servidos
+
+`nginx/conf/default.conf` (no versionado en el repo) solo tiene virtual host para `erp.helipistas.com`, con redirect HTTP→HTTPS y proxy a Odoo (`8069`) + websocket (`8072`):
+
+```nginx
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name erp.helipistas.com;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# HTTPS configuration with Let's Encrypt
+server {
+    listen 443 ssl;
+    server_name erp.helipistas.com;
+
+    client_max_body_size 100M;
+
+    ssl_certificate /etc/letsencrypt/live/erp.helipistas.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.helipistas.com/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    location / {
+        proxy_pass http://helipistas_odoo:8069;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_connect_timeout 720s;
+        proxy_send_timeout 720s;
+        proxy_read_timeout 720s;
+    }
+
+    location /websocket {
+        proxy_pass http://helipistas_odoo:8072;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
+    }
+
+    location ~* /web/static/ {
+        proxy_pass http://helipistas_odoo:8069;
+        proxy_cache_valid 200 60m;
+        proxy_buffering on;
+        expires 864000;
+    }
+}
+```
+
+`erp17.helipistas.com` no tiene virtual host propio pese a estar mencionado como dominio de la app en otros sitios del repo/histórico.
+
+**⚠️ Riesgo pendiente:** `helipistas_n8n` (env `N8N_HOST=n8n.helipistas.com`, `WEBHOOK_URL=https://n8n.helipistas.com/`) y `metabase` (`MB_SITE_URL=https://metabase.helipistas.com`) están configurados como si fueran a exponerse por nginx con dominio y TLS, pero en la práctica se acceden hoy directamente por `http://54.228.16.152:5678` y `http://54.228.16.152:3000` — HTTP plano, sin certificado, con el puerto abierto en el security group. Pendiente: darles virtual host + TLS en nginx (y cerrar el puerto directo), o al menos ajustar esas env vars a la realidad actual.
+
+## Certificados TLS: renovación y recarga de nginx
+
+El contenedor `certbot` renueva el certificado de `erp.helipistas.com` cada 12h (`certbot renew` en bucle, ver entrypoint en `dockerserver/docker-compose.yml`); no hay certificados emitidos para `erp17.helipistas.com` ni `metabase.helipistas.com` (ver riesgo pendiente arriba). Certbot **no lleva `--deploy-hook`**: al renovar solo actualiza los ficheros en `/efs/HELIPISTAS-ODOO-17/certbot/conf`, no le avisa a nginx. nginx solo lee el certificado al arrancar o al recargar (`nginx -s reload`), así que si el contenedor `helipistas_nginx` lleva mucho tiempo sin reiniciarse, sigue sirviendo el certificado **viejo** aunque haya uno nuevo válido en disco.
+
+Esto causó una caída real: el 2026-08-03, con `helipistas_nginx` con 5 meses de uptime sin recargar, el certificado servido (emitido el 2026-05-05, válido 90 días) caducó mientras el certificado ya renovado en disco (válido hasta 2026-10-02) esperaba sin usarse → `ERR_CERT_DATE_INVALID` en el navegador de los usuarios, pese a que `docker exec helipistas_certbot certbot certificates` mostraba el certificado en regla.
+
+**Diagnóstico** (repetible ante cualquier aviso de certificado):
+```bash
+# Certificado que certbot tiene en disco (fuente de verdad)
+docker exec helipistas_certbot certbot certificates
+
+# Certificado que nginx está sirviendo de verdad ahora mismo (desde fuera, con openssl moderno, NO desde el propio EC2 que tiene uno antiguo)
+echo | openssl s_client -connect erp.helipistas.com:443 -servername erp.helipistas.com 2>/dev/null | openssl x509 -noout -dates
+```
+Si las fechas no coinciden, nginx necesita recargar.
+
+**Arreglo inmediato** (sin downtime, no reinicia el contenedor):
+```bash
+docker exec helipistas_nginx nginx -s reload
+```
+
+**Arreglo estructural**: como `certbot` y `nginx` son contenedores separados sin socket de Docker compartido, no hay `--deploy-hook` directo. Se ha añadido un cron en el host (fuera del repo, en el crontab de root de la instancia EC2) que recarga nginx una vez al mes, con margen de sobra frente a la ventana de renovación de Let's Encrypt (~30 días antes de caducar):
+```bash
+0 3 1 * * docker exec helipistas_nginx nginx -s reload
+```
+
+## Despliegue / actualización
+
+Desde el servidor, dentro de `/efs/HELIPISTAS-ODOO-17/`:
+
+```bash
+# actualizar código (repo desplegado dentro de odoo/addons/helipistas-erp-odoo-17)
+cd odoo/addons/helipistas-erp-odoo-17
+git pull
+
+# reconstruir imagen de Odoo si cambió el Dockerfile o requirements
+cd /efs/HELIPISTAS-ODOO-17
+docker-compose build helipistas_odoo
+
+# recrear contenedores
+docker-compose up -d
+```
+
+> El servidor tiene el binario legacy `docker-compose` (con guion), no el plugin v2 `docker compose`.
+
+No hay pipeline de CI/CD: el repo no tiene `.github/workflows/` ni scripts de despliegue. El `git pull` + `docker-compose build` + `docker-compose up -d` de arriba se ejecuta a mano en el servidor.
+
+## Pendiente
+
+- Exponer `n8n.helipistas.com` y `metabase.helipistas.com` por nginx con TLS y cerrar el acceso directo por IP:puerto (ver riesgo en la sección de nginx).
+- Security groups de la EC2: no versionados aquí, consultar consola AWS.
+- Custodia de la clave SSH del equipo: no documentada aquí por decisión explícita.
