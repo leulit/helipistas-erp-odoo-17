@@ -7,6 +7,14 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.view_quant_package_form"/>
             <field name="arch" type="xml">
+                <!-- "Desempaquetar" saca TODAS las piezas de la caja. Es una operacion real
+                     -vaciar una caja- pero con nombre de paqueteria, y ahora ademas deja a esas
+                     piezas sin estanteria: la propagacion de stock.quant.write las pone como
+                     sueltas sin ubicar. De ahi el confirm. -->
+                <xpath expr="//button[@name='unpack']" position="attributes">
+                    <attribute name="string">Vaciar la caja</attribute>
+                    <attribute name="confirm">Se sacarán todas las piezas de esta caja y se quedarán sin estantería, como sueltas sin ubicar. ¿Seguro?</attribute>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id" required="1" options="{'no_quick_create': True}"/>
                 </xpath>
@@ -54,6 +62,9 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.view_quant_package_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>
@@ -68,6 +79,9 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.quant_package_search_view"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
                 <xpath expr="//field[@name='location_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>
