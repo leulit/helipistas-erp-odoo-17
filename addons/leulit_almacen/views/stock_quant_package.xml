@@ -39,6 +39,13 @@
                 <xpath expr="//field[@name='pack_date']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <!-- "Propietario" es un unico partner para toda la caja, y una caja puede tener
+                     lotes de propietarios distintos. El dato bueno esta en la existencia:
+                     stock.quant.owner_id, con 8.677 quants con propietario en produccion.
+                     Un campo por caja solo puede mentir o quedarse en blanco. -->
+                <xpath expr="//field[@name='owner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 

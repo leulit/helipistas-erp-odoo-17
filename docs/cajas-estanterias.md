@@ -524,6 +524,10 @@ que en un almacén de repuestos solo confunden. Ocultos en la ficha de caja:
   envíos. En producción no hay **ni un solo registro**: el desplegable salía vacío.
 - **Fecha de empaquetado** (`pack_date`): la rellena el botón nativo "Poner en paquete". Para una
   caja permanente del almacén no significa nada.
+- **Propietario** (`owner_id`): un único partner para toda la caja, y una caja puede contener
+  lotes de propietarios distintos. El dato bueno vive en la existencia — `stock.quant.owner_id`,
+  con **8.677 quants con propietario** en producción. Un campo por caja solo puede mentir o
+  quedarse en blanco.
 
 Y "Referencia de paquete" pasa a llamarse **"Código de caja"**. Lo que sí se queda es
 `location_id`, renombrado a **"Estado del contenido"**, porque ahí sí importa: es el estado
