@@ -185,13 +185,34 @@ El `search_read` corre con los permisos de quien llama, así que la regla multi-
 `stock.location` ya deja fuera las estanterías de la otra compañía — no hay que filtrar por
 `company_id` a mano. Y las raíces se pueden renombrar sin romper la app.
 
-**QR de estantería.** `stock.location.qr`, formato `EST | id | nombre`. Distingue del de caja
-(`CAJA | id | nombre`) y del de pieza (`id | producto`). Solo lo tienen las ubicaciones que
-cuelgan de una raíz de estanterías (`es_estanteria`): una etiqueta pegada en `ICA/Stock` no
-significa nada. Se ve en la ficha y se imprime con *Imprimir → Etiqueta de estantería*.
+**Los tres QR: identifican elementos, no posiciones**
 
-Los tres `qr` del módulo son `fields.Binary`, como el de pieza. En QWeb hay que hacer
+Un QR dice **qué** es esto, nunca **dónde** está. La posición sale siempre del ERP. Esa es la
+razón de que mover una caja de estantería, o una pieza de caja, no obligue a reimprimir nada:
+la etiqueta sigue identificando al mismo elemento.
+
+- **Pieza** — `stock.lot.qr`. Contenido: `{last_move_stock_id.id} | {product_id.name}`.
+  Preexistente, no se ha tocado. Se imprime desde la ficha de pieza.
+- **Caja** — `stock.quant.package.qr`. Contenido: `CAJA | {id} | {name}`.
+- **Estantería** — `stock.location.qr`. Contenido: `EST | {id} | {name}`.
+
+El prefijo es lo que permite al lector distinguir los tres casos mirando `items[0]`: `CAJA`,
+`EST`, o un número. El nombre que va detrás del id es para la persona que mira la etiqueta; lo
+que identifica es **el id**.
+
+Las estanterías solo tienen QR si cuelgan de una raíz de estanterías (`es_estanteria`): una
+etiqueta pegada en `ICA/Stock` no significa nada.
+
+En las dos fichas — caja y estantería — el QR **se ve en pantalla**, además de imprimirse con
+*Imprimir → Etiqueta de caja* / *Etiqueta de estantería*.
+
+Los tres `qr` son `fields.Binary`, que es lo que acepta `widget="image"`. En QWeb hace falta
 `o.qr.decode()`: un Binary se lee como `bytes` y `'%s' % b'...'` produce `"b'iVBOR...'"`.
+
+⚠️ El QR de pieza identifica por **`last_move_stock_id.id`**, el id del último movimiento, no el
+del lote. Es preexistente y funciona, pero significa que la etiqueta impresa apunta a un
+movimiento que deja de ser el último en cuanto la pieza se mueve. No se ha tocado, pero conviene
+saberlo antes de apoyarse en ello.
 
 ### 2 Método para la app — `set_caja_app` en `models/stock_lot.py`
 
@@ -270,9 +291,9 @@ modelo ya la tiene cualquier usuario interno.
 
 ## 3. Contrato con la app ICARUS
 
-La app llama a `stock.lot.set_caja_app` vía `OdooApi.callButton`, que envía los parámetros en
-`context['args']`. El QR de las cajas usa el prefijo `CAJA|{package_id}|{name}` para que el
-lector de la app lo distinga del QR de pieza, que tiene el formato `{id}|{codigo}`.
+La app llama a `stock.lot.set_caja_app`, `set_estanteria_app` y `marcar_inventariado` vía
+`OdooApi.callButton`, que envía los parámetros en `context['args']`. Los tres formatos de QR y
+por qué el id es lo que identifica están en §1.
 
 Los tres `UserError` de la tabla de arriba son parte del contrato: la app debe mostrarlos, no
 tragárselos.
@@ -501,3 +522,8 @@ La app **no funciona** hasta que el frontend cambie `findEstanterias` a
 
 Después, el ciclo mínimo desde el iPad: escanear QR de caja → escanear pieza → *Revisado* →
 comprobar en Odoo que la pieza quedó en esa caja y con fecha y usuario de inventario.
+
+Y el de piezas sueltas, que es el mismo cambiando la primera etiqueta: escanear QR de
+**estantería** → escanear pieza → confirmar, que llama a `set_estanteria_app` en vez de
+`set_caja_app`. El lector tiene que distinguir los tres QR por `items[0]`: `CAJA`, `EST`, o un
+número (pieza).
