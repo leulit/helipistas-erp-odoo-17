@@ -67,6 +67,10 @@
                             <field name="motivo_baja"/>
                             <field name="last_maintenance_request_id"/>
                             <field name="caja_estanteria" readonly="1"/>
+                            <field name="caja_id" readonly="1"/>
+                            <!-- Si la pieza va en una caja, el sitio lo manda la caja. Solo se
+                                 edita a mano cuando va suelta en la estantería. -->
+                            <field name="estanteria_id" readonly="caja_id != False" options="{'no_create': True}"/>
                             <field name="posicion"/>
                             <field name="sistema"/>
                             <field name="equipment_id" invisible="1"/>
@@ -185,6 +189,8 @@
                     <field name="date_first_move"/>
                     <field name="fecha_caducidad"/>
                     <field name="caja_estanteria" optional="hide"/>
+                    <field name="caja_id" optional="show"/>
+                    <field name="estanteria_id" optional="show"/>
                     <field name="fecha_inventario" optional="show"/>
                     <field name="usuario_inventario" optional="hide"/>
                 </xpath>
@@ -232,11 +238,16 @@
                 <xpath expr="//search" position="inside">
                     <field name="fecha_inventario"/>
                     <field name="usuario_inventario"/>
+                    <field name="estanteria_id"/>
+                    <field name="caja_id"/>
+                    <filter name="sin_ubicar" string="Sin ubicar" domain="[('estanteria_id','=',False),('quant_ids.quantity','&gt;',0),('quant_ids.location_id.usage','=','internal')]"/>
                     <filter name="con_stock" string="Con stock" domain="[('quant_ids.quantity','&gt;',0),('quant_ids.location_id.usage','=','internal')]"/>
                     <filter name="sin_inventariar" string="Sin inventariar" domain="[('fecha_inventario','=',False)]"/>
                     <group expand="0" string="Agrupar por">
                         <filter name="group_usuario_inventario" string="Inventariado por" context="{'group_by':'usuario_inventario'}"/>
                         <filter name="group_fecha_inventario" string="Último inventario" context="{'group_by':'fecha_inventario'}"/>
+                        <filter name="group_estanteria" string="Estantería" context="{'group_by':'estanteria_id'}"/>
+                        <filter name="group_caja" string="Caja" context="{'group_by':'caja_id'}"/>
                     </group>
                 </xpath>
             </field>

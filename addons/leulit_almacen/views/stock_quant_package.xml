@@ -10,6 +10,13 @@
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id" required="1" options="{'no_quick_create': True}"/>
                 </xpath>
+                <!-- El QR se calcula solo a partir del codigo de la caja. Se muestra aqui para
+                     poder leerlo o capturarlo sin pasar por el PDF de la etiqueta. -->
+                <xpath expr="//div[@class='oe_title']" position="after">
+                    <div class="oe_right">
+                        <field name="qr" widget="image" nolabel="1" options="{'size': [120, 120]}"/>
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='location_id']" position="attributes">
                     <attribute name="string">Estado del contenido</attribute>
                     <attribute name="help">Ubicación calculada a partir del contenido. En este ERP representa el estado del material (Nuevo, Útil, Pendiente Decisión), no dónde está físicamente la caja: eso es la estantería.</attribute>
@@ -56,6 +63,73 @@
             </field>
         </record>
 
+        <!-- Formulario propio para dar de alta estanterias. mode="primary": hereda del
+             formulario de ubicaciones del core pero NO lo modifica, asi la pantalla normal de
+             Ubicaciones sigue igual. Se engancha a la accion con form_view_ref, que es una
+             linea, en vez de con registros ir.actions.act_window.view. -->
+        <record id="leulit_20260818_1305_form" model="ir.ui.view">
+            <field name="name">leulit_20260818_1305_form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <!-- Reglas de estanteria: acceso al stock y a las reglas de almacenaje no
+                     aplican, una ubicacion 'view' no contiene material. -->
+                <xpath expr="//div[@name='button_box']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//label[@for='name']" position="attributes">
+                    <attribute name="string">Nombre de la estantería</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="placeholder">p. ej. E-01</attribute>
+                </xpath>
+                <xpath expr="//label[@for='location_id']" position="attributes">
+                    <attribute name="string">Cuelga de</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                    <attribute name="placeholder">Estanterías Icarus / Estanterías Helipistas</attribute>
+                    <attribute name="help">La raíz de estanterías de su compañía. Una estantería sin raíz no aparece ni en esta lista ni en el desplegable del formulario de caja.</attribute>
+                </xpath>
+                <!-- Tipo de ubicacion siempre Vista. Odoo se niega a crear quants en una
+                     ubicacion 'view' (stock.quant.check_location_id), y eso es justo lo que
+                     hace falta: en este ERP location_id NO es un sitio, es el estado Part-145
+                     del material. Si una pieza pudiera "estar en E-01", habria dejado de estar
+                     en Material Util y se perderia el estado. La estantería guarda cajas, no
+                     material. Ademas es lo que filtra el desplegable del formulario de caja. -->
+                <xpath expr="//field[@name='usage']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="string">Tipo de ubicación</attribute>
+                    <attribute name="help">Siempre "Vista". La estantería guarda cajas, no material: el material va dentro de la caja, y su ubicación en Odoo sigue indicando su estado (Material Nuevo, Útil, Pendiente Decisión), no dónde está. Este tipo impide que Odoo mueva material "a la estantería" y se pierda ese estado.</attribute>
+                </xpath>
+                <xpath expr="//field[@name='company_id'][last()]" position="attributes">
+                    <attribute name="required">1</attribute>
+                    <attribute name="help">Debe ser la misma que la de la raíz. Los almacenes de Icarus y de Helipistas están separados.</attribute>
+                </xpath>
+                <!-- Ruido para una estanteria: devoluciones, estrategia de salida (FIFO/LIFO/
+                     FEFO, que solo aplica a ubicaciones que contienen material) y nota. -->
+                <xpath expr="//field[@name='return_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@string='Logistics']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='comment']" position="attributes">
+                    <attribute name="placeholder">Nota (opcional): pasillo, sala, referencia física...</attribute>
+                </xpath>
+                <!-- QR de la estanteria, para pegarlo en la balda. Solo aparece cuando la
+                     ubicacion cuelga de una raiz de estanterias: una etiqueta en "ICA/Stock"
+                     no significa nada. -->
+                <xpath expr="//h2" position="after">
+                    <field name="es_estanteria" invisible="1"/>
+                    <div class="oe_right" invisible="not es_estanteria">
+                        <field name="qr" widget="image" nolabel="1" options="{'size': [120, 120]}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
         <record id="leulit_20260818_1304_action" model="ir.actions.act_window">
             <field name="name">Estanterías</field>
             <field name="type">ir.actions.act_window</field>
@@ -65,10 +139,10 @@
                  <field name="domain"> y se guarda literal, con lo que el cliente revienta al
                  parsearlo. Con eval, Odoo resuelve los ids al cargar el fichero. -->
             <field name="domain" eval="[('id', 'child_of', [ref('location_estanterias_ica'), ref('location_estanterias_hlp')]), ('id', 'not in', [ref('location_estanterias_ica'), ref('location_estanterias_hlp')])]"/>
-            <field name="context">{'default_usage': 'view'}</field>
+            <field name="context">{'default_usage': 'view', 'form_view_ref': 'leulit_almacen.leulit_20260818_1305_form'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smart_tutorial">Aún no hay ninguna estantería.</p>
-                <p>Crea aquí las estanterías físicas del almacén. Son ubicaciones de tipo Vista: no pueden contener stock, solo sirven para saber dónde está colocada cada caja.</p>
+                <p>Crea aquí las estanterías físicas del almacén. Una estantería guarda <b>cajas</b>; el material va dentro de las cajas. En Odoo son ubicaciones de tipo Vista, que es lo que impide que el material se registre "en la estantería" y deje de figurar en su estado (Material Nuevo, Útil, Pendiente Decisión).</p>
                 <p><b>Cada estantería debe colgar de la raíz de su compañía</b> (<i>Estanterías Icarus</i> o <i>Estanterías Helipistas</i>): es el campo "Ubicación padre". Una estantería sin raíz no aparece en esta lista ni en el desplegable del formulario de caja.</p>
             </field>
         </record>

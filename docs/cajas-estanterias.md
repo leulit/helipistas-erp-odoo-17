@@ -33,9 +33,30 @@ jerarquía por si algún día hacen falta baldas. Cero modelos nuevos.
 
 **Estado del material → se queda donde está**, en el árbol `ICA/Stock/...`
 
-Ese árbol no es geografía: es el estado Part-145 (`Material Nuevo`, `Material Útil`, `Material
-Pendiente Decisión`...). Unas 32 comparaciones literales de nombre, repartidas en 8 ficheros,
-dependen de él. No se toca.
+Ese árbol **sí es un sitio, y además coincide con el estado Part-145** (`Material Nuevo`,
+`Material Útil`, `Material Pendiente Decisión`...). La nomenclatura viene de la definición que
+había en el MOE. Ojo: la correspondencia no es 1:1 — `Material Nuevo` y `Material Útil` pueden
+compartir sitio físico. Suena confuso, pero es así.
+
+Por eso hace falta el eje de estanterías: el árbol de ubicaciones dice el estado y la zona
+gruesa, no dónde está exactamente la pieza. Unas 32 comparaciones literales de nombre,
+repartidas en 8 ficheros, dependen de esos nombres. No se toca.
+
+**Piezas sueltas: la posición vive en el lote**
+
+No todo va en caja — una pala de rotor se apoya en la estantería. Por eso la fuente de verdad de
+dónde está una pieza es **`stock.lot.estanteria_id`**, no la caja:
+
+- Pieza suelta → se le asigna la estantería directamente.
+- Pieza en caja → la hereda de la caja, y mover la caja de estantería se propaga a su contenido.
+  La propagación va en `stock.quant.write()` y no en los métodos que escriben `package_id`, para
+  cubrir también los caminos del core como "Poner en paquete".
+- `stock.lot.caja_id` (compute **almacenado**) dice en qué caja está, o vacío si va suelta.
+  Almacenado a propósito: es lo que permite buscar y agrupar por caja.
+- Editar a mano la estantería de una pieza que está en una caja está bloqueado en el formulario
+  y rechazado por `_check_estanteria_caja`: quedaría contradiciendo a su caja.
+
+Granularidad: **la estantería entera**. No hay hueco ni posición dentro de ella.
 
 **Un lote va siempre en una sola caja — criterio de almacén, no negociable**
 
@@ -164,6 +185,14 @@ El `search_read` corre con los permisos de quien llama, así que la regla multi-
 `stock.location` ya deja fuera las estanterías de la otra compañía — no hay que filtrar por
 `company_id` a mano. Y las raíces se pueden renombrar sin romper la app.
 
+**QR de estantería.** `stock.location.qr`, formato `EST | id | nombre`. Distingue del de caja
+(`CAJA | id | nombre`) y del de pieza (`id | producto`). Solo lo tienen las ubicaciones que
+cuelgan de una raíz de estanterías (`es_estanteria`): una etiqueta pegada en `ICA/Stock` no
+significa nada. Se ve en la ficha y se imprime con *Imprimir → Etiqueta de estantería*.
+
+Los tres `qr` del módulo son `fields.Binary`, como el de pieza. En QWeb hay que hacer
+`o.qr.decode()`: un Binary se lee como `bytes` y `'%s' % b'...'` produce `"b'iVBOR...'"`.
+
 ### 2 Método para la app — `set_caja_app` en `models/stock_lot.py`
 
 Mismo patrón que `create_adjustment_move_app`: los parámetros llegan por **contexto**
@@ -191,6 +220,17 @@ contrapartida, **el cambio de caja no queda en el histórico de movimientos**.
 Detalle no evidente: escribe con `with_context(inventory_mode=False)` porque
 `stock.quant._get_forbidden_fields_write()` incluye `package_id` y `write()` lanza `UserError`
 si se escribe estando en modo inventario.
+
+### 2 bis Colocar piezas sueltas — `set_estanteria_app`
+
+Para las que no van en caja. La estantería llega en `context['args']['estanteria_id']` y las
+piezas en los ids de la llamada, igual que `marcar_inventariado`.
+
+- Falta `estanteria_id` → `UserError`: *"Falta la estantería."*
+- Alguna pieza está en una caja → `UserError` con la lista: su sitio lo manda la caja, hay que
+  usar `set_caja_app` o sacarla de la caja antes.
+
+No genera ningún `stock.move`.
 
 ### 3 Resto de lo implementado en el ERP
 

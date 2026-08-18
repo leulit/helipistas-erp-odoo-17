@@ -74,6 +74,17 @@ class StockQuantPackage(models.Model):
         return self.env['stock.location'].search_read(self._domain_estanteria(), ['id', 'name'])
 
 
+    def write(self, vals):
+        res = super(StockQuantPackage, self).write(vals)
+        # Mover una caja de estanteria mueve todo lo que hay dentro: si no, habria que
+        # reetiquetar pieza a pieza y el lote acabaria contradiciendo a su caja.
+        if 'estanteria_id' in vals:
+            lotes = self.mapped('quant_ids.lot_id')
+            if lotes:
+                lotes.sudo().write({'estanteria_id': vals['estanteria_id']})
+        return res
+
+
     @api.constrains('estanteria_id', 'company_id')
     def _check_estanteria_company(self):
         """Los almacenes de Icarus y de Helipistas están separados: una caja no puede colocarse
@@ -89,7 +100,7 @@ class StockQuantPackage(models.Model):
                         estanteria.display_name, estanteria.company_id.name, item.company_id.name))
 
 
-    qr = fields.Char(compute=_get_qr, store=False, string='QR')
+    qr = fields.Binary(compute=_get_qr, store=False, string='QR')
     estanteria_id = fields.Many2one(
         comodel_name='stock.location', string='Estantería',
         domain=lambda self: self._domain_estanteria(), ondelete='restrict',

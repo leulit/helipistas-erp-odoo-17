@@ -73,12 +73,14 @@ Views are never copy-pasted; every customization is `inherit_id` + `<xpath>`. Re
 
 - **Flights** (`leulit.vuelo`, in `leulit_actividad`/`leulit_operaciones`): states `prevuelo → cerrado → cancelado`; `checkValidCreateWriteData()` validates helicopter/pilot schedule overlap; dynamic role profiles `PV_PILOTO`, `PV_ALUMNO`, `PV_INSTRUCTOR`, `PV_VERIFICADO`; post-processing hooks `vuelo_chain_postvuelo`, `vuelo_chain_cerrado`. Codes generated via `ir.sequence` (`leulit.vuelo`).
 - **E-signature** (`leulit_esignature`): a `TransientModel` wizard signs records with a QR code (`pyqrcode`) + OTP (`res.users.get_otp()`); used for anomalías, vuelos, partes de escuela.
-- **Warehouse location axis** (`leulit_almacen`): `stock.location` in the ICA tree is **not
-  geography, it is Part-145 material state** (`Material Nuevo`, `Material Útil`, `Material
-  Pendiente Decisión`, `Herramientas`, `Equipamientos`). ~36 literal name comparisons across
-  8 files depend on it (the 4 move wizards, `stock_lot._get_location_stock`,
-  `stock_move_line._get_tipo_instalacion`, `stock_picking`) — none use `child_of`. Never hang
-  sub-locations off that tree. Physical position is a **separate axis**: caja =
+- **Warehouse location axis** (`leulit_almacen`): `stock.location` in the ICA tree is a real
+  place **that also encodes Part-145 material state** (`Material Nuevo`, `Material Útil`,
+  `Material Pendiente Decisión`, `Herramientas`, `Equipamientos`) — the naming comes from the
+  MOE. The mapping is not 1:1: `Material Nuevo` and `Material Útil` can share the same physical
+  spot, which is why exact physical position needs a separate axis. ~36 literal name
+  comparisons across 8 files depend on those names (the 4 move wizards,
+  `stock_lot._get_location_stock`, `stock_move_line._get_tipo_instalacion`, `stock_picking`) —
+  none use `child_of`. Never hang sub-locations off that tree. Physical position is a **separate axis**: caja =
   `stock.quant.package` + `estanteria_id` → `stock.location` with `usage='view'` under a
   **per-company root** — `Estanterías Icarus` (company 2) and `Estanterías Helipistas`
   (company 1); the two warehouses are separate. Odoo forbids stock in `view` locations, see
