@@ -93,7 +93,7 @@ class AccountAnalyticLine(models.Model):
                                 item.task_id.name if item.task_id else 'N/A',
                                 item.date_time.date(), dias_atras, hace_3_dias
                             )
-                            raise ValidationError(msg)
+                            # raise ValidationError(msg)
                         
 
     sale_order = fields.Many2one(comodel_name='sale.order', string='Presupuesto', domain=[('flag_flight_part','=',True),('state','=','sale'),('tag_ids','=',False),('task_done','=',False)])

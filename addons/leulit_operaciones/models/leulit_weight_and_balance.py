@@ -69,7 +69,7 @@ class leulit_weight_and_balance(models.Model):
                         'pedals',
                         'dualcontrols',
                         'items_on_mount_bar_right',
-                        'items_on_mount_bar_left'
+                        'items_on_mount_bar_left',
                         'gancho_carga',
                         'carga_externa',
                         'misc1',
