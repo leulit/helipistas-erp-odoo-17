@@ -385,3 +385,79 @@ Después comprobar:
 2. Los filtros **Con stock** y **Sin inventariar** aparecen en el buscador de Lotes/Nº de serie.
 3. `marcar_inventariado` sella fecha y usuario, y el cambio queda anotado en el chatter.
 4. Que un lote con existencias en dos ubicaciones tenga la misma caja en ambas.
+
+---
+
+## 6. Puesta en marcha
+
+Orden a seguir. Cada bloque supone que el anterior salió bien.
+
+### 6.1 Actualizar el módulo
+
+En el servidor, dentro del checkout del repo:
+
+```bash
+cd /efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17
+git pull
+./upd_module.sh leulit_almacen prod
+```
+
+El script actualiza, avisa si el log trae `ERROR`/`CRITICAL` y reinicia el contenedor. No hace
+`pg_dump`: el respaldo es la copia diaria del EFS. Este cambio añade dos columnas y una clave
+foránea, nada que reescriba datos existentes, así que no hace falta `--backup`.
+Ver `docs/produccion.md`.
+
+### 6.2 Verificar que el `-u` pasó de verdad
+
+Ningún fichero lo dice: el estado está en la base de datos.
+
+```bash
+# las columnas nuevas existen
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT column_name FROM information_schema.columns
+    WHERE table_name IN ('stock_lot','stock_quant_package')
+      AND column_name IN ('fecha_inventario','usuario_inventario','estanteria_id');"
+
+# las dos raíces se crearon, una por compañía
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT d.name, l.id, l.company_id, l.usage
+     FROM ir_model_data d JOIN stock_location l ON l.id = d.res_id
+    WHERE d.module = 'leulit_almacen' AND d.name LIKE 'location_estanterias%';"
+```
+
+Tres columnas y dos filas (compañías 2 y 1, `usage = view`). Cero filas = el código está en
+disco pero el módulo no se actualizó.
+
+### 6.3 Configurar antes de tocar nada
+
+1. **Crear las estanterías.** Menú *Almacén → Estanterías* (grupo `RResponsable_almacen`).
+   El módulo crea las dos raíces **vacías**: hasta que no haya estanterías colgando de ellas,
+   el desplegable de caja sale vacío en Odoo y en la app.
+   Cada estantería debe llevar **Ubicación padre** = la raíz de su compañía. Sin padre no
+   aparece en ningún sitio.
+2. **Revisar los grupos.** Quien inventaría necesita `RBase_almacen`; quien mantiene el
+   catálogo de estanterías, `RResponsable_almacen`.
+3. **Cajas.** Se pueden crear desde Odoo o sobre la marcha desde la app. Si se rotulan antes,
+   imprimir las etiquetas: seleccionar en la lista → *Imprimir → Etiqueta de caja*.
+
+### 6.4 Prueba funcional en Odoo, antes de soltar la app
+
+- Formulario de caja: el desplegable de estantería trae **solo** estanterías. Si aparecen
+  `ICA`, `WH-HELIPISTAS` o `Partner Locations`, el dominio no se aplicó.
+- Crear una caja sin estantería → lo rechaza. Con un código ya existente → lo rechaza.
+- Seleccionar varias líneas en *Existencias* → *Asignar a caja*. Comprobar que **no** aparece
+  ningún movimiento nuevo en el histórico de la pieza.
+- Columna **Estantería** en existencias y filtro **Sin ubicar (sin caja)**.
+- Ficha de pieza: campo *Caja / Estantería* relleno, y *Último inventario* / *Inventariado por*.
+- Buscador de Lotes: filtros **Con stock** y **Sin inventariar**, y agrupar por *Inventariado por*.
+- Con un usuario de Icarus, comprobar que **no** ve las estanterías de Helipistas.
+- Borrar una raíz de estanterías → debe negarse con mensaje, no borrar nada.
+
+### 6.5 Requisito de la app — bloqueante
+
+La app **no funciona** hasta que el frontend cambie `findEstanterias` a
+`stock.quant.package.get_estanterias_app`. El filtro por nombre que lleva ahora
+(`complete_name like 'Estanterías/'`) no puede devolver nada: ver §1.
+
+Después, el ciclo mínimo desde el iPad: escanear QR de caja → escanear pieza → *Revisado* →
+comprobar en Odoo que la pieza quedó en esa caja y con fecha y usuario de inventario.

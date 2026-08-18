@@ -18,7 +18,7 @@ if [ $# -lt 2 ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     echo "================================================================="
     echo ""
     echo "Uso:"
-    echo "  ./$SCRIPT_NAME <modulo> <entorno>"
+    echo "  ./$SCRIPT_NAME <modulo> <entorno> [--backup]"
     echo ""
     echo "Entornos:"
     echo "  dev  -> contenedor 'helipistas_odoo_17'  (docker/docker-compose.yml, local)"
@@ -27,14 +27,19 @@ if [ $# -lt 2 ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     echo "Ejemplos:"
     echo "  ./$SCRIPT_NAME leulit_almacen dev"
     echo "  ./$SCRIPT_NAME leulit_almacen prod"
+    echo "  ./$SCRIPT_NAME leulit_almacen prod --backup"
     echo ""
-    echo "En prod hace copia de seguridad antes de tocar el esquema y guarda el log."
+    echo "--backup hace un pg_dump antes de actualizar. NO es el comportamiento por"
+    echo "defecto: tarda mucho en la base de produccion y ya hay copia diaria del EFS."
+    echo "Usalo solo para un cambio de esquema grande o irreversible."
     echo "================================================================="
     exit 1
 fi
 
 MODULO="$1"
 ENTORNO="$2"
+BACKUP_ANTES=0
+[ "${3:-}" == "--backup" ] && BACKUP_ANTES=1
 BASE="productiu"
 
 case "$ENTORNO" in
@@ -49,21 +54,20 @@ if ! docker inspect "$CONTENEDOR" >/dev/null 2>&1; then
     exit 1
 fi
 
-# En prod, copia de seguridad ANTES de tocar el esquema. Un -u puede añadir columnas,
-# cambiar claves foráneas y crear índices únicos: eso no se deshace con un git revert.
-if [ -n "$BACKUP_DIR" ]; then
-    BACKUP="$BACKUP_DIR/backup-$(date +%F-%H%M).dump"
-    echo "💾 Copia de seguridad -> $BACKUP"
+# El pg_dump NO va por defecto: en la base de produccion tarda muchisimo y ya hay copia
+# diaria del EFS. Solo con --backup, para un cambio de esquema que no quieras arriesgar.
+if [ "$BACKUP_ANTES" -eq 1 ]; then
+    BACKUP="${BACKUP_DIR:-/tmp}/backup-$(date +%F-%H%M).dump"
+    echo "💾 Copia de seguridad -> $BACKUP (esto puede tardar bastante)"
     if ! docker exec "$PSQL" pg_dump -U odoo -Fc "$BASE" > "$BACKUP"; then
         echo "❌ Falló el pg_dump. No se actualiza nada."
         rm -f "$BACKUP"
         exit 1
     fi
     echo "   $(du -h "$BACKUP" | cut -f1)"
-    LOG="$BACKUP_DIR/upd-$MODULO-$(date +%F-%H%M).log"
-else
-    LOG="/tmp/upd-$MODULO-$(date +%F-%H%M).log"
 fi
+
+LOG="${BACKUP_DIR:-/tmp}/upd-$MODULO-$(date +%F-%H%M).log"
 
 echo "⏱️  Actualizando '$MODULO' en '$BASE' ($ENTORNO, contenedor $CONTENEDOR)..."
 echo "-----------------------------------------------------------------"

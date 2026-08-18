@@ -255,18 +255,31 @@ docker-compose up -d
 registry sin columna en la base de datos y la primera lectura revienta con `UndefinedColumn`.
 
 ```bash
-# 1. copia de seguridad ANTES de tocar el esquema
-docker exec helipistas_postgres pg_dump -U odoo -Fc productiu \
-  > /efs/HELIPISTAS-ODOO-17/backup-$(date +%F-%H%M).dump
-
-# 2. actualizar el módulo, guardando la salida (docker exec NO escribe en `docker logs`)
+# 1. actualizar el módulo, guardando la salida (docker exec NO escribe en `docker logs`)
 docker exec -i helipistas_odoo odoo -d productiu -u <modulo> --stop-after-init 2>&1 \
   | tee /efs/HELIPISTAS-ODOO-17/upd-<modulo>-$(date +%F-%H%M).log
 
-# 3. reiniciar para que los workers recarguen el registry
+# 2. reiniciar para que los workers recarguen el registry
 docker restart helipistas_odoo
 docker logs -f helipistas_odoo
 ```
+
+O directamente `./upd_module.sh <modulo> prod` desde el checkout, que hace los dos pasos y
+avisa si el log trae `ERROR`/`CRITICAL`.
+
+**Copia de seguridad:** no se hace en cada actualización. La base de producción es grande y un
+`pg_dump` tarda demasiado para ponerlo en el camino habitual; el respaldo de referencia es la
+copia diaria del EFS. Para un cambio de esquema que no quieras arriesgar, `--backup` fuerza el
+volcado antes de actualizar:
+
+```bash
+./upd_module.sh <modulo> prod --backup
+```
+
+Ojo con lo que cubre cada cosa: la copia del EFS es a nivel de sistema de ficheros sobre un
+Postgres en marcha, así que es *crash-consistent* — se restaura como si se hubiera ido la luz,
+y Postgres reconstruye con el WAL. Un `pg_dump` es un volcado lógico consistente. Para el día
+a día la del EFS vale; para una migración de datos, mejor el dump.
 
 El contenedor de producción es `helipistas_odoo`, no `helipistas_odoo_17` (ese es el de
 desarrollo local). La base de datos es `productiu`.
