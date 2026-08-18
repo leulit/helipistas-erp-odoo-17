@@ -49,8 +49,13 @@ dónde está una pieza es **`stock.lot.estanteria_id`**, no la caja:
 
 - Pieza suelta → se le asigna la estantería directamente.
 - Pieza en caja → la hereda de la caja, y mover la caja de estantería se propaga a su contenido.
-  La propagación va en `stock.quant.write()` y no en los métodos que escriben `package_id`, para
-  cubrir también los caminos del core como "Poner en paquete".
+  La propagación va en los hooks de `stock.quant` (`create`, `write`, `unlink` → 
+  `stock.lot._sync_estanteria_caja()`) y no en los métodos que escriben `package_id`, para cubrir
+  también los caminos del core como "Poner en paquete". Los tres, no sólo `write`: un quant puede
+  **nacer** ya dentro de una caja (recepción sobre un paquete) y puede **desaparecer** al quedarse
+  sin existencias; si sólo se cubre `write`, el lote se queda diciendo dónde estaba antes.
+  El campo del lote es una copia de la caja: quien lo lea sin este sincronismo lee un dato viejo,
+  no una discrepancia legítima.
 - `stock.lot.caja_id` (compute **almacenado**) dice en qué caja está, o vacío si va suelta.
   Almacenado a propósito: es lo que permite buscar y agrupar por caja.
 - Editar a mano la estantería de una pieza que está en una caja está bloqueado en el formulario

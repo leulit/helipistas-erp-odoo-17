@@ -458,6 +458,16 @@ class StockLot(models.Model):
                         item.name, cajas[0].name, cajas[0].estanteria_id.display_name or _('ninguna')))
 
 
+    def _sync_estanteria_caja(self):
+        """Si la pieza esta en una caja, su estanteria la manda la caja. Lo llaman los hooks de
+        stock.quant: crear, escribir y borrar un quant son las tres formas de meter o sacar una
+        pieza de una caja, y el campo del lote es una copia que si no se queda contando otra cosa."""
+        for item in self:
+            if item.estanteria_id != item.caja_id.estanteria_id:
+                item.sudo().estanteria_id = item.caja_id.estanteria_id
+
+
+
     def marcar_inventariado(self):
         # ponytail: sella hoy + quien llama. El historial de inventarios anteriores lo guarda
         # el chatter via tracking=True, sin modelo de campana ni tabla de historico.
