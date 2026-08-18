@@ -256,7 +256,9 @@ registry sin columna en la base de datos y la primera lectura revienta con `Unde
 
 ```bash
 # 1. actualizar el módulo, guardando la salida (docker exec NO escribe en `docker logs`)
-docker exec -i helipistas_odoo odoo -d productiu -u <modulo> --stop-after-init 2>&1 \
+# --no-http porque el Odoo del contenedor ya tiene cogido el 8069: sin eso el proceso
+# del exec muere con "Address already in use" antes de actualizar nada.
+docker exec -i helipistas_odoo odoo -d productiu -u <modulo> --no-http --stop-after-init 2>&1 \
   | tee /efs/HELIPISTAS-ODOO-17/upd-<modulo>-$(date +%F-%H%M).log
 
 # 2. reiniciar para que los workers recarguen el registry

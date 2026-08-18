@@ -76,7 +76,10 @@ echo "-----------------------------------------------------------------"
 # el fichero se llena de códigos de control.
 # docker exec NO escribe en `docker logs`, que solo captura el proceso principal del
 # contenedor: si no se guarda aquí, esta salida se pierde al cerrar la terminal.
-docker exec -i "$CONTENEDOR" odoo -d "$BASE" -u "$MODULO" --stop-after-init 2>&1 | tee "$LOG"
+# --no-http: el Odoo del contenedor ya tiene el 8069 cogido. Sin esto, el proceso del
+# exec intenta bindear el mismo puerto y muere con "Address already in use" antes de
+# actualizar nada.
+docker exec -i "$CONTENEDOR" odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
 RESULTADO=${PIPESTATUS[0]}
 
 echo "-----------------------------------------------------------------"
