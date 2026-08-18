@@ -33,9 +33,30 @@ jerarquía por si algún día hacen falta baldas. Cero modelos nuevos.
 
 **Estado del material → se queda donde está**, en el árbol `ICA/Stock/...`
 
-Ese árbol no es geografía: es el estado Part-145 (`Material Nuevo`, `Material Útil`, `Material
-Pendiente Decisión`...). Unas 32 comparaciones literales de nombre, repartidas en 8 ficheros,
-dependen de él. No se toca.
+Ese árbol **sí es un sitio, y además coincide con el estado Part-145** (`Material Nuevo`,
+`Material Útil`, `Material Pendiente Decisión`...). La nomenclatura viene de la definición que
+había en el MOE. Ojo: la correspondencia no es 1:1 — `Material Nuevo` y `Material Útil` pueden
+compartir sitio físico. Suena confuso, pero es así.
+
+Por eso hace falta el eje de estanterías: el árbol de ubicaciones dice el estado y la zona
+gruesa, no dónde está exactamente la pieza. Unas 32 comparaciones literales de nombre,
+repartidas en 8 ficheros, dependen de esos nombres. No se toca.
+
+**Piezas sueltas: la posición vive en el lote**
+
+No todo va en caja — una pala de rotor se apoya en la estantería. Por eso la fuente de verdad de
+dónde está una pieza es **`stock.lot.estanteria_id`**, no la caja:
+
+- Pieza suelta → se le asigna la estantería directamente.
+- Pieza en caja → la hereda de la caja, y mover la caja de estantería se propaga a su contenido.
+  La propagación va en `stock.quant.write()` y no en los métodos que escriben `package_id`, para
+  cubrir también los caminos del core como "Poner en paquete".
+- `stock.lot.caja_id` (compute **almacenado**) dice en qué caja está, o vacío si va suelta.
+  Almacenado a propósito: es lo que permite buscar y agrupar por caja.
+- Editar a mano la estantería de una pieza que está en una caja está bloqueado en el formulario
+  y rechazado por `_check_estanteria_caja`: quedaría contradiciendo a su caja.
+
+Granularidad: **la estantería entera**. No hay hueco ni posición dentro de ella.
 
 **Un lote va siempre en una sola caja — criterio de almacén, no negociable**
 
@@ -164,6 +185,35 @@ El `search_read` corre con los permisos de quien llama, así que la regla multi-
 `stock.location` ya deja fuera las estanterías de la otra compañía — no hay que filtrar por
 `company_id` a mano. Y las raíces se pueden renombrar sin romper la app.
 
+**Los tres QR: identifican elementos, no posiciones**
+
+Un QR dice **qué** es esto, nunca **dónde** está. La posición sale siempre del ERP. Esa es la
+razón de que mover una caja de estantería, o una pieza de caja, no obligue a reimprimir nada:
+la etiqueta sigue identificando al mismo elemento.
+
+- **Pieza** — `stock.lot.qr`. Contenido: `{last_move_stock_id.id} | {product_id.name}`.
+  Preexistente, no se ha tocado. Se imprime desde la ficha de pieza.
+- **Caja** — `stock.quant.package.qr`. Contenido: `CAJA | {id} | {name}`.
+- **Estantería** — `stock.location.qr`. Contenido: `EST | {id} | {name}`.
+
+El prefijo es lo que permite al lector distinguir los tres casos mirando `items[0]`: `CAJA`,
+`EST`, o un número. El nombre que va detrás del id es para la persona que mira la etiqueta; lo
+que identifica es **el id**.
+
+Las estanterías solo tienen QR si cuelgan de una raíz de estanterías (`es_estanteria`): una
+etiqueta pegada en `ICA/Stock` no significa nada.
+
+En las dos fichas — caja y estantería — el QR **se ve en pantalla**, además de imprimirse con
+*Imprimir → Etiqueta de caja* / *Etiqueta de estantería*.
+
+Los tres `qr` son `fields.Binary`, que es lo que acepta `widget="image"`. En QWeb hace falta
+`o.qr.decode()`: un Binary se lee como `bytes` y `'%s' % b'...'` produce `"b'iVBOR...'"`.
+
+⚠️ El QR de pieza identifica por **`last_move_stock_id.id`**, el id del último movimiento, no el
+del lote. Es preexistente y funciona, pero significa que la etiqueta impresa apunta a un
+movimiento que deja de ser el último en cuanto la pieza se mueve. No se ha tocado, pero conviene
+saberlo antes de apoyarse en ello.
+
 ### 2 Método para la app — `set_caja_app` en `models/stock_lot.py`
 
 Mismo patrón que `create_adjustment_move_app`: los parámetros llegan por **contexto**
@@ -191,6 +241,17 @@ contrapartida, **el cambio de caja no queda en el histórico de movimientos**.
 Detalle no evidente: escribe con `with_context(inventory_mode=False)` porque
 `stock.quant._get_forbidden_fields_write()` incluye `package_id` y `write()` lanza `UserError`
 si se escribe estando en modo inventario.
+
+### 2 bis Colocar piezas sueltas — `set_estanteria_app`
+
+Para las que no van en caja. La estantería llega en `context['args']['estanteria_id']` y las
+piezas en los ids de la llamada, igual que `marcar_inventariado`.
+
+- Falta `estanteria_id` → `UserError`: *"Falta la estantería."*
+- Alguna pieza está en una caja → `UserError` con la lista: su sitio lo manda la caja, hay que
+  usar `set_caja_app` o sacarla de la caja antes.
+
+No genera ningún `stock.move`.
 
 ### 3 Resto de lo implementado en el ERP
 
@@ -230,9 +291,9 @@ modelo ya la tiene cualquier usuario interno.
 
 ## 3. Contrato con la app ICARUS
 
-La app llama a `stock.lot.set_caja_app` vía `OdooApi.callButton`, que envía los parámetros en
-`context['args']`. El QR de las cajas usa el prefijo `CAJA|{package_id}|{name}` para que el
-lector de la app lo distinga del QR de pieza, que tiene el formato `{id}|{codigo}`.
+La app llama a `stock.lot.set_caja_app`, `set_estanteria_app` y `marcar_inventariado` vía
+`OdooApi.callButton`, que envía los parámetros en `context['args']`. Los tres formatos de QR y
+por qué el id es lo que identifica están en §1.
 
 Los tres `UserError` de la tabla de arriba son parte del contrato: la app debe mostrarlos, no
 tragárselos.
@@ -385,3 +446,105 @@ Después comprobar:
 2. Los filtros **Con stock** y **Sin inventariar** aparecen en el buscador de Lotes/Nº de serie.
 3. `marcar_inventariado` sella fecha y usuario, y el cambio queda anotado en el chatter.
 4. Que un lote con existencias en dos ubicaciones tenga la misma caja en ambas.
+
+---
+
+## 6. Puesta en marcha
+
+Orden a seguir. Cada bloque supone que el anterior salió bien.
+
+### 6.1 Actualizar el módulo
+
+En el servidor, dentro del checkout del repo:
+
+```bash
+cd /efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17
+git pull
+./upd_module.sh leulit_almacen prod
+```
+
+El script actualiza, avisa si el log trae `ERROR`/`CRITICAL` y reinicia el contenedor. No hace
+`pg_dump`: el respaldo es la copia diaria del EFS. Este cambio añade dos columnas y una clave
+foránea, nada que reescriba datos existentes, así que no hace falta `--backup`.
+Ver `docs/produccion.md`.
+
+### 6.2 Verificar que el `-u` pasó de verdad
+
+Ningún fichero lo dice: el estado está en la base de datos.
+
+```bash
+# las columnas nuevas existen
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT column_name FROM information_schema.columns
+    WHERE table_name IN ('stock_lot','stock_quant_package')
+      AND column_name IN ('fecha_inventario','usuario_inventario','estanteria_id');"
+
+# las dos raíces se crearon, una por compañía
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT d.name, l.id, l.company_id, l.usage
+     FROM ir_model_data d JOIN stock_location l ON l.id = d.res_id
+    WHERE d.module = 'leulit_almacen' AND d.name LIKE 'location_estanterias%';"
+```
+
+Tres columnas y dos filas (compañías 2 y 1, `usage = view`). Cero filas = el código está en
+disco pero el módulo no se actualizó.
+
+### 6.3 Configurar antes de tocar nada
+
+1. **Crear las estanterías.** Menú *Almacén → Estanterías* (grupo `RResponsable_almacen`).
+   El módulo crea las dos raíces **vacías**: hasta que no haya estanterías colgando de ellas,
+   el desplegable de caja sale vacío en Odoo y en la app.
+   Cada estantería debe llevar **Ubicación padre** = la raíz de su compañía. Sin padre no
+   aparece en ningún sitio.
+2. **Revisar los grupos.** Quien inventaría necesita `RBase_almacen`; quien mantiene el
+   catálogo de estanterías, `RResponsable_almacen`.
+3. **Cajas.** Se pueden crear desde Odoo o sobre la marcha desde la app. Si se rotulan antes,
+   imprimir las etiquetas: seleccionar en la lista → *Imprimir → Etiqueta de caja*.
+
+### 6.4 Prueba funcional en Odoo, antes de soltar la app
+
+- Formulario de caja: el desplegable de estantería trae **solo** estanterías. Si aparecen
+  `ICA`, `WH-HELIPISTAS` o `Partner Locations`, el dominio no se aplicó.
+- Crear una caja sin estantería → lo rechaza. Con un código ya existente → lo rechaza.
+- Seleccionar varias líneas en *Existencias* → *Asignar a caja*. Comprobar que **no** aparece
+  ningún movimiento nuevo en el histórico de la pieza.
+- Columna **Estantería** en existencias y filtro **Sin ubicar (sin caja)**.
+- Ficha de pieza: campo *Caja / Estantería* relleno, y *Último inventario* / *Inventariado por*.
+- Buscador de Lotes: filtros **Con stock** y **Sin inventariar**, y agrupar por *Inventariado por*.
+- Con un usuario de Icarus, comprobar que **no** ve las estanterías de Helipistas.
+- Borrar una raíz de estanterías → debe negarse con mensaje, no borrar nada.
+
+### 6.4 bis Trampas de herencia de vistas — aprendidas rompiendo producción
+
+Dos despliegues abortaron por esto. La verificación estática (XML bien formado, Python compila)
+**no** lo detecta: solo se ve cuando Odoo carga el módulo, y ahí ya es un `-u` fallido.
+
+- **`@string` no vale como selector.** `//group[@string='Logistics']` → *"View inheritance may not
+  use attribute 'string' as a selector"*. Hay que apuntar por `@name`, por elemento, o por el
+  contenido: `//field[@name='removal_strategy_id']/..`.
+- **`@class` tampoco, aunque solo avise.** `//div[@class='oe_title']` deja un WARNING; lo correcto
+  es `//div[hasclass('oe_title')]`.
+- **Un xpath que casa con varios nodos se aplica al primero**, en silencio. `//field[@name=
+  'company_id'][last()]` parecía apuntar a uno y casaba con dos, porque `last()` es relativo a
+  cada padre. Mejor acotar por el padre: `//group[@name='additional_info']/field[@name='company_id']`.
+- **`%(xmlid)d` no se interpola** en el texto de `<field name="domain">`: se guarda literal y el
+  cliente revienta al parsearlo. Hay que usar `eval` con `ref()`.
+
+Cómo comprobarlo antes de desplegar, sin instancia Odoo: sacar el arch **resuelto** del padre de
+producción con `ir.ui.view.get_combined_arch` y pasarle los xpath con `lxml`. Eso caza los tres
+primeros casos. El grep de `@string` y `@class` en los `xpath expr=` del módulo caza los dos
+primeros sin salir del portátil.
+
+### 6.5 Requisito de la app — bloqueante
+
+La app **no funciona** hasta que el frontend cambie `findEstanterias` a
+`stock.quant.package.get_estanterias_app`. El filtro por nombre que lleva ahora
+(`complete_name like 'Estanterías/'`) no puede devolver nada: ver §1.
+
+Después, el ciclo mínimo desde el iPad: escanear QR de caja → escanear pieza → *Revisado* →
+comprobar en Odoo que la pieza quedó en esa caja y con fecha y usuario de inventario.
+
+Y el de piezas sueltas, que es el mismo cambiando la primera etiqueta: escanear QR de
+**estantería** → escanear pieza → confirmar, que llama a `set_estanteria_app` en vez de
+`set_caja_app`. El lector tiene que distinguir los tres QR por `items[0]`: `CAJA`, `EST`, o un
+número (pieza).

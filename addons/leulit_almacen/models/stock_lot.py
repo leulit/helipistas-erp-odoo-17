@@ -349,6 +349,16 @@ class StockLot(models.Model):
             item.equipment_id = self.env['maintenance.equipment'].search([('production_lot', '=', item.id)], limit=1)
 
 
+    @api.depends('quant_ids.package_id', 'quant_ids.quantity')
+    def _get_caja(self):
+        """La caja donde esta la pieza. Un lote va siempre entero en una sola caja (criterio de
+        almacen), asi que hay como mucho una. Almacenado a proposito: asi se puede buscar y
+        agrupar por caja, que es lo que responde "que hay en la caja C-014"."""
+        for item in self:
+            cajas = item.quant_ids.filtered(lambda q: q.quantity and q.package_id).mapped('package_id')
+            item.caja_id = cajas[0] if cajas else False
+
+
     def _get_caja_estanteria(self):
         for item in self:
             partes = []
@@ -411,6 +421,14 @@ class StockLot(models.Model):
     proveedores_id_ant = fields.Char(string='Proveedores')
     date_first_move = fields.Date(compute=_get_first_move, search=_search_first_move_date ,string="Fecha primer movimiento")
 
+    caja_id = fields.Many2one(
+        comodel_name="stock.quant.package", string="Caja", compute=_get_caja, store=True,
+        readonly=True, help="Caja en la que está la pieza. Vacío si va suelta en la estantería.")
+    estanteria_id = fields.Many2one(
+        comodel_name="stock.location", string="Estantería", tracking=True, ondelete='restrict',
+        domain=lambda self: self.env['stock.quant.package']._domain_estanteria(),
+        help="Dónde está físicamente la pieza. Si va dentro de una caja la pone la caja y no se "
+             "edita aquí; si va suelta en la estantería, se asigna directamente.")
     update_stock = fields.Boolean(string="Actualizado")
     fecha_inventario = fields.Date(string="Último inventario", tracking=True)
     usuario_inventario = fields.Many2one(comodel_name="res.users", string="Inventariado por", tracking=True)
@@ -426,6 +444,19 @@ class StockLot(models.Model):
     limit_date = fields.Integer(string="Vida límite dias")
     tbo_hours = fields.Float(string="TBO horas")
     tbo_date = fields.Integer(string="TBO dias")
+
+    @api.constrains('estanteria_id')
+    def _check_estanteria_caja(self):
+        """Si la pieza esta en una caja, su estanteria la manda la caja. Editarla a mano en el
+        lote dejaria la pieza diciendo que esta en E-02 y su caja en E-01."""
+        for item in self:
+            cajas = item.quant_ids.filtered(lambda q: q.quantity and q.package_id).mapped('package_id')
+            if cajas and item.estanteria_id != cajas[0].estanteria_id:
+                raise ValidationError(_(
+                    'La pieza "%s" está en la caja "%s", que está en la estantería "%s". '
+                    'Para cambiarla de sitio, mueve la caja o saca la pieza de ella.') % (
+                        item.name, cajas[0].name, cajas[0].estanteria_id.display_name or _('ninguna')))
+
 
     def marcar_inventariado(self):
         # ponytail: sella hoy + quien llama. El historial de inventarios anteriores lo guarda
@@ -614,6 +645,23 @@ class StockLot(models.Model):
         if producto.type == 'product':
             self.env['stock.quant'].sudo().create({'product_id':datos['product_id'],'company_id':datos['company_id'],'location_id':datos['location_id'],'lot_id':datos['lote_id'],'quantity':-datos['quantity']})
             self.env['stock.quant'].sudo().create({'product_id':datos['product_id'],'company_id':datos['company_id'],'location_id':datos['location_dest_id'],'lot_id':datos['lote_id'],'quantity':datos['quantity']})
+
+
+    def set_estanteria_app(self):
+        """Coloca piezas SUELTAS en una estanteria. Para las que van en caja no vale: ahi el
+        sitio lo manda la caja, y hay que usar set_caja_app.
+        La estanteria llega en context['args']['estanteria_id'] y las piezas en self, igual que
+        marcar_inventariado. NO genera movimiento de stock."""
+        datos = self._context.get('args', {})
+        if not datos.get('estanteria_id'):
+            raise UserError(_('Falta la estantería.'))
+        en_caja = self.filtered(lambda item: item.caja_id)
+        if en_caja:
+            raise UserError(_('Estas piezas están dentro de una caja, su sitio lo manda la caja: '
+                              '%s. Asígnalas a otra caja, o sácalas de ella primero.') % (
+                                  ', '.join(en_caja.mapped('name'))))
+        self.write({'estanteria_id': datos['estanteria_id']})
+        return True
 
 
     def set_caja_app(self):

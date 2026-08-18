@@ -48,6 +48,18 @@ class StockQuant(models.Model):
         return  [('id','=','0')]
     
 
+    def write(self, vals):
+        res = super(StockQuant, self).write(vals)
+        # Meter una pieza en una caja (o sacarla) le cambia el sitio. Se propaga aqui y no en
+        # los sitios que escriben package_id para cubrir tambien los caminos del core, como el
+        # boton nativo "Poner en paquete".
+        if 'package_id' in vals:
+            for item in self:
+                if item.lot_id:
+                    item.lot_id.sudo().estanteria_id = item.package_id.estanteria_id
+        return res
+
+
     estanteria_id = fields.Many2one(related='package_id.estanteria_id', comodel_name='stock.location', string='Estantería')
     precio = fields.Float(related='lot_id.precio', string='Precio unitario')
     proveedores_id_ant = fields.Char(related='lot_id.proveedores_id_ant', string='Proveedores')

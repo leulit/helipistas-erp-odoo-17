@@ -255,32 +255,67 @@ docker-compose up -d
 registry sin columna en la base de datos y la primera lectura revienta con `UndefinedColumn`.
 
 ```bash
-# 1. copia de seguridad ANTES de tocar el esquema
-docker exec helipistas_postgres pg_dump -U odoo -Fc productiu \
-  > /efs/HELIPISTAS-ODOO-17/backup-$(date +%F-%H%M).dump
+# 1. parar el Odoo que sirve peticiones. No es opcional: un ALTER TABLE necesita ACCESS
+#    EXCLUSIVE y cualquier consulta viva sobre la tabla cancela el -u con
+#    "canceling statement due to lock timeout".
+docker stop helipistas_odoo
 
-# 2. actualizar el módulo, guardando la salida (docker exec NO escribe en `docker logs`)
-docker exec -i helipistas_odoo odoo -d productiu -u <modulo> --stop-after-init 2>&1 \
+# 2. actualizar en un contenedor de usar y tirar clonado del parado (misma imagen, red,
+#    variables y volúmenes), guardando la salida
+docker run --rm --network helipistas-odoo-17_helipistas_network \
+  --volumes-from helipistas_odoo \
+  -e HOST=postgresOdoo16 -e USER=odoo -e PASSWORD=<ver docker-compose.yml> \
+  <imagen de helipistas_odoo> odoo -d productiu -u <modulo> --no-http --stop-after-init 2>&1 \
   | tee /efs/HELIPISTAS-ODOO-17/upd-<modulo>-$(date +%F-%H%M).log
 
-# 3. reiniciar para que los workers recarguen el registry
-docker restart helipistas_odoo
+# 3. arrancar de nuevo
+docker start helipistas_odoo
 docker logs -f helipistas_odoo
 ```
+
+Si Postgres cancela el paso 2 por bloqueo aun con el ERP parado, hay otro cliente con la tabla
+cogida (Metabase, n8n, una sesión `psql` abierta):
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu \
+  -c "select pid, state, query from pg_stat_activity where pid <> pg_backend_pid()"
+```
+
+Si en el paso 2 revienta con `duplicate key value violates unique constraint "<tabla>_pkey"`
+al cargar datos, no es el módulo: son las secuencias de `id` que quedaron atrás en la
+importación de datos y hay que resincronizarlas (una vez para toda la base):
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu < docs/fix_secuencias.sql
+```
+
+O directamente `./upd_module.sh <modulo> prod` desde el checkout, que hace los tres pasos
+(y saca la red, la imagen y las variables del propio contenedor) y avisa si el log trae
+`ERROR`/`CRITICAL`.
+
+**Copia de seguridad:** no se hace en cada actualización. La base de producción es grande y un
+`pg_dump` tarda demasiado para ponerlo en el camino habitual; el respaldo de referencia es la
+copia diaria del EFS. Para un cambio de esquema que no quieras arriesgar, `--backup` fuerza el
+volcado antes de actualizar:
+
+```bash
+./upd_module.sh <modulo> prod --backup
+```
+
+Ojo con lo que cubre cada cosa: la copia del EFS es a nivel de sistema de ficheros sobre un
+Postgres en marcha, así que es *crash-consistent* — se restaura como si se hubiera ido la luz,
+y Postgres reconstruye con el WAL. Un `pg_dump` es un volcado lógico consistente. Para el día
+a día la del EFS vale; para una migración de datos, mejor el dump.
 
 El contenedor de producción es `helipistas_odoo`, no `helipistas_odoo_17` (ese es el de
 desarrollo local). La base de datos es `productiu`.
 
-El paso 3 no es opcional aquí: con `workers = 2` hay procesos vivos con el registry anterior
-en memoria. Odoo suele recargarlos solo por la secuencia `base_registry_signaling`, pero
-reiniciar lo garantiza.
+El ERP está caído entre el paso 1 y el 3, así que esto se hace cuando no hay nadie
+trabajando. `upd_module.sh` arranca el contenedor pase lo que pase (`trap`), también si el
+`-u` falla o si cortas con Ctrl-C.
 
-Durante el paso 2 hay dos procesos Odoo sobre la misma base de datos: el que sirve peticiones
-y el del `-u`. Para un cambio de esquema conviene hacerlo cuando no haya nadie trabajando, o
-parar antes el contenedor (`docker-compose stop helipistas_odoo`) y arrancarlo después.
-
-`-i` en vez de `-it`: sin TTY la salida se puede redirigir a fichero. Con `-it` docker asigna
-un terminal y el `tee` recibe los códigos de control.
+Si el `-u` falla, la base queda como estaba: Odoo lo hace todo en una transacción y la
+deshace entera.
 
 ### Cómo verificar que un módulo se actualizó de verdad
 

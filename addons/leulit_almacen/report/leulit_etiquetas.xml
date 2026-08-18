@@ -153,7 +153,52 @@
                                     </td>
                                     <td style="vertical-align:top; overflow-y: hidden; border:1px solid transparent;">
                                         <t t-if="o.qr">
-                                            <img t-att-src="'data:image/png;base64,%s' % o.qr" style="width:auto;height:25mm;"/>
+                                            <img t-att-src="'data:image/png;base64,%s' % o.qr.decode()" style="width:auto;height:25mm;"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="leulit_20260819_1000_informe">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <table class="fullwidth" style="border-collapse:collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="width:25mm; border-bottom: 1px solid black">
+                                        <p style="font-weight: bold;font-size:10px;text-align:left;margin-top:8px;">ÍCARUS</p>
+                                        <p style="font-size: 5px;text-align:left;font-weight: normal;margin-top:-10px;">MANTENIMENT,S.L.</p>
+                                        <p style="font-size: 5px;text-align:left;font-weight: normal;margin-top:-4px;">EASA PART 145. E-173</p>
+                                    </th>
+                                    <th style="width:60mm; border-bottom: 1px solid black">
+                                        <p style="font-size:20px; text-align:center;font-weight: bold;">ESTANTERÍA</p>
+                                    </th>
+                                    <th style="width:20mm; border-bottom: 1px solid black">
+                                        <p style="font-weight: normal;margin:0mm; text-align:center; font-size:8px">Ref M.O.E. 2.3</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align:top; border:1px solid transparent;font-weight: bold;">
+                                        <p style="font-size:13px">Estantería:</p>
+                                        <p style="font-size:9px;margin-top:-7px;">Compañía:</p>
+                                    </td>
+                                    <td style="vertical-align:top; border:1px solid transparent;">
+                                        <div style="width: 60mm;">
+                                            <p style="font-size:13px;"><span t-esc="o.name"/></p>
+                                            <p style="font-size:9px;margin-top:-7px;"><span t-esc="o.company_id.name or '-'"/></p>
+                                        </div>
+                                    </td>
+                                    <td style="vertical-align:top; overflow-y: hidden; border:1px solid transparent;">
+                                        <t t-if="o.qr">
+                                            <img t-att-src="'data:image/png;base64,%s' % o.qr.decode()" style="width:auto;height:25mm;"/>
                                         </t>
                                     </td>
                                 </tr>
