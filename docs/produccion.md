@@ -68,7 +68,7 @@ Todos los servicios comparten la red bridge `helipistas_network`.
 
 Definidas directamente en `docker-compose.yml` (no hay `.env` en el repo para producción):
 
-- `HOST=postgresOdoo16`, `USER=odoo`, `PASSWORD=helipistas@2025`
+- `HOST=postgresOdoo16`, `USER=odoo`, `PASSWORD=<ver docker-compose.yml en el servidor>`
 - `ODOO_LONGPOLLING_PORT=8072`
 - `LANG=es_ES.UTF-8`, `LANGUAGE=es_ES:es`, `LC_ALL=es_ES.UTF-8`
 
@@ -79,6 +79,58 @@ Definidas directamente en `docker-compose.yml` (no hay `.env` en el repo para pr
 El volumen `/efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17/addons` en el servidor corresponde a la carpeta [`addons/`](../addons) de este repositorio (checkout de la rama desplegada), montado en `/mnt/extra-addons` dentro del contenedor.
 
 Módulos propios: `leulit`, `leulit_actividad`, `leulit_almacen`, `leulit_calidad`, `leulit_camo`, `leulit_comercial`, `leulit_crm_team`, `leulit_encuestas`, `leulit_escuela`, `leulit_esignature`, `leulit_groups_manager`, `leulit_hide_menus`, `leulit_ia`, `leulit_meteo`, `leulit_nda`, `leulit_operaciones`, `leulit_parte_145`, `leulit_partis`, `leulit_planificacion`, `leulit_seguridad`, `leulit_taller`, `leulit_tarea`, `leulit_trabajador_externo`, `leulit_user_impersonate`, más `maintenance_equipment_changes` y `third-party-addons/`.
+
+## Configuración de Odoo (`odoo.conf`)
+
+`/efs/HELIPISTAS-ODOO-17/odoo/conf/odoo.conf` (no versionado en el repo, montado en `/etc/odoo` dentro del contenedor):
+
+```ini
+[options]
+# Database settings
+db_host = postgresOdoo16
+db_port = 5432
+db_user = odoo
+db_password = <ver odoo.conf en el servidor>
+db_template = template0
+db_name = productiu
+dbfilter = ^productiu$
+
+# Server settings
+http_port = 8069
+longpolling-port = 8072
+workers = 2
+max_cron_threads = 1
+admin_passwd = <ver odoo.conf en el servidor>   # password maestro: NO versionar
+lang = es_ES.UTF-8
+
+# File paths
+addons_path = /mnt/extra-addons,/mnt/extra-addons/third-party-addons,/usr/lib/python3/dist-packages/odoo/addons
+data_dir = /var/lib/odoo
+
+# Logging
+log_level = info
+log_handler = :INFO
+
+# Security
+list_db = True
+
+# Performance
+limit_memory_hard = 1677721600
+limit_memory_soft = 1342177280
+limit_request = 8192
+limit_time_cpu = 600
+limit_time_real = 1200
+
+# Proxy mode (for Nginx)
+proxy_mode = True
+
+# Session
+session_dir = /var/lib/odoo/sessions
+```
+
+`proxy_mode = True` es obligatorio con nginx delante (hace que Odoo confíe en `X-Forwarded-*` en vez de en la conexión directa). `workers = 2` + 1 gunicorn/master implica como mucho 2 requests HTTP concurrentes reales (más cron/longpolling aparte); revisar si da para el pico de uso actual.
+
+**⚠️ Riesgo pendiente:** `admin_passwd` (contraseña maestra que protege `/web/database/manager` — crear/duplicar/restaurar/eliminar bases de datos) está en claro en el fichero y es la **misma** que `db_password`. Además `list_db = True` deja el listado/gestor de bases de datos accesible. `dbfilter` limita lo que se ve en el selector de login, pero no bloquea `/web/database/manager` en sí. Pendiente: `admin_passwd` distinta y fuerte (o vacía + `list_db = False` si el manager no se usa en producción), y mover credenciales a secret/`.env` (mismo pendiente ya anotado para `db_password` en la sección de variables de entorno).
 
 ## nginx: dominios servidos
 
@@ -196,10 +248,78 @@ docker-compose up -d
 
 > El servidor tiene el binario legacy `docker-compose` (con guion), no el plugin v2 `docker compose`.
 
+### Si el cambio toca modelos, vistas, permisos o datos de un módulo
+
+`git pull` + `up -d` **no basta**: Odoo solo crea columnas y carga los ficheros XML durante un
+`-u`/`-i`. En un arranque normal se salta `init_models`, así que un campo nuevo queda en el
+registry sin columna en la base de datos y la primera lectura revienta con `UndefinedColumn`.
+
+```bash
+# 1. copia de seguridad ANTES de tocar el esquema
+docker exec helipistas_postgres pg_dump -U odoo -Fc productiu \
+  > /efs/HELIPISTAS-ODOO-17/backup-$(date +%F-%H%M).dump
+
+# 2. actualizar el módulo, guardando la salida (docker exec NO escribe en `docker logs`)
+docker exec -i helipistas_odoo odoo -d productiu -u <modulo> --stop-after-init 2>&1 \
+  | tee /efs/HELIPISTAS-ODOO-17/upd-<modulo>-$(date +%F-%H%M).log
+
+# 3. reiniciar para que los workers recarguen el registry
+docker restart helipistas_odoo
+docker logs -f helipistas_odoo
+```
+
+El contenedor de producción es `helipistas_odoo`, no `helipistas_odoo_17` (ese es el de
+desarrollo local). La base de datos es `productiu`.
+
+El paso 3 no es opcional aquí: con `workers = 2` hay procesos vivos con el registry anterior
+en memoria. Odoo suele recargarlos solo por la secuencia `base_registry_signaling`, pero
+reiniciar lo garantiza.
+
+Durante el paso 2 hay dos procesos Odoo sobre la misma base de datos: el que sirve peticiones
+y el del `-u`. Para un cambio de esquema conviene hacerlo cuando no haya nadie trabajando, o
+parar antes el contenedor (`docker-compose stop helipistas_odoo`) y arrancarlo después.
+
+`-i` en vez de `-it`: sin TTY la salida se puede redirigir a fichero. Con `-it` docker asigna
+un terminal y el `tee` recibe los códigos de control.
+
+### Cómo verificar que un módulo se actualizó de verdad
+
+No hay ningún fichero que lo diga: el estado del módulo está en la base de datos. En disco
+solo puedes confirmar que **el código llegó**, que es otra cosa.
+
+```bash
+# el código llegó y el contenedor lo ve (el fallo típico es hacer git pull en otro directorio)
+cd /efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17 && git log -1 --oneline
+docker exec helipistas_odoo ls -l /mnt/extra-addons/<modulo>/
+
+# el log del paso 2: 0 líneas con ERROR/CRITICAL y un "Modules loaded." al final
+grep -iE "error|critical|traceback" /efs/HELIPISTAS-ODOO-17/upd-<modulo>-*.log
+```
+
+La comprobación que de verdad vale es en la base de datos: si los xmlid del módulo existen,
+sus ficheros de datos se cargaron.
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT module, name, write_date FROM ir_model_data
+    WHERE module = '<modulo>' ORDER BY write_date DESC LIMIT 10;"
+```
+
+Un `write_date` reciente en esas filas = el `-u` pasó por ahí. Para un campo nuevo, además:
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu -c \
+  "SELECT column_name FROM information_schema.columns
+    WHERE table_name = 'stock_lot' AND column_name = 'fecha_inventario';"
+```
+
+Cero filas = el código está en disco pero el módulo **no** se actualizó.
+
 No hay pipeline de CI/CD: el repo no tiene `.github/workflows/` ni scripts de despliegue. El `git pull` + `docker-compose build` + `docker-compose up -d` de arriba se ejecuta a mano en el servidor.
 
 ## Pendiente
 
 - Exponer `n8n.helipistas.com` y `metabase.helipistas.com` por nginx con TLS y cerrar el acceso directo por IP:puerto (ver riesgo en la sección de nginx).
+- `admin_passwd` de Odoo: distinta de `db_password` y fuerte, o desactivar `list_db` si el gestor de BD no se usa en producción (ver riesgo en la sección de `odoo.conf`).
 - Security groups de la EC2: no versionados aquí, consultar consola AWS.
 - Custodia de la clave SSH del equipo: no documentada aquí por decisión explícita.
