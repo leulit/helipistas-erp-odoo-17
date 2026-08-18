@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Raíz del árbol de estanterías. Es una ubicación de tipo VISTA a propósito: Odoo
+             impide que una ubicación 'view' contenga stock (stock.quant.check_location_id),
+             así que nadie podrá mover material a una estantería por error. El árbol de
+             estanterías es un eje FÍSICO, independiente del árbol ICA/Stock/... que en este
+             ERP representa el ESTADO aeronáutico del material.
+
+             Una raíz POR COMPAÑÍA: los almacenes de Icarus (ICA) y de Helipistas
+             (WH-HELIPISTAS) están separados y sus estanterías no se mezclan. La separación
+             efectiva la hace la regla multi-compañía de stock.location; la constraint de
+             stock_quant_package.py impide además colocar una caja en la estantería de otra
+             compañía. -->
+        <record id="location_estanterias_ica" model="stock.location">
+            <field name="name">Estanterías Icarus</field>
+            <field name="usage">view</field>
+            <!-- Icarus = compañía 2. Se referencia por id porque no tiene xmlid en la BD;
+                 es el mismo criterio que el resto del módulo (acciones con company_id = 2). -->
+            <field name="company_id" eval="2"/>
+        </record>
+
+        <record id="location_estanterias_hlp" model="stock.location">
+            <field name="name">Estanterías Helipistas</field>
+            <field name="usage">view</field>
+            <!-- Helipistas = compañía 1 (base.main_company). -->
+            <field name="company_id" eval="1"/>
+        </record>
+
+    </data>
+</odoo>

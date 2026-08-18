@@ -81,6 +81,22 @@
             sequence="65"
         />
         <menuitem
+            id="leulit_20260818_1340_menuitem"
+            name="Cajas"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20260818_1303_action"
+            groups="leulit_almacen.RBase_almacen"
+            sequence="66"
+        />
+        <menuitem
+            id="leulit_20260818_1341_menuitem"
+            name="Estanterías"
+            parent="leulit.leulit_20201130_1135_menuitem"
+            action="leulit_20260818_1304_action"
+            groups="leulit_almacen.RResponsable_almacen"
+            sequence="67"
+        />
+        <menuitem
             id="leulit_20230222_1140_menuitem"
             name="Herramientas"
             parent="leulit.leulit_20201130_1135_menuitem"

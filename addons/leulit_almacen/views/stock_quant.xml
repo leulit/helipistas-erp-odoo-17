@@ -14,6 +14,26 @@
                     <field name="proveedores_id_ant"/>
                     <field name="date_first_move"/>
                 </xpath>
+                <xpath expr="//field[@name='package_id']" position="after">
+                    <field name="estanteria_id" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="leulit_20260818_1320_search" model="ir.ui.view">
+            <field name="name">leulit_20260818_1320_search</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.quant_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='package_id']" position="after">
+                    <field name="estanteria_id"/>
+                </xpath>
+                <xpath expr="//filter[@name='in_stock']" position="before">
+                    <filter name="sin_ubicar" string="Sin ubicar (sin caja)"
+                            domain="[('package_id', '=', False), ('quantity', '!=', 0), ('location_id.usage', '=', 'internal')]"/>
+                    <separator/>
+                </xpath>
             </field>
         </record>
 

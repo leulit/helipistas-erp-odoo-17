@@ -48,6 +48,7 @@ class StockQuant(models.Model):
         return  [('id','=','0')]
     
 
+    estanteria_id = fields.Many2one(related='package_id.estanteria_id', comodel_name='stock.location', string='Estantería')
     precio = fields.Float(related='lot_id.precio', string='Precio unitario')
     proveedores_id_ant = fields.Char(related='lot_id.proveedores_id_ant', string='Proveedores')
     date_first_move = fields.Date(related='lot_id.date_first_move', string="Fecha primer movimiento")

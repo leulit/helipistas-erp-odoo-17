@@ -73,6 +73,19 @@ Views are never copy-pasted; every customization is `inherit_id` + `<xpath>`. Re
 
 - **Flights** (`leulit.vuelo`, in `leulit_actividad`/`leulit_operaciones`): states `prevuelo → cerrado → cancelado`; `checkValidCreateWriteData()` validates helicopter/pilot schedule overlap; dynamic role profiles `PV_PILOTO`, `PV_ALUMNO`, `PV_INSTRUCTOR`, `PV_VERIFICADO`; post-processing hooks `vuelo_chain_postvuelo`, `vuelo_chain_cerrado`. Codes generated via `ir.sequence` (`leulit.vuelo`).
 - **E-signature** (`leulit_esignature`): a `TransientModel` wizard signs records with a QR code (`pyqrcode`) + OTP (`res.users.get_otp()`); used for anomalías, vuelos, partes de escuela.
+- **Warehouse location axis** (`leulit_almacen`): `stock.location` in the ICA tree is **not
+  geography, it is Part-145 material state** (`Material Nuevo`, `Material Útil`, `Material
+  Pendiente Decisión`, `Herramientas`, `Equipamientos`). ~36 literal name comparisons across
+  8 files depend on it (the 4 move wizards, `stock_lot._get_location_stock`,
+  `stock_move_line._get_tipo_instalacion`, `stock_picking`) — none use `child_of`. Never hang
+  sub-locations off that tree. Physical position is a **separate axis**: caja =
+  `stock.quant.package` + `estanteria_id` → `stock.location` with `usage='view'` under a
+  **per-company root** — `Estanterías Icarus` (company 2) and `Estanterías Helipistas`
+  (company 1); the two warehouses are separate. Odoo forbids stock in `view` locations, see
+  `stock.quant.check_location_id`. The roots are resolved by xmlid, never by name
+  (`stock_quant_package._raices_estanterias`), and `stock_location.unlink()` refuses to delete
+  them: `location_id` is `ondelete='cascade'`, so deleting a root would wipe the whole shelf
+  catalogue. Full design: `docs/cajas-estanterias.md`.
 - **AI assistant** (`leulit_ia`): has its own `CLAUDE.md`/`ARCHITECTURE.md` — read those before touching this module. Summary: OWL chat sidebar in Odoo → `/ai/chat` controller → external `ai-service`/`helipistas-mcp`/`litellm-proxy` Docker containers, provider-agnostic (Claude/Ollama/Gemini via one config line). Non-negotiable rule: a feature only belongs here if it improves the user's actual daily work — no AI for AI's sake. Odoo 17 **Community** only — never reference Enterprise-only models/modules (`sign`, `documents`, `web_gantt`, `web_studio`, ...).
 
 ### Repo-specific conventions

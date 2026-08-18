@@ -11,4 +11,16 @@
         <field name="binding_model_id" ref="model_stock_lot"/>
         <field name="binding_type">report</field>
     </record>
+
+    <record id="etiqueta_caja_report" model="ir.actions.report">
+        <field name="name">Etiqueta de caja</field>
+        <field name="model">stock.quant.package</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">leulit_almacen.leulit_20260818_1350_informe</field>
+        <field name="report_file">leulit_almacen.leulit_20260818_1350_informe</field>
+        <field name="paperformat_id" ref="leulit.paperformat_B8_landscape"/>
+        <field name="print_report_name">'Etiqueta-caja-%s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_stock_quant_package"/>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

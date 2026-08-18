@@ -45,6 +45,8 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="proveedores_id_ant"/>
                             <field name="update_stock"/>
+                            <field name="fecha_inventario"/>
+                            <field name="usuario_inventario"/>
                             <div id="herramienta" colspan="2"  invisible="((categoria_product != 18))" >
                                 <separator string="Herramienta"/> 
                                 <group>
@@ -64,6 +66,7 @@
                             <field name="rotable_lifelimit"/>
                             <field name="motivo_baja"/>
                             <field name="last_maintenance_request_id"/>
+                            <field name="caja_estanteria" readonly="1"/>
                             <field name="posicion"/>
                             <field name="sistema"/>
                             <field name="equipment_id" invisible="1"/>
@@ -181,6 +184,9 @@
                     <field name="proveedores_id_ant"/>
                     <field name="date_first_move"/>
                     <field name="fecha_caducidad"/>
+                    <field name="caja_estanteria" optional="hide"/>
+                    <field name="fecha_inventario" optional="show"/>
+                    <field name="usuario_inventario" optional="hide"/>
                 </xpath>
                 <xpath expr="//field[@name='expiration_date']" position="replace">
                 </xpath>
@@ -217,6 +223,24 @@
             </field>
         </record>
     
+
+        <record id="leulit_20260818_1200_search" model="ir.ui.view">
+            <field name="name">leulit_20260818_1200_search</field>
+            <field name="model">stock.lot</field>
+            <field name="inherit_id" ref="stock.search_product_lot_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="fecha_inventario"/>
+                    <field name="usuario_inventario"/>
+                    <filter name="con_stock" string="Con stock" domain="[('quant_ids.quantity','&gt;',0),('quant_ids.location_id.usage','=','internal')]"/>
+                    <filter name="sin_inventariar" string="Sin inventariar" domain="[('fecha_inventario','=',False)]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter name="group_usuario_inventario" string="Inventariado por" context="{'group_by':'usuario_inventario'}"/>
+                        <filter name="group_fecha_inventario" string="Último inventario" context="{'group_by':'fecha_inventario'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
 
         <record id="leulit_20221125_1057_action" model="ir.actions.act_window">
             <field name="name">Piezas</field>

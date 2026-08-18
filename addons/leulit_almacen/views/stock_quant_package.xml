@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20260818_1300_form" model="ir.ui.view">
+            <field name="name">leulit_20260818_1300_form</field>
+            <field name="model">stock.quant.package</field>
+            <field name="inherit_id" ref="stock.view_quant_package_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='package_type_id']" position="before">
+                    <field name="estanteria_id" required="1" options="{'no_quick_create': True}"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="string">Estado del contenido</attribute>
+                    <attribute name="help">Ubicación calculada a partir del contenido. En este ERP representa el estado del material (Nuevo, Útil, Pendiente Decisión), no dónde está físicamente la caja: eso es la estantería.</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20260818_1301_tree" model="ir.ui.view">
+            <field name="name">leulit_20260818_1301_tree</field>
+            <field name="model">stock.quant.package</field>
+            <field name="inherit_id" ref="stock.view_quant_package_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='package_type_id']" position="before">
+                    <field name="estanteria_id"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="string">Estado del contenido</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20260818_1302_search" model="ir.ui.view">
+            <field name="name">leulit_20260818_1302_search</field>
+            <field name="model">stock.quant.package</field>
+            <field name="inherit_id" ref="stock.quant_package_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_id']" position="before">
+                    <field name="estanteria_id"/>
+                </xpath>
+                <xpath expr="//filter[@name='location']" position="before">
+                    <filter string="Estantería" name="estanteria" domain="[]" context="{'group_by': 'estanteria_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="leulit_20260818_1303_action" model="ir.actions.act_window">
+            <field name="name">Cajas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.quant.package</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smart_tutorial">Aún no hay ninguna caja.</p>
+                <p>Una caja agrupa piezas y se coloca en una estantería. Cambiar una caja de estantería no genera ningún movimiento de stock: no altera el estado del material.</p>
+            </field>
+        </record>
+
+        <record id="leulit_20260818_1304_action" model="ir.actions.act_window">
+            <field name="name">Estanterías</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.location</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id', 'child_of', [%(location_estanterias_ica)d, %(location_estanterias_hlp)d]), ('id', 'not in', [%(location_estanterias_ica)d, %(location_estanterias_hlp)d])]</field>
+            <field name="context">{'default_usage': 'view'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smart_tutorial">Aún no hay ninguna estantería.</p>
+                <p>Crea aquí las estanterías físicas del almacén. Son ubicaciones de tipo Vista: no pueden contener stock, solo sirven para saber dónde está colocada cada caja.</p>
+                <p><b>Cada estantería debe colgar de la raíz de su compañía</b> (<i>Estanterías Icarus</i> o <i>Estanterías Helipistas</i>): es el campo "Ubicación padre". Una estantería sin raíz no aparece en esta lista ni en el desplegable del formulario de caja.</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

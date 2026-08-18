@@ -349,7 +349,21 @@ class StockLot(models.Model):
             item.equipment_id = self.env['maintenance.equipment'].search([('production_lot', '=', item.id)], limit=1)
 
 
+    def _get_caja_estanteria(self):
+        for item in self:
+            partes = []
+            for quant in item.quant_ids:
+                if quant.quantity and quant.package_id:
+                    estanteria = quant.package_id.estanteria_id.name
+                    partes.append('{0}: {1}{2}'.format(
+                        quant.location_id.name,
+                        quant.package_id.name,
+                        ' ({0})'.format(estanteria) if estanteria else ''))
+            item.caja_estanteria = ' | '.join(partes)
+
+
     id_pieza = fields.Char(string='id pieza antiguo')
+    caja_estanteria = fields.Char(compute=_get_caja_estanteria, store=False, string="Caja / Estantería")
     qr = fields.Binary(compute=_get_qr, store=False, string='QR')
     moves = fields.One2many(comodel_name="stock.move.line", inverse_name="lot_id", string="Movimientos")
     last_move_stock_id = fields.Many2one(comodel_name="stock.move.line", compute=_get_location_stock, store=False, string="Última ubicación")
@@ -398,6 +412,8 @@ class StockLot(models.Model):
     date_first_move = fields.Date(compute=_get_first_move, search=_search_first_move_date ,string="Fecha primer movimiento")
 
     update_stock = fields.Boolean(string="Actualizado")
+    fecha_inventario = fields.Date(string="Último inventario", tracking=True)
+    usuario_inventario = fields.Many2one(comodel_name="res.users", string="Inventariado por", tracking=True)
     active = fields.Boolean(default=True)
     posicion = fields.Char(string="Posición")
     sistema = fields.Char(string="Sistema")
@@ -410,6 +426,15 @@ class StockLot(models.Model):
     limit_date = fields.Integer(string="Vida límite dias")
     tbo_hours = fields.Float(string="TBO horas")
     tbo_date = fields.Integer(string="TBO dias")
+
+    def marcar_inventariado(self):
+        # ponytail: sella hoy + quien llama. El historial de inventarios anteriores lo guarda
+        # el chatter via tracking=True, sin modelo de campana ni tabla de historico.
+        return self.write({
+            'fecha_inventario': fields.Date.context_today(self),
+            'usuario_inventario': self.env.uid,
+        })
+
 
     def create_form_one(self):
         self.ensure_one()
@@ -589,3 +614,30 @@ class StockLot(models.Model):
         if producto.type == 'product':
             self.env['stock.quant'].sudo().create({'product_id':datos['product_id'],'company_id':datos['company_id'],'location_id':datos['location_id'],'lot_id':datos['lote_id'],'quantity':-datos['quantity']})
             self.env['stock.quant'].sudo().create({'product_id':datos['product_id'],'company_id':datos['company_id'],'location_id':datos['location_dest_id'],'lot_id':datos['lote_id'],'quantity':datos['quantity']})
+
+
+    def set_caja_app(self):
+        """Asigna (o quita) la caja de una pieza en una ubicación concreta. NO genera movimiento
+        de stock: la caja es la posición física, no el estado del material.
+        Llamado desde la app ICARUS con OdooApi.callButton, que envía los parámetros en
+        context['args'] igual que create_adjustment_move_app."""
+        datos = self._context.get('args', {})
+        if not datos.get('lote_id') or not datos.get('location_id'):
+            raise UserError(_('Faltan datos para asignar la caja (pieza y ubicación son obligatorios).'))
+        quants = self.env['stock.quant'].sudo().search([
+            ('lot_id', '=', datos['lote_id']),
+            ('location_id', '=', datos['location_id']),
+            ('quantity', '!=', 0),
+        ])
+        if not quants:
+            raise UserError(_('La pieza no tiene existencias en esa ubicación.'))
+        if len(quants) > 1:
+            # Un mismo lote en una misma ubicación puede tener un quant por caja. Si ya está
+            # repartido, no hay una respuesta correcta desde la app: que lo resuelvan en Odoo.
+            cajas = ', '.join([q.package_id.name or _('sin caja') for q in quants])
+            raise UserError(_('La pieza está repartida en varias cajas en esa ubicación (%s). '
+                              'Resuélvelo desde Odoo antes de asignarla por la app.') % cajas)
+        # inventory_mode=False: stock.quant.write() prohíbe escribir package_id en modo inventario
+        # (ver _get_forbidden_fields_write en stock/models/stock_quant.py).
+        quants.with_context(inventory_mode=False).write({'package_id': datos.get('caja_id') or False})
+        return True

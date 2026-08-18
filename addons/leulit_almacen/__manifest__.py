@@ -15,6 +15,7 @@
     "data": [
         "groups.xml",
         "security.xml",
+        "data/leulit_estanterias.xml",
         "views/stock_move_line.xml",
         "views/stock_lot.xml",
         "views/stock_picking.xml",
@@ -27,6 +28,8 @@
         "views/stock_move_certificate.xml",
         "views/stock_move_scrap.xml",
         "views/stock_quant.xml",
+        "views/stock_quant_package.xml",
+        "views/leulit_asignar_caja.xml",
         "views/leulit_rel_formone_lot.xml",
         "views/purchase_order.xml",
         "views/leulit_maintenance_boroscopia.xml",

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="leulit_20260818_1310_form" model="ir.ui.view">
+            <field name="name">leulit_20260818_1310_form</field>
+            <field name="model">leulit.asignar.caja</field>
+            <field name="arch" type="xml">
+                <form string="Asignar a caja">
+                    <group>
+                        <field name="caja_id" options="{'no_quick_create': True}"/>
+                        <field name="estanteria_id" readonly="1"/>
+                    </group>
+                    <separator string="Existencias seleccionadas"/>
+                    <field name="quant_ids" readonly="1" nolabel="1">
+                        <tree create="0" delete="0">
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="location_id" string="Estado"/>
+                            <field name="quantity" string="Cantidad"/>
+                            <field name="package_id" string="Caja actual"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Asignar a la caja" name="action_asignar" type="object" class="btn-primary"/>
+                        <button string="Quitar de su caja" name="action_quitar" type="object" class="btn-secondary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="leulit_20260818_1311_action" model="ir.actions.act_window">
+            <field name="name">Asignar a caja</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">leulit.asignar.caja</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_stock_quant"/>
+            <field name="binding_view_types">list</field>
+        </record>
+
+    </data>
+</odoo>

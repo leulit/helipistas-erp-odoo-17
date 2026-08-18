@@ -14,6 +14,9 @@ from . import stock_move_scrap
 from . import stock_warehouse_orderpoint
 from . import stock_warehouse_orderpoint_automatizaciones
 from . import stock_quant
+from . import stock_location
+from . import stock_quant_package
+from . import leulit_asignar_caja
 from . import leulit_rel_formone_lot
 from . import purchase_order_line
 from . import purchase_order
