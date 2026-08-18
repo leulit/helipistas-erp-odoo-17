@@ -762,7 +762,7 @@ class leulit_weight_and_balance(models.Model):
     bufrs_long_moment = fields.Float('')
     bufrs_lat_moment = fields.Float('')
 
-    bufls = fields.Float('r')
+    bufls = fields.Float('')
     bufls_long_arm = fields.Float('')
     bufls_lat_arm = fields.Float('')
     bufls_long_moment = fields.Float('')
