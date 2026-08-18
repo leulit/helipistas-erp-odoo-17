@@ -21,6 +21,24 @@
                     <attribute name="string">Estado del contenido</attribute>
                     <attribute name="help">Ubicación calculada a partir del contenido. En este ERP representa el estado del material (Nuevo, Útil, Pendiente Decisión), no dónde está físicamente la caja: eso es la estantería.</attribute>
                 </xpath>
+                <!-- Vocabulario de paqueteria de Odoo, que aqui confunde: una caja del almacen
+                     no es un bulto de envio. "Tipo de paquete" (stock.package.type) es el
+                     formato fisico -medidas, peso maximo, codigo de barras- que usan los
+                     modulos de transportistas para tarifar; no hay ni un solo registro en la
+                     base. "Fecha de empaquetado" la rellena el boton "Poner en paquete" y para
+                     una caja permanente no dice nada. -->
+                <xpath expr="//label[@for='name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="placeholder">p. ej. C-014</attribute>
+                </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='pack_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 

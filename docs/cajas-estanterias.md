@@ -514,6 +514,21 @@ disco pero el módulo no se actualizó.
 - Con un usuario de Icarus, comprobar que **no** ve las estanterías de Helipistas.
 - Borrar una raíz de estanterías → debe negarse con mensaje, no borrar nada.
 
+### 6.3 bis Vocabulario de paquetería escondido en la ficha de caja
+
+`stock.quant.package` es el modelo de **bultos de envío** de Odoo, y su formulario trae campos
+que en un almacén de repuestos solo confunden. Ocultos en la ficha de caja:
+
+- **Tipo de paquete** (`package_type_id` → `stock.package.type`): el formato físico del embalaje
+  —medidas, peso máximo, código de barras— que usan los módulos de transportistas para tarifar
+  envíos. En producción no hay **ni un solo registro**: el desplegable salía vacío.
+- **Fecha de empaquetado** (`pack_date`): la rellena el botón nativo "Poner en paquete". Para una
+  caja permanente del almacén no significa nada.
+
+Y "Referencia de paquete" pasa a llamarse **"Código de caja"**. Lo que sí se queda es
+`location_id`, renombrado a **"Estado del contenido"**, porque ahí sí importa: es el estado
+Part-145 del material que hay dentro, calculado por Odoo, no dónde está la caja.
+
 ### 6.4 bis Trampas de herencia de vistas — aprendidas rompiendo producción
 
 Dos despliegues abortaron por esto. La verificación estática (XML bien formado, Python compila)
