@@ -72,22 +72,41 @@ LOG="${BACKUP_DIR:-/tmp}/upd-$MODULO-$(date +%F-%H%M).log"
 echo "⏱️  Actualizando '$MODULO' en '$BASE' ($ENTORNO, contenedor $CONTENEDOR)..."
 echo "-----------------------------------------------------------------"
 
-# -i y no -it: sin TTY la salida se puede redirigir. Con -it docker asigna un terminal y
-# el fichero se llena de códigos de control.
-# docker exec NO escribe en `docker logs`, que solo captura el proceso principal del
-# contenedor: si no se guarda aquí, esta salida se pierde al cerrar la terminal.
-# --no-http: el Odoo del contenedor ya tiene el 8069 cogido. Sin esto, el proceso del
-# exec intenta bindear el mismo puerto y muere con "Address already in use" antes de
-# actualizar nada.
-docker exec -i "$CONTENEDOR" odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
+# Un ALTER TABLE necesita ACCESS EXCLUSIVE sobre la tabla: con el Odoo que sirve peticiones
+# vivo, cualquier consulta abierta la bloquea y Postgres cancela el -u con "canceling
+# statement due to lock timeout". Por eso se para el contenedor y la actualizacion va en uno
+# de usar y tirar clonado de el: misma imagen, misma red, mismas variables y mismos volumenes
+# (ahi esta /etc/odoo y /mnt/extra-addons), sin publicar puertos.
+IMAGEN=$(docker inspect -f '{{.Image}}' "$CONTENEDOR")
+RED=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}' "$CONTENEDOR" | awk '{print $1}')
+ENV_FILE=$(mktemp)
+docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$CONTENEDOR" > "$ENV_FILE"
+
+# Pase lo que pase (error, Ctrl-C), el ERP tiene que volver a levantarse.
+trap 'rm -f "$ENV_FILE"; docker start "$CONTENEDOR" >/dev/null 2>&1' EXIT
+
+echo "⏸️  Parando '$CONTENEDOR': el ERP queda caido hasta que acabe el script."
+docker stop "$CONTENEDOR" >/dev/null
+
+# La salida no va a `docker logs` (ese solo captura el proceso principal del contenedor de
+# produccion), asi que se guarda aqui o se pierde al cerrar la terminal.
+docker run --rm --network "$RED" --env-file "$ENV_FILE" --volumes-from "$CONTENEDOR" \
+    "$IMAGEN" odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
 RESULTADO=${PIPESTATUS[0]}
 
 echo "-----------------------------------------------------------------"
 echo "📄 Log: $LOG"
 
 if [ "$RESULTADO" -ne 0 ]; then
-    echo "❌ El comando terminó con error (código $RESULTADO). NO se reinicia el contenedor."
+    echo "❌ El comando terminó con error (código $RESULTADO). La base queda como estaba:"
+    echo "   Odoo hace el -u en una transacción y la deshace entera si algo revienta."
+    if grep -q "lock timeout" "$LOG"; then
+        echo "   Es un bloqueo de Postgres: alguien más tiene la tabla cogida (Metabase, n8n,"
+        echo "   una sesión psql abierta). Míralo con:"
+        echo "   docker exec -i $PSQL psql -U odoo -d $BASE -c \"select pid, state, query from pg_stat_activity where pid <> pg_backend_pid()\""
+    fi
     [ -n "${BACKUP:-}" ] && echo "   Copia de seguridad en $BACKUP"
+    echo "🔄 Arrancando '$CONTENEDOR' de nuevo..."
     exit "$RESULTADO"
 fi
 
@@ -100,7 +119,5 @@ fi
 
 echo "✅ Módulo '$MODULO' actualizado en $ENTORNO."
 
-# Con workers > 1 hay procesos vivos con el registry anterior en memoria. Odoo suele
-# recargarlos solo por la secuencia base_registry_signaling, pero reiniciar lo garantiza.
-echo "🔄 Reiniciando '$CONTENEDOR' para que los workers recarguen el registry..."
-docker restart "$CONTENEDOR" >/dev/null && echo "   Hecho. Log: docker logs -f $CONTENEDOR"
+echo "🔄 Arrancando '$CONTENEDOR' con el registry nuevo..."
+docker start "$CONTENEDOR" >/dev/null && echo "   Hecho. Log: docker logs -f $CONTENEDOR"
