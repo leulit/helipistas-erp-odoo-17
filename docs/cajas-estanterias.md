@@ -514,6 +514,27 @@ disco pero el módulo no se actualizó.
 - Con un usuario de Icarus, comprobar que **no** ve las estanterías de Helipistas.
 - Borrar una raíz de estanterías → debe negarse con mensaje, no borrar nada.
 
+### 6.4 bis Trampas de herencia de vistas — aprendidas rompiendo producción
+
+Dos despliegues abortaron por esto. La verificación estática (XML bien formado, Python compila)
+**no** lo detecta: solo se ve cuando Odoo carga el módulo, y ahí ya es un `-u` fallido.
+
+- **`@string` no vale como selector.** `//group[@string='Logistics']` → *"View inheritance may not
+  use attribute 'string' as a selector"*. Hay que apuntar por `@name`, por elemento, o por el
+  contenido: `//field[@name='removal_strategy_id']/..`.
+- **`@class` tampoco, aunque solo avise.** `//div[@class='oe_title']` deja un WARNING; lo correcto
+  es `//div[hasclass('oe_title')]`.
+- **Un xpath que casa con varios nodos se aplica al primero**, en silencio. `//field[@name=
+  'company_id'][last()]` parecía apuntar a uno y casaba con dos, porque `last()` es relativo a
+  cada padre. Mejor acotar por el padre: `//group[@name='additional_info']/field[@name='company_id']`.
+- **`%(xmlid)d` no se interpola** en el texto de `<field name="domain">`: se guarda literal y el
+  cliente revienta al parsearlo. Hay que usar `eval` con `ref()`.
+
+Cómo comprobarlo antes de desplegar, sin instancia Odoo: sacar el arch **resuelto** del padre de
+producción con `ir.ui.view.get_combined_arch` y pasarle los xpath con `lxml`. Eso caza los tres
+primeros casos. El grep de `@string` y `@class` en los `xpath expr=` del módulo caza los dos
+primeros sin salir del portátil.
+
 ### 6.5 Requisito de la app — bloqueante
 
 La app **no funciona** hasta que el frontend cambie `findEstanterias` a

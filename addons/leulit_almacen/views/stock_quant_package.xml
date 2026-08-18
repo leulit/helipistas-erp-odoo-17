@@ -12,7 +12,7 @@
                 </xpath>
                 <!-- El QR se calcula solo a partir del codigo de la caja. Se muestra aqui para
                      poder leerlo o capturarlo sin pasar por el PDF de la etiqueta. -->
-                <xpath expr="//div[@class='oe_title']" position="after">
+                <xpath expr="//div[hasclass('oe_title')]" position="after">
                     <div class="oe_right">
                         <field name="qr" widget="image" nolabel="1" options="{'size': [120, 120]}"/>
                     </div>
@@ -103,7 +103,10 @@
                     <attribute name="string">Tipo de ubicación</attribute>
                     <attribute name="help">Siempre "Vista". La estantería guarda cajas, no material: el material va dentro de la caja, y su ubicación en Odoo sigue indicando su estado (Material Nuevo, Útil, Pendiente Decisión), no dónde está. Este tipo impide que Odoo mueva material "a la estantería" y se pierda ese estado.</attribute>
                 </xpath>
-                <xpath expr="//field[@name='company_id'][last()]" position="attributes">
+                <!-- El formulario del core tiene DOS company_id: uno oculto fuera del sheet
+                     y el del grupo. Se apunta al del grupo por su padre, no con [last()], que
+                     casaria con los dos (cada uno es el ultimo dentro de su propio padre). -->
+                <xpath expr="//group[@name='additional_info']/field[@name='company_id']" position="attributes">
                     <attribute name="required">1</attribute>
                     <attribute name="help">Debe ser la misma que la de la raíz. Los almacenes de Icarus y de Helipistas están separados.</attribute>
                 </xpath>
@@ -112,7 +115,9 @@
                 <xpath expr="//field[@name='return_location']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//group[@string='Logistics']" position="attributes">
+                <!-- El grupo "Logistics" se selecciona por su contenido, no por @string:
+                     Odoo prohibe @string como selector en herencia de vistas. -->
+                <xpath expr="//field[@name='removal_strategy_id']/.." position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='comment']" position="attributes">
