@@ -277,7 +277,9 @@ No genera ningún `stock.move`.
 - `views/stock_move_line.xml` — columnas Caja origen/destino en el histórico, y se **muestra**
   `result_package_id` en operaciones detalladas (estaba `column_invisible=1`). Eso es lo que
   permite ubicar la pieza al recepcionarla, sin código extra.
-- `security.xml` — accesos para `RBase_almacen`. Ojo: este módulo **no** usa
+- `security.xml` — accesos para `RBase_almacen`, más el alta/edición de `stock.location` para
+  `RResponsable_almacen` (sin borrado), que es lo que permite crear estanterías sin ser
+  Inventario/Administrador. Ojo: este módulo **no** usa
   `security/ir.model.access.csv`; los permisos son registros `ir.model.access` dentro de
   `security.xml`.
 - `menu.xml` — "Cajas" (`RBase_almacen`) y "Estanterías" (`RResponsable_almacen`).
@@ -502,7 +504,12 @@ disco pero el módulo no se actualizó.
    Cada estantería debe llevar **Ubicación padre** = la raíz de su compañía. Sin padre no
    aparece en ningún sitio.
 2. **Revisar los grupos.** Quien inventaría necesita `RBase_almacen`; quien mantiene el
-   catálogo de estanterías, `RResponsable_almacen`.
+   catálogo de estanterías, `RResponsable_almacen`. Además hacen falta dos cosas que no da
+   este módulo: **Inventario / Usuario** (`stock.group_stock_user`, para existencias,
+   transferencias e inventario físico) y **Rol Taller / Base**, porque el menú *Almacén*
+   cuelga de la app *Taller* (`addons/leulit/menu.xml`). Crear estanterías **no** exige
+   Inventario/Administrador: `security.xml` le da a `RResponsable_almacen` el alta y la
+   edición de `stock.location` (sin borrado).
 3. **Cajas.** Se pueden crear desde Odoo o sobre la marcha desde la app. Si se rotulan antes,
    imprimir las etiquetas: seleccionar en la lista → *Imprimir → Etiqueta de caja*.
 
