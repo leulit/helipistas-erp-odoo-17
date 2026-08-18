@@ -11,6 +11,12 @@
                      -vaciar una caja- pero con nombre de paqueteria, y ahora ademas deja a esas
                      piezas sin estanteria: la propagacion de stock.quant.write las pone como
                      sueltas sin ubicar. De ahi el confirm. -->
+                <!-- "Traslados del paquete": los albaranes donde aparece la caja. Sigue
+                     teniendo sentido -al recepcionar se puede fijar la caja en la linea de
+                     movimiento- pero con el nombre de Odoo, no con el nuestro. -->
+                <xpath expr="//button[@name='action_view_picking']" position="attributes">
+                    <attribute name="string">Traslados de la caja</attribute>
+                </xpath>
                 <xpath expr="//button[@name='unpack']" position="attributes">
                     <attribute name="string">Vaciar la caja</attribute>
                     <attribute name="confirm">Se sacarán todas las piezas de esta caja y se quedarán sin estantería, como sueltas sin ubicar. ¿Seguro?</attribute>
@@ -65,6 +71,9 @@
                 <xpath expr="//field[@name='display_name']" position="attributes">
                     <attribute name="string">Código de caja</attribute>
                 </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>
@@ -82,6 +91,8 @@
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="string">Código de caja</attribute>
                 </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="replace"/>
+                <xpath expr="//filter[@name='package_type']" position="replace"/>
                 <xpath expr="//field[@name='location_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>
