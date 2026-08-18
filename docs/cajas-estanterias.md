@@ -529,7 +529,10 @@ que en un almacén de repuestos solo confunden. Ocultos en la ficha de caja:
   con **8.677 quants con propietario** en producción. Un campo por caja solo puede mentir o
   quedarse en blanco.
 
-Y "Referencia de paquete" pasa a llamarse **"Código de caja"**. Lo que sí se queda es
+Y "Referencia de paquete" pasa a llamarse **"Código de caja"**, en los tres sitios donde salía:
+la ficha, la cabecera de la lista (`display_name`) y el buscador. El botón **"Desempaquetar"**
+pasa a **"Vaciar la caja"** y ahora pide confirmación: saca todas las piezas y, con la
+propagación nueva, las deja además sin estantería. Lo que sí se queda es
 `location_id`, renombrado a **"Estado del contenido"**, porque ahí sí importa: es el estado
 Part-145 del material que hay dentro, calculado por Odoo, no dónde está la caja.
 
