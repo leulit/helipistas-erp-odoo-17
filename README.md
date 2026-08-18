@@ -561,3 +561,24 @@ Despues de la migracion:
 
     - Buscar esta linea en todo el codigo personalizado y cambiar el 1 por un 2, mirar si se modifica en las sequencias el cambio de companyia en todo caso, cambiarlo a mano desde la interficie web sino desde la base de datos.
         <field name="company_id">1</field>
+### Despues de importar: resincronizar las secuencias
+
+La importacion mete filas con el `id` explicito, pero **no toca las secuencias**. Se quedan
+donde estaban, asi que el primer `INSERT` que deje a Postgres asignar el id choca con una fila
+ya existente:
+
+```
+ERROR: duplicate key value violates unique constraint "stock_location_pkey"
+DETAIL:  Key (id)=(19) already exists.
+```
+
+No es un fallo del modulo que lo destape: le pasa a cualquier `create` sobre una tabla
+importada (desde la interfaz web o desde un `-u` que cargue datos). Se arregla de una vez para
+toda la base con:
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu < docs/fix_secuencias.sql
+```
+
+Adelanta cada secuencia de `id` que vaya por detras del `max(id)` de su tabla y dice cuales ha
+tocado. Es idempotente y no modifica datos, se puede lanzar siempre que aparezca ese error.

@@ -281,6 +281,14 @@ docker exec -i helipistas_postgres psql -U odoo -d productiu \
   -c "select pid, state, query from pg_stat_activity where pid <> pg_backend_pid()"
 ```
 
+Si en el paso 2 revienta con `duplicate key value violates unique constraint "<tabla>_pkey"`
+al cargar datos, no es el módulo: son las secuencias de `id` que quedaron atrás en la
+importación de datos y hay que resincronizarlas (una vez para toda la base):
+
+```bash
+docker exec -i helipistas_postgres psql -U odoo -d productiu < docs/fix_secuencias.sql
+```
+
 O directamente `./upd_module.sh <modulo> prod` desde el checkout, que hace los tres pasos
 (y saca la red, la imagen y las variables del propio contenedor) y avisa si el log trae
 `ERROR`/`CRITICAL`.
