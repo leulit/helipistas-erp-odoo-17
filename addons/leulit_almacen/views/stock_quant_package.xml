@@ -61,7 +61,10 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">stock.location</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('id', 'child_of', [%(location_estanterias_ica)d, %(location_estanterias_hlp)d]), ('id', 'not in', [%(location_estanterias_ica)d, %(location_estanterias_hlp)d])]</field>
+            <!-- eval + ref(), NO "%(xmlid)d": esa interpolacion no se aplica al texto de
+                 <field name="domain"> y se guarda literal, con lo que el cliente revienta al
+                 parsearlo. Con eval, Odoo resuelve los ids al cargar el fichero. -->
+            <field name="domain" eval="[('id', 'child_of', [ref('location_estanterias_ica'), ref('location_estanterias_hlp')]), ('id', 'not in', [ref('location_estanterias_ica'), ref('location_estanterias_hlp')])]"/>
             <field name="context">{'default_usage': 'view'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smart_tutorial">Aún no hay ninguna estantería.</p>
