@@ -232,13 +232,23 @@ Comportamiento y errores que **la app tiene que manejar**:
   *"Faltan datos para asignar la caja (pieza y ubicación son obligatorios)."*
 - La pieza no tiene existencias en esa ubicación → `UserError`:
   *"La pieza no tiene existencias en esa ubicación."*
-- La pieza está repartida en **varias cajas** en esa ubicación → `UserError`:
-  *"La pieza está repartida en varias cajas en esa ubicación (X, Y). Resuélvelo desde Odoo antes
-  de asignarla por la app."*
-- Todo correcto → escribe `package_id` en el quant y devuelve `true`.
+- Todas las líneas de stock son negativas → `UserError`: es un descuadre de inventario.
+- La pieza ya está repartida entre **varias cajas** en esa ubicación → `UserError`:
+  *"La pieza ya está repartida entre varias cajas en esa ubicación (X, Y)..."*
+- Todo correcto → escribe `package_id` en **todas** las líneas positivas y devuelve `true`.
 
-Ese tercer caso existe porque un mismo lote en una misma ubicación tiene **un quant por caja**.
-La app debe mostrar el mensaje tal cual, no tragárselo.
+La app debe mostrar esos mensajes tal cual, no tragárselos.
+
+**Por qué escribe en todas las líneas positivas, y no en una.** Un mismo lote puede tener varias
+filas de `stock.quant` en la MISMA ubicación sin estar en varias cajas: `owner_id` (y la fecha de
+entrada) forman parte de la clave del quant, así que 12 unidades de las que 5 entraron con
+propietario *Helipistas* y 7 por un ajuste de inventario se quedan en dos filas que Odoo **no
+fusiona nunca**. La ficha de la pieza las suma y enseña 12, y en el almacén esas 12 están en una
+sola caja. La caja es un hecho **físico**; el propietario y la fecha de entrada son
+**contabilidad**. En producción hay 1.581 filas positivas con propietario en ubicaciones
+internas, así que no es un caso raro: el guard anterior —que exigía una sola fila positiva—
+bloqueaba la app en todas ellas. El único reparto que sigue rechazándose es el real: filas
+positivas ya asignadas a **cajas distintas**.
 
 No genera ningún `stock.move`: la caja es posición física, no estado del material. Como
 contrapartida, **el cambio de caja no queda en el histórico de movimientos**.
@@ -343,6 +353,8 @@ Comprobaciones mínimas:
 - [ ] Botón **Imprimir etiqueta** en la ficha de caja: abre el mismo PDF.
 - [ ] En el PDF, `Estantería` / `ÍCARUS` / `Compañía` salen con los acentos correctos.
 - [ ] El QR impreso, leído con el móvil, contiene `CAJA | <id> | <nombre>`.
+- [ ] `docker exec -ti helipistas_odoo_17 odoo -u leulit_almacen -d <db> --test-enable
+      --test-tags=/leulit_almacen --stop-after-init` → pasan los tests de `set_caja_app`.
 
 
 ---

@@ -695,18 +695,24 @@ class StockLot(models.Model):
         # El guard anterior las confundía y rechazaba el 29% del almacén con un mensaje que decía
         # "repartida en varias cajas (sin caja, sin caja)".
         # Un quant negativo es un descuadre contable, no un sitio físico: una caja no puede
-        # contener -1 unidades. La caja va sobre la única fila con existencias reales.
+        # contener -1 unidades. La caja va sobre las filas con existencias reales.
         positivos = quants.filtered(lambda item: item.quantity > 0)
         if not positivos:
             raise UserError(_('La pieza no tiene existencias positivas en esa ubicación: hay %s '
                               'línea(s) de stock y todas son negativas. Es un descuadre de '
                               'inventario, resuélvelo desde Odoo.') % len(quants))
-        if len(positivos) > 1:
-            detalle = ', '.join(['%s: %s' % (item.package_id.name or _('sin caja'), item.quantity)
-                                 for item in positivos])
-            raise UserError(_('La pieza tiene existencias en varias líneas de stock en esa '
-                              'ubicación (%s) y no se puede decidir cuál lleva la caja. '
-                              'Resuélvelo desde Odoo antes de asignarla por la app.') % detalle)
+        # Varias filas positivas del mismo lote y ubicacion NO son varios sitios: son la misma
+        # pieza partida por criterios contables. owner_id forma parte de la clave de stock.quant,
+        # asi que 12 unidades compradas 5 con propietario Helipistas y 7 por ajuste de inventario
+        # se quedan en dos filas que Odoo no fusiona nunca. La ficha de la pieza las suma y
+        # ensena 12, y en el almacen esas 12 estan en la misma caja. La caja es un hecho fisico;
+        # el propietario y la fecha de entrada son contabilidad. Van todas a la misma caja.
+        cajas_actuales = positivos.mapped('package_id')
+        if len(cajas_actuales) > 1:
+            raise UserError(_('La pieza ya está repartida entre varias cajas en esa ubicación '
+                              '(%s). Eso sí es un reparto físico y la app no puede decidir por ti: '
+                              'únelo desde Odoo antes de asignarla.') % (
+                                  ', '.join(cajas_actuales.mapped('name'))))
         quants = positivos
         # inventory_mode=False: stock.quant.write() prohíbe escribir package_id en modo inventario
         # (ver _get_forbidden_fields_write en stock/models/stock_quant.py).
