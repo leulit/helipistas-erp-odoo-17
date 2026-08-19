@@ -689,12 +689,25 @@ class StockLot(models.Model):
         ])
         if not quants:
             raise UserError(_('La pieza no tiene existencias en esa ubicación.'))
-        if len(quants) > 1:
-            # Un mismo lote en una misma ubicación puede tener un quant por caja. Si ya está
-            # repartido, no hay una respuesta correcta desde la app: que lo resuelvan en Odoo.
-            cajas = ', '.join([q.package_id.name or _('sin caja') for q in quants])
-            raise UserError(_('La pieza está repartida en varias cajas en esa ubicación (%s). '
-                              'Resuélvelo desde Odoo antes de asignarla por la app.') % cajas)
+        # Varios quants del mismo lote y ubicación NO significan varias cajas: la clave de
+        # unicidad de stock.quant incluye owner_id e in_date, así que una salida con propietario
+        # contra existencias sin propietario deja una segunda fila (negativa) sin caja alguna.
+        # El guard anterior las confundía y rechazaba el 29% del almacén con un mensaje que decía
+        # "repartida en varias cajas (sin caja, sin caja)".
+        # Un quant negativo es un descuadre contable, no un sitio físico: una caja no puede
+        # contener -1 unidades. La caja va sobre la única fila con existencias reales.
+        positivos = quants.filtered(lambda item: item.quantity > 0)
+        if not positivos:
+            raise UserError(_('La pieza no tiene existencias positivas en esa ubicación: hay %s '
+                              'línea(s) de stock y todas son negativas. Es un descuadre de '
+                              'inventario, resuélvelo desde Odoo.') % len(quants))
+        if len(positivos) > 1:
+            detalle = ', '.join(['%s: %s' % (item.package_id.name or _('sin caja'), item.quantity)
+                                 for item in positivos])
+            raise UserError(_('La pieza tiene existencias en varias líneas de stock en esa '
+                              'ubicación (%s) y no se puede decidir cuál lleva la caja. '
+                              'Resuélvelo desde Odoo antes de asignarla por la app.') % detalle)
+        quants = positivos
         # inventory_mode=False: stock.quant.write() prohíbe escribir package_id en modo inventario
         # (ver _get_forbidden_fields_write en stock/models/stock_quant.py).
         quants.with_context(inventory_mode=False).write({'package_id': datos.get('caja_id') or False})
