@@ -287,7 +287,19 @@ No genera ningún `stock.move`.
   `qr` calculado en `stock.quant.package` (`pyqrcode`, contenido `CAJA | {id} | {nombre}`),
   plantilla QWeb y acción de informe con `binding_model_id`, de modo que aparece en el menú
   **Imprimir** de la ficha y de la lista de cajas. Admite selección múltiple: una etiqueta por
-  página. Mismo `paperformat_B8_landscape` que la etiqueta de pieza.
+  página. Mismo `paperformat_B8_landscape` que la etiqueta de pieza. La ficha de caja tiene
+  además un botón **Imprimir etiqueta** en la cabecera, junto a *Vaciar la caja*, que lanza esa
+  misma acción sin pasar por el menú.
+
+  **Trampa del charset (acentos mal en el PDF).** Las tres plantillas de etiqueta llevan un
+  `<meta charset="utf-8"/>` dentro del `t-call="web.html_container"`. Parece redundante porque
+  `web.report_layout` ya pone el charset en el `<head>`, pero
+  `ir_actions_report._prepare_html()` solo conserva ese `<head>` si el documento contiene un
+  `<div class="article">` — el que añaden `web.basic_layout` / `web.external_layout`. Estas
+  etiquetas no lo usan (paperformat B8, estilos en línea), así que Odoo cae en la rama que se
+  queda con el contenido de `<main>` pelado y se lo pasa a wkhtmltopdf sin cabecera: asume
+  latin-1 y `Estantería`, `ÍCARUS` o `Compañía` salen con mojibake. Cualquier etiqueta nueva
+  que no use `basic_layout` necesita ese meta.
 
 ### 4 Búsqueda de cajas para el desplegable de la app
 
@@ -328,6 +340,8 @@ Comprobaciones mínimas:
 - [ ] Caja sin estantería → lo rechaza el `required`.
 - [ ] Imprimir → Etiqueta de caja sobre una caja: sale el código, la estantería y un QR legible.
 - [ ] Lo mismo seleccionando varias cajas en la lista: una etiqueta por página.
+- [ ] Botón **Imprimir etiqueta** en la ficha de caja: abre el mismo PDF.
+- [ ] En el PDF, `Estantería` / `ÍCARUS` / `Compañía` salen con los acentos correctos.
 - [ ] El QR impreso, leído con el móvil, contiene `CAJA | <id> | <nombre>`.
 
 
@@ -408,11 +422,18 @@ def marcar_inventariado(self):
 `views/stock_lot.xml`:
 
 - Formulario (`leulit_20221121_1017_form`): los dos campos, justo bajo `update_stock`.
-- Lista (`leulit_20221121_1017_tree`): `fecha_inventario` visible, `usuario_inventario` como
-  columna opcional.
+- Lista (`leulit_20221121_1017_tree`): `fecha_inventario` y `usuario_inventario` visibles.
 - Buscador (`leulit_20260818_1200_search`, nuevo, hereda `stock.search_product_lot_filter`):
   ambos campos buscables, filtros **Con stock** y **Sin inventariar**, y agrupar por usuario o
   por fecha.
+
+**Listado "inventariado desde tal fecha".** El campo del buscador se llama *Inventariado desde*
+y lleva `filter_domain="[('fecha_inventario','>=',self)]"`: se teclea una fecha en la caja de
+búsqueda de *Piezas* y sale todo lo inventariado ese día o después, con su fecha y quién lo
+hizo. Buscar por fecha exacta no se ofrece porque nadie lo pregunta así. Para dejarlo a mano,
+*Favoritos → Guardar búsqueda actual*; para el reparto por persona, *Agrupar por → Inventariado
+por*. Sin tocar código también se llega por *Filtros → Añadir filtro personalizado* con
+`Último inventario > fecha`, que es lo que había antes de este cambio.
 
 ### 5.3 Contrato con la app ICARUS
 

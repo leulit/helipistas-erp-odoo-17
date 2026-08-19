@@ -192,7 +192,7 @@
                     <field name="caja_id" optional="show"/>
                     <field name="estanteria_id" optional="show"/>
                     <field name="fecha_inventario" optional="show"/>
-                    <field name="usuario_inventario" optional="hide"/>
+                    <field name="usuario_inventario" optional="show"/>
                 </xpath>
                 <xpath expr="//field[@name='expiration_date']" position="replace">
                 </xpath>
@@ -236,7 +236,9 @@
             <field name="inherit_id" ref="stock.search_product_lot_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//search" position="inside">
-                    <field name="fecha_inventario"/>
+                    <!-- Buscar por fecha exacta de inventario no sirve para nada; lo que se pregunta
+                         siempre es "que se ha inventariado desde tal dia". De ahi el >=. -->
+                    <field name="fecha_inventario" string="Inventariado desde" filter_domain="[('fecha_inventario','&gt;=',self)]"/>
                     <field name="usuario_inventario"/>
                     <field name="estanteria_id"/>
                     <field name="caja_id"/>

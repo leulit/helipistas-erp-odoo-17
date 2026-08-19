@@ -21,6 +21,11 @@
                     <attribute name="string">Vaciar la caja</attribute>
                     <attribute name="confirm">Se sacarán todas las piezas de esta caja y se quedarán sin estantería, como sueltas sin ubicar. ¿Seguro?</attribute>
                 </xpath>
+                <!-- Misma accion que el menu Imprimir -> Etiqueta de caja, aqui a mano porque es
+                     lo que se hace al dar de alta una caja: guardar y pegarle el QR. -->
+                <xpath expr="//button[@name='unpack']" position="after">
+                    <button name="%(leulit_almacen.etiqueta_caja_report)d" type="action" string="Imprimir etiqueta"/>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id" required="1" options="{'no_quick_create': True}"/>
                 </xpath>
