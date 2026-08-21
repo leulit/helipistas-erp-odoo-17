@@ -41,7 +41,7 @@
                         <group col="6">
                             <group colspan="2">
                                 <field name="vuelo_id" string="Flight"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
-                                <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" />
+                                <field name="helicoptero_id" string="Helicopter"  options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" force_save="1" />
                                 <field name="maintenance_request_id" options="{'no_create': True, 'edit': False, 'no_open':true}"  readonly="((estado in ['deferred', 'closed', 'flightcanceled']))" />
                             </group>
                             <group colspan="2">
@@ -59,7 +59,7 @@
                         </group>
                         <group string="Report">
                             <group>
-                                <field name="fecha" string="Date" readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" />
+                                <field name="fecha" string="Date" readonly="estado in ['deferred', 'closed', 'flightcanceled'] or vuelo_id" force_save="1" />
                                 <label for="informado_por" string="Who"/>
                                 <div class="o_row">
                                     <field name="informado_por" nolabel="1"/>
