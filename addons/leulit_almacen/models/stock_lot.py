@@ -458,6 +458,16 @@ class StockLot(models.Model):
                         item.name, cajas[0].name, cajas[0].estanteria_id.display_name or _('ninguna')))
 
 
+    def _sync_estanteria_caja(self):
+        """Si la pieza esta en una caja, su estanteria la manda la caja. Lo llaman los hooks de
+        stock.quant: crear, escribir y borrar un quant son las tres formas de meter o sacar una
+        pieza de una caja, y el campo del lote es una copia que si no se queda contando otra cosa."""
+        for item in self:
+            if item.estanteria_id != item.caja_id.estanteria_id:
+                item.sudo().estanteria_id = item.caja_id.estanteria_id
+
+
+
     def marcar_inventariado(self):
         # ponytail: sella hoy + quien llama. El historial de inventarios anteriores lo guarda
         # el chatter via tracking=True, sin modelo de campana ni tabla de historico.
@@ -679,12 +689,31 @@ class StockLot(models.Model):
         ])
         if not quants:
             raise UserError(_('La pieza no tiene existencias en esa ubicación.'))
-        if len(quants) > 1:
-            # Un mismo lote en una misma ubicación puede tener un quant por caja. Si ya está
-            # repartido, no hay una respuesta correcta desde la app: que lo resuelvan en Odoo.
-            cajas = ', '.join([q.package_id.name or _('sin caja') for q in quants])
-            raise UserError(_('La pieza está repartida en varias cajas en esa ubicación (%s). '
-                              'Resuélvelo desde Odoo antes de asignarla por la app.') % cajas)
+        # Varios quants del mismo lote y ubicación NO significan varias cajas: la clave de
+        # unicidad de stock.quant incluye owner_id e in_date, así que una salida con propietario
+        # contra existencias sin propietario deja una segunda fila (negativa) sin caja alguna.
+        # El guard anterior las confundía y rechazaba el 29% del almacén con un mensaje que decía
+        # "repartida en varias cajas (sin caja, sin caja)".
+        # Un quant negativo es un descuadre contable, no un sitio físico: una caja no puede
+        # contener -1 unidades. La caja va sobre las filas con existencias reales.
+        positivos = quants.filtered(lambda item: item.quantity > 0)
+        if not positivos:
+            raise UserError(_('La pieza no tiene existencias positivas en esa ubicación: hay %s '
+                              'línea(s) de stock y todas son negativas. Es un descuadre de '
+                              'inventario, resuélvelo desde Odoo.') % len(quants))
+        # Varias filas positivas del mismo lote y ubicacion NO son varios sitios: son la misma
+        # pieza partida por criterios contables. owner_id forma parte de la clave de stock.quant,
+        # asi que 12 unidades compradas 5 con propietario Helipistas y 7 por ajuste de inventario
+        # se quedan en dos filas que Odoo no fusiona nunca. La ficha de la pieza las suma y
+        # ensena 12, y en el almacen esas 12 estan en la misma caja. La caja es un hecho fisico;
+        # el propietario y la fecha de entrada son contabilidad. Van todas a la misma caja.
+        cajas_actuales = positivos.mapped('package_id')
+        if len(cajas_actuales) > 1:
+            raise UserError(_('La pieza ya está repartida entre varias cajas en esa ubicación '
+                              '(%s). Eso sí es un reparto físico y la app no puede decidir por ti: '
+                              'únelo desde Odoo antes de asignarla.') % (
+                                  ', '.join(cajas_actuales.mapped('name'))))
+        quants = positivos
         # inventory_mode=False: stock.quant.write() prohíbe escribir package_id en modo inventario
         # (ver _get_forbidden_fields_write en stock/models/stock_quant.py).
         quants.with_context(inventory_mode=False).write({'package_id': datos.get('caja_id') or False})

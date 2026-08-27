@@ -7,6 +7,25 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.view_quant_package_form"/>
             <field name="arch" type="xml">
+                <!-- "Desempaquetar" saca TODAS las piezas de la caja. Es una operacion real
+                     -vaciar una caja- pero con nombre de paqueteria, y ahora ademas deja a esas
+                     piezas sin estanteria: la propagacion de stock.quant.write las pone como
+                     sueltas sin ubicar. De ahi el confirm. -->
+                <!-- "Traslados del paquete": los albaranes donde aparece la caja. Sigue
+                     teniendo sentido -al recepcionar se puede fijar la caja en la linea de
+                     movimiento- pero con el nombre de Odoo, no con el nuestro. -->
+                <xpath expr="//button[@name='action_view_picking']" position="attributes">
+                    <attribute name="string">Traslados de la caja</attribute>
+                </xpath>
+                <xpath expr="//button[@name='unpack']" position="attributes">
+                    <attribute name="string">Vaciar la caja</attribute>
+                    <attribute name="confirm">Se sacarán todas las piezas de esta caja y se quedarán sin estantería, como sueltas sin ubicar. ¿Seguro?</attribute>
+                </xpath>
+                <!-- Misma accion que el menu Imprimir -> Etiqueta de caja, aqui a mano porque es
+                     lo que se hace al dar de alta una caja: guardar y pegarle el QR. -->
+                <xpath expr="//button[@name='unpack']" position="after">
+                    <button name="%(leulit_almacen.etiqueta_caja_report)d" type="action" string="Imprimir etiqueta"/>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id" required="1" options="{'no_quick_create': True}"/>
                 </xpath>
@@ -21,6 +40,31 @@
                     <attribute name="string">Estado del contenido</attribute>
                     <attribute name="help">Ubicación calculada a partir del contenido. En este ERP representa el estado del material (Nuevo, Útil, Pendiente Decisión), no dónde está físicamente la caja: eso es la estantería.</attribute>
                 </xpath>
+                <!-- Vocabulario de paqueteria de Odoo, que aqui confunde: una caja del almacen
+                     no es un bulto de envio. "Tipo de paquete" (stock.package.type) es el
+                     formato fisico -medidas, peso maximo, codigo de barras- que usan los
+                     modulos de transportistas para tarifar; no hay ni un solo registro en la
+                     base. "Fecha de empaquetado" la rellena el boton "Poner en paquete" y para
+                     una caja permanente no dice nada. -->
+                <xpath expr="//label[@for='name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="placeholder">p. ej. C-014</attribute>
+                </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='pack_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- "Propietario" es un unico partner para toda la caja, y una caja puede tener
+                     lotes de propietarios distintos. El dato bueno esta en la existencia:
+                     stock.quant.owner_id, con 8.677 quants con propietario en produccion.
+                     Un campo por caja solo puede mentir o quedarse en blanco. -->
+                <xpath expr="//field[@name='owner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 
@@ -29,6 +73,12 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.view_quant_package_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </xpath>
                 <xpath expr="//field[@name='package_type_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>
@@ -43,6 +93,11 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.quant_package_search_view"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">Código de caja</attribute>
+                </xpath>
+                <xpath expr="//field[@name='package_type_id']" position="replace"/>
+                <xpath expr="//filter[@name='package_type']" position="replace"/>
                 <xpath expr="//field[@name='location_id']" position="before">
                     <field name="estanteria_id"/>
                 </xpath>

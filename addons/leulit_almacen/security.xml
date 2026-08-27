@@ -91,4 +91,20 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
+    <!-- Crear estanterias es crear una stock.location, y la ACL estandar de Odoo solo se la da
+         a Inventario/Administrador (stock.access_stock_location_manager), que ademas abre
+         crear almacenes y tocar el arbol ICA. El responsable de almacen necesita justo esto y
+         nada mas, asi que se le da aqui: sin borrar, porque location_id es ondelete='cascade'
+         y cargarse una raiz se llevaria por delante todo el catalogo de estanterias (de eso
+         protege ademas stock_location.unlink()). -->
+    <record id="leulit_20260818_1332_access_permission" model="ir.model.access">
+        <field name="name">stock.location access permission</field>
+        <field name="model_id" ref="stock.model_stock_location"/>
+        <field name="group_id" ref="leulit_almacen.RResponsable_almacen"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
 </odoo>

@@ -49,8 +49,13 @@ dónde está una pieza es **`stock.lot.estanteria_id`**, no la caja:
 
 - Pieza suelta → se le asigna la estantería directamente.
 - Pieza en caja → la hereda de la caja, y mover la caja de estantería se propaga a su contenido.
-  La propagación va en `stock.quant.write()` y no en los métodos que escriben `package_id`, para
-  cubrir también los caminos del core como "Poner en paquete".
+  La propagación va en los hooks de `stock.quant` (`create`, `write`, `unlink` → 
+  `stock.lot._sync_estanteria_caja()`) y no en los métodos que escriben `package_id`, para cubrir
+  también los caminos del core como "Poner en paquete". Los tres, no sólo `write`: un quant puede
+  **nacer** ya dentro de una caja (recepción sobre un paquete) y puede **desaparecer** al quedarse
+  sin existencias; si sólo se cubre `write`, el lote se queda diciendo dónde estaba antes.
+  El campo del lote es una copia de la caja: quien lo lea sin este sincronismo lee un dato viejo,
+  no una discrepancia legítima.
 - `stock.lot.caja_id` (compute **almacenado**) dice en qué caja está, o vacío si va suelta.
   Almacenado a propósito: es lo que permite buscar y agrupar por caja.
 - Editar a mano la estantería de una pieza que está en una caja está bloqueado en el formulario
@@ -227,13 +232,23 @@ Comportamiento y errores que **la app tiene que manejar**:
   *"Faltan datos para asignar la caja (pieza y ubicación son obligatorios)."*
 - La pieza no tiene existencias en esa ubicación → `UserError`:
   *"La pieza no tiene existencias en esa ubicación."*
-- La pieza está repartida en **varias cajas** en esa ubicación → `UserError`:
-  *"La pieza está repartida en varias cajas en esa ubicación (X, Y). Resuélvelo desde Odoo antes
-  de asignarla por la app."*
-- Todo correcto → escribe `package_id` en el quant y devuelve `true`.
+- Todas las líneas de stock son negativas → `UserError`: es un descuadre de inventario.
+- La pieza ya está repartida entre **varias cajas** en esa ubicación → `UserError`:
+  *"La pieza ya está repartida entre varias cajas en esa ubicación (X, Y)..."*
+- Todo correcto → escribe `package_id` en **todas** las líneas positivas y devuelve `true`.
 
-Ese tercer caso existe porque un mismo lote en una misma ubicación tiene **un quant por caja**.
-La app debe mostrar el mensaje tal cual, no tragárselo.
+La app debe mostrar esos mensajes tal cual, no tragárselos.
+
+**Por qué escribe en todas las líneas positivas, y no en una.** Un mismo lote puede tener varias
+filas de `stock.quant` en la MISMA ubicación sin estar en varias cajas: `owner_id` (y la fecha de
+entrada) forman parte de la clave del quant, así que 12 unidades de las que 5 entraron con
+propietario *Helipistas* y 7 por un ajuste de inventario se quedan en dos filas que Odoo **no
+fusiona nunca**. La ficha de la pieza las suma y enseña 12, y en el almacén esas 12 están en una
+sola caja. La caja es un hecho **físico**; el propietario y la fecha de entrada son
+**contabilidad**. En producción hay 1.581 filas positivas con propietario en ubicaciones
+internas, así que no es un caso raro: el guard anterior —que exigía una sola fila positiva—
+bloqueaba la app en todas ellas. El único reparto que sigue rechazándose es el real: filas
+positivas ya asignadas a **cajas distintas**.
 
 No genera ningún `stock.move`: la caja es posición física, no estado del material. Como
 contrapartida, **el cambio de caja no queda en el histórico de movimientos**.
@@ -272,7 +287,9 @@ No genera ningún `stock.move`.
 - `views/stock_move_line.xml` — columnas Caja origen/destino en el histórico, y se **muestra**
   `result_package_id` en operaciones detalladas (estaba `column_invisible=1`). Eso es lo que
   permite ubicar la pieza al recepcionarla, sin código extra.
-- `security.xml` — accesos para `RBase_almacen`. Ojo: este módulo **no** usa
+- `security.xml` — accesos para `RBase_almacen`, más el alta/edición de `stock.location` para
+  `RResponsable_almacen` (sin borrado), que es lo que permite crear estanterías sin ser
+  Inventario/Administrador. Ojo: este módulo **no** usa
   `security/ir.model.access.csv`; los permisos son registros `ir.model.access` dentro de
   `security.xml`.
 - `menu.xml` — "Cajas" (`RBase_almacen`) y "Estanterías" (`RResponsable_almacen`).
@@ -280,7 +297,19 @@ No genera ningún `stock.move`.
   `qr` calculado en `stock.quant.package` (`pyqrcode`, contenido `CAJA | {id} | {nombre}`),
   plantilla QWeb y acción de informe con `binding_model_id`, de modo que aparece en el menú
   **Imprimir** de la ficha y de la lista de cajas. Admite selección múltiple: una etiqueta por
-  página. Mismo `paperformat_B8_landscape` que la etiqueta de pieza.
+  página. Mismo `paperformat_B8_landscape` que la etiqueta de pieza. La ficha de caja tiene
+  además un botón **Imprimir etiqueta** en la cabecera, junto a *Vaciar la caja*, que lanza esa
+  misma acción sin pasar por el menú.
+
+  **Trampa del charset (acentos mal en el PDF).** Las tres plantillas de etiqueta llevan un
+  `<meta charset="utf-8"/>` dentro del `t-call="web.html_container"`. Parece redundante porque
+  `web.report_layout` ya pone el charset en el `<head>`, pero
+  `ir_actions_report._prepare_html()` solo conserva ese `<head>` si el documento contiene un
+  `<div class="article">` — el que añaden `web.basic_layout` / `web.external_layout`. Estas
+  etiquetas no lo usan (paperformat B8, estilos en línea), así que Odoo cae en la rama que se
+  queda con el contenido de `<main>` pelado y se lo pasa a wkhtmltopdf sin cabecera: asume
+  latin-1 y `Estantería`, `ÍCARUS` o `Compañía` salen con mojibake. Cualquier etiqueta nueva
+  que no use `basic_layout` necesita ese meta.
 
 ### 4 Búsqueda de cajas para el desplegable de la app
 
@@ -321,7 +350,11 @@ Comprobaciones mínimas:
 - [ ] Caja sin estantería → lo rechaza el `required`.
 - [ ] Imprimir → Etiqueta de caja sobre una caja: sale el código, la estantería y un QR legible.
 - [ ] Lo mismo seleccionando varias cajas en la lista: una etiqueta por página.
+- [ ] Botón **Imprimir etiqueta** en la ficha de caja: abre el mismo PDF.
+- [ ] En el PDF, `Estantería` / `ÍCARUS` / `Compañía` salen con los acentos correctos.
 - [ ] El QR impreso, leído con el móvil, contiene `CAJA | <id> | <nombre>`.
+- [ ] `docker exec -ti helipistas_odoo_17 odoo -u leulit_almacen -d <db> --test-enable
+      --test-tags=/leulit_almacen --stop-after-init` → pasan los tests de `set_caja_app`.
 
 
 ---
@@ -401,11 +434,18 @@ def marcar_inventariado(self):
 `views/stock_lot.xml`:
 
 - Formulario (`leulit_20221121_1017_form`): los dos campos, justo bajo `update_stock`.
-- Lista (`leulit_20221121_1017_tree`): `fecha_inventario` visible, `usuario_inventario` como
-  columna opcional.
+- Lista (`leulit_20221121_1017_tree`): `fecha_inventario` y `usuario_inventario` visibles.
 - Buscador (`leulit_20260818_1200_search`, nuevo, hereda `stock.search_product_lot_filter`):
   ambos campos buscables, filtros **Con stock** y **Sin inventariar**, y agrupar por usuario o
   por fecha.
+
+**Listado "inventariado desde tal fecha".** El campo del buscador se llama *Inventariado desde*
+y lleva `filter_domain="[('fecha_inventario','>=',self)]"`: se teclea una fecha en la caja de
+búsqueda de *Piezas* y sale todo lo inventariado ese día o después, con su fecha y quién lo
+hizo. Buscar por fecha exacta no se ofrece porque nadie lo pregunta así. Para dejarlo a mano,
+*Favoritos → Guardar búsqueda actual*; para el reparto por persona, *Agrupar por → Inventariado
+por*. Sin tocar código también se llega por *Filtros → Añadir filtro personalizado* con
+`Último inventario > fecha`, que es lo que había antes de este cambio.
 
 ### 5.3 Contrato con la app ICARUS
 
@@ -497,7 +537,12 @@ disco pero el módulo no se actualizó.
    Cada estantería debe llevar **Ubicación padre** = la raíz de su compañía. Sin padre no
    aparece en ningún sitio.
 2. **Revisar los grupos.** Quien inventaría necesita `RBase_almacen`; quien mantiene el
-   catálogo de estanterías, `RResponsable_almacen`.
+   catálogo de estanterías, `RResponsable_almacen`. Además hacen falta dos cosas que no da
+   este módulo: **Inventario / Usuario** (`stock.group_stock_user`, para existencias,
+   transferencias e inventario físico) y **Rol Taller / Base**, porque el menú *Almacén*
+   cuelga de la app *Taller* (`addons/leulit/menu.xml`). Crear estanterías **no** exige
+   Inventario/Administrador: `security.xml` le da a `RResponsable_almacen` el alta y la
+   edición de `stock.location` (sin borrado).
 3. **Cajas.** Se pueden crear desde Odoo o sobre la marcha desde la app. Si se rotulan antes,
    imprimir las etiquetas: seleccionar en la lista → *Imprimir → Etiqueta de caja*.
 
@@ -513,6 +558,31 @@ disco pero el módulo no se actualizó.
 - Buscador de Lotes: filtros **Con stock** y **Sin inventariar**, y agrupar por *Inventariado por*.
 - Con un usuario de Icarus, comprobar que **no** ve las estanterías de Helipistas.
 - Borrar una raíz de estanterías → debe negarse con mensaje, no borrar nada.
+
+### 6.3 bis Vocabulario de paquetería escondido en la ficha de caja
+
+`stock.quant.package` es el modelo de **bultos de envío** de Odoo, y su formulario trae campos
+que en un almacén de repuestos solo confunden. Ocultos en la ficha de caja:
+
+- **Tipo de paquete** (`package_type_id` → `stock.package.type`): el formato físico del embalaje
+  —medidas, peso máximo, código de barras— que usan los módulos de transportistas para tarifar
+  envíos. En producción no hay **ni un solo registro**: el desplegable salía vacío. Fuera de los
+  tres sitios: ficha, columna de la lista y buscador (campo y agrupación).
+- **Fecha de empaquetado** (`pack_date`): la rellena el botón nativo "Poner en paquete". Para una
+  caja permanente del almacén no significa nada.
+- **Propietario** (`owner_id`): un único partner para toda la caja, y una caja puede contener
+  lotes de propietarios distintos. El dato bueno vive en la existencia — `stock.quant.owner_id`,
+  con **8.677 quants con propietario** en producción. Un campo por caja solo puede mentir o
+  quedarse en blanco.
+
+Y "Referencia de paquete" pasa a llamarse **"Código de caja"**, en los tres sitios donde salía:
+la ficha, la cabecera de la lista (`display_name`) y el buscador. El botón **"Desempaquetar"**
+pasa a **"Vaciar la caja"** y ahora pide confirmación: saca todas las piezas y, con la
+propagación nueva, las deja además sin estantería. Y el botón de estadística **"Traslados del
+paquete"** pasa a **"Traslados de la caja"**: se queda, porque al recepcionar sí se puede fijar
+la caja en la línea de movimiento, y entonces el albarán aparece ahí. Lo que sí se queda es
+`location_id`, renombrado a **"Estado del contenido"**, porque ahí sí importa: es el estado
+Part-145 del material que hay dentro, calculado por Odoo, no dónde está la caja.
 
 ### 6.4 bis Trampas de herencia de vistas — aprendidas rompiendo producción
 

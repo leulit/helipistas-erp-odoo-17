@@ -48,15 +48,34 @@ class StockQuant(models.Model):
         return  [('id','=','0')]
     
 
+    def _sync_estanteria(self):
+        # Meter una pieza en una caja (o sacarla) le cambia el sitio. Se propaga desde el quant y
+        # no desde los sitios que escriben package_id para cubrir tambien los caminos del core,
+        # como el boton nativo "Poner en paquete".
+        self.mapped('lot_id')._sync_estanteria_caja()
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # Un quant puede nacer ya dentro de una caja (recepcion sobre un paquete, validar un
+        # albaran con "Poner en paquete"): sin esto la pieza se queda diciendo donde estaba antes.
+        quants = super(StockQuant, self).create(vals_list)
+        quants.filtered('package_id')._sync_estanteria()
+        return quants
+
+
     def write(self, vals):
         res = super(StockQuant, self).write(vals)
-        # Meter una pieza en una caja (o sacarla) le cambia el sitio. Se propaga aqui y no en
-        # los sitios que escriben package_id para cubrir tambien los caminos del core, como el
-        # boton nativo "Poner en paquete".
         if 'package_id' in vals:
-            for item in self:
-                if item.lot_id:
-                    item.lot_id.sudo().estanteria_id = item.package_id.estanteria_id
+            self._sync_estanteria()
+        return res
+
+
+    def unlink(self):
+        # Se queda sin existencias en la caja: deja de estar donde estaba la caja.
+        lotes = self.filtered('package_id').mapped('lot_id')
+        res = super(StockQuant, self).unlink()
+        lotes._sync_estanteria_caja()
         return res
 
 

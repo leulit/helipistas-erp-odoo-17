@@ -121,6 +121,13 @@
 
         <template id="leulit_20260818_1350_informe">
             <t t-call="web.html_container">
+                <!-- Este <meta> parece redundante -web.report_layout ya pone charset en el <head>-
+                     pero no lo es: ir_actions_report._prepare_html() solo conserva el <head> si el
+                     documento trae un <div class="article"> (lo que ponen web.basic_layout /
+                     external_layout). Sin el, se queda con el contenido de <main> pelado y se lo
+                     pasa a wkhtmltopdf sin cabecera: asume latin-1 y los acentos salen mal. La
+                     etiqueta de pieza de arriba lleva el mismo meta por lo mismo. -->
+                <meta charset="utf-8"/>
                 <t t-foreach="docs" t-as="o">
                     <div class="page">
                         <table class="fullwidth" style="border-collapse:collapse;">
@@ -166,6 +173,8 @@
 
         <template id="leulit_20260819_1000_informe">
             <t t-call="web.html_container">
+                <!-- Ver el meta de la etiqueta de caja: sin el, acentos mal. -->
+                <meta charset="utf-8"/>
                 <t t-foreach="docs" t-as="o">
                     <div class="page">
                         <table class="fullwidth" style="border-collapse:collapse;">
