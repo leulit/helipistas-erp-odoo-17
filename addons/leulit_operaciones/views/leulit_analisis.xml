@@ -19,7 +19,7 @@
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
                 <pivot string="Análisis de horas de vuelo" sample="0">
-                    <field name="helicoptero_modelo" type="row"/>
+                    <field name="helicoptero_tipo" type="row"/>
                     <field name="mes" type="col"/>
                     <field name="anyo" type="col"/>
                     <field name="airtime" type="measure"/>
@@ -32,11 +32,11 @@
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
                 <search string="Análisis de horas de vuelo">
-                    <field name="helicoptero_modelo"/>
+                    <field name="helicoptero_tipo"/>
                     <field name="helicoptero_id"/>
                     <field name="fechavuelo"/>
                     <group expand="0" string="Agrupar por">
-                        <filter name="group_modelo" string="Modelo" context="{'group_by':'helicoptero_modelo'}"/>
+                        <filter name="group_tipo" string="Tipo" context="{'group_by':'helicoptero_tipo'}"/>
                         <filter name="group_helicoptero" string="Helicóptero" context="{'group_by':'helicoptero_id'}"/>
                         <filter name="group_mes" string="Mes" context="{'group_by':'mes'}"/>
                         <filter name="group_anyo" string="Año" context="{'group_by':'anyo'}"/>
