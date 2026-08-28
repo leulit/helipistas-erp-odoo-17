@@ -292,7 +292,10 @@ No genera ningún `stock.move`.
   Inventario/Administrador. Ojo: este módulo **no** usa
   `security/ir.model.access.csv`; los permisos son registros `ir.model.access` dentro de
   `security.xml`.
-- `menu.xml` — "Cajas" (`RBase_almacen`) y "Estanterías" (`RResponsable_almacen`).
+- `menu.xml` — "Cajas" y "Estanterías", ambos con `RBase_almacen`. El menú Estanterías
+  estuvo gateado por `RResponsable_almacen` hasta 2026-08-24; se bajó a Base porque
+  `RResponsable_almacen` también gatea el desbloqueo de pedidos de compra
+  (`purchase_order.xml`, `purchase_order_line.py`) y no se puede dar lo uno sin lo otro.
 - `report/leulit_etiquetas.xml` + `report/ir_actions_report.xml` — **etiqueta de caja**: campo
   `qr` calculado en `stock.quant.package` (`pyqrcode`, contenido `CAJA | {id} | {nombre}`),
   plantilla QWeb y acción de informe con `binding_model_id`, de modo que aparece en el menú
@@ -531,18 +534,20 @@ disco pero el módulo no se actualizó.
 
 ### 6.3 Configurar antes de tocar nada
 
-1. **Crear las estanterías.** Menú *Almacén → Estanterías* (grupo `RResponsable_almacen`).
+1. **Crear las estanterías.** Menú *Almacén → Estanterías* (grupo `RBase_almacen`).
    El módulo crea las dos raíces **vacías**: hasta que no haya estanterías colgando de ellas,
    el desplegable de caja sale vacío en Odoo y en la app.
    Cada estantería debe llevar **Ubicación padre** = la raíz de su compañía. Sin padre no
    aparece en ningún sitio.
-2. **Revisar los grupos.** Quien inventaría necesita `RBase_almacen`; quien mantiene el
-   catálogo de estanterías, `RResponsable_almacen`. Además hacen falta dos cosas que no da
-   este módulo: **Inventario / Usuario** (`stock.group_stock_user`, para existencias,
-   transferencias e inventario físico) y **Rol Taller / Base**, porque el menú *Almacén*
-   cuelga de la app *Taller* (`addons/leulit/menu.xml`). Crear estanterías **no** exige
-   Inventario/Administrador: `security.xml` le da a `RResponsable_almacen` el alta y la
-   edición de `stock.location` (sin borrado).
+2. **Revisar los grupos.** Quien inventaría o mantiene el catálogo de estanterías necesita
+   `RBase_almacen`. Además hacen falta dos cosas que no da este módulo: **Inventario /
+   Usuario** (`stock.group_stock_user`, para existencias, transferencias e inventario físico)
+   y **Rol Taller / Base**, porque el menú *Almacén* cuelga de la app *Taller*
+   (`addons/leulit/menu.xml`). El alta de estanterías la da `security.xml` a
+   `RResponsable_almacen` (sin borrado) y, de serie, **Inventario / Administrador**: un
+   `RBase_almacen` sin ninguno de los dos ve el menú pero solo consulta. Usuarios
+   multi-compañía: el almacén real es Icarus, así que hace falta la compañía 2 en
+   `company_ids` más **Extra Rights / Multi Compañías**.
 3. **Cajas.** Se pueden crear desde Odoo o sobre la marcha desde la app. Si se rotulan antes,
    imprimir las etiquetas: seleccionar en la lista → *Imprimir → Etiqueta de caja*.
 

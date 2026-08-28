@@ -93,7 +93,7 @@
             name="Estanterías"
             parent="leulit.leulit_20201130_1135_menuitem"
             action="leulit_20260818_1304_action"
-            groups="leulit_almacen.RResponsable_almacen"
+            groups="leulit_almacen.RBase_almacen"
             sequence="67"
         />
         <menuitem

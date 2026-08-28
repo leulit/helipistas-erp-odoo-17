@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Cómo entra y se gestiona el correo comercial</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm 13mm 16mm; }
+
+  :root{
+    --tinta:#15202b;
+    --suave:#5b6b7c;
+    --linea:#d8e0e8;
+    --azul:#14507d;
+    --azul-claro:#e8f0f7;
+    --ambar:#a8610a;
+    --ambar-claro:#fdf2e2;
+    --papel:#ffffff;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:var(--tinta);
+    background:var(--papel);
+    font-size:10pt;
+    line-height:1.45;
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1{
+    font-size:19pt;
+    line-height:1.15;
+    margin:0 0 3px;
+    letter-spacing:-0.4px;
+    font-weight:700;
+  }
+  h2{
+    font-size:12pt;
+    margin:14px 0 6px;
+    color:var(--azul);
+    letter-spacing:-0.2px;
+    font-weight:700;
+    padding-bottom:4px;
+    border-bottom:1.5px solid var(--linea);
+    page-break-after:avoid;
+  }
+  h3{
+    font-size:10pt;
+    margin:12px 0 4px;
+    font-weight:700;
+    page-break-after:avoid;
+  }
+  p{ margin:0 0 7px; }
+  ul{ margin:0 0 7px; padding-left:16px; }
+  li{ margin-bottom:4px; }
+  strong{ font-weight:700; }
+
+  .cabecera{
+    border-bottom:2.5px solid var(--azul);
+    padding-bottom:9px;
+    margin-bottom:15px;
+  }
+  .sub{ color:var(--suave); font-size:9.5pt; margin:0; }
+  .meta{ color:var(--suave); font-size:8pt; margin-top:5px; letter-spacing:0.2px; }
+
+  .resumen{
+    background:var(--azul-claro);
+    border-left:4px solid var(--azul);
+    padding:11px 14px;
+    margin:0;
+    font-size:10.5pt;
+    line-height:1.45;
+  }
+  .resumen p{ margin:0; }
+  .resumen p + p{ margin-top:7px; }
+
+  .aviso{
+    background:var(--ambar-claro);
+    border-left:4px solid var(--ambar);
+    padding:10px 13px;
+    font-size:9pt;
+    margin:8px 0;
+    page-break-inside:avoid;
+  }
+  .aviso p{ margin:0; }
+  .aviso p + p{ margin-top:5px; }
+
+  .diagrama{ margin:9px 0 3px; page-break-inside:avoid; }
+  .diagrama svg{ width:100%; height:auto; display:block; }
+
+  .pie-fig{ font-size:8pt; color:var(--suave); margin:0 0 4px; font-style:italic; }
+
+  .dosco{ display:flex; gap:14px; margin:6px 0; }
+  .dosco > div{ flex:1; }
+
+  .tarjeta{
+    border:1px solid var(--linea);
+    border-radius:4px;
+    padding:9px 11px;
+    font-size:9pt;
+    line-height:1.4;
+  }
+  .tarjeta h3{ margin:0 0 3px; }
+
+  .fase{
+    border:1px solid var(--linea);
+    border-radius:4px;
+    padding:10px 12px;
+    margin-bottom:7px;
+    page-break-inside:avoid;
+  }
+  .fase h3{ margin:0 0 4px; color:var(--azul); }
+  .fase p{ margin:0 0 5px; font-size:9pt; }
+  .fase ul{ font-size:9pt; margin-bottom:0; }
+
+  .etiq{
+    display:inline-block;
+    font-size:7pt;
+    font-weight:700;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    padding:2px 6px;
+    border-radius:3px;
+    vertical-align:2px;
+    margin-left:6px;
+  }
+  .etiq-lista{ background:#dff0e4; color:#1c6b47; }
+  .etiq-luego{ background:var(--ambar-claro); color:var(--ambar); }
+
+  .cierre{
+    margin-top:9px;
+    padding-top:6px;
+    border-top:1px solid var(--linea);
+    font-size:8pt;
+    color:var(--suave);
+  }
+</style>
+</head>
+<body>
+
+<div class="cabecera">
+  <h1>Cómo entra y se gestiona el correo comercial</h1>
+  <p class="sub">Propuesta de flujo de información entre el correo de la empresa y el ERP</p>
+  <p class="meta">Helipistas · 24 de agosto de 2026 · Documento de trabajo para dirección</p>
+</div>
+
+<div class="resumen">
+  <p><strong>Hoy</strong>, cada oportunidad comercial que llega por correo la copia una persona a mano en el ERP, y la conversación con el cliente se queda en Gmail, en un buzón que comparten varias personas.</p>
+  <p><strong>La propuesta</strong> es que el correo comercial cree la oportunidad solo, y que toda la conversación con el cliente —ida y vuelta— quede guardada dentro de esa oportunidad, visible para quien tenga permiso.</p>
+</div>
+
+<h2>1. De dónde partimos</h2>
+
+<p>Antes de proponer nada revisamos qué está pasando de verdad en el sistema. Tres hechos:</p>
+
+<ul>
+  <li><strong>Las oportunidades se teclean a mano.</strong> Las creadas este mes las introdujo una persona, una por una, leyendo el correo en Gmail y copiando los datos al ERP.</li>
+  <li><strong>La conversación no está en el ERP.</strong> El último correo de un cliente guardado dentro de una oportunidad es de <strong>mayo de 2025</strong>. Desde entonces, en el ERP solo hay notas internas.</li>
+  <li><strong>Varias personas entran al mismo buzón con la misma contraseña.</strong> No queda registro de quién hizo qué.</li>
+</ul>
+
+<div class="dosco">
+  <div class="tarjeta">
+    <h3>Dependencia de personas</h3>
+    Si quien lleva una conversación está de baja o de vacaciones, nadie más sabe por dónde iba ni qué se le prometió al cliente.
+  </div>
+  <div class="tarjeta">
+    <h3>Oportunidades que se pierden</h3>
+    Si nadie teclea el correo en el ERP, la oportunidad no existe. Depende de que una persona se acuerde.
+  </div>
+  <div class="tarjeta">
+    <h3>Sin trazabilidad</h3>
+    No se puede reconstruir qué se le ofreció a un cliente ni cuándo. Para una empresa auditada, es un punto débil.
+  </div>
+</div>
+
+<h2>2. Cómo funciona hoy</h2>
+
+<div class="diagrama">
+<svg viewBox="0 0 640 286" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo actual del correo comercial">
+  <defs>
+    <marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6b7c"/>
+    </marker>
+    <marker id="pfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8610a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="310" height="286" fill="#f4f7fa"/>
+  <text x="14" y="17" font-family="Helvetica, Arial" font-size="9.5" font-weight="bold" fill="#5b6b7c" letter-spacing="1">GMAIL</text>
+  <rect x="330" y="0" width="310" height="286" fill="#fbfcfd"/>
+  <text x="344" y="17" font-family="Helvetica, Arial" font-size="9.5" font-weight="bold" fill="#5b6b7c" letter-spacing="1">ERP (ODOO)</text>
+
+  <rect x="20" y="30" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="48" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">1 · El cliente escribe</text>
+  <text x="33" y="63" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">a info@helipistas.com</text>
+  <line x1="155" y1="72" x2="155" y2="88" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf)"/>
+
+  <rect x="20" y="88" width="270" height="52" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="106" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">2 · Varias personas leen el buzón</text>
+  <text x="33" y="121" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">Todas con la misma contraseña. Ahí se mezcla</text>
+  <text x="33" y="133" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">lo comercial con todo lo demás.</text>
+  <line x1="155" y1="140" x2="155" y2="156" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf)"/>
+
+  <rect x="20" y="156" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="174" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">3 · Una persona decide si interesa</text>
+  <text x="33" y="189" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">y contesta al cliente desde Gmail</text>
+  <line x1="155" y1="198" x2="155" y2="214" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf)"/>
+
+  <rect x="20" y="214" width="270" height="52" rx="4" fill="#eef3f8" stroke="#c3d1de"/>
+  <text x="33" y="232" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">4 · La conversación se queda aquí</text>
+  <text x="33" y="247" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">Toda la ida y vuelta con el cliente vive en</text>
+  <text x="33" y="259" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">Gmail y no sale de ahí.</text>
+
+  <path d="M 290 177 L 350 177" stroke="#a8610a" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#pfa)" fill="none"/>
+  <text x="297" y="170" font-family="Helvetica, Arial" font-size="8.5" font-weight="bold" fill="#a8610a">a mano</text>
+
+  <rect x="350" y="156" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="363" y="174" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">Teclea la oportunidad en el ERP</text>
+  <text x="363" y="189" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">nombre, correo, qué pide</text>
+  <line x1="485" y1="198" x2="485" y2="214" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf)"/>
+
+  <rect x="350" y="214" width="270" height="52" rx="4" fill="#fdf2e2" stroke="#e8c48a"/>
+  <text x="363" y="232" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#a8610a">La oportunidad nace vacía</text>
+  <text x="363" y="247" font-family="Helvetica, Arial" font-size="9" fill="#8a5209">Tiene la ficha, pero ni un solo correo del</text>
+  <text x="363" y="259" font-family="Helvetica, Arial" font-size="9" fill="#8a5209">cliente dentro.</text>
+</svg>
+</div>
+<p class="pie-fig">El correo y la ficha del cliente viven en dos sitios distintos, unidos solo por alguien que copia a mano.</p>
+
+<h2>3. Cómo proponemos que funcione</h2>
+
+<p>Para el cliente <strong>no cambia nada</strong>: sigue escribiendo a la misma dirección de siempre. Lo que cambia es lo que pasa por dentro.</p>
+
+<div class="diagrama">
+<svg viewBox="0 0 640 352" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo propuesto del correo comercial">
+  <defs>
+    <marker id="pf2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6b7c"/>
+    </marker>
+    <marker id="pf3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#14507d"/>
+    </marker>
+    <marker id="pf4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c9c7c"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="310" height="352" fill="#f4f7fa"/>
+  <text x="14" y="17" font-family="Helvetica, Arial" font-size="9.5" font-weight="bold" fill="#5b6b7c" letter-spacing="1">GMAIL</text>
+  <rect x="330" y="0" width="310" height="352" fill="#fbfcfd"/>
+  <text x="344" y="17" font-family="Helvetica, Arial" font-size="9.5" font-weight="bold" fill="#5b6b7c" letter-spacing="1">ERP (ODOO)</text>
+
+  <rect x="20" y="30" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="48" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">1 · El cliente escribe</text>
+  <text x="33" y="63" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">a info@helipistas.com — igual que hoy</text>
+  <line x1="155" y1="72" x2="155" y2="88" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf2)"/>
+
+  <rect x="20" y="88" width="270" height="52" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="106" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">2 · Se separa automáticamente</text>
+  <text x="33" y="121" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">Lo comercial va al ERP. Lo demás queda</text>
+  <text x="33" y="133" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">apartado para que lo mire una persona.</text>
+
+  <path d="M 290 114 L 350 114" stroke="#14507d" stroke-width="1.8" marker-end="url(#pf3)" fill="none"/>
+  <text x="299" y="107" font-family="Helvetica, Arial" font-size="8.5" font-weight="bold" fill="#14507d">solo</text>
+
+  <rect x="350" y="88" width="270" height="52" rx="4" fill="#e8f0f7" stroke="#8fb3ce"/>
+  <text x="363" y="106" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#14507d">3 · Nace la oportunidad</text>
+  <text x="363" y="121" font-family="Helvetica, Arial" font-size="9" fill="#2b5e87">Con los datos del cliente y el correo</text>
+  <text x="363" y="133" font-family="Helvetica, Arial" font-size="9" fill="#2b5e87">original guardado dentro.</text>
+  <line x1="485" y1="140" x2="485" y2="156" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf2)"/>
+
+  <rect x="350" y="156" width="270" height="52" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="363" y="174" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">4 · El equipo contesta desde el ERP</text>
+  <text x="363" y="189" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">Al cliente le llega el correo desde</text>
+  <text x="363" y="201" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">ventas@helipistas.com</text>
+
+  <path d="M 350 182 L 290 182" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf2)" fill="none"/>
+
+  <rect x="20" y="161" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="179" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">Queda copia en el buzón de la empresa</text>
+  <text x="33" y="194" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">en la carpeta de enviados, como siempre</text>
+  <line x1="155" y1="203" x2="155" y2="219" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf2)"/>
+
+  <rect x="20" y="219" width="270" height="42" rx="4" fill="#ffffff" stroke="#c3d1de"/>
+  <text x="33" y="237" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#15202b">5 · El cliente responde</text>
+  <text x="33" y="252" font-family="Helvetica, Arial" font-size="9" fill="#5b6b7c">a ventas@helipistas.com</text>
+
+  <path d="M 290 240 L 350 240" stroke="#14507d" stroke-width="1.8" marker-end="url(#pf3)" fill="none"/>
+  <text x="299" y="233" font-family="Helvetica, Arial" font-size="8.5" font-weight="bold" fill="#14507d">solo</text>
+
+  <rect x="350" y="219" width="270" height="42" rx="4" fill="#e8f0f7" stroke="#8fb3ce"/>
+  <text x="363" y="237" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#14507d">6 · La respuesta cae en la misma ficha</text>
+  <text x="363" y="252" font-family="Helvetica, Arial" font-size="9" fill="#2b5e87">No hay que buscarla ni copiarla</text>
+  <line x1="485" y1="261" x2="485" y2="277" stroke="#5b6b7c" stroke-width="1.3" marker-end="url(#pf2)"/>
+
+  <rect x="350" y="277" width="270" height="50" rx="4" fill="#dff0e4" stroke="#8cbfa2"/>
+  <text x="363" y="295" font-family="Helvetica, Arial" font-size="10" font-weight="bold" fill="#1c6b47">Toda la conversación, en un sitio</text>
+  <text x="363" y="310" font-family="Helvetica, Arial" font-size="9" fill="#256b4c">Visible para quien tenga permiso, hoy y</text>
+  <text x="363" y="322" font-family="Helvetica, Arial" font-size="9" fill="#256b4c">dentro de tres años.</text>
+
+  <path d="M 622 302 L 632 302 L 632 182 L 622 182" stroke="#5c9c7c" stroke-width="1.4" fill="none" marker-end="url(#pf4)"/>
+  <text x="500" y="344" font-family="Helvetica, Arial" font-size="8.5" font-style="italic" fill="#5b6b7c">y así hasta cerrar la venta</text>
+</svg>
+</div>
+<p class="pie-fig">El correo entra solo, se contesta desde el ERP y la respuesta vuelve al mismo sitio. Nadie copia nada.</p>
+
+<h2>4. Por qué el ERP no puede ser nuestro programa de correo</h2>
+
+<p>La pregunta natural es la contraria: si vamos a trabajar el correo desde el ERP, ¿por qué no leerlo todo ahí y prescindir de Gmail? Lo hemos comprobado a fondo y la respuesta es que <strong>el ERP no está construido para eso</strong>. No es cuestión de configurarlo mejor.</p>
+
+<div class="dosco">
+  <div class="tarjeta">
+    <h3>No tiene buzones</h3>
+    El ERP guarda los correos <strong>pegados a una ficha</strong> —una oportunidad, una factura, un parte— no en carpetas de correo. No existe bandeja de entrada, ni carpetas, ni forma de dar a una persona acceso a un buzón y a otra persona a otro. Esa idea no está en el programa.
+  </div>
+  <div class="tarjeta">
+    <h3>Lo que entra tiene que encajar en algo</h3>
+    Cuando llega un correo, el ERP busca a qué ficha pertenece. Si no lo averigua, lo rechaza. No hay un sitio donde el correo se quede esperando a que alguien lo mire, como sí pasa en Gmail.
+  </div>
+</div>
+
+<h3>Las salidas que existen, y por qué no compensan</h3>
+
+<ul>
+  <li><strong>Comprar un módulo que le añada un programa de correo.</strong> Revisamos el catálogo entero: solo hay uno compatible con nuestra versión que cumpla lo que pedimos. Cuesta <strong>389 €</strong> de licencia, y el propio fabricante advierte de que su versión básica no sincroniza correctamente con el servidor de correo — para eso hay que subir a una suscripción mensual. Además habría que validar antes con una demo que los buzones se ven separados y no mezclados.</li>
+  <li><strong>Programarlo a medida.</strong> Equivale a reescribir un programa de correo completo, con su gestión de carpetas, permisos y sincronización. El coste y el riesgo no guardan ninguna proporción con el problema que resuelve.</li>
+  <li><strong>Los módulos gratuitos de la comunidad.</strong> No existe ninguno que haga esto en nuestra versión. Se revisaron los tres repositorios oficiales.</li>
+</ul>
+
+<div class="aviso">
+  <p><strong>Lo relevante es que no lo necesitamos.</strong> Lo que hace falta no es leer el correo dentro del ERP: es que la conversación de cada cliente quede guardada junto a su oportunidad y no se pierda. Eso el ERP lo hace de serie y lo hace bien.</p>
+  <p>Gmail sigue siendo el programa de correo de la empresa, que es para lo que está hecho. Cada herramienta en lo suyo, y sin comprar nada.</p>
+</div>
+
+<h2>5. Qué cambia para cada uno</h2>
+
+<div class="dosco">
+  <div class="tarjeta">
+    <h3>Para el cliente</h3>
+    Nada. Escribe a la misma dirección y recibe respuesta de una dirección de la empresa. No nota el cambio.
+  </div>
+  <div class="tarjeta">
+    <h3>Para el equipo comercial</h3>
+    Deja de teclear oportunidades y de buscar correos antiguos. Trabaja en un solo sitio, con la conversación delante.
+  </div>
+</div>
+<div class="dosco">
+  <div class="tarjeta">
+    <h3>Para dirección</h3>
+    Puede ver el histórico completo de cualquier oportunidad sin pedírselo a nadie, y saber en qué punto está.
+  </div>
+  <div class="tarjeta">
+    <h3>Para la seguridad de la empresa</h3>
+    Se acaban las contraseñas compartidas. Cada persona entra con su usuario y queda registrado qué hizo.
+  </div>
+</div>
+
+<h2>6. Cómo llegamos hasta ahí</h2>
+
+<div class="fase">
+  <h3>Fase 1 — Que el circuito funcione<span class="etiq etiq-lista">sin coste de licencias</span></h3>
+  <p>Se monta con lo que la empresa ya tiene pagado e instalado: el correo de Google y el ERP. No hace falta comprar nada ni contratar cuentas nuevas.</p>
+  <ul>
+    <li>La dirección <strong>ventas@helipistas.com</strong> se crea como nombre alternativo del buzón actual, sin gastar una licencia más.</li>
+    <li>Se separa el correo comercial del resto con reglas fijas: quién escribe, sobre qué asunto, de dónde viene.</li>
+    <li>Se decide qué personas pueden ver y gestionar cada tipo de oportunidad.</li>
+  </ul>
+</div>
+
+<div class="fase">
+  <h3>Fase 2 — Que la separación la haga el sistema<span class="etiq etiq-luego">después, si compensa</span></h3>
+  <p>Las reglas fijas aciertan con lo repetitivo, pero fallan con lo ambiguo, que es justo donde hoy se cometen los errores. Ahí entra la clasificación automática con inteligencia artificial: lee el correo, decide si es una oportunidad comercial y a qué área corresponde.</p>
+  <ul>
+    <li>Se puede probar en pequeño y medir cuánto acierta <em>antes</em> de invertir en integrarlo del todo.</li>
+    <li>Si no acierta lo suficiente, se descarta habiendo gastado muy poco.</li>
+    <li>La Fase 1 funciona por sí sola. La Fase 2 solo quita trabajo manual; no es imprescindible.</li>
+  </ul>
+</div>
+
+<h2>7. Qué falta por confirmar</h2>
+
+<p>Este documento describe el circuito acordado, no un sistema ya probado. Antes de dar fecha hay que resolver tres puntos:</p>
+
+<ul>
+  <li><strong>Comprobar el envío desde <em>ventas@helipistas.com</em>.</strong> Todo indica que Google lo permite sin cuenta adicional, pero está pendiente de una prueba real. Es cuestión de minutos.</li>
+  <li><strong>Decidir qué pasa con el correo que no es comercial.</strong> Facturas, currículums, avisos. Hoy se mezclan en el mismo buzón y hay que definir dónde van y quién los mira.</li>
+  <li><strong>Extender el circuito a las demás áreas.</strong> Hoy solo una de las cuatro áreas comerciales tiene dirección de correo propia configurada. Escuela, helitaxi y mantenimiento habría que decidirlas.</li>
+</ul>
+
+<div class="aviso">
+  <p><strong>Un matiz importante sobre el buzón compartido.</strong> Para que el circuito sea fiable, el buzón de entrada de <em>info@</em> deja de ser una bandeja que las personas leen y pasa a ser la cola de entrada del ERP. Si alguien abre un correo antes que el sistema, el sistema puede no llegar a verlo.</p>
+  <p>No significa perder el acceso al correo: las personas siguen viéndolo todo, pero organizado por carpetas en vez de amontonado en la bandeja de entrada. Es el cambio de costumbre más relevante de toda la propuesta y conviene explicarlo bien al equipo.</p>
+</div>
+
+<div class="cierre">
+  Preparado a partir de la revisión del sistema en producción del 24 de agosto de 2026. Las cifras y fechas proceden de datos reales del ERP, no de estimaciones.
+</div>
+
+</body>
+</html>

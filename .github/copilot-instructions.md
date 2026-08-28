@@ -98,6 +98,28 @@ Muestra semáforos (verde/amarillo/rojo) para campos char/boolean. Registrados e
 
 Ver ejemplos reales en: `addons/leulit_actividad/views/leulit_vuelo.xml`
 
+### `readonly` en vistas: Odoo 17 NO guarda el valor
+
+En Odoo 17 el cliente web **descarta** el valor de todo campo que esté `readonly`
+en el momento de guardar. Si un `@api.onchange` rellena un campo y la vista lo
+marca `readonly`, ese valor **no llega al servidor**: si el campo es `required`
+revienta el `NOT NULL`, y si no lo es se pierde en silencio.
+
+La combinación letal es un `readonly` que depende de un campo que el usuario
+cambia en el mismo formulario:
+
+```xml
+<!-- MAL: al elegir el vuelo, el onchange rellena helicoptero_id y ese mismo
+     acto lo vuelve readonly -> nunca se guarda -> NOT NULL violation -->
+<field name="helicoptero_id" readonly="estado in [...] or vuelo_id"/>
+
+<!-- BIEN: sigue bloqueado en pantalla, pero se envía -->
+<field name="helicoptero_id" readonly="estado in [...] or vuelo_id" force_save="1"/>
+```
+
+Regla: **campo `readonly` que alguien escribe desde servidor u onchange →
+`force_save="1"`**. Caso real: `leulit.anomalia` (commit c664b788).
+
 ### Gestión de Adjuntos (ir.attachment)
 **Patrón crítico**: Override del método `check()` en `ir.attachment` para permitir acceso a adjuntos huérfanos (sin `res_model/res_id`) por usuarios `RBase`:
 ```python
