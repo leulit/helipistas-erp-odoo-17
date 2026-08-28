@@ -9,16 +9,22 @@
 
 
         <record id="RSeguridad_user" model="res.groups">
-            <field name="name">Usuario</field>
+            <field name="name">Usuario SMS</field>
             <field name="category_id" ref="seguridad_rol_category"/>
+            <field name="implied_ids" eval="[(4, ref('mgmtsystem.group_mgmtsystem_user'))]"/>
         </record>
         
         <record id="RSeguridad_responsable" model="res.groups">
-            <field name="name">Responsable</field>
-            <field name="implied_ids" eval="[(4, ref('RSeguridad_user'))]"/>
+            <field name="name">Responsable SMS</field>
+            <field name="implied_ids" eval="[(4, ref('RSeguridad_user')), (4, ref('mgmtsystem.group_mgmtsystem_manager'))]"/>
             <field name="category_id" ref="seguridad_rol_category"/>
         </record>
 
+        <!-- El menú raíz de mgmtsystem lo declara el addon como manager+viewer; viewer lo
+             tienen 72 usuarios, así que aquí se fija a los roles SMS. -->
+        <record id="mgmtsystem.menu_mgmtsystem_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('mgmtsystem.group_mgmtsystem_manager'), ref('RSeguridad_user'), ref('RSeguridad_responsable')])]"/>
+        </record>
 
     </data>
 </odoo>
