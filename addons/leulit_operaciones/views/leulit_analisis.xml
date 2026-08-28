@@ -6,7 +6,7 @@
             <field name="name">leulit.vuelo.analisis.graph</field>
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
-                <graph string="Análisis de horas de vuelo" type="line" sample="0">
+                <graph string="Análisis de horas de vuelo" type="line" stacked="0" sample="0">
                     <field name="mes" type="row"/>
                     <field name="anyo" type="row"/>
                     <field name="airtime" type="measure"/>

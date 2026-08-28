@@ -22,10 +22,22 @@ docker logs -f helipistas_odoo_17
 docker exec -ti helipistas_odoo_17 /bin/bash
 ```
 
-Update/install a module against a database:
+Update a module — **always via `./upd_module.sh`**, never `docker exec ... odoo -u` a mano
+(el script elige contenedor por entorno, guarda log, detecta ERROR/CRITICAL con exit 0 y
+deja el ERP arrancado pase lo que pase):
 
 ```bash
-docker exec -ti helipistas_odoo_17 odoo -u <module> -d <db> --stop-after-init
+./upd_module.sh <module> dev              # local, contenedor helipistas_odoo_17
+./upd_module.sh <module> prod             # EC2, contenedor helipistas_odoo; solo XML, sin cortar servicio
+./upd_module.sh <module> prod --stop      # obligatorio si el módulo añade/quita campos (ALTER TABLE)
+```
+
+Regla: cambios de solo XML (vistas, menús, informes, grupos, permisos) → sin `--stop`.
+Cambios de esquema Python (campos nuevos o eliminados) → `--stop`, el ERP queda caído
+mientras dura. `./upd_module.sh -h` para el resto. Instalar un módulo nuevo (`-i`) sigue
+siendo a mano:
+
+```bash
 docker exec -ti helipistas_odoo_17 odoo -i <module> -d <db> --stop-after-init
 ```
 
