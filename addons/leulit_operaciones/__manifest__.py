@@ -31,6 +31,7 @@
         "views/leulit_hist_weight_and_balance.xml",
         "views/leulit_postvuelo.xml",
         "views/leulit_realizados.xml",
+        "views/leulit_analisis.xml",
         "views/leulit_tipos_vuelo.xml",
         "views/leulit_operador.xml",
         "views/leulit_helipuerto.xml",

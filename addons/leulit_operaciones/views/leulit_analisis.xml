@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="leulit_20260828_1200_graph">
+            <field name="name">leulit.vuelo.analisis.graph</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="arch" type="xml">
+                <graph string="Análisis de horas de vuelo" type="line" sample="0">
+                    <field name="mes" type="row"/>
+                    <field name="anyo" type="row"/>
+                    <field name="airtime" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20260828_1200_pivot">
+            <field name="name">leulit.vuelo.analisis.pivot</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="arch" type="xml">
+                <pivot string="Análisis de horas de vuelo" sample="0">
+                    <field name="helicoptero_modelo" type="row"/>
+                    <field name="mes" type="col"/>
+                    <field name="anyo" type="col"/>
+                    <field name="airtime" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="leulit_20260828_1200_search">
+            <field name="name">leulit.vuelo.analisis.search</field>
+            <field name="model">leulit.vuelo</field>
+            <field name="arch" type="xml">
+                <search string="Análisis de horas de vuelo">
+                    <field name="helicoptero_modelo"/>
+                    <field name="helicoptero_id"/>
+                    <field name="fechavuelo"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter name="group_modelo" string="Modelo" context="{'group_by':'helicoptero_modelo'}"/>
+                        <filter name="group_helicoptero" string="Helicóptero" context="{'group_by':'helicoptero_id'}"/>
+                        <filter name="group_mes" string="Mes" context="{'group_by':'mes'}"/>
+                        <filter name="group_anyo" string="Año" context="{'group_by':'anyo'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_20260828_1200_action">
+            <field name="name">Análisis</field>
+            <field name="res_model">leulit.vuelo</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="domain">[('estado','=','cerrado')]</field>
+            <field name="search_view_id" ref="leulit_20260828_1200_search"/>
+        </record>
+        <record id="leulit_20260828_1200_action_graph" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="leulit_20260828_1200_graph" />
+            <field name="act_window_id" ref="leulit_20260828_1200_action" />
+        </record>
+        <record id="leulit_20260828_1200_action_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="leulit_20260828_1200_pivot" />
+            <field name="act_window_id" ref="leulit_20260828_1200_action" />
+        </record>
+
+    </data>
+</odoo>

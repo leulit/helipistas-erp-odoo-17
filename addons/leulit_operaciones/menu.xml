@@ -53,6 +53,14 @@
             groups="leulit.ROperaciones_responsable"
             sequence="50"
         />
+        <menuitem
+            id="leulit_20260828_1200_menuitem"
+            name="Análisis"
+            parent="leulit_20201023_1053_menuitem"
+            action="leulit_20260828_1200_action"
+            groups="leulit.ROperaciones_responsable"
+            sequence="60"
+        />
         <menuitem 
             id="leulit_20201023_1120_menuitem" 
             name="Tipos" 

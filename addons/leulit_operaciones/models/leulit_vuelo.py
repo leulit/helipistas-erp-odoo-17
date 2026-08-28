@@ -1133,11 +1133,17 @@ class leulit_vuelo(models.Model):
             }
         return False
 
-    @api.depends('helicoptero_id')
+    @api.depends('helicoptero_id.modelo')
     def _get_modelo_helicoptero(self):
         for item in self:
             item.helicoptero_modelo = item.helicoptero_id.modelo.name
-    
+
+    @api.depends('fechavuelo')
+    def _calc_mes_anyo(self):
+        for item in self:
+            item.mes = item.fechavuelo and '%02d' % item.fechavuelo.month or False
+            item.anyo = item.fechavuelo and str(item.fechavuelo.year) or False
+
 
     def acumulados_in_date(self, helicoptero, fecha):
         if helicoptero and helicoptero.id:
@@ -2264,7 +2270,10 @@ class leulit_vuelo(models.Model):
     deltahorasmotor = fields.Float(compute='_calc_delta_horas_motor',string='Delta horas motor',store=False)
     strdeltahorasmotor = fields.Char(compute='_get_str_deltahorasmotor',string='Delta horas motor str',store=False)
     helicoptero_id = fields.Many2one('leulit.helicoptero', string='Helicóptero', required=True, domain="[('baja','=',False)]")
-    helicoptero_modelo = fields.Char(compute=_get_modelo_helicoptero,string="Modelo")
+    helicoptero_modelo = fields.Char(compute=_get_modelo_helicoptero,string="Modelo",store=True)
+    # ponytail: claves '01'..'12' para que el pivot/gráfico ordene ene→dic sin ORDER BY propio
+    mes = fields.Selection([('01','Enero'),('02','Febrero'),('03','Marzo'),('04','Abril'),('05','Mayo'),('06','Junio'),('07','Julio'),('08','Agosto'),('09','Septiembre'),('10','Octubre'),('11','Noviembre'),('12','Diciembre')], compute=_calc_mes_anyo, string='Mes', store=True)
+    anyo = fields.Char(compute=_calc_mes_anyo, string='Año', store=True)
     helicoptero_tipo = fields.Selection(related='helicoptero_id.tipo',string='Tipo',store=True)
     helicoptero_propietario = fields.Many2one(related='helicoptero_id.user_id',string='Propietario',store=True)
     strhoras_remanente = fields.Char(related='helicoptero_id.strhoras_remanente', string='Potencial Aeronave')
