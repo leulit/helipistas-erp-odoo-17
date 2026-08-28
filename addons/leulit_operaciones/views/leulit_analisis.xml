@@ -6,7 +6,7 @@
             <field name="name">leulit.vuelo.analisis.graph</field>
             <field name="model">leulit.vuelo</field>
             <field name="arch" type="xml">
-                <graph string="Análisis de horas de vuelo" type="line" stacked="0" sample="0">
+                <graph string="Análisis de horas de vuelo" js_class="leulit_analisis_graph" type="bar" stacked="0" sample="0">
                     <field name="mes" type="row"/>
                     <field name="anyo" type="row"/>
                     <field name="airtime" type="measure"/>
@@ -50,6 +50,7 @@
             <field name="res_model">leulit.vuelo</field>
             <field name="view_mode">graph,pivot</field>
             <field name="domain">[('estado','=','cerrado')]</field>
+            <field name="context">{'graph_mode': 'bar', 'graph_stacked': False}</field>
             <field name="search_view_id" ref="leulit_20260828_1200_search"/>
         </record>
         <record id="leulit_20260828_1200_action_graph" model="ir.actions.act_window.view">

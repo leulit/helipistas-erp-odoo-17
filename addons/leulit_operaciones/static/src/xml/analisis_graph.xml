@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="leulit_operaciones.AnalisisGraphButtons">
+        <div class="btn-group" role="toolbar" aria-label="Main actions">
+            <t t-call="web.ReportViewMeasures">
+                <t t-set="measures" t-value="model.metaData.measures"/>
+                <t t-set="activeMeasures" t-value="[model.metaData.measure]"/>
+            </t>
+        </div>
+        <div t-if="model.metaData.domains.length === 1" class="btn-group" role="toolbar" aria-label="Sort graph" name="toggleOrderToolbar">
+            <button class="btn btn-secondary fa fa-sort-amount-desc o_graph_button" data-tooltip="Descendente" aria-label="Descendente"
+                t-on-click="() => this.toggleOrder('DESC')"
+                t-att-class="{ active: model.metaData.order === 'DESC' }"
+            />
+            <button class="btn btn-secondary fa fa-sort-amount-asc o_graph_button" data-tooltip="Ascendente" aria-label="Ascendente"
+                t-on-click="() => this.toggleOrder('ASC')"
+                t-att-class="{ active: model.metaData.order === 'ASC' }"
+            />
+        </div>
+    </t>
+
+</templates>
