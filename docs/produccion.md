@@ -254,14 +254,42 @@ docker-compose up -d
 `-u`/`-i`. En un arranque normal se salta `init_models`, así que un campo nuevo queda en el
 registry sin columna en la base de datos y la primera lectura revienta con `UndefinedColumn`.
 
+Hay dos formas de hacer el `-u`, y la que toca depende de si el módulo cambia el esquema:
+
+- **Cambios de solo XML** (vistas, menús, informes, permisos): el `-u` no hace `ALTER TABLE`,
+  así que puede correr en un proceso aparte dentro del contenedor vivo. **El ERP no se cae.**
+- **Cambios que añaden o quitan campos**: el `ALTER TABLE` necesita `ACCESS EXCLUSIVE` sobre la
+  tabla, y cualquier consulta viva del Odoo que sirve peticiones lo cancela con
+  `canceling statement due to lock timeout`. Hay que **parar el contenedor**.
+
 ```bash
-# 1. parar el Odoo que sirve peticiones. No es opcional: un ALTER TABLE necesita ACCESS
-#    EXCLUSIVE y cualquier consulta viva sobre la tabla cancela el -u con
-#    "canceling statement due to lock timeout".
+# sin cortar servicio (por defecto) — solo XML
+./upd_module.sh <modulo> prod
+
+# parando el ERP — el módulo añade o quita campos
+./upd_module.sh <modulo> prod --stop
+```
+
+El script saca la red, la imagen y las variables del propio contenedor, guarda la salida en
+`/efs/HELIPISTAS-ODOO-17/upd-<modulo>-<fecha>.log` y avisa si el log trae `ERROR`/`CRITICAL`.
+Si el modo por defecto muere por bloqueo, te dice que repitas con `--stop`; nunca para
+producción por su cuenta.
+
+Lo que hace cada modo por dentro, por si hay que reproducirlo a mano:
+
+```bash
+# --- por defecto: segundo proceso Odoo dentro del contenedor vivo ---
+# --no-http para que no pelee por el puerto con el que está sirviendo. Al terminar, Odoo avisa
+# a los workers por la secuencia base_registry_signaling y recargan solos: no hay que reiniciar.
+docker exec -i helipistas_odoo \
+  odoo -d productiu -u <modulo> --no-http --stop-after-init 2>&1 \
+  | tee /efs/HELIPISTAS-ODOO-17/upd-<modulo>-$(date +%F-%H%M).log
+
+# --- --stop: contenedor parado y clon de usar y tirar ---
+# 1. parar el Odoo que sirve peticiones
 docker stop helipistas_odoo
 
-# 2. actualizar en un contenedor de usar y tirar clonado del parado (misma imagen, red,
-#    variables y volúmenes), guardando la salida
+# 2. actualizar en un contenedor clonado del parado (misma imagen, red, variables y volúmenes)
 docker run --rm --network helipistas-odoo-17_helipistas_network \
   --volumes-from helipistas_odoo \
   -e HOST=postgresOdoo16 -e USER=odoo -e PASSWORD=<ver docker-compose.yml> \
@@ -289,10 +317,6 @@ importación de datos y hay que resincronizarlas (una vez para toda la base):
 docker exec -i helipistas_postgres psql -U odoo -d productiu < docs/fix_secuencias.sql
 ```
 
-O directamente `./upd_module.sh <modulo> prod` desde el checkout, que hace los tres pasos
-(y saca la red, la imagen y las variables del propio contenedor) y avisa si el log trae
-`ERROR`/`CRITICAL`.
-
 **Copia de seguridad:** no se hace en cada actualización. La base de producción es grande y un
 `pg_dump` tarda demasiado para ponerlo en el camino habitual; el respaldo de referencia es la
 copia diaria del EFS. Para un cambio de esquema que no quieras arriesgar, `--backup` fuerza el
@@ -310,9 +334,10 @@ a día la del EFS vale; para una migración de datos, mejor el dump.
 El contenedor de producción es `helipistas_odoo`, no `helipistas_odoo_17` (ese es el de
 desarrollo local). La base de datos es `productiu`.
 
-El ERP está caído entre el paso 1 y el 3, así que esto se hace cuando no hay nadie
+Con `--stop` el ERP está caído entre el paso 1 y el 3, así que eso se hace cuando no hay nadie
 trabajando. `upd_module.sh` arranca el contenedor pase lo que pase (`trap`), también si el
-`-u` falla o si cortas con Ctrl-C.
+`-u` falla o si cortas con Ctrl-C. En el modo por defecto no se para nada, así que no hay
+ventana que buscar.
 
 Si el `-u` falla, la base queda como estaba: Odoo lo hace todo en una transacción y la
 deshace entera.

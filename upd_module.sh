@@ -6,7 +6,10 @@
 # y carga los ficheros XML durante un -u/-i. Sin esto, un campo nuevo queda en el registry
 # sin columna en la base de datos y la primera lectura revienta con UndefinedColumn.
 #
-# Ver docs/produccion.md, sección "Despliegue / actualización".
+# Por defecto el ERP NO se para: el -u va en un proceso aparte dentro del contenedor vivo.
+# Con --stop se para el contenedor y la actualizacion va en un clon de usar y tirar, que es
+# lo unico que funciona cuando el -u tiene que hacer ALTER TABLE. Ver la ayuda (-h) y
+# docs/produccion.md, seccion "Despliegue / actualización".
 
 set -u
 
@@ -18,28 +21,51 @@ if [ $# -lt 2 ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     echo "================================================================="
     echo ""
     echo "Uso:"
-    echo "  ./$SCRIPT_NAME <modulo> <entorno> [--backup]"
+    echo "  ./$SCRIPT_NAME <modulo> <entorno> [--stop] [--backup]"
     echo ""
     echo "Entornos:"
     echo "  dev  -> contenedor 'helipistas_odoo_17'  (docker/docker-compose.yml, local)"
     echo "  prod -> contenedor 'helipistas_odoo'     (dockerserver/, EC2 + EFS)"
     echo ""
+    echo "Modos:"
+    echo "  (por defecto)  El ERP sigue en marcha. El -u se ejecuta dentro del contenedor"
+    echo "                 vivo. Al terminar, Odoo avisa a los workers por la secuencia"
+    echo "                 base_registry_signaling y recargan solos: no hay que reiniciar."
+    echo "                 Vale para cambios de solo XML: vistas, menus, informes, permisos."
+    echo ""
+    echo "  --stop         Para el contenedor y actualiza en un clon efimero. Obligatorio"
+    echo "                 cuando el modulo añade o quita campos: un ALTER TABLE necesita"
+    echo "                 ACCESS EXCLUSIVE sobre la tabla y cualquier consulta viva lo"
+    echo "                 cancela con 'canceling statement due to lock timeout'."
+    echo "                 El ERP queda caido hasta que acabe."
+    echo ""
+    echo "  --backup       pg_dump antes de actualizar. NO es el comportamiento por defecto:"
+    echo "                 tarda mucho en la base de produccion y ya hay copia diaria del"
+    echo "                 EFS. Usalo solo para un cambio de esquema grande o irreversible."
+    echo ""
     echo "Ejemplos:"
     echo "  ./$SCRIPT_NAME leulit_almacen dev"
-    echo "  ./$SCRIPT_NAME leulit_almacen prod"
-    echo "  ./$SCRIPT_NAME leulit_almacen prod --backup"
-    echo ""
-    echo "--backup hace un pg_dump antes de actualizar. NO es el comportamiento por"
-    echo "defecto: tarda mucho en la base de produccion y ya hay copia diaria del EFS."
-    echo "Usalo solo para un cambio de esquema grande o irreversible."
+    echo "  ./$SCRIPT_NAME leulit_almacen prod                 # solo XML, sin cortar servicio"
+    echo "  ./$SCRIPT_NAME leulit_operaciones prod --stop      # el modulo añade campos"
+    echo "  ./$SCRIPT_NAME leulit_almacen prod --stop --backup"
     echo "================================================================="
     exit 1
 fi
 
 MODULO="$1"
 ENTORNO="$2"
+shift 2
+
+PARAR=0
 BACKUP_ANTES=0
-[ "${3:-}" == "--backup" ] && BACKUP_ANTES=1
+for arg in "$@"; do
+    case "$arg" in
+        --stop)   PARAR=1 ;;
+        --backup) BACKUP_ANTES=1 ;;
+        *) echo "❌ Opción '$arg' no reconocida. Usa --stop y/o --backup."; exit 1 ;;
+    esac
+done
+
 BASE="productiu"
 
 case "$ENTORNO" in
@@ -72,27 +98,36 @@ LOG="${BACKUP_DIR:-/tmp}/upd-$MODULO-$(date +%F-%H%M).log"
 echo "⏱️  Actualizando '$MODULO' en '$BASE' ($ENTORNO, contenedor $CONTENEDOR)..."
 echo "-----------------------------------------------------------------"
 
-# Un ALTER TABLE necesita ACCESS EXCLUSIVE sobre la tabla: con el Odoo que sirve peticiones
-# vivo, cualquier consulta abierta la bloquea y Postgres cancela el -u con "canceling
-# statement due to lock timeout". Por eso se para el contenedor y la actualizacion va en uno
-# de usar y tirar clonado de el: misma imagen, misma red, mismas variables y mismos volumenes
-# (ahi esta /etc/odoo y /mnt/extra-addons), sin publicar puertos.
-IMAGEN=$(docker inspect -f '{{.Image}}' "$CONTENEDOR")
-RED=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}' "$CONTENEDOR" | awk '{print $1}')
-ENV_FILE=$(mktemp)
-docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$CONTENEDOR" > "$ENV_FILE"
+# La salida no va a `docker logs` (ese solo captura el proceso principal del contenedor),
+# asi que en los dos modos se guarda en $LOG o se pierde al cerrar la terminal.
+if [ "$PARAR" -eq 1 ]; then
+    # Un ALTER TABLE necesita ACCESS EXCLUSIVE sobre la tabla: con el Odoo que sirve
+    # peticiones vivo, cualquier consulta abierta la bloquea y Postgres cancela el -u. Por
+    # eso se para el contenedor y la actualizacion va en uno de usar y tirar clonado de el:
+    # misma imagen, misma red, mismas variables y mismos volumenes (ahi esta /etc/odoo y
+    # /mnt/extra-addons), sin publicar puertos.
+    IMAGEN=$(docker inspect -f '{{.Image}}' "$CONTENEDOR")
+    RED=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}' "$CONTENEDOR" | awk '{print $1}')
+    ENV_FILE=$(mktemp)
+    docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$CONTENEDOR" > "$ENV_FILE"
 
-# Pase lo que pase (error, Ctrl-C), el ERP tiene que volver a levantarse.
-trap 'rm -f "$ENV_FILE"; docker start "$CONTENEDOR" >/dev/null 2>&1' EXIT
+    # Pase lo que pase (error, Ctrl-C), el ERP tiene que volver a levantarse.
+    trap 'rm -f "$ENV_FILE"; docker start "$CONTENEDOR" >/dev/null 2>&1' EXIT
 
-echo "⏸️  Parando '$CONTENEDOR': el ERP queda caido hasta que acabe el script."
-docker stop "$CONTENEDOR" >/dev/null
+    echo "⏸️  Parando '$CONTENEDOR': el ERP queda caido hasta que acabe el script."
+    docker stop "$CONTENEDOR" >/dev/null
 
-# La salida no va a `docker logs` (ese solo captura el proceso principal del contenedor de
-# produccion), asi que se guarda aqui o se pierde al cerrar la terminal.
-docker run --rm --network "$RED" --env-file "$ENV_FILE" --volumes-from "$CONTENEDOR" \
-    "$IMAGEN" odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
-RESULTADO=${PIPESTATUS[0]}
+    docker run --rm --network "$RED" --env-file "$ENV_FILE" --volumes-from "$CONTENEDOR" \
+        "$IMAGEN" odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
+    RESULTADO=${PIPESTATUS[0]}
+else
+    # Segundo proceso Odoo dentro del contenedor vivo. --no-http para que no pelee por el
+    # puerto con el que esta sirviendo. Sin -t en el exec: un TTY rompe el pipe a tee.
+    echo "▶️  El ERP sigue sirviendo peticiones; el -u va en un proceso aparte."
+    docker exec -i "$CONTENEDOR" \
+        odoo -d "$BASE" -u "$MODULO" --no-http --stop-after-init 2>&1 | tee "$LOG"
+    RESULTADO=${PIPESTATUS[0]}
+fi
 
 echo "-----------------------------------------------------------------"
 echo "📄 Log: $LOG"
@@ -101,12 +136,18 @@ if [ "$RESULTADO" -ne 0 ]; then
     echo "❌ El comando terminó con error (código $RESULTADO). La base queda como estaba:"
     echo "   Odoo hace el -u en una transacción y la deshace entera si algo revienta."
     if grep -q "lock timeout" "$LOG"; then
-        echo "   Es un bloqueo de Postgres: alguien más tiene la tabla cogida (Metabase, n8n,"
-        echo "   una sesión psql abierta). Míralo con:"
-        echo "   docker exec -i $PSQL psql -U odoo -d $BASE -c \"select pid, state, query from pg_stat_activity where pid <> pg_backend_pid()\""
+        if [ "$PARAR" -eq 0 ]; then
+            echo "   Es un bloqueo de Postgres. Este módulo toca el esquema (añade o quita"
+            echo "   campos) y el ALTER TABLE no puede con el ERP en marcha. Repite con --stop:"
+            echo "   ./$SCRIPT_NAME $MODULO $ENTORNO --stop"
+        else
+            echo "   Es un bloqueo de Postgres aun con el ERP parado: alguien más tiene la tabla"
+            echo "   cogida (Metabase, n8n, una sesión psql abierta). Míralo con:"
+            echo "   docker exec -i $PSQL psql -U odoo -d $BASE -c \"select pid, state, query from pg_stat_activity where pid <> pg_backend_pid()\""
+        fi
     fi
     [ -n "${BACKUP:-}" ] && echo "   Copia de seguridad en $BACKUP"
-    echo "🔄 Arrancando '$CONTENEDOR' de nuevo..."
+    [ "$PARAR" -eq 1 ] && echo "🔄 Arrancando '$CONTENEDOR' de nuevo..."
     exit "$RESULTADO"
 fi
 
@@ -119,5 +160,10 @@ fi
 
 echo "✅ Módulo '$MODULO' actualizado en $ENTORNO."
 
-echo "🔄 Arrancando '$CONTENEDOR' con el registry nuevo..."
-docker start "$CONTENEDOR" >/dev/null && echo "   Hecho. Log: docker logs -f $CONTENEDOR"
+if [ "$PARAR" -eq 1 ]; then
+    echo "🔄 Arrancando '$CONTENEDOR' con el registry nuevo..."
+    docker start "$CONTENEDOR" >/dev/null && echo "   Hecho. Log: docker logs -f $CONTENEDOR"
+else
+    echo "   El ERP no se ha parado. Los workers recargan el registry solos en la siguiente"
+    echo "   petición (base_registry_signaling); si algo no se refleja, F5 con caché limpia."
+fi
