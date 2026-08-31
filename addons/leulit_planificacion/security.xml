@@ -209,4 +209,21 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
+    <!-- El grupo RPlanificacion_planner ve todos los proyectos aunque no sea
+         seguidor/asignado. project_public_members_rule (core) solo deja ver
+         proyectos con privacy_visibility='followers' (default en leulit,
+         ver leulit/models/project_project.py) a quien esté en
+         message_partner_ids; esta regla añade visibilidad total en modo
+         solo lectura, sin dar permisos de escritura/creación/borrado. -->
+    <record id="leulit_project_project_rule_planificacion_planner" model="ir.rule">
+        <field name="name">Project: RPlanificacion_planner ve todos los proyectos</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('RPlanificacion_planner'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
 </odoo>
