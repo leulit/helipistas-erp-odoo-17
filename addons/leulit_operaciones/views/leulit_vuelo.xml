@@ -1673,6 +1673,7 @@
             <field name="res_model">leulit.vuelo</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('fechavuelo','&lt;=',time.strftime('%Y-%m-%d'))]</field>
+            <field name="search_view_id" ref="leulit_20230906_1505_filter"/>
         </record>
         <record id="leulit_20230906_1505_action_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>
@@ -1698,6 +1699,7 @@
             <field name="res_model">leulit.vuelo</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('fechavuelo','&gt;',time.strftime('%Y-%m-%d'))]</field>
+            <field name="search_view_id" ref="leulit_20230906_1505_filter"/>
         </record>
         <record id="leulit_20220818_1621_action_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>
@@ -1723,6 +1725,7 @@
             <field name="res_model">leulit.vuelo</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="domain">[('is_last_30_days','=',True)]</field>
+            <field name="search_view_id" ref="leulit_20230906_1505_filter"/>
         </record>
         <record id="leulit_20250520_1024_action_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>
@@ -1750,6 +1753,7 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[('user_vuelo_ids','=',True)]</field>
             <field name="context">{'create': False, 'edit': False}</field>
+            <field name="search_view_id" ref="leulit_20230906_1505_filter"/>
         </record>
         <record id="leulit_20201021_1648_action_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="1"/>

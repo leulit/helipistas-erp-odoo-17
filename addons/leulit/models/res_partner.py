@@ -18,6 +18,27 @@ class res_partner(models.Model):
     def _lang_get(self):
         return self.env['res.lang'].get_installed()
 
+    @api.constrains('vat')
+    def _check_vat_duplicado(self):
+        """VAT/NIF único a nivel global (todas las compañías), ignorando
+        mayúsculas/minúsculas y espacios al comparar."""
+        for partner in self:
+            if not partner.vat or not partner.vat.strip():
+                continue
+            self.env.cr.execute("""
+                SELECT id, name FROM res_partner
+                WHERE id != %s
+                  AND vat IS NOT NULL
+                  AND UPPER(REPLACE(vat, ' ', '')) = UPPER(REPLACE(%s, ' ', ''))
+                LIMIT 1
+            """, (partner.id, partner.vat))
+            duplicado = self.env.cr.fetchone()
+            if duplicado:
+                raise ValidationError(
+                    _('Ya existe otro contacto con el mismo VAT/NIF (%s): "%s".')
+                    % (partner.vat, duplicado[1])
+                )
+
     def create_user_by_partner(self):
         try:
             self.env['res.users'].create({
