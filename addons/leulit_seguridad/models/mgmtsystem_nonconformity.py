@@ -129,11 +129,14 @@ class MgmtsystemNonconformity(models.Model):
 
     # Al cerrar/cancelar una NC (sea desde el wizard "Cerrar NC" o haciendo
     # clic directamente en la barra de estados), sus acciones asociadas
-    # (action_ids + immediate_action_id) se sincronizan al estado que
-    # corresponda, para que no se queden abiertas si el responsable de
-    # seguridad no las repasa una a una. El paso a "En progreso" ya lo hace
-    # el módulo base (mgmtsystem_nonconformity.write()) abriendo las
-    # acciones en borrador.
+    # (action_ids + immediate_action_id) se cierran/cancelan con ella, para
+    # que no se queden abiertas si el responsable de seguridad no las repasa
+    # una a una. Se hace ANTES de escribir el stage_id de la NC (no después)
+    # porque la validación heredada de mgmtsystem_nonconformity exige que las
+    # acciones ya estén cerradas para poder pasar a "done": si lo hiciéramos
+    # a posteriori, ese chequeo saltaría con "acciones por cerrar" en vez de
+    # cerrarlas sin más. El paso a "En progreso" ya lo hace el módulo base
+    # (mgmtsystem_nonconformity.write()) abriendo las acciones en borrador.
     _ACTION_STAGE_XMLID_POR_ESTADO_NC = {
         "done": "mgmtsystem_action.stage_close",
         "cancel": "mgmtsystem_action.stage_cancel",
@@ -141,8 +144,8 @@ class MgmtsystemNonconformity(models.Model):
 
     def write(self, vals):
         create_date = vals.pop("create_date", None)
-        cambia_stage = "stage_id" in vals
-        estados_previos = {nc.id: nc.state for nc in self} if cambia_stage else {}
+        if vals.get("stage_id"):
+            self._cerrar_acciones_relacionadas(vals)
         res = super().write(vals)
         if create_date:
             self._cr.execute(
@@ -150,23 +153,29 @@ class MgmtsystemNonconformity(models.Model):
                 (create_date, tuple(self.ids)),
             )
             self.invalidate_recordset(["create_date"])
-        if cambia_stage:
-            for nc in self:
-                if nc.state != estados_previos.get(nc.id):
-                    nc._sincronizar_estado_acciones()
         return res
 
-    def _sincronizar_estado_acciones(self):
-        self.ensure_one()
-        xmlid = self._ACTION_STAGE_XMLID_POR_ESTADO_NC.get(self.state)
+    def _cerrar_acciones_relacionadas(self, vals):
+        nuevo_estado = (
+            self.env["mgmtsystem.nonconformity.stage"].browse(vals["stage_id"]).state
+        )
+        xmlid = self._ACTION_STAGE_XMLID_POR_ESTADO_NC.get(nuevo_estado)
         if not xmlid:
             return
-        stage = self.env.ref(xmlid, raise_if_not_found=False)
-        if not stage:
+        stage_destino = self.env.ref(xmlid, raise_if_not_found=False)
+        if not stage_destino:
             return
-        acciones = self._get_all_actions().filtered(lambda a: not a.stage_id.is_ending)
-        if acciones:
-            acciones.write({"stage_id": stage.id})
+        for nc in self.filtered(lambda nc: nc.state != nuevo_estado):
+            acciones = nc._get_all_actions()
+            if "immediate_action_id" in vals:
+                # Puede venir en el mismo write que stage_id (p.ej. el wizard
+                # "Cerrar NC"), así que aún no está reflejada en memoria.
+                acciones |= self.env["mgmtsystem.action"].browse(
+                    vals["immediate_action_id"]
+                )
+            acciones = acciones.filtered(lambda a: not a.stage_id.is_ending)
+            if acciones:
+                acciones.write({"stage_id": stage_destino.id})
 
     def set_default_origin_on_nonconformity(self):
         _logger.error("################### set_default_origin_on_nonconformity")
