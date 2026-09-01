@@ -25,7 +25,7 @@ class LeuilitWizardCerrarNC(models.TransientModel):
     def action_confirmar_cierre(self):
         self.ensure_one()
         stage_done = self.env.ref("mgmtsystem_nonconformity.stage_done")
-        self.nc_id.write({
+        self.nc_id.with_context(cierre_rapido_nc=True).write({
             "immediate_action_id": self.immediate_action_id.id,
             "motivo_cierre": self.motivo_cierre,
             "stage_id": stage_done.id,

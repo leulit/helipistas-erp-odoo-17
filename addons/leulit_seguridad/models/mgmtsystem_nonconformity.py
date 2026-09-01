@@ -64,8 +64,13 @@ class MgmtsystemNonconformity(models.Model):
 
     @api.constrains("stage_id")
     def _check_close_with_evaluation(self):
+        # El cierre rápido solo se activa cuando el write viene del wizard
+        # "Cerrar NC" (que marca este contexto): usar la presencia de
+        # motivo_cierre como señal era incorrecto, porque ese campo persiste
+        # en el registro y una vez relleno activaba el atajo también al
+        # cerrar la NC del modo normal, clicando el estado directamente.
         cierre_rapido = self.filtered(
-            lambda nc: nc.state == "done" and nc.motivo_cierre
+            lambda nc: nc.state == "done" and self.env.context.get("cierre_rapido_nc")
         )
         for nc in cierre_rapido:
             if not nc.immediate_action_id:
