@@ -84,13 +84,6 @@
                             <field name="company_id" groups="base.group_multi_company" />
                             <field name="nc_relacionada_id" readonly="1" invisible="not nc_relacionada_id" groups="base.group_multi_company" />
                         </group>
-                        <group name="fechas_estado" string="Fechas por Estado">
-                            <field name="fecha_analisis" />
-                            <field name="fecha_plan_accion" />
-                            <field name="fecha_en_progreso" />
-                            <field name="closing_date" />
-                            <field name="fecha_cancelacion" />
-                        </group>
                     </group>
 
                     <notebook>
@@ -145,6 +138,16 @@
                         </page>
                         <page string="Auditorías relacionadas" groups="mgmtsystem.group_mgmtsystem_auditor">
                             <field name="audit_ids" colspan="4" nolabel="1" />
+                        </page>
+
+                        <page string="Trazabilidad" name="trazabilidad">
+                            <group name="fechas_estado" string="Fechas por Estado">
+                                <field name="fecha_analisis" />
+                                <field name="fecha_plan_accion" />
+                                <field name="fecha_en_progreso" />
+                                <field name="closing_date" />
+                                <field name="fecha_cancelacion" />
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
