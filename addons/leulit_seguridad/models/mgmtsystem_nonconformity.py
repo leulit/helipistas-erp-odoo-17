@@ -127,6 +127,30 @@ class MgmtsystemNonconformity(models.Model):
     )
     risk_type_id = fields.Many2one("mgmtsystem.hazard.risk.type", string="Peligro")
 
+    # Una fecha por cada estado intermedio del ciclo de vida (salvo
+    # "Borrador", que ya tiene create_date). Se actualizan cada vez que la NC
+    # (re)entra en el estado y NO se borran al salir de él, para poder
+    # reconstruir cuándo pasó por cada fase. Son editables a mano desde el
+    # formulario.
+    fecha_analisis = fields.Datetime(string="Fecha Análisis")
+    fecha_plan_accion = fields.Datetime(string="Fecha Plan de Acción")
+    fecha_en_progreso = fields.Datetime(string="Fecha En Progreso")
+
+    _FECHA_FIELD_POR_ESTADO = {
+        "analysis": "fecha_analisis",
+        "pending": "fecha_plan_accion",
+        "open": "fecha_en_progreso",
+    }
+
+    # "Cancelado" es un estado final, igual que "Cerrado": fecha_cancelacion
+    # se comporta exactamente como closing_date (se fija la primera vez que
+    # entra y se borra en cuanto sale), en vez de con la lógica "no se borra"
+    # de las fechas intermedias de arriba. Editable a mano igual que
+    # closing_date, que también se redefine aquí solo para eso (el módulo
+    # base lo deja readonly=True).
+    closing_date = fields.Datetime(readonly=False)
+    fecha_cancelacion = fields.Datetime(string="Fecha Cancelación", readonly=False)
+
     # Al cerrar/cancelar una NC (sea desde el wizard "Cerrar NC" o haciendo
     # clic directamente en la barra de estados), sus acciones asociadas
     # (action_ids + immediate_action_id) se cierran/cancelan con ella, para
@@ -144,6 +168,8 @@ class MgmtsystemNonconformity(models.Model):
 
     def write(self, vals):
         create_date = vals.pop("create_date", None)
+        cambia_stage = "stage_id" in vals
+        estados_previos = {nc.id: nc.state for nc in self} if cambia_stage else {}
         if vals.get("stage_id"):
             self._cerrar_acciones_relacionadas(vals)
         res = super().write(vals)
@@ -153,7 +179,31 @@ class MgmtsystemNonconformity(models.Model):
                 (create_date, tuple(self.ids)),
             )
             self.invalidate_recordset(["create_date"])
+        if cambia_stage:
+            self._actualizar_fechas_por_estado(vals, estados_previos)
         return res
+
+    def _actualizar_fechas_por_estado(self, vals, estados_previos):
+        """Refresca la fecha del estado al que entra la NC. Para los estados
+        intermedios no se borra la fecha del estado anterior al salir de él:
+        reconstruir cuándo pasó por cada fase debe seguir siendo posible
+        aunque luego se haya corregido el estado. "Cancelado", en cambio, es
+        un estado final igual que "Cerrado", así que fecha_cancelacion sigue
+        el mismo patrón que closing_date del módulo base: se borra al salir."""
+        ahora = fields.Datetime.now()
+        for nc in self:
+            if nc.state == estados_previos.get(nc.id):
+                continue
+            campo = self._FECHA_FIELD_POR_ESTADO.get(nc.state)
+            if campo and campo not in vals:
+                # Si ya viene en vals es que se ha editado la fecha a mano en
+                # el mismo write; no la pisamos con "ahora".
+                nc[campo] = ahora
+            if "fecha_cancelacion" not in vals:
+                if nc.state == "cancel" and not nc.fecha_cancelacion:
+                    nc.fecha_cancelacion = ahora
+                elif nc.state != "cancel" and nc.fecha_cancelacion:
+                    nc.fecha_cancelacion = False
 
     def _cerrar_acciones_relacionadas(self, vals):
         nuevo_estado = (
@@ -173,7 +223,12 @@ class MgmtsystemNonconformity(models.Model):
                 acciones |= self.env["mgmtsystem.action"].browse(
                     vals["immediate_action_id"]
                 )
-            acciones = acciones.filtered(lambda a: not a.stage_id.is_ending)
+            # Comparamos con el stage destino, no con "is_ending": si la NC se
+            # cerró/canceló por error y se corrige pasándola al otro estado
+            # final, las acciones deben seguirla (p.ej. de canceladas a
+            # cerradas), no quedarse ancladas en el primer estado final que
+            # alcanzaron.
+            acciones = acciones.filtered(lambda a: a.stage_id != stage_destino)
             if acciones:
                 acciones.write({"stage_id": stage_destino.id})
 
