@@ -5,11 +5,62 @@ import threading
 
 _logger = logging.getLogger(__name__)
 
+# Icarus Manteniment = compañía 2, sin xmlid en la BD (mismo criterio que
+# leulit_almacen/data/leulit_estanterias.xml: se referencia por id).
+ICARUS_COMPANY_ID = 2
+SISTEMA_PARTE_145 = "Parte 145"
+
 
 class MgmtsystemNonconformity(models.Model):
     _inherit = "mgmtsystem.nonconformity"
 
     motivo_cierre = fields.Text(string="Motivo de Cierre")
+
+    nc_relacionada_id = fields.Many2one(
+        "mgmtsystem.nonconformity",
+        string="NC relacionada (otra empresa)",
+        copy=False,
+        readonly=True,
+        help="Copia automática de esta NC en la otra empresa, o la NC original de la que "
+             "esta es copia. Se genera cuando una NC se crea en Helipistas con el sistema "
+             "'Parte 145': Icarus Manteniment, como organización de mantenimiento aprobada "
+             "Part-145, necesita su propio registro para su sistema de calidad aunque el "
+             "hallazgo se haya originado en Helipistas.",
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._crear_espejo_nc_icarus_parte_145()
+        return records
+
+    def _crear_espejo_nc_icarus_parte_145(self):
+        """Solo se rellenan nombre y descripción (con una nota indicando de qué NC de
+        Helipistas proviene): el resto de campos (responsable, sistema, orígenes...) los
+        completa el encargado de seguridad de Icarus al triarla, no tienen por qué coincidir
+        con los de Helipistas."""
+        icarus = self.env["res.company"].sudo().browse(ICARUS_COMPANY_ID).exists()
+        if not icarus:
+            _logger.warning(
+                "No existe la compañía Icarus Manteniment (id=%s): no se crea la NC espejo.",
+                ICARUS_COMPANY_ID,
+            )
+            return
+        helipistas = self.env.ref("base.main_company")
+        for nc in self:
+            if nc.company_id != helipistas or nc.nc_relacionada_id:
+                continue
+            if not nc.system_id or (nc.system_id.name or "").strip() != SISTEMA_PARTE_145:
+                continue
+            nota = _('Copia automática de la NC "%s" de Helipistas.') % nc.ref
+            descripcion = "%s\n\n%s" % (nota, nc.description or "")
+            espejo = self.env["mgmtsystem.nonconformity"].sudo().create({
+                "name": nc.name,
+                "description": descripcion,
+                "company_id": icarus.id,
+                "nc_relacionada_id": nc.id,
+            })
+            nc.sudo().write({"nc_relacionada_id": espejo.id})
 
     @api.constrains("stage_id")
     def _check_close_with_evaluation(self):
