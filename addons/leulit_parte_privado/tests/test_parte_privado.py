@@ -54,16 +54,11 @@ class TestPartePrivado(common.TransactionCase):
             'presupuesto_vuelo': presupuesto.id,
             'vuelo_tipo_id'   : tipo.id,
             'numpax'          : 0,
-            'numpae'          : 0,
             'lugarsalida'     : helipuerto.id,
             'lugarllegada'    : helipuerto.id,
             'horasalida'      : 10.0,
-            'horallegada'     : 11.0,
             'tiemposervicio'  : 1.0,
-            'airtime'         : 0.9,
             'fuelqty'         : max(0.0, objetivo_fuel - (ultimo.fuelllegada if ultimo else 0.0)),
-            'oilqty'          : 0.0,
-            'fuelllegada'     : 40.0,
             'tacomllegada'    : (ultimo.tacomllegada if ultimo else 0.0) + 1.0,
             'ngvuelo'         : 1.0,
             'nfvuelo'         : 1.0,
@@ -76,9 +71,10 @@ class TestPartePrivado(common.TransactionCase):
             self.skipTest('faltan datos maestros: piloto privado con usuario activo, helicóptero en servicio con potencial, presupuesto NCO en sale, tipo de vuelo NCO, helipuerto')
         Vuelo = self.env['leulit.vuelo']
 
-        # 1) fallo tardío (cadena B: combustible llegada 0) -> UserError y vuelo cancelado, no bloquea
+        # 1) fallo tardío (cadena B: tacómetro/NG de llegada 0) -> UserError y vuelo cancelado, no bloquea
+        es_ec120b = self.env['leulit.helicoptero'].browse(datos['helicoptero_id']).tipo == 'EC120B'
         with self.assertRaises(UserError):
-            self.Wizard.create(dict(datos, fuelllegada=0.0)).finalizar()
+            self.Wizard.create(dict(datos, ngvuelo=0.0) if es_ec120b else dict(datos, tacomllegada=0.0)).finalizar()
         fallido = Vuelo.search([('privado_introducido_por','=',self.operador.id)])
         self.assertTrue(all(v.estado == 'cancelado' for v in fallido))
 

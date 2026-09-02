@@ -51,19 +51,24 @@ permiso que otorgue este módulo: ese menú no está restringido por grupo.
    pisa con la llegada del vuelo anterior.
 4. Llama a `calculosFuel('tiempoprevisto')` (distancia, hora de llegada
    prevista, combustibles).
-5. Ejecuta la **cadena paralela A** (prevuelo→postvuelo): handlers
+5. Estima el combustible de llegada con la fórmula del parte normal
+   (`_calc_fuelllegada`: salida − consumo medio × tiempo de servicio). El
+   combustible no se transcribe del papel: añadido = 0 salvo que el
+   remanente del último vuelo no cubra el mínimo, en cuyo caso el wizard lo
+   pide.
+6. Ejecuta la **cadena paralela A** (prevuelo→postvuelo): handlers
    importados de `vuelo_chain_postvuelo.py` más `DatosGeneralesPrivadoHandler`
    propio, que reproduce los mismos checks del original salvo meteo, C.G.,
    performance y pasajeros W&B.
-6. Firma 1 (`with_user` del piloto): estado pasa a `postvuelo`, se generan y
+7. Firma 1 (`with_user` del piloto): estado pasa a `postvuelo`, se generan y
    firman POV y PTV con el OTP real del piloto (`get_otp()` +
    `buildSignature` + `buildPdfSigned`); F27 automático si es EC120B con
    `checklist_prevuelo_BFF`.
-7. Ejecuta la **cadena paralela B** (postvuelo→cerrado): handlers importados
+8. Ejecuta la **cadena paralela B** (postvuelo→cerrado): handlers importados
    de `vuelo_chain_cerrado.py` tal cual.
-8. Comprueba `verificar_actividad_aerea()` del partner del piloto.
-9. Firma 2: estado pasa a `cerrado`, `control_firma='firmado'`.
-10. Deja traza (ver más abajo) y cierra el wizard.
+9. Comprueba `verificar_actividad_aerea()` del partner del piloto.
+10. Firma 2: estado pasa a `cerrado`, `control_firma='firmado'`.
+11. Deja traza (ver más abajo) y cierra el wizard.
 
 ## Qué se omite y por qué
 
@@ -79,6 +84,9 @@ rellenar de forma fiable:
   2026-09-01); reactivable en el futuro añadiendo el handler importado a
   `chains/vuelo_chain_privado.py` — un import y un eslabón más en la lista.
 - **Parte de escuela**: no aplica, el flujo es NCO privado, sin escuela.
+- **Combustible y aceite transcritos**: aceite fijo a 0; combustible estimado
+  (ver flujo). Hora de llegada y Air Time se calculan (salida + servicio,
+  servicio − 6 min); PAE fijo a 0 (NCO no admite).
 
 ## Qué queda si falla
 

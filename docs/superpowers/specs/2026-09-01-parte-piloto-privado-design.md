@@ -36,9 +36,7 @@ Ficheros que quedan **intactos**: `vuelo_chain_postvuelo.py`,
   falla, rollback total (una sola transacción), no queda nada a medias.
 - **`tipo_actividad = 'NCO'` fijo.** Consecuencias verificadas en código:
   - pax permitidos (`vuelo_chain_postvuelo.py:73-75`);
-  - `numpae` > 0 lo rechaza el handler (`:76-78`). Aun así, **el form lo
-    pide, obligatorio y sin default** (decisión 2026-09-02): el usuario lo
-    declara explícitamente y la cadena valida.
+  - `numpae` > 0 lo rechaza el handler (`:76-78`) → el form no lo muestra, se fija a 0 (decisión 2026-09-02, revisada tras la primera prueba).
 - **Presupuesto se selecciona cada vez** en el form (depende del piloto).
   Domain estándar: `flag_flight_part=True`, `state='sale'`, `task_done=False`.
 - **Meteo NO exigible** en este flujo. La cadena original la exige a todos
@@ -104,18 +102,15 @@ Inputs del usuario:
 - `presupuesto_vuelo` (m2o `sale.order`, domain estándar flag_flight_part)
 - `vuelo_tipo_id` (m2o `leulit.vuelostipo` → al crear genera la
   `vuelo_tipo_line`; cubre el check "No hay comentario logbook")
-- `numpax` (int, default 0)
-- `numpae` (int, **required, sin default**)
+- `numpax` (int, default 1)
 - `lugarsalida`, `lugarllegada` (m2o helipuerto)
-- `horasalida`, `horallegada` (float hora local — el PTV pinta UTC, el modelo
-  guarda local; el form pide local como el parte actual)
-- `fuelqty` (fuel añadido, l.), `oilqty` (aceite añadido, l.; 0 es válido —
-  la cadena exige ≥ 0)
-- `fuelllegada` (l.)
+- `horasalida` (float hora local) y `tiemposervicio`; `horallegada` = salida + servicio y `airtime` = servicio − 6 min se calculan en el form, solo lectura (decisión 2026-09-02).
+- combustible (decisión 2026-09-02): `oilqty` = 0 fijo; `fuelllegada` estimado
+  server-side con `_calc_fuelllegada`; `fuelqty` = 0 y oculto salvo que el
+  remanente del último vuelo cerrado no cubra el mínimo, entonces se pide.
 - `tacomllegada` (no-EC120B) **o** `ngvuelo` + `nfvuelo` (EC120B; constraint
   existente: > 0 y ≤ 4) — visibilidad condicionada al modelo del helicóptero
-- `tiemposervicio`, `airtime` (float horas; constraints existentes: airtime
-  múltiplo de 6 min, ≤ tiemposervicio, ≤ 3 h)
+- constraints existentes que siguen aplicando: airtime múltiplo de 6 min, ≤ tiemposervicio, ≤ 3 h
 - `comentarios` (O.V., texto libre, opcional)
 - `declaracion` (boolean único: "Inspección prevuelo, briefing, NOTAM y
   debriefing realizados" → marca `checklist_realizado`, `briefing_realizado`,
