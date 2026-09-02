@@ -85,10 +85,8 @@ rellenar de forma fiable:
   `chains/vuelo_chain_privado.py` — un import y un eslabón más en la lista.
 - **Parte de escuela**: no aplica, el flujo es NCO privado, sin escuela.
 - **Combustible y aceite transcritos**: aceite fijo a 0; combustible estimado
-  (ver flujo). Hora de llegada y Air Time se calculan (salida + servicio;
-  servicio − 6 min exactos); la constraint de Air Time múltiplo de 6 min se exime
-  para los vuelos con `privado_introducido_por` (override en `models/leulit_vuelo.py`,
-  el resto de vuelos la mantiene); PAE fijo a 0 (NCO no admite).
+  (ver flujo). Hora de llegada y Air Time se calculan (salida + servicio,
+  servicio − 6 min); PAE fijo a 0 (NCO no admite).
 
 ## Qué queda si falla
 

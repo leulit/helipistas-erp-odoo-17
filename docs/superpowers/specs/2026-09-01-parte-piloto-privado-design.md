@@ -104,7 +104,7 @@ Inputs del usuario:
   `vuelo_tipo_line`; cubre el check "No hay comentario logbook")
 - `numpax` (int, default 1)
 - `lugarsalida`, `lugarllegada` (m2o helipuerto)
-- `horasalida` (float hora local) y `tiemposervicio`; `horallegada` = salida + servicio y `airtime` = servicio − 6 min se calculan en el form, solo lectura (decisión 2026-09-02).
+- `horasalida` (float hora local) y `tiemposervicio`; `horallegada` = salida + servicio y `airtime` = servicio − 6 min exactos se calculan en el form, solo lectura (decisión 2026-09-02); la constraint de múltiplo de 6 min se exime para partes privados.
 - combustible (decisión 2026-09-02): `oilqty` = 0 fijo; `fuelllegada` estimado
   server-side con `_calc_fuelllegada`; `fuelqty` = 0 y oculto salvo que el
   remanente del último vuelo cerrado no cubra el mínimo, entonces se pide.

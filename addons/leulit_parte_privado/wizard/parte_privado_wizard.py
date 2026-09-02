@@ -40,7 +40,7 @@ class PartePrivadoWizard(models.TransientModel):
         for w in self:
             llegada = w.horasalida + w.tiemposervicio
             w.horallegada = llegada - 24.0 if llegada >= 24.0 else llegada
-            w.airtime = max(w.tiemposervicio - 0.1, 0.0)    # 6 minutos de arranque/parada
+            w.airtime = max(w.tiemposervicio - 0.1, 0.0)    # servicio - 6 min exactos (la constraint de múltiplo de 6 min se exime en models/leulit_vuelo.py)
 
     @api.depends('helicoptero_id', 'tiemposervicio')
     def _compute_fuel(self):
@@ -116,8 +116,6 @@ class PartePrivadoWizard(models.TransientModel):
         self.ensure_one()
         if not self.declaracion:
             raise UserError(_("Debe confirmar la declaración de inspección prevuelo, briefing, NOTAM y debriefing."))
-        if not self.env['leulit.vuelo']._is_multiple_of_six_minutes(self.tiemposervicio):
-            raise UserError(_("El tiempo de servicio debe ser múltiplo de 6 minutos (el Air Time se calcula restando 6 minutos)."))
         if self.fuel_remanente + self.fuelqty < self.fuel_minimo:
             raise UserError(_("Combustible de salida insuficiente: remanente %.0f l. + añadido %.0f l. es menor que el mínimo %.0f l. Indique el combustible añadido según el PTV.") % (self.fuel_remanente, self.fuelqty, self.fuel_minimo))
         user = self._usuario_piloto()
