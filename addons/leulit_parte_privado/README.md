@@ -51,11 +51,12 @@ permiso que otorgue este módulo: ese menú no está restringido por grupo.
    pisa con la llegada del vuelo anterior.
 4. Llama a `calculosFuel('tiempoprevisto')` (distancia, hora de llegada
    prevista, combustibles).
-5. Estima el combustible de llegada con la fórmula del parte normal
-   (`_calc_fuelllegada`: salida − consumo medio × tiempo de servicio). El
-   combustible no se transcribe del papel: añadido = 0 salvo que el
-   remanente del último vuelo no cubra el mínimo, en cuyo caso el wizard lo
-   pide.
+5. Combustible sin transcribir: si el remanente del último vuelo cerrado no
+   cubre el mínimo que calcula el propio parte (`combustibleminimo`), se
+   reposta lo justo para cubrirlo (+1 l. de margen) y se recalcula con
+   `calculosFuel`; la llegada se estima con `_calc_fuelllegada` (salida −
+   consumo medio × tiempo de servicio). El usuario no ve ningún campo de
+   combustible.
 6. Ejecuta la **cadena paralela A** (prevuelo→postvuelo): handlers
    importados de `vuelo_chain_postvuelo.py` más `DatosGeneralesPrivadoHandler`
    propio, que reproduce los mismos checks del original salvo meteo, C.G.,
@@ -84,8 +85,9 @@ rellenar de forma fiable:
   2026-09-01); reactivable en el futuro añadiendo el handler importado a
   `chains/vuelo_chain_privado.py` — un import y un eslabón más en la lista.
 - **Parte de escuela**: no aplica, el flujo es NCO privado, sin escuela.
-- **Combustible y aceite transcritos**: aceite fijo a 0; combustible estimado
-  (ver flujo). Hora de llegada y Air Time se calculan (salida + servicio,
+- **Combustible y aceite transcritos**: aceite fijo a 0; combustible añadido y
+  de llegada calculados, sin campos en el form (ver flujo). Hora de llegada y
+  Air Time se calculan (salida + servicio,
   servicio − 6 min); PAE fijo a 0 (NCO no admite).
 
 ## Qué queda si falla

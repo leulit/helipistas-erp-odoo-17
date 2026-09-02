@@ -10,7 +10,6 @@
                         <field name="fechavuelo"/>
                         <field name="helicoptero_id" options="{'no_create': True}"/>
                         <field name="helicoptero_tipo" invisible="1"/>
-                        <field name="fuel_insuficiente" invisible="1"/>
                         <field name="piloto_id" options="{'no_create': True}"/>
                         <field name="presupuesto_vuelo" options="{'no_create': True}"/>
                         <field name="vuelo_tipo_id" options="{'no_create': True}"/>
@@ -28,12 +27,6 @@
                         <field name="tacomllegada" invisible="helicoptero_tipo == 'EC120B'" required="helicoptero_tipo != 'EC120B'"/>
                         <field name="ngvuelo" invisible="helicoptero_tipo != 'EC120B'" required="helicoptero_tipo == 'EC120B'"/>
                         <field name="nfvuelo" invisible="helicoptero_tipo != 'EC120B'" required="helicoptero_tipo == 'EC120B'"/>
-                    </group>
-                    <group string="Combustible" invisible="not fuel_insuficiente">
-                        <div class="alert alert-warning" role="alert" colspan="2">El remanente del último vuelo cerrado no cubre el combustible mínimo para este tiempo de servicio. Indique el combustible añadido según el PTV.</div>
-                        <field name="fuel_remanente" readonly="1"/>
-                        <field name="fuel_minimo" readonly="1"/>
-                        <field name="fuelqty" required="fuel_insuficiente"/>
                     </group>
                     <group string="Observaciones">
                         <field name="comentarios" nolabel="1" colspan="2"/>

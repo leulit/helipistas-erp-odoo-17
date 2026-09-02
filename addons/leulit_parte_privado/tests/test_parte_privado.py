@@ -46,7 +46,6 @@ class TestPartePrivado(common.TransactionCase):
             return None
         ultimo = Vuelo.search([('helicoptero_id','=',heli.id),('estado','in',['postvuelo','cerrado'])], order='fechasalida desc', limit=1)
         fecha = (ultimo.fechavuelo if ultimo else fields.Date.today()) + timedelta(days=1)
-        objetivo_fuel = 300 if heli.tipo == 'EC120B' else 100
         return {
             'fechavuelo'      : fecha,
             'helicoptero_id'  : heli.id,
@@ -58,7 +57,6 @@ class TestPartePrivado(common.TransactionCase):
             'lugarllegada'    : helipuerto.id,
             'horasalida'      : 10.0,
             'tiemposervicio'  : 1.0,
-            'fuelqty'         : max(0.0, objetivo_fuel - (ultimo.fuelllegada if ultimo else 0.0)),
             'tacomllegada'    : (ultimo.tacomllegada if ultimo else 0.0) + 1.0,
             'ngvuelo'         : 1.0,
             'nfvuelo'         : 1.0,
@@ -83,6 +81,8 @@ class TestPartePrivado(common.TransactionCase):
         vuelo = Vuelo.search([('privado_introducido_por','=',self.operador.id),('estado','=','cerrado')])
         self.assertEqual(len(vuelo), 1)
         self.assertEqual(vuelo.control_firma, 'firmado')
+        self.assertGreaterEqual(vuelo.fuelsalida, vuelo.combustibleminimo)
+        self.assertGreater(vuelo.fuelllegada, 0.0)
         self.assertEqual(vuelo.tipo_actividad, 'NCO')
         self.assertEqual(vuelo.lugarsalida.id, datos['lugarsalida'])
         self.assertEqual(vuelo.create_uid.partner_id, vuelo.piloto_id.partner_id)

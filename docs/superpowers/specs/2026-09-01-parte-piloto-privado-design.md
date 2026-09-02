@@ -105,9 +105,9 @@ Inputs del usuario:
 - `numpax` (int, default 1)
 - `lugarsalida`, `lugarllegada` (m2o helipuerto)
 - `horasalida` (float hora local) y `tiemposervicio`; `horallegada` = salida + servicio y `airtime` = servicio − 6 min se calculan en el form, solo lectura (decisión 2026-09-02).
-- combustible (decisión 2026-09-02): `oilqty` = 0 fijo; `fuelllegada` estimado
-  server-side con `_calc_fuelllegada`; `fuelqty` = 0 y oculto salvo que el
-  remanente del último vuelo cerrado no cubra el mínimo, entonces se pide.
+- combustible (decisión 2026-09-02, sin campos en el form): `oilqty` = 0 fijo;
+  `fuelqty` = 0 salvo que el remanente no cubra `combustibleminimo`, entonces
+  se reposta lo justo (+1 l.); `fuelllegada` estimado con `_calc_fuelllegada`.
 - `tacomllegada` (no-EC120B) **o** `ngvuelo` + `nfvuelo` (EC120B; constraint
   existente: > 0 y ≤ 4) — visibilidad condicionada al modelo del helicóptero
 - constraints existentes que siguen aplicando: airtime múltiplo de 6 min, ≤ tiemposervicio, ≤ 3 h

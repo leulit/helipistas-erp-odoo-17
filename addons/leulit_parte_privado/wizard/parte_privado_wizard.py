@@ -25,10 +25,6 @@ class PartePrivadoWizard(models.TransientModel):
     tiemposervicio = fields.Float('Tiempo servicio', required=True)
     horallegada = fields.Float('Hora llegada local', compute='_compute_horas')
     airtime = fields.Float('Air Time', compute='_compute_horas')
-    fuelqty = fields.Float('Combustible añadido (l.)')
-    fuel_remanente = fields.Float('Remanente último vuelo (l.)', compute='_compute_fuel')
-    fuel_minimo = fields.Float('Combustible mínimo (l.)', compute='_compute_fuel')
-    fuel_insuficiente = fields.Boolean(compute='_compute_fuel')
     tacomllegada = fields.Float('Tacom. llegada')
     ngvuelo = fields.Float('NG vuelo')
     nfvuelo = fields.Float('NF vuelo')
@@ -41,16 +37,6 @@ class PartePrivadoWizard(models.TransientModel):
             llegada = w.horasalida + w.tiemposervicio
             w.horallegada = llegada - 24.0 if llegada >= 24.0 else llegada
             w.airtime = max(w.tiemposervicio - 0.1, 0.0)    # 6 minutos de arranque/parada
-
-    @api.depends('helicoptero_id', 'tiemposervicio')
-    def _compute_fuel(self):
-        # Mismo remanente que usa onchange_helicoptero y misma fórmula de mínimo que calculosFuel (reserva 30 min)
-        Vuelo = self.env['leulit.vuelo']
-        for w in self:
-            ultimo = Vuelo.search([('helicoptero_id','=',w.helicoptero_id.id),('estado','=','cerrado'),('fechasalida','!=',False)], limit=1, order='fechasalida desc')
-            w.fuel_remanente = ultimo.fuelllegada
-            w.fuel_minimo = Vuelo._calc_combustible_minimo(w.tiemposervicio, '30', w.helicoptero_id.consumomedio, '0', '0', 0, w.helicoptero_id.velocidad) if w.helicoptero_id else 0.0
-            w.fuel_insuficiente = bool(w.helicoptero_id) and w.fuel_remanente < w.fuel_minimo
 
     def _usuario_piloto(self):
         user = self.piloto_id.partner_id.user_ids.filtered('active')[:1]
@@ -74,7 +60,6 @@ class PartePrivadoWizard(models.TransientModel):
             'tiempoprevisto'                 : self.tiemposervicio,
             'tiemposervicio'                 : self.tiemposervicio,
             'airtime'                        : self.airtime,
-            'fuelqty'                        : self.fuelqty,
             'oilqty'                         : 0.0,
             'tacomllegada'                   : self.tacomllegada,
             'ngvuelo'                        : self.ngvuelo,
@@ -118,8 +103,6 @@ class PartePrivadoWizard(models.TransientModel):
             raise UserError(_("Debe confirmar la declaración de inspección prevuelo, briefing, NOTAM y debriefing."))
         if not self.env['leulit.vuelo']._is_multiple_of_six_minutes(self.tiemposervicio):
             raise UserError(_("El tiempo de servicio debe ser múltiplo de 6 minutos (el Air Time se calcula restando 6 minutos)."))
-        if self.fuel_remanente + self.fuelqty < self.fuel_minimo:
-            raise UserError(_("Combustible de salida insuficiente: remanente %.0f l. + añadido %.0f l. es menor que el mínimo %.0f l. Indique el combustible añadido según el PTV.") % (self.fuel_remanente, self.fuelqty, self.fuel_minimo))
         user = self._usuario_piloto()
         user.sudo().get_otp_secret()
         Vuelo = self.env['leulit.vuelo'].with_user(user)
@@ -129,7 +112,12 @@ class PartePrivadoWizard(models.TransientModel):
             vuelo.onchange_helicoptero()                          # pesos, velocidad, consumo, tacom/fuel del último vuelo cerrado
             vuelo.write({'lugarsalida': self.lugarsalida.id})     # el onchange lo pisa con la llegada del vuelo anterior
             vuelo.calculosFuel('tiempoprevisto')                  # distancia, hora llegada prevista, combustibles
-            vuelo.write({'fuelllegada': vuelo._calc_fuelllegada(vuelo.tiemposervicio, vuelo.fuelsalida, vuelo.consumomedio_vuelo)})  # llegada estimada, no se transcribe
+            # Combustible no transcrito: se reposta lo justo para cubrir el mínimo que calcula el propio parte
+            # (+1 l. de margen por redondeos) y la llegada se estima con la fórmula del parte normal.
+            if vuelo.fuelsalida < vuelo.combustibleminimo:
+                vuelo.write({'fuelqty': round(vuelo.combustibleminimo - vuelo.editfuelrem + 1.0, 2)})
+                vuelo.calculosFuel('fuelqty')
+            vuelo.write({'fuelllegada': vuelo._calc_fuelllegada(vuelo.tiemposervicio, vuelo.fuelsalida, vuelo.consumomedio_vuelo)})
             self._ejecutar(vuelo_chain_privado.chain_to_postvuelo(), vuelo_chain_postvuelo.VueloChainToPostvueloRequest(), vuelo)
             self._firmar(vuelo)                                   # prevuelo -> postvuelo, POV/PTV (+F27 si EC120B con BFF)
             self._ejecutar(vuelo_chain_privado.chain_to_cerrado(), vuelo_chain_cerrado.VueloChainToCerradoRequest(), vuelo)
