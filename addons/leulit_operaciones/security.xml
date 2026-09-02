@@ -210,35 +210,4 @@
         <field name="perm_unlink" eval="1"/>
     </record>
 
-    <record id="leulit_20260831_1200_hr_employee_self_access" model="ir.model.access">
-        <field name="name">Ficha de empleado - lectura propia</field>
-        <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="group_id" ref="leulit.RBase"/>
-        <field name="perm_read" eval="1"/>
-        <field name="perm_create" eval="0"/>
-        <field name="perm_write" eval="0"/>
-        <field name="perm_unlink" eval="0"/>
-    </record>
-    <record id="leulit_20260831_1200_hr_employee_self_rule" model="ir.rule">
-        <field name="name">Ficha de empleado: cada usuario ve solo la suya</field>
-        <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="domain_force">[('user_id', '=', user.id)]</field>
-        <field name="groups" eval="[(4, ref('leulit.RBase'))]"/>
-    </record>
-    <record id="leulit_20260831_1200_hr_employee_officer_rule" model="ir.rule">
-        <field name="name">Ficha de empleado: Officer/Administrator ven todas</field>
-        <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
-    </record>
-
-    <!-- Dan visibilidad del icono "Empleados" y de su lista (filtrada por el rule de arriba a la propia ficha)
-         a cualquier usuario base, sin tocar Configuración/Nóminas que siguen solo para Officer/Administrator -->
-    <record id="hr.menu_hr_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('leulit.RBase'))]"/>
-    </record>
-    <record id="hr.menu_hr_employee_payroll" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('leulit.RBase'))]"/>
-    </record>
-
 </odoo>
