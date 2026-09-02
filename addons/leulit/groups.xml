@@ -88,6 +88,11 @@
             <field name="category_id" ref="operaciones_rol_category"/>
         </record>
 
+        <record id="ROperaciones_parte_privado" model="res.groups">
+            <field name="name">Parte piloto privado</field>
+            <field name="category_id" ref="operaciones_rol_category"/>
+        </record>
+
         <!-- Rol Campaña Bomberos -->
         <record model="ir.module.category" id="campaña_bomberos_rol_category">
             <field name="name">Rol Campaña Bomberos</field>

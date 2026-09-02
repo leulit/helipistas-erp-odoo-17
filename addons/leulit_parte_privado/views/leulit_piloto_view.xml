@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="leulit_20260902_1000_form" model="ir.ui.view">
+        <field name="name">leulit.piloto.form.privado</field>
+        <field name="model">leulit.piloto</field>
+        <field name="inherit_id" ref="leulit_operaciones.leulit_20200708_1210_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='freelance']" position="after">
+                <field name="privado"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

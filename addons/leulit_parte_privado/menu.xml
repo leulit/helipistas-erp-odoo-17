@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- El menú raíz Operaciones está restringido a ROperaciones_operador; se añade el grupo nuevo sin quitar los existentes -->
+    <record id="leulit.leulit_20200618_1104_menuitem" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('leulit.ROperaciones_parte_privado'))]"/>
+    </record>
+
+    <menuitem
+        id="leulit_20260902_1010_menuitem"
+        name="Parte piloto privado"
+        parent="leulit_operaciones.leulit_20201023_1053_menuitem"
+        action="leulit_20260902_1010_action"
+        groups="leulit.ROperaciones_parte_privado"
+        sequence="16"
+    />
+</odoo>

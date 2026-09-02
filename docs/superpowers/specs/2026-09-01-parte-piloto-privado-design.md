@@ -36,7 +36,9 @@ Ficheros que quedan **intactos**: `vuelo_chain_postvuelo.py`,
   falla, rollback total (una sola transacción), no queda nada a medias.
 - **`tipo_actividad = 'NCO'` fijo.** Consecuencias verificadas en código:
   - pax permitidos (`vuelo_chain_postvuelo.py:73-75`);
-  - `numpae` debe ser 0 (`:76-78`) → el form no lo pide, se fija a 0.
+  - `numpae` > 0 lo rechaza el handler (`:76-78`). Aun así, **el form lo
+    pide, obligatorio y sin default** (decisión 2026-09-02): el usuario lo
+    declara explícitamente y la cadena valida.
 - **Presupuesto se selecciona cada vez** en el form (depende del piloto).
   Domain estándar: `flag_flight_part=True`, `state='sale'`, `task_done=False`.
 - **Meteo NO exigible** en este flujo. La cadena original la exige a todos
@@ -103,6 +105,7 @@ Inputs del usuario:
 - `vuelo_tipo_id` (m2o `leulit.vuelostipo` → al crear genera la
   `vuelo_tipo_line`; cubre el check "No hay comentario logbook")
 - `numpax` (int, default 0)
+- `numpae` (int, **required, sin default**)
 - `lugarsalida`, `lugarllegada` (m2o helipuerto)
 - `horasalida`, `horallegada` (float hora local — el PTV pinta UTC, el modelo
   guarda local; el form pide local como el parte actual)
@@ -119,11 +122,11 @@ Inputs del usuario:
   `notam_revisado`, `checklist_postvuelo_realizado`)
 
 Sin meteo, sin W&B, sin performance, sin `ruta_id`, sin alternativos, sin
-alumno/verificado/operador/supervisor, sin numpae.
+alumno/verificado/operador/supervisor.
 
 ### 4.4 Defaults y derivados al crear el vuelo
 
-Constantes: `tipo_actividad='NCO'`, `numtripulacion=1`, `numpae=0`,
+Constantes: `tipo_actividad='NCO'`, `numtripulacion=1`,
 `asiento_pic='pic_right'`, `reservasfuel='30'`, `rodaje='0'`,
 `contingencia='0'`, `distancia_alternativo=0`, `uso_gancho=0`, `landings=1`,
 `nightlandings=0`, `arlanding=0`, `sling_cycle=0`, `ifr=False`, `nv=False`,

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_parte_privado_wizard,leulit.parte.privado.wizard,model_leulit_parte_privado_wizard,leulit.ROperaciones_parte_privado,1,1,1,1
+access_parte_privado_sale_order,sale.order lectura parte privado,sale.model_sale_order,leulit.ROperaciones_parte_privado,1,0,0,0

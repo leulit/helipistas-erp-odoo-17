@@ -64,7 +64,7 @@ addons/
   leulit/              foundation module — every leulit_* module depends on it
   leulit_*/             functional modules: operaciones, actividad(_taller), taller, camo,
                          parte_145, escuela, calidad, seguridad, almacen, comercial,
-                         planificacion, esignature, meteo, nda, ia, encuestas, crm_team,
+                         planificacion, parte_privado, esignature, meteo, nda, ia, encuestas, crm_team,
                          groups_manager, hide_menus, trabajador_externo, user_impersonate...
   third-party-addons/  OCA/community modules, vendored — don't modify
 ```
