@@ -30,16 +30,16 @@ deja el ERP arrancado pase lo que pase):
 ./upd_module.sh <module> dev              # local, contenedor helipistas_odoo_17
 ./upd_module.sh <module> prod             # EC2, contenedor helipistas_odoo; solo XML, sin cortar servicio
 ./upd_module.sh <module> prod --stop      # obligatorio si el módulo añade/quita campos (ALTER TABLE)
+./upd_module.sh <module> dev --install    # módulo nuevo, primera vez (-i en vez de -u)
 ```
 
 Regla: cambios de solo XML (vistas, menús, informes, grupos, permisos) → sin `--stop`.
 Cambios de esquema Python (campos nuevos o eliminados) → `--stop`, el ERP queda caído
-mientras dura. `./upd_module.sh -h` para el resto. Instalar un módulo nuevo (`-i`) sigue
-siendo a mano:
+mientras dura. `./upd_module.sh -h` para el resto.
 
-```bash
-docker exec -ti helipistas_odoo_17 odoo -i <module> -d <db> --stop-after-init
-```
+Instalar un módulo nuevo va por el mismo script con `--install`: un `-u` sobre un módulo
+que aún no está en `ir.module.module` no hace nada, Odoo lo ignora. Solo la primera vez;
+después ya se actualiza en modo normal.
 
 Run tests (tests live under `<module>/tests/`, using `odoo.tests.common.TransactionCase`/`HttpCase`):
 
