@@ -66,7 +66,11 @@ permiso que otorgue este módulo: ese menú no está restringido por grupo.
    `buildSignature` + `buildPdfSigned`); F27 automático si es EC120B con
    `checklist_prevuelo_BFF`.
 8. Ejecuta la **cadena paralela B** (postvuelo→cerrado): handlers importados
-   de `vuelo_chain_cerrado.py` tal cual.
+   de `vuelo_chain_cerrado.py` tal cual, menos `ComprobacionParteEscuelaHandler`
+   y `ComprobacionOverlapPartesEscuelaVueloHandler` — este último porque el
+   flujo normal tampoco lo corre al cerrar y aquí auto-solaparía (el vuelo ya
+   está en `postvuelo` y la búsqueda no excluye su propio id); el solape ya lo
+   comprobó la cadena A.
 9. Comprueba `verificar_actividad_aerea()` del partner del piloto.
 10. Firma 2: estado pasa a `cerrado`, `control_firma='firmado'`.
 11. Deja traza (ver más abajo) y cierra el wizard.
@@ -85,6 +89,11 @@ rellenar de forma fiable:
   2026-09-01); reactivable en el futuro añadiendo el handler importado a
   `chains/vuelo_chain_privado.py` — un import y un eslabón más en la lista.
 - **Parte de escuela**: no aplica, el flujo es NCO privado, sin escuela.
+- **Overlap de partes al cerrar**: la cadena B no incluye
+  `ComprobacionOverlapPartesEscuelaVueloHandler`; el vuelo ya está en
+  `postvuelo` en ese punto y la búsqueda del handler no excluye su propio id,
+  así que se solaparía consigo mismo. El flujo web tampoco lo corre ahí. El
+  solape se comprueba en la cadena A, al pasar a postvuelo.
 - **Combustible y aceite transcritos**: aceite fijo a 0; combustible añadido y
   de llegada calculados, sin campos en el form (ver flujo). Hora de llegada y
   Air Time se calculan (salida + servicio,

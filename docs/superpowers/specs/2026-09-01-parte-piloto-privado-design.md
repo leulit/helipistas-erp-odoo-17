@@ -171,11 +171,15 @@ Derivados ejecutando server-side la lógica existente (onchange
    `vuelo_chain_cerrado.py` importados **tal cual** — todos satisfacibles con
    los datos capturados: ComprobacionPresupuesto, ComprobacionChecks,
    ComprobacionUsuarioPiloto, ComprobacionDescanso, ComprobacionHelicoptero,
-   ComprobacionOverlapPartesEscuelaVuelo, ComprobacionDatosGenerales,
-   ComprobacionDatosCombustible, UpdateProximoVuelo. Nota: nuestra composición
-   conecta también los eslabones que el `initChainToCerrado` original dejó
-   desconectados por el bug conocido (chain7 asignado dos veces) — sin tocar
-   el original, que se queda con su bug.
+   ComprobacionDatosGenerales, ComprobacionDatosCombustible,
+   UpdateProximoVuelo. Se omite `ComprobacionOverlapPartesEscuelaVuelo`: en
+   este punto el vuelo ya está en `postvuelo` y la búsqueda del handler no
+   excluye su propio id, así que se solaparía consigo mismo; además
+   `initChainToCerrado` (flujo web) tampoco lo corre al cerrar, así que
+   omitirlo mantiene la paridad. El solape ya lo comprobó la cadena A. Nota:
+   nuestra composición conecta también los eslabones que el `initChainToCerrado`
+   original dejó desconectados por el bug conocido (chain7 asignado dos veces)
+   — sin tocar el original, que se queda con su bug.
 6. **`verificar_actividad_aerea`** del partner del piloto (método existente,
    llamado igual que hace `firmar_doc_parte_vuelo` al cerrar).
 7. **Firma 2** → estado `cerrado`, POV/PTV finales firmados.

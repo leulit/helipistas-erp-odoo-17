@@ -69,7 +69,10 @@ def chain_to_cerrado():
         cerr.ComprobacionUsuarioPilotoHandler(),
         cerr.ComprobacionDescansoHandler(),
         cerr.ComprobacionHelicopteroHandler(),
-        cerr.ComprobacionOverlapPartesEscuelaVueloHandler(),
+        # ponytail: initChainToCerrado tampoco lo lleva; aquí además auto-solaparía
+        # (el vuelo ya está en postvuelo cuando corre esta cadena y la búsqueda de
+        # vuelo_chain_cerrado.py no excluye el propio id). El solape ya se comprobó
+        # en chain_to_postvuelo. Omitido: ComprobacionOverlapPartesEscuelaVueloHandler.
         cerr.ComprobacionDatosGeneralesHandler(),
         cerr.ComprobacionDatosCombustibleHandler(),
         cerr.UpdateProximoVueloHandler(),

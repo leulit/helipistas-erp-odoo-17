@@ -928,10 +928,13 @@ log.
 
 #### 8.4.6 `ComprobacionOverlapPartesEscuelaVueloHandler`
 
-**44 a 48.** Los mismos cinco casos que 18–22, con los mismos mensajes. La única
-diferencia es que el solape horario se calcula con `horallegada` real en vez de
-`horallegadaprevista`. Como en esta app las dos coinciden, el comportamiento es
-idéntico.
+Este handler **no se ejecuta** en la cadena a cerrado: en este punto el vuelo
+ya está en `postvuelo` y la búsqueda del handler (`fechavuelo` + estado
+`postvuelo`/`cerrado`) no excluye su propio id, así que el vuelo se solaparía
+consigo mismo y el cierre fallaría siempre. El flujo web (`initChainToCerrado`)
+tampoco lo corre en este punto, así que omitirlo mantiene la paridad. Los casos
+44 a 48 (los mismos cinco de 18–22) por tanto no existen en esta cadena, solo
+en §8.3.6, al pasar a postvuelo.
 
 #### 8.4.7 `ComprobacionDatosGeneralesHandler` (cerrado)
 
@@ -1258,20 +1261,19 @@ el flujo web, al cerrar un parte no se valida el combustible.**
 
 El parte privado no reutiliza esa función: arma su propia cadena en
 `chains/vuelo_chain_privado.py`, enlazando los eslabones uno a uno. Y ahí el
-validador de combustible sí queda enlazado. Por el mismo motivo, la cadena
-privada también ejecuta al cerrar el validador de solapes
-(`ComprobacionOverlapPartesEscuelaVueloHandler`), que la del web tampoco corre en
-ese punto — aunque sí lo corre antes, al pasar a postvuelo.
+validador de combustible sí queda enlazado. El validador de solapes
+(`ComprobacionOverlapPartesEscuelaVueloHandler`) sigue sin enlazarse al cerrar,
+igual que en el flujo web: en ese punto el vuelo ya está en `postvuelo` y la
+búsqueda del handler no excluye su propio id, así que auto-solaparía siempre.
+El solape ya se comprueba antes, al pasar a postvuelo.
 
 Consecuencias prácticas para el cliente:
 
 - Los errores nº 58, 59 y 60 (combustible al cerrar) **solo pueden aparecer por
   la app**. Un usuario de oficina que cierre el mismo parte por el web no los
   vería.
-- Los errores nº 44 a 48 (solapes) se comprueban **dos veces** en el flujo
-  privado: una al pasar a postvuelo y otra al cerrar. Si algo cambia entre medias
-  —otro parte introducido en paralelo— puede fallar en la segunda pasada, ya con
-  los documentos de la primera firma generados.
+- Los errores nº 44 a 48 (solapes) solo aparecen al pasar a postvuelo, no al
+  cerrar — ni en la app ni en el web.
 
 El comportamiento del parte privado es el correcto: valida lo que el web se deja
 sin validar. Simplemente hay que saberlo para no perseguir un fantasma cuando un
