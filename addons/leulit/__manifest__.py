@@ -5,7 +5,7 @@
     "author": "Leulit S.L.",
     "website": "http://www.leulit.com",
     "category": "leulit",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.1.0",
     "depends": [
         "base",
         "mail",
@@ -44,6 +44,7 @@
         "views/leulit_checklist.xml",
         "views/leulit_checklist_template.xml",
         "views/leulit_checklist_item.xml",
+        "views/leulit_documento.xml",
         "report/leulit_report_checklist.xml",
         "report/ir_actions_report.xml",
         "adjuntos.xml",

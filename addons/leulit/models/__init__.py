@@ -16,4 +16,6 @@ from . import res_users
 from . import sale_order
 from . import sale_order_line
 from . import ir_attachment
+from . import leulit_documento
+from . import leulit_documento_migrar_wizard
 from . import project_project

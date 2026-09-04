@@ -16,6 +16,20 @@
                             <field name="peso_piloto" />
                             <field name="firma" widget="image" class="oe_avatar oe_left"/>
                         </group>
+                        <notebook>
+                            <page name="documentos" string="Documentos">
+                                <field name="documento_ids">
+                                    <tree editable="bottom" default_order="date desc">
+                                        <field name="partner_id" column_invisible="1"/>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="expiration_date"/>
+                                        <field name="valid"/>
+                                        <button name="add_docs" type="object" class="oe_highlight" string="Adjuntar Doc."/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
-from odoo import models
+from odoo import models, fields
 from odoo.exceptions import AccessError
 from odoo.tools.translate import _
 
 
 class IrAttachment(models.Model):
     _inherit = 'ir.attachment'
+
+    documento_id = fields.Many2one('leulit.documento', string='Documento id')
 
     def check(self, mode, values=None):
         """

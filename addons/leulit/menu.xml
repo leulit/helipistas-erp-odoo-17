@@ -265,6 +265,18 @@
         />
 
 
+    <!-- Herramienta de un solo uso, solo administradores: cuelga de Ajustes (base.menu_administration),
+         no de "Gestión Documental" (ese menú es un ir.actions.act_url que abre Google Drive en pestaña
+         nueva y no navega dentro del backend, así que un submenú suyo no seria alcanzable). -->
+    <menuitem
+        id="leulit_20260903_1200_menuitem"
+        name="Migrar documentos antiguos"
+        parent="base.menu_administration"
+        action="leulit_documento_migrar_wizard_action"
+        sequence="900"
+        groups="base.group_system"
+    />
+
     <!-- Menu Formacion -->
     <menuitem
         id="leulit_20201125_1200_menuitem"

@@ -146,3 +146,4 @@ class res_partner(models.Model):
     empleado_erp = fields.Integer(string='empleado_erp')
     partner_erp = fields.Integer(string='partner_erp')
     user_id_erp = fields.Integer(string='user_erp')
+    documento_ids = fields.One2many(comodel_name="leulit.documento", inverse_name="partner_id", string="Documentos")

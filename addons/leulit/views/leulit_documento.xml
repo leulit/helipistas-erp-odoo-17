@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Popup "Adjuntar Documentos" reutilizado desde la pestaña "Documentos" de
+            cualquier ficha (alumno, piloto, operador, mecánico...) mediante el botón
+            del modelo leulit.documento (método add_docs).
+        -->
+        <record model="ir.ui.view" id="leulit_documento_adjuntar_form">
+            <field name="name">leulit_documento_adjuntar_form</field>
+            <field name="model">leulit.documento</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Adjuntar Documentos">
+                    <group col="1">
+                        <h3>Selecciona todos los archivos que deseas adjuntar:</h3>
+                        <field name="rel_docs" nolabel="1"/>
+                    </group>
+                    <footer>
+                        <button string="Guardar y cerrar" name="action_close" type="object" class="btn-primary"/>
+                        <button string="Descartar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--
+            Asistente para lanzar a mano la migración de los mecanismos de
+            documentación antiguos (alumno/piloto/mecánico) al modelo
+            unificado leulit.documento. Solo visible para administradores
+            (grupo base.group_system), ver menú "Gestión Documental".
+        -->
+        <record model="ir.ui.view" id="leulit_documento_migrar_wizard_form">
+            <field name="name">leulit_documento_migrar_wizard_form</field>
+            <field name="model">leulit.documento_migrar_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Migrar documentos antiguos">
+                    <group>
+                        <p>
+                            Migra a "Documentos" (modelo único, colgado del contacto) los documentos
+                            que aún viven en los mecanismos antiguos: SENASA y adjuntos sueltos de
+                            alumno, adjuntos de piloto, y adjuntos de chatter de mecánico.
+                        </p>
+                        <p>
+                            No borra nada de lo antiguo. Se puede ejecutar más de una vez: lo ya
+                            migrado no se vuelve a duplicar.
+                        </p>
+                        <field name="resumen" invisible="not resumen" widget="text"/>
+                    </group>
+                    <footer>
+                        <button string="Migrar" name="action_migrar" type="object" class="btn-primary"/>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="leulit_documento_migrar_wizard_action">
+            <field name="name">Migrar documentos antiguos</field>
+            <field name="res_model">leulit.documento_migrar_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

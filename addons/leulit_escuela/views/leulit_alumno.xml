@@ -116,6 +116,18 @@
                                     </tree>
                                 </field>
                             </page>
+                            <page name="documentos_unificados" string="Documentos (nuevo)">
+                                <field name="documento_ids">
+                                    <tree editable="bottom" default_order="date desc">
+                                        <field name="partner_id" column_invisible="1"/>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="expiration_date"/>
+                                        <field name="valid"/>
+                                        <button name="add_docs" type="object" class="oe_highlight" string="Adjuntar Doc."/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="Evaluación">
                                 <field name="rel_alumno_evaluacion_ids">
                                     <tree string="Evaluación" editable="bottom">
