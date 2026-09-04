@@ -268,6 +268,9 @@ Hay dos formas de hacer el `-u`, y la que toca depende de si el módulo cambia e
 
 # parando el ERP — el módulo añade o quita campos
 ./upd_module.sh <modulo> prod --stop
+
+# primera instalación de un módulo nuevo (-i en vez de -u)
+./upd_module.sh <modulo> prod --install
 ```
 
 El script saca la red, la imagen y las variables del propio contenedor, guarda la salida en
