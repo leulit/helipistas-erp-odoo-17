@@ -30,6 +30,20 @@ class TestPartePrivado(common.TransactionCase):
         with self.assertRaises(UserError):
             wiz._usuario_piloto()
 
+    def test_entorno_piloto_acota_empresas(self):
+        """El operador puede tener varias empresas activas; el entorno del piloto debe quedar
+        acotado a las suyas o env.company lanza AccessError ('empresas no autorizadas')."""
+        principal = self.env.company
+        otra = self.env['res.company'].create({'name': 'Empresa test parte privado'})
+        piloto_user = self.env['res.users'].create({
+            'name'        : 'Piloto test empresas',
+            'login'       : 'piloto_empresas_parte_privado_test',
+            'company_id'  : principal.id,
+            'company_ids' : [(6, 0, [principal.id])],
+        })
+        wiz = self.Wizard.with_context(allowed_company_ids=[principal.id, otra.id]).new({})
+        self.assertEqual(wiz._entorno_piloto(piloto_user).env.company, principal)
+
     def _datos_reales(self):
         """Datos maestros de la BD de pruebas; None si faltan (el test se salta)."""
         Vuelo = self.env['leulit.vuelo']
