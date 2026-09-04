@@ -113,6 +113,17 @@ Con esto, aunque la firma y el `create_uid` queden a nombre del piloto (para
 que la maquinaria de firma funcione igual que en el flujo normal), siempre es
 reconstruible quién transcribió realmente cada parte.
 
+## Cliente móvil (app del piloto privado)
+
+El mismo wizard se ataca por JSON-RPC desde una app destinada **solo a pilotos
+privados**, en la que el piloto transcribe él mismo su parte. La especificación
+completa para quien la implemente —contrato, pantallas, catálogo exhaustivo de
+las 61 validaciones y reconciliación ante timeout— está en
+`docs/superpowers/specs/2026-09-03-app-parte-privado-spec.md`.
+
+Si se toca este módulo o los validadores importados de `leulit_operaciones`,
+ese documento hay que revisarlo.
+
 ## Instalación, actualización y tests
 
 Sin Odoo local en este entorno; ejecutar en el Docker de pruebas del
