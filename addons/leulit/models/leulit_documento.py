@@ -39,6 +39,13 @@ class leulitDocumento(models.Model):
     expiration_date = fields.Date(string="Fecha de caducidad")
     valid = fields.Boolean(compute=_get_valido, string="Documento vigente")
 
+    def unlink(self):
+        # rel_docs (ir.attachment) no tiene ondelete='cascade' hacia aquí: si no lo
+        # borramos a mano, el archivo se queda huérfano en la base de datos al borrar
+        # la fila desde la pestaña "Documentos".
+        self.rel_docs.unlink()
+        return super().unlink()
+
     def action_close(self):
         return {'type': 'ir.actions.act_window_close'}
 

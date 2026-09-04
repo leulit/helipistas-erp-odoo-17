@@ -137,7 +137,9 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
-    <!-- Documentos unificados (alumno/piloto/operador/mecanico...), colgados de partner_id -->
+    <!-- Documentos unificados (alumno/piloto/operador/mecanico...), colgados de partner_id.
+         Crear y modificar: cualquier usuario con acceso a la ficha (RBase). Borrar: solo
+         RDocumentos_responsable (ver groups.xml) — por eso RBase no lleva perm_unlink. -->
     <record id="leulit_20260903_1100_access_permission" model="ir.model.access">
         <field name="name">leulit_documento</field>
         <field name="model_id" ref="model_leulit_documento"/>
@@ -145,6 +147,15 @@
         <field name="perm_read" eval="1"/>
         <field name="perm_create" eval="1"/>
         <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+    <record id="leulit_20260904_1000_access_permission" model="ir.model.access">
+        <field name="name">leulit_documento_borrado_responsable</field>
+        <field name="model_id" ref="model_leulit_documento"/>
+        <field name="group_id" ref="leulit.RDocumentos_responsable"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_write" eval="0"/>
         <field name="perm_unlink" eval="1"/>
     </record>
 
