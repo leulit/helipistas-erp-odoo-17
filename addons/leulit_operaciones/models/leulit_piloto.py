@@ -372,7 +372,6 @@ class leulit_piloto(models.Model):
     profesor = fields.One2many(compute=_profesor, string='Profesor', comodel_name='leulit.profesor')
     employee = fields.Many2one(related='partner_id.user_ids.employee_id',comodel_name='hr.employee',string='Empleado')
     piloto_helipistas = fields.Boolean(compute='_is_piloto_helipistas', string='Piloto Helipistas', store=False, search='_search_piloto_helipistas')
-    documentos_ids = fields.One2many(comodel_name="leulit.piloto_adjunto", inverse_name="piloto_id", string="Documentos")
     dieta_ta = fields.Float(string="Dieta Temporada Alta")
     dieta_tb = fields.Float(string="Dieta Temporada Baja")
     plus_activacion = fields.Float(string="Plus Festivo/Nacional")

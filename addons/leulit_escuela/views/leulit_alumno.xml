@@ -99,24 +99,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Documentos">
-                                <field name="attachement_ids">
-                                    <tree class="attachement_ids">
-                                        <field name="name"/>
-                                        <field name="create_date"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Autorización exámenes SENASA">
-                                <field name="rel_alumno_documentacion_ids">
-                                    <tree string="Documentación">
-                                        <field name="name"/>
-                                        <field name="fecha_expedicion"/>
-                                        <field name="fecha_validez"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page name="documentos_unificados" string="Documentos (nuevo)">
+                            <page name="documentos_unificados" string="Documentos">
                                 <field name="documento_ids">
                                     <tree editable="bottom" default_order="date desc">
                                         <field name="partner_id" column_invisible="1"/>

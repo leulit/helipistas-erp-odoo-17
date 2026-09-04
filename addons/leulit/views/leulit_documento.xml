@@ -26,10 +26,10 @@
         </record>
 
         <!--
-            Asistente para lanzar a mano la migración de los mecanismos de
-            documentación antiguos (alumno/piloto/mecánico) al modelo
-            unificado leulit.documento. Solo visible para administradores
-            (grupo base.group_system), ver menú "Gestión Documental".
+            Asistente para lanzar a mano el rescate de adjuntos sueltos del clip del
+            chatter (alumno/mecánico/calidad/camo/empleado) al modelo unificado
+            leulit.documento. Solo visible para administradores (grupo
+            base.group_system), ver menú "Ajustes".
         -->
         <record model="ir.ui.view" id="leulit_documento_migrar_wizard_form">
             <field name="name">leulit_documento_migrar_wizard_form</field>
@@ -38,9 +38,9 @@
                 <form string="Migrar documentos antiguos">
                     <group>
                         <p>
-                            Migra a "Documentos" (modelo único, colgado del contacto) los documentos
-                            que aún viven en los mecanismos antiguos: SENASA y adjuntos sueltos de
-                            alumno, adjuntos de piloto, y adjuntos de chatter de mecánico.
+                            Migra a "Documentos" (modelo único, colgado del contacto) los adjuntos
+                            que aún viven sueltos en el clip del chatter de alumno, mecánico,
+                            trabajador de calidad, personal CAMO y empleado.
                         </p>
                         <p>
                             No borra nada de lo antiguo. Se puede ejecutar más de una vez: lo ya

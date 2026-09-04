@@ -169,11 +169,6 @@ class leulit_alumno(models.Model):
                 item.total_horas_fact = 0
 
 
-    def _get_attachments(self):
-        for item in self:
-            item.attachement_ids = self.env['ir.attachment'].search([('res_model', '=', 'leulit.alumno'),('res_id', '=', item.id)])
-
-
     def metodo_historial_a_ejecutar(self):
         view_ref = self.env['ir.model.data']._xmlid_to_res_model_res_id('leulit_escuela.leulit_20201130_1125_informes_historial_popup_form')
         view_id = view_ref and view_ref[1] or False
@@ -464,7 +459,6 @@ class leulit_alumno(models.Model):
     rel_alumno_curso_ids = fields.One2many('leulit.rel_alumno_curso', 'alumno_id', 'Cursos', required=True, domain=[('cursos_perfil_formacion','=',False)])
     piloto_id = fields.Many2one('leulit.piloto', 'Piloto', index=True)
     parte_escuela_ids = fields.One2many(compute='_get_partes_escuela',string='Partes de escuela',comodel_name='leulit.parte_escuela')
-    rel_alumno_documentacion_ids= fields.One2many('leulit.rel_alumno_documentacion', 'alumno_id','Documentación', required=True)
     rel_alumno_evaluacion_ids = fields.One2many('leulit.rel_alumno_evaluacion', 'alumno_id', 'Evaluación',required=True)
     partesescuela_teorico_ids = fields.One2many(compute='_get_partesescuela_teoria',string='Partes escuela teórico',comodel_name='leulit.parte_escuela')
     partesescuela_practico_ids = fields.One2many(compute='_get_partesescuela_practica',string='Partes escuela práctico',comodel_name='leulit.parte_escuela')
@@ -472,7 +466,6 @@ class leulit_alumno(models.Model):
     total_horas_teorica = fields.Float(compute='_get_total_horas_teorica',string='Total horas teórica')
     total_horas_practica = fields.Float(compute='_get_total_horas_practica',string='Total horas práctica')
     total_horas = fields.Float(compute='_get_total_horas',string='Total horas')
-    attachement_ids = fields.One2many(compute='_get_attachments',string='Ficheros',store=False,comodel_name='ir.attachment')
     activo = fields.Boolean(compute='alumno_activo',string='Activo',store=False,search=_search_alumno_activo)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Contacto', required=True, ondelete='cascade')
     fecha_nacimiento = fields.Date("Fecha de nacimiento", required=False)

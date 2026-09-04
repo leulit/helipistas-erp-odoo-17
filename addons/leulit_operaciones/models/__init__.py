@@ -3,8 +3,6 @@ from . import leulit_vuelo_tipo_line
 from . import leulit_tipos_vuelo
 from . import leulit_vuelo_scripts
 from . import leulit_operaciones_performance
-from . import ir_attachment
-from . import leulit_piloto_adjunto
 from . import sale_order
 from . import hr_expense
 from . import hr_employee

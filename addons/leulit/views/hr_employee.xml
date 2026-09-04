@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Pestaña "Documentos" en la ficha de empleado, para el personal sin ficha de
+            rol específica (alumno/piloto/operador/mecánico/calidad/camo) que solo tiene
+            hr.employee. Ver el related field documento_ids en models/hr_employee.py.
+        -->
+        <record model="ir.ui.view" id="leulit_hr_employee_documentos_form_view">
+            <field name="name">leulit_hr_employee_documentos_form_view</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="documentos" string="Documentos">
+                        <field name="documento_ids">
+                            <tree editable="bottom" default_order="date desc">
+                                <field name="partner_id" column_invisible="1"/>
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="expiration_date"/>
+                                <field name="valid"/>
+                                <button name="add_docs" type="object" class="oe_highlight" string="Adjuntar Doc."/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

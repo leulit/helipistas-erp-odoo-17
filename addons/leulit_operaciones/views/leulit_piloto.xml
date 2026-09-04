@@ -26,19 +26,7 @@
                             <field name="supervisor_privados" groups="leulit.ROperaciones_gestor"/>
                         </group>
                         <notebook>
-                            <page name="piloto_documentos" string="Documentos">
-                                <field name="documentos_ids">
-                                    <tree editable="bottom" default_order="date desc">
-                                        <field name="piloto_id" column_invisible="1"/>
-                                        <field name="name"/>
-                                        <field name="date"/>
-                                        <field name="expiration_date"/>
-                                        <field name="valid"/>
-                                        <button name="add_docs_piloto" type="object" class="oe_highlight" string="Adjuntar Doc."/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page name="documentos_unificados" string="Documentos (nuevo)">
+                            <page name="documentos_unificados" string="Documentos">
                                 <field name="documento_ids">
                                     <tree editable="bottom" default_order="date desc">
                                         <field name="partner_id" column_invisible="1"/>

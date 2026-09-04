@@ -57,23 +57,52 @@ class leulitDocumento(models.Model):
             'flags': {'form': {'action_buttons': True}}
         }
 
+    def _migrar_adjuntos_sueltos(self, model_name, hoy):
+        """
+        Rescata, para cada registro de model_name, los ir.attachment sueltos
+        colgados de él (típicamente subidos por el clip del chatter, sin
+        fecha de caducidad ni metadatos) y crea un leulit.documento por cada
+        uno, usando record.partner_id (el registro debe tenerlo, directo o
+        _inherits). Devuelve cuántos ha migrado.
+        """
+        migrados = 0
+        for record in self.env[model_name].search([]):
+            if not record.partner_id:
+                continue
+            attachments = self.env['ir.attachment'].search([
+                ('res_model', '=', model_name),
+                ('res_id', '=', record.id),
+                ('documento_id', '=', False),
+            ])
+            for attachment in attachments:
+                doc = self.create({
+                    'partner_id': record.partner_id.id,
+                    'name': attachment.name or 'Documento',
+                    'date': attachment.create_date.date() if attachment.create_date else hoy,
+                })
+                attachment.write({'documento_id': doc.id})
+                migrados += 1
+        return migrados
+
     def migrar_documentos_legacy(self):
         """
-        Migración manual, bajo demanda, de los mecanismos de documentación
-        antiguos (SENASA/adjuntos de alumno, piloto_adjunto de piloto,
-        adjuntos de chatter de mecánico) al modelo unificado leulit.documento.
+        Migración manual, bajo demanda, de los adjuntos sueltos del clip del
+        chatter (alumno, mecánico, trabajador de calidad, personal CAMO,
+        empleado) al modelo unificado leulit.documento.
+
+        Los mecanismos antiguos de alumno (SENASA) y piloto (piloto_adjunto)
+        ya se eliminaron una vez migrados sus datos; este método ya no los
+        toca.
 
         Se lanza a mano desde el botón del asistente "Migrar documentos
-        antiguos" (menú Gestión Documental, solo administradores), nunca
+        antiguos" (menú Ajustes, solo administradores), nunca
         automáticamente al actualizar un módulo. Es segura de ejecutar más
         de una vez: un adjunto que ya tiene documento_id asignado no se
-        vuelve a migrar (la única excepción son las filas SENASA/piloto sin
-        ningún adjunto vinculado nunca, donde se comprueba por
-        partner_id+nombre+fecha en vez de por adjunto).
+        vuelve a migrar.
 
         Cada bloque comprueba si el modelo de origen existe antes de tocarlo,
         para no reventar si algún día se desinstala leulit_escuela/
-        leulit_operaciones/leulit_taller.
+        leulit_taller/leulit_calidad/leulit_camo.
 
         Devuelve una lista de líneas de texto con el resumen de lo migrado.
         """
@@ -83,109 +112,49 @@ class leulitDocumento(models.Model):
         resumen = []
         hoy = fields.Date.context_today(self)
 
-        # 1) SENASA: leulit.rel_alumno_documentacion -> leulit.documento
-        if 'leulit.rel_alumno_documentacion' in self.env:
-            migrados = 0
-            for rel in self.env['leulit.rel_alumno_documentacion'].search([]):
-                if not rel.alumno_id or not rel.alumno_id.partner_id:
-                    continue
-                nombre = rel.name or 'Documento SENASA'
-                fecha = rel.fecha_expedicion or hoy
-                pendientes = rel.doc_alumno.filtered(lambda a: not a.documento_id)
-                if rel.doc_alumno:
-                    if not pendientes:
-                        continue  # todos sus adjuntos ya migrados
-                else:
-                    ya_existe = self.search_count([
-                        ('partner_id', '=', rel.alumno_id.partner_id.id),
-                        ('name', '=', nombre),
-                        ('date', '=', fecha),
-                    ])
-                    if ya_existe:
-                        continue
-                doc = self.create({
-                    'partner_id': rel.alumno_id.partner_id.id,
-                    'name': nombre,
-                    'date': fecha,
-                    'expiration_date': rel.fecha_validez or False,
-                })
-                if pendientes:
-                    pendientes.write({'documento_id': doc.id})
-                migrados += 1
-            resumen.append('%s documentos SENASA (alumno)' % migrados)
-
-        # 2) Adjuntos sueltos colgados directamente de leulit.alumno (chatter)
+        # Adjuntos sueltos colgados directamente de leulit.alumno (chatter)
         if 'leulit.alumno' in self.env:
-            migrados = 0
-            for alumno in self.env['leulit.alumno'].search([]):
-                if not alumno.partner_id:
-                    continue
-                attachments = self.env['ir.attachment'].search([
-                    ('res_model', '=', 'leulit.alumno'),
-                    ('res_id', '=', alumno.id),
-                    ('documento_id', '=', False),
-                ])
-                for attachment in attachments:
-                    doc = self.create({
-                        'partner_id': alumno.partner_id.id,
-                        'name': attachment.name or 'Documento',
-                        'date': attachment.create_date.date() if attachment.create_date else hoy,
-                    })
-                    attachment.write({'documento_id': doc.id})
-                    migrados += 1
+            migrados = self._migrar_adjuntos_sueltos('leulit.alumno', hoy)
             resumen.append('%s adjuntos sueltos de alumno' % migrados)
 
-        # 3) leulit.piloto_adjunto -> leulit.documento
-        if 'leulit.piloto_adjunto' in self.env:
-            migrados = 0
-            for adjunto in self.env['leulit.piloto_adjunto'].search([]):
-                if not adjunto.piloto_id or not adjunto.piloto_id.partner_id:
-                    continue
-                nombre = adjunto.name or 'Documento'
-                fecha = adjunto.date or hoy
-                pendientes = adjunto.rel_docs.filtered(lambda a: not a.documento_id)
-                if adjunto.rel_docs:
-                    if not pendientes:
-                        continue
-                else:
-                    ya_existe = self.search_count([
-                        ('partner_id', '=', adjunto.piloto_id.partner_id.id),
-                        ('name', '=', nombre),
-                        ('date', '=', fecha),
-                    ])
-                    if ya_existe:
-                        continue
-                doc = self.create({
-                    'partner_id': adjunto.piloto_id.partner_id.id,
-                    'name': nombre,
-                    'date': fecha,
-                    'expiration_date': adjunto.expiration_date or False,
-                })
-                if pendientes:
-                    pendientes.write({'documento_id': doc.id})
-                migrados += 1
-            resumen.append('%s documentos de piloto' % migrados)
-
-        # 4) Adjuntos de chatter colgados de leulit.mecanico
+        # Adjuntos de chatter colgados de leulit.mecanico
         if 'leulit.mecanico' in self.env:
+            migrados = self._migrar_adjuntos_sueltos('leulit.mecanico', hoy)
+            resumen.append('%s adjuntos de chatter de mecánico' % migrados)
+
+        # Adjuntos de chatter colgados de leulit.calidad_worker
+        if 'leulit.calidad_worker' in self.env:
+            migrados = self._migrar_adjuntos_sueltos('leulit.calidad_worker', hoy)
+            resumen.append('%s adjuntos de chatter de trabajador de calidad' % migrados)
+
+        # Adjuntos de chatter colgados de leulit.camo_worker
+        if 'leulit.camo_worker' in self.env:
+            migrados = self._migrar_adjuntos_sueltos('leulit.camo_worker', hoy)
+            resumen.append('%s adjuntos de chatter de personal CAMO' % migrados)
+
+        # Adjuntos de chatter colgados directamente de hr.employee. A diferencia de
+        # los anteriores, hr.employee no tiene partner_id propio (no es _inherits de
+        # res.partner): hay que resolver el contacto vía user_id.partner_id. Un empleado
+        # sin usuario de login no tiene dónde migrar sus adjuntos y se omite.
+        if 'hr.employee' in self.env:
             migrados = 0
-            for mecanico in self.env['leulit.mecanico'].search([]):
-                if not mecanico.partner_id:
+            for employee in self.env['hr.employee'].search([]):
+                if not employee.user_id or not employee.user_id.partner_id:
                     continue
                 attachments = self.env['ir.attachment'].search([
-                    ('res_model', '=', 'leulit.mecanico'),
-                    ('res_id', '=', mecanico.id),
+                    ('res_model', '=', 'hr.employee'),
+                    ('res_id', '=', employee.id),
                     ('documento_id', '=', False),
                 ])
                 for attachment in attachments:
                     doc = self.create({
-                        'partner_id': mecanico.partner_id.id,
+                        'partner_id': employee.user_id.partner_id.id,
                         'name': attachment.name or 'Documento',
                         'date': attachment.create_date.date() if attachment.create_date else hoy,
                     })
                     attachment.write({'documento_id': doc.id})
                     migrados += 1
-            resumen.append('%s adjuntos de chatter de mecánico' % migrados)
+            resumen.append('%s adjuntos de chatter de empleado' % migrados)
 
         _logger.info('Migración manual a leulit.documento (usuario %s): %s', self.env.user.login, ' | '.join(resumen))
         return resumen

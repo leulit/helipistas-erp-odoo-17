@@ -45,6 +45,7 @@
         "views/leulit_checklist_template.xml",
         "views/leulit_checklist_item.xml",
         "views/leulit_documento.xml",
+        "views/hr_employee.xml",
         "report/leulit_report_checklist.xml",
         "report/ir_actions_report.xml",
         "adjuntos.xml",

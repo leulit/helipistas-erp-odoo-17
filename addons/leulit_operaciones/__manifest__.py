@@ -19,7 +19,6 @@
         "views/leulit_vuelo.xml",
         "views/leulit_vuelo_taller.xml",
         "views/leulit_operaciones_performance.xml",
-        "views/leulit_piloto_adjunto.xml",
         "views/sale_order.xml",
         "views/hr_expense.xml",
         "views/hr_employee.xml",

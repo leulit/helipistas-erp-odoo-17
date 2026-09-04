@@ -20,7 +20,6 @@ from . import leulit_resource
 from . import leulit_rel_parte_escuela_cursos_alumnos
 from . import leulit_popup_rel_parte_escuela_cursos_alumnos
 from . import leulit_rel_alumno_evaluacion
-from . import leulit_rel_alumno_documentacion
 from . import leulit_rel_alumno_curso
 from . import leulit_profesor
 from . import leulit_perfil_formacion_accion
