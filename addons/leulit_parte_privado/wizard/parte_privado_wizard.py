@@ -44,6 +44,13 @@ class PartePrivadoWizard(models.TransientModel):
             raise UserError(_("El piloto %s no tiene usuario activo en el ERP; no se puede firmar en su nombre.") % self.piloto_id.name)
         return user
 
+    def _entorno_piloto(self, user):
+        # ponytail: el operador puede tener varias empresas activas en el conmutador y el piloto
+        # pertenece solo a la suya. Sin acotar allowed_company_ids, el primer acceso a env.company
+        # bajo with_user(piloto) —p.ej. el ir.sequence del código de vuelo— revienta con
+        # "Acceso a empresas no autorizadas o no válidas" (Environment.company, odoo/api.py).
+        return self.env['leulit.vuelo'].with_user(user).with_context(allowed_company_ids=user.company_ids.ids)
+
     def _vals_vuelo(self, hay_vuelo_anterior):
         return {
             'fechavuelo'                     : self.fechavuelo,
@@ -105,7 +112,7 @@ class PartePrivadoWizard(models.TransientModel):
             raise UserError(_("El tiempo de servicio debe ser múltiplo de 6 minutos (el Air Time se calcula restando 6 minutos)."))
         user = self._usuario_piloto()
         user.sudo().get_otp_secret()
-        Vuelo = self.env['leulit.vuelo'].with_user(user)
+        Vuelo = self._entorno_piloto(user)
         hay_anterior = bool(Vuelo.search([('helicoptero_id','=',self.helicoptero_id.id),('estado','=','cerrado'),('fechavuelo','=',self.fechavuelo),('horasalida','<',self.horasalida)], limit=1))
         vuelo = Vuelo.create(self._vals_vuelo(hay_anterior))
         try:

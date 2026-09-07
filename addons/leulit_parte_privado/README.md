@@ -61,6 +61,12 @@ permiso que otorgue este módulo: ese menú no está restringido por grupo.
    importados de `vuelo_chain_postvuelo.py` más `DatosGeneralesPrivadoHandler`
    propio, que reproduce los mismos checks del original salvo meteo, C.G.,
    performance y pasajeros W&B.
+   Todo lo que se hace en nombre del piloto va por `_entorno_piloto()`:
+   `with_user(piloto)` **y** `allowed_company_ids` acotado a las empresas del
+   piloto. El operador puede tener varias empresas activas en el conmutador y
+   el piloto pertenece solo a la suya; sin acotarlo, el primer `env.company`
+   (el `ir.sequence` del código de vuelo, ya en el `create`) lanza «Acceso a
+   empresas no autorizadas o no válidas».
 7. Firma 1 (`with_user` del piloto): estado pasa a `postvuelo`, se generan y
    firman POV y PTV con el OTP real del piloto (`get_otp()` +
    `buildSignature` + `buildPdfSigned`); F27 automático si es EC120B con
