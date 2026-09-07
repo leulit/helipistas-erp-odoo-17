@@ -21,7 +21,7 @@
 
         <record model="ir.actions.act_url" id="leulit_20260205_1219_action">
             <field name="name">Open KPI</field>
-            <field name="url">http://54.228.16.152:3000/</field>
+            <field name="url">https://metabase.helipistas.com</field>
             <field name="target">new</field>
         </record>
 
