@@ -44,7 +44,7 @@
                         </group>
                         <group col="2">
                             <group>
-                                <field name="nombre_archivo" invisible="0"/>
+                                <field name="nombre_archivo" invisible="1"/>
                                 <field name="datas" filename="nombre_archivo" string="Documento"/>
                                 <field name="link_web" widget="url"/>
                             </group>
