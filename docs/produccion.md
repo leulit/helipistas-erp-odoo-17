@@ -54,7 +54,7 @@ Definidos en [`dockerserver/docker-compose.yml`](../dockerserver/docker-compose.
 | `nginx` | `nginx:latest` | `helipistas_nginx` | `80`, `443` | Proxy inverso / TLS |
 | `certbot` | `certbot/certbot` | `helipistas_certbot` | — | Renovación automática de certificados (cada 12h) |
 | `helipistas_n8n` | `helipistas/n8n:1.0.0` | `helipistas_n8n` | `5678` | Automatizaciones (n8n) — acceso directo por IP:5678, ver nota abajo |
-| `metabase` | `metabase/metabase:latest` | `metabase_app` | `3000` | BI/analítica (Metabase) — acceso directo por IP:3000, ver nota abajo |
+| `metabase` | `metabase/metabase:latest` (v0.63.16.6) | `metabase_app` | — (no publicado) | BI/analítica (Metabase Community) — se sirve en `https://metabase.helipistas.com` por nginx: [`metabase-https.md`](metabase-https.md). Usuarios y permisos: [`metabase-usuarios-permisos.md`](metabase-usuarios-permisos.md) |
 
 Todos los servicios comparten la red bridge `helipistas_network`.
 
@@ -134,7 +134,13 @@ session_dir = /var/lib/odoo/sessions
 
 ## nginx: dominios servidos
 
-`nginx/conf/default.conf` (no versionado en el repo) solo tiene virtual host para `erp.helipistas.com`, con redirect HTTP→HTTPS y proxy a Odoo (`8069`) + websocket (`8072`):
+> **⚠️ `default.conf` es un bind mount de un fichero suelto** (`/efs/HELIPISTAS-ODOO-17/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf`). Docker monta el **inodo**, no la ruta: si al editarlo se sustituye el fichero por uno nuevo (`mv`, `sed -i`, y `vi` con su `backupcopy=auto` por defecto), el host queda con el fichero nuevo y **el contenedor sigue viendo el viejo** — `nginx -t` valida la configuración antigua y el reload no cambia nada, sin ningún error. Editar una copia y meterla con `cp` (que escribe dentro del mismo inodo), y comprobar siempre desde dentro:
+> ```bash
+> cp default.conf /tmp/nuevo.conf && vi /tmp/nuevo.conf && cp /tmp/nuevo.conf default.conf
+> docker exec helipistas_nginx grep -c <algo-del-cambio> /etc/nginx/conf.d/default.conf
+> ```
+
+`nginx/conf/default.conf` (no versionado en el repo) tiene virtual host para `erp.helipistas.com`, con redirect HTTP→HTTPS y proxy a Odoo (`8069`) + websocket (`8072`):
 
 ```nginx
 # Redirect HTTP to HTTPS
@@ -199,13 +205,15 @@ server {
 }
 ```
 
+Desde el **2026-09-07** el fichero lleva además los dos `server` de `metabase.helipistas.com` (redirect 80→443 y proxy a `metabase_app:3000`) y el `map $http_upgrade $connection_upgrade` al principio. El bloque completo, el porqué del `resolver` de Docker en el `proxy_pass` y el procedimiento de emisión del certificado están en [`metabase-https.md`](metabase-https.md) — que es también el documento a seguir si hay que rehacer esta parte.
+
 `erp17.helipistas.com` no tiene virtual host propio pese a estar mencionado como dominio de la app en otros sitios del repo/histórico.
 
-**⚠️ Riesgo pendiente:** `helipistas_n8n` (env `N8N_HOST=n8n.helipistas.com`, `WEBHOOK_URL=https://n8n.helipistas.com/`) y `metabase` (`MB_SITE_URL=https://metabase.helipistas.com`) están configurados como si fueran a exponerse por nginx con dominio y TLS, pero en la práctica se acceden hoy directamente por `http://54.228.16.152:5678` y `http://54.228.16.152:3000` — HTTP plano, sin certificado, con el puerto abierto en el security group. Pendiente: darles virtual host + TLS en nginx (y cerrar el puerto directo), o al menos ajustar esas env vars a la realidad actual.
+**⚠️ Riesgo pendiente (solo n8n):** `helipistas_n8n` (env `N8N_HOST=n8n.helipistas.com`, `WEBHOOK_URL=https://n8n.helipistas.com/`) está configurado como si se expusiera por nginx con dominio y TLS, pero se accede hoy directamente por `http://54.228.16.152:5678` — HTTP plano, sin certificado, con el puerto abierto en el security group, y `n8n.helipistas.com` ni siquiera tiene registro DNS. Pendiente: mismo tratamiento que se le ha dado a Metabase (receta en [`metabase-https.md`](metabase-https.md), sección final).
 
 ## Certificados TLS: renovación y recarga de nginx
 
-El contenedor `certbot` renueva el certificado de `erp.helipistas.com` cada 12h (`certbot renew` en bucle, ver entrypoint en `dockerserver/docker-compose.yml`); no hay certificados emitidos para `erp17.helipistas.com` ni `metabase.helipistas.com` (ver riesgo pendiente arriba). Certbot **no lleva `--deploy-hook`**: al renovar solo actualiza los ficheros en `/efs/HELIPISTAS-ODOO-17/certbot/conf`, no le avisa a nginx. nginx solo lee el certificado al arrancar o al recargar (`nginx -s reload`), así que si el contenedor `helipistas_nginx` lleva mucho tiempo sin reiniciarse, sigue sirviendo el certificado **viejo** aunque haya uno nuevo válido en disco.
+El contenedor `certbot` renueva cada 12h (`certbot renew` en bucle, ver entrypoint en `dockerserver/docker-compose.yml`) **tres** certificados, todos ECDSA y todos renovados el 2026-09-02 con caducidad 2026-12-01: `erp.helipistas.com`, `erp17.helipistas.com` y `metabase.helipistas.com`. Los de `erp17` y `metabase` llevan emitidos y renovándose desde hace tiempo aunque **ningún virtual host los use todavía**. No hay certificado para `n8n.helipistas.com`. Certbot **no lleva `--deploy-hook`**: al renovar solo actualiza los ficheros en `/efs/HELIPISTAS-ODOO-17/certbot/conf`, no le avisa a nginx. nginx solo lee el certificado al arrancar o al recargar (`nginx -s reload`), así que si el contenedor `helipistas_nginx` lleva mucho tiempo sin reiniciarse, sigue sirviendo el certificado **viejo** aunque haya uno nuevo válido en disco.
 
 Esto causó una caída real: el 2026-08-03, con `helipistas_nginx` con 5 meses de uptime sin recargar, el certificado servido (emitido el 2026-05-05, válido 90 días) caducó mientras el certificado ya renovado en disco (válido hasta 2026-10-02) esperaba sin usarse → `ERR_CERT_DATE_INVALID` en el navegador de los usuarios, pese a que `docker exec helipistas_certbot certbot certificates` mostraba el certificado en regla.
 
@@ -224,9 +232,30 @@ Si las fechas no coinciden, nginx necesita recargar.
 docker exec helipistas_nginx nginx -s reload
 ```
 
-**Arreglo estructural**: como `certbot` y `nginx` son contenedores separados sin socket de Docker compartido, no hay `--deploy-hook` directo. Se ha añadido un cron en el host (fuera del repo, en el crontab de root de la instancia EC2) que recarga nginx una vez al mes, con margen de sobra frente a la ventana de renovación de Let's Encrypt (~30 días antes de caducar):
+**Arreglo estructural**: como `certbot` y `nginx` son contenedores separados sin socket de Docker compartido, no hay `--deploy-hook` directo. Se ha añadido un cron en el host (fuera del repo, en el crontab de root de la instancia EC2) que recarga nginx una vez al mes:
 ```bash
 0 3 1 * * docker exec helipistas_nginx nginx -s reload
+```
+
+**⚠️ Ese cron no basta, y el 2026-09-07 se comprobó en vivo.** Estado observado ese día:
+
+- `helipistas_certbot`: `Up 6 months`, funcionando — había renovado los tres certificados el 2026-09-02, con caducidad **2026-12-01**.
+- `helipistas_nginx`: también 6 meses sin recargar, sirviendo todavía el certificado de `erp.helipistas.com` emitido el 2026-07-04 y con caducidad **2026-10-02**.
+
+O sea, el mismo fallo del 2026-08-03 estaba otra vez en curso: certificado bueno en disco, certificado viejo servido. El cron del día 1 lo habría salvado el 2026-10-01, a **un día** de la caducidad, porque Let's Encrypt abre la ventana 30 días antes y un certificado que caduca a principio de mes se recarga con horas de margen. Y ahora ese cron es la única salvaguarda de **tres** certificados, no de uno.
+
+**Resuelto ese mismo día como efecto colateral:** el `nginx -s reload` de la puesta en marcha de `metabase.helipistas.com` cargó los certificados renovados. Verificado desde fuera: `erp.helipistas.com` pasó de servir el certificado con caducidad 2026-10-02 a servir el de 2026-12-01. El riesgo concreto está cerrado; el mecánico —cron mensual, sin `--deploy-hook`— sigue igual.
+
+Arreglo: pasar el reload a semanal. No corta conexiones ni reinicia el contenedor, así que hacerlo más a menudo no cuesta nada.
+
+```bash
+0 3 * * 0 docker exec helipistas_nginx nginx -s reload
+```
+
+**⚠️ Y el contenedor `certbot` no tiene `restart:` en el `docker-compose.yml`:** aquí lleva 6 meses en marcha, pero no vuelve solo tras un reinicio del host, y la renovación se pararía sin que nadie se entere. Comprobación:
+
+```bash
+docker ps --filter name=helipistas_certbot --format '{{.Names}} {{.Status}}'
 ```
 
 ## Despliegue / actualización
@@ -382,7 +411,12 @@ No hay pipeline de CI/CD: el repo no tiene `.github/workflows/` ni scripts de de
 
 ## Pendiente
 
-- Exponer `n8n.helipistas.com` y `metabase.helipistas.com` por nginx con TLS y cerrar el acceso directo por IP:puerto (ver riesgo en la sección de nginx).
+- Exponer `n8n.helipistas.com` por nginx con TLS y cerrar el `5678` directo (ver riesgo en la sección de nginx). Metabase ya está hecho: [`metabase-https.md`](metabase-https.md).
+- **n8n apunta a una base de datos que no existe:** el servicio declara `DB_POSTGRESDB_DATABASE=n8n` pero el 2026-09-07 `psql -d n8n` devolvía `database "n8n" does not exist`. O n8n no está funcionando, o cayó al SQLite por defecto dentro del contenedor y sus workflows están a un `docker rm` de perderse. Pendiente: comprobarlo (`docker logs helipistas_n8n`) y decidir.
+- `erp17.helipistas.com` tiene certificado emitido y renovándose pero ningún virtual host que lo use. Pendiente: darle vhost o dejar de renovarlo (`certbot delete --cert-name erp17.helipistas.com`).
+- PostgreSQL publica `5432:5432` al exterior con la contraseña en claro en el `docker-compose.yml`. Nada fuera del EC2 necesita ese puerto: Odoo, n8n y Metabase llegan por la red `helipistas_network`. Pendiente: dejar de publicarlo, o al menos limitar la regla del security group a las IP que de verdad lo usen.
 - `admin_passwd` de Odoo: distinta de `db_password` y fuerte, o desactivar `list_db` si el gestor de BD no se usa en producción (ver riesgo en la sección de `odoo.conf`).
+- El servicio `certbot` no tiene `restart:` en `dockerserver/docker-compose.yml`, así que no vuelve solo tras un reinicio del host: la renovación automática puede estar parada sin aviso. Pendiente: añadirle `restart: unless-stopped`.
+- El cron de recarga de nginx es mensual y deja margen de horas con certificados que caducan a principio de mes (ver sección de certificados TLS). Pendiente: pasarlo a semanal.
 - Security groups de la EC2: no versionados aquí, consultar consola AWS.
 - Custodia de la clave SSH del equipo: no documentada aquí por decisión explícita.

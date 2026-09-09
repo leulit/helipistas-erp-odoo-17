@@ -151,8 +151,7 @@ services:
     image: metabase/metabase:latest
     container_name: metabase_app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    # Sin publicar el 3000: a Metabase se llega solo por nginx (metabase.helipistas.com)
     depends_on:
       - postgresOdoo16
     environment:
