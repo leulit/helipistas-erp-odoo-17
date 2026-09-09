@@ -71,6 +71,7 @@ class leulitMaintenanceManual(models.Model):
             
 
     attachment_id = fields.Many2one(comodel_name="ir.attachment", string="Documento", required=True, ondelete='cascade')
+    nombre_archivo = fields.Char(string="Nombre archivo")
     categoria_id = fields.Many2one(comodel_name="leulit.categoria_manual", string="Categoria")
     descripcion = fields.Char(string="Descripción")
     pn = fields.Char(string="P/N")
