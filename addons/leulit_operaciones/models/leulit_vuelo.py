@@ -2392,7 +2392,7 @@ class leulit_vuelo(models.Model):
     pasajeros_wb = fields.Integer(string="Pasajeros en M&B")
 
     estado_vista = fields.Selection([
-        ('prevuelo', 'Prevuelo'),
+        ('prevuelo', 'Prevuelo'), 
         ('fin_prevuelo', 'Fin prevuelo'),
         ('postvuelo', 'Postvuelo'),
         ('cerrado', 'Cerrado'),
