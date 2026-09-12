@@ -32,83 +32,83 @@
                         <tr>
                             <td style="vertical-align:top; border:1px solid transparent;font-weight: bold;">
                                 <p style="font-size:13px;margin:0;line-height:14px;">PN:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">PN Alt.:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">Nombre:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">SN:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">Revisión:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">Lote:</p>
-                                <p style="font-size:9px;margin:0;line-height:11px;">R.Origen:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">PN Alt.:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">Nombre:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">SN:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">Revisión:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">Lote:</p>
+                                <p style="font-size:10px;margin:0;line-height:12px;">R.Origen:</p>
                                 <t t-if="titulo=='MATERIAL NUEVO'">
-                                    <p style="font-size:9px;margin:0;line-height:11px;">Fecha Alta:</p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;">F.Caducidad:</p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;">Fecha Alta:</p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;">F.Caducidad:</p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"></p>
                                 </t>
                                 <t t-else="">
                                     <t t-if="titulo == 'MATERIAL ÚTIL' or titulo == 'M. PTE. DECISIÓN'">
-                                        <p style="font-size:9px;margin:0;line-height:11px;">O.Trabajo:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">T.S.N:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">T.S.O:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">V.Operativa:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">Fecha Alta:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">F.Caducidad:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">Posición:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">Sistema:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">O.Trabajo:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">T.S.N:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">T.S.O:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">V.Operativa:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">Fecha Alta:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">F.Caducidad:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">Posición:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">Sistema:</p>
                                     </t>
                                     <t t-else="">
-                                        <p style="font-size:9px;margin:0;line-height:11px;">O.Trabajo:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">T.S.N:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">T.S.O:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">V.Operativa:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;">Motivo baja:</p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">O.Trabajo:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">T.S.N:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">T.S.O:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">V.Operativa:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;">Motivo baja:</p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
                                     </t>
                                 </t>
                             </td>
                             <td style="vertical-align:top; border:1px solid transparent;">
                                 <div style="width: 60mm;">
                                     <p style="font-size:13px;margin:0;line-height:14px;"><span t-esc="pn"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="pn_alternativo"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="pn_nombre"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="sn"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="revision"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="lote"/></p>
-                                    <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="ref_origen"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="pn_alternativo"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="pn_nombre"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="sn"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="revision"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="lote"/></p>
+                                    <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="ref_origen"/></p>
                                     <t t-if="titulo=='MATERIAL NUEVO'">
-                                        <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="fecha_alta"/></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="fecha_caducidad"/></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                        <p style="font-size:9px;margin:0;line-height:11px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="fecha_alta"/></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="fecha_caducidad"/></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                        <p style="font-size:10px;margin:0;line-height:12px;"></p>
                                     </t>
                                     <t t-else="">
                                         <t t-if="titulo == 'MATERIAL ÚTIL' or titulo == 'M. PTE. DECISIÓN'">
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="codigo_wo"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="tsn"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="tso"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="o_life_hours"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="fecha_alta"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="fecha_caducidad"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="posicion"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="sistema"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="codigo_wo"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="tsn"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="tso"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="o_life_hours"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="fecha_alta"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="fecha_caducidad"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="posicion"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="sistema"/></p>
                                         </t>
                                         <t t-else="">
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="codigo_wo"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="tsn"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="tso"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="o_life_hours"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"><span t-esc="motivo_baja"/></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"></p>
-                                            <p style="font-size:9px;margin:0;line-height:11px;"></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="codigo_wo"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="tsn"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="tso"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="o_life_hours"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"><span t-esc="motivo_baja"/></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"></p>
+                                            <p style="font-size:10px;margin:0;line-height:12px;"></p>
                                         </t>
                                     </t>
                                 </div>
