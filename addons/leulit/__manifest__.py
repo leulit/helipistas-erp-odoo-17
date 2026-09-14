@@ -56,6 +56,8 @@
         'web.assets_backend': [
             'leulit/static/src/js/widget_semaforo_field.js',
             'leulit/static/src/xml/semaforo_char.xml',
+            'leulit/static/src/js/leulit_company_theme.js',
+            'leulit/static/src/css/leulit_company_theme.css',
         ],
     },
     "demo": [],
