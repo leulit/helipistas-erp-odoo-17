@@ -13,7 +13,7 @@ import { PivotRenderer } from "@web/views/pivot/pivot_renderer";
 class TareasSemanaEstadoPivotModel extends PivotModel {
     async load(searchParams) {
         await super.load(searchParams);
-        if (this.metaData.rowGroupBys[0] === "create_date:week") {
+        if (this.metaData.rowGroupBys[0] === "date_last_stage_update:week") {
             const tree = this.data.rowGroupTree;
             if (tree && tree.directSubTrees.size) {
                 tree.sortedKeys = [...tree.directSubTrees.keys()].reverse();

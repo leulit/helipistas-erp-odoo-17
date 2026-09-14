@@ -125,8 +125,8 @@
                             string="Emilio Álvarez y Pau Barbarroja"
                             domain="[('user_ids', 'in', [11, 14])]"/>
                     <filter name="filter_last_12_weeks"
-                            string="Creadas últimas 12 semanas"
-                            domain="[('create_date', '&gt;=', (context_today() - relativedelta(weeks=12)).strftime('%Y-%m-%d'))]"/>
+                            string="Cambio de estado últimas 12 semanas"
+                            domain="[('date_last_stage_update', '&gt;=', (context_today() - relativedelta(weeks=12)).strftime('%Y-%m-%d'))]"/>
                 </xpath>
             </field>
         </record>
@@ -187,13 +187,13 @@
             <field name="context">{'search_default_open_tasks': 1}</field>
         </record>
 
-        <!-- Pivot: tareas por semana (creación) y estado, para Emilio Álvarez y Pau Barbarroja -->
+        <!-- Pivot: tareas por semana (último cambio de etapa) y estado, para Emilio Álvarez y Pau Barbarroja -->
         <record id="leulit_20260914_1530_pivot" model="ir.ui.view">
             <field name="name">leulit_20260914_1530_pivot</field>
             <field name="model">project.task</field>
             <field name="arch" type="xml">
                 <pivot string="Tareas por semana y estado" js_class="leulit_tareas_semana_pivot">
-                    <field name="create_date" interval="week" type="row"/>
+                    <field name="date_last_stage_update" interval="week" type="row"/>
                     <field name="user_ids" type="row"/>
                     <field name="stage_id" type="col"/>
                 </pivot>
