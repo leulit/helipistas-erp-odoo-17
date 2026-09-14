@@ -2,20 +2,12 @@
     --leulit-company-color: #546e7a;
 }
 
-/* barra superior: visible en cualquier vista del backend */
-.o_main_navbar {
-    background-color: var(--leulit-company-color) !important;
-}
-
-/* franja lateral fija a la izquierda de la pantalla, mismo color */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 6px;
-    background-color: var(--leulit-company-color);
-    z-index: 10000;
-    pointer-events: none;
+/* ponytail: borde en el <html>, no un ::before con position:fixed. muk_web_theme
+   (appsbar/navbar) mete sus propios transforms/pseudo-elementos y se comía la barra
+   fija; un borde es parte de la caja del documento, no depende de stacking context.
+   No tocar .o_main_navbar: sus hijos (secciones de menú) pintan su propio fondo desde
+   muk_web_theme y machacaban el color, dejando la navbar a dos tonos. */
+html {
+    box-sizing: border-box;
+    border-left: 8px solid var(--leulit-company-color);
 }
