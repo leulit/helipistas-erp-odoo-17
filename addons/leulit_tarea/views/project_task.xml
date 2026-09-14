@@ -114,10 +114,19 @@
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='inactive']" position="after">
                     <separator/>
-                    <filter name="sin_actividades" 
-                            string="Sin Actividades" 
+                    <filter name="sin_actividades"
+                            string="Sin Actividades"
                             domain="[('activity_ids', '=', False)]"
                             help="Tareas abiertas sin ninguna actividad programada (tareas huérfanas)"/>
+                </xpath>
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <separator/>
+                    <filter name="filter_emilio_pau"
+                            string="Emilio Álvarez y Pau Barbarroja"
+                            domain="[('user_ids', 'in', [11, 14])]"/>
+                    <filter name="filter_last_12_weeks"
+                            string="Creadas últimas 12 semanas"
+                            domain="[('create_date', '&gt;=', (context_today() - relativedelta(weeks=12)).strftime('%Y-%m-%d'))]"/>
                 </xpath>
             </field>
         </record>
@@ -176,6 +185,29 @@
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity,timeline</field>
             <field name="domain">[('project_borrador', '=', False)]</field>
             <field name="context">{'search_default_open_tasks': 1}</field>
+        </record>
+
+        <!-- Pivot: tareas por semana (creación) y estado, para Emilio Álvarez y Pau Barbarroja -->
+        <record id="leulit_20260914_1530_pivot" model="ir.ui.view">
+            <field name="name">leulit_20260914_1530_pivot</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <pivot string="Tareas por semana y estado">
+                    <field name="create_date" interval="week" type="row"/>
+                    <field name="user_ids" type="row"/>
+                    <field name="stage_id" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="leulit_20260914_1531_action" model="ir.actions.act_window">
+            <field name="name">Tareas por semana y estado</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="leulit_20260914_1530_pivot"/>
+            <field name="domain">[('project_borrador', '=', False), '|', ('active', '=', True), ('active', '=', False)]</field>
+            <field name="context">{'search_default_filter_emilio_pau': 1, 'search_default_filter_last_12_weeks': 1}</field>
+            <field name="search_view_id" ref="project.view_task_search_form"/>
         </record>
 
         <!-- Control de Actividades (mail.activity) -->

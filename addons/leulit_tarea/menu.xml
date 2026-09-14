@@ -39,12 +39,19 @@
             sequence="19"
             groups="leulit_tarea.RT_administrador"
         />
-        <menuitem 
+        <menuitem
+            id="leulit_20260914_1531_menuitem"
+            name="Tareas por semana y estado"
+            parent="leulit_20200907_1307_menuitem"
+            action="leulit_20260914_1531_action"
+            sequence="20"
+        />
+        <menuitem
             id="leulit_20260116_1030_menuitem"
             name="Control actividades"
             parent="leulit_20200907_1307_menuitem"
             action="leulit_20260116_1030_action"
-            sequence="20"
+            sequence="21"
             groups="leulit_tarea.RT_administrador"
         />
         <menuitem 
