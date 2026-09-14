@@ -7,12 +7,16 @@
 .leulit-company-ribbon {
     position: fixed;
     top: 30px;
-    left: -400px;
-    width: 1200px;
-    /* franja (grosor perpendicular a la diagonal) = height, no width: es la altura de
-       la caja antes de rotarla la que se convierte en el ancho visual de la banda.
-       display:flex centra el texto en las dos dimensiones sin depender de cuadrar
-       line-height + padding a mano. */
+    left: -200px;
+    /* width = longitud de la tira a lo largo de su propio eje (cuánto abarca la
+       diagonal); height = grosor perpendicular, la franja de color que se ve. Son
+       ejes distintos: al pedir "doble de ancho" dos veces seguidas esto se infló a
+       1200px de longitud, y una caja tan larga rotada -45deg da una bounding box
+       (getBoundingClientRect) de ~900px de lado — de ahí que el hover se disparara
+       lejos del rombo visible y que la caja "rebosara" por encima de la pantalla.
+       600px es la longitud que ya funcionaba bien; el grosor doblado (84px) es el
+       cambio que sí se pidió. */
+    width: 600px;
     height: 84px;
     display: flex;
     align-items: center;
