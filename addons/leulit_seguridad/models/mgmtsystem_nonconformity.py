@@ -126,6 +126,16 @@ class MgmtsystemNonconformity(models.Model):
         required=False,
     )
     risk_type_id = fields.Many2one("mgmtsystem.hazard.risk.type", string="Peligro")
+    clasificacion = fields.Selection(
+        [
+            ("generalidades", "Generalidades"),
+            ("significante", "Significante"),
+            ("sns", "SNS"),
+        ],
+        string="Clasificación",
+        default="generalidades",
+        required=True,
+    )
 
     # Una fecha por cada estado intermedio del ciclo de vida (salvo
     # "Borrador", que ya tiene create_date). Se actualizan cada vez que la NC
