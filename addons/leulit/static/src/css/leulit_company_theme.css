@@ -6,17 +6,19 @@
    de ese stacking context. pointer-events:none para no tapar clicks del navbar. */
 .leulit-company-ribbon {
     position: fixed;
-    top: 25px;
-    left: -100px;
-    width: 300px;
-    padding: 4px;
+    top: 30px;
+    left: -200px;
+    width: 600px;
+    padding: 8px;
     text-align: center;
-    line-height: 20px;
+    line-height: 26px;
     letter-spacing: 1px;
-    color: #f0f0f0;
-    font-size: 13px;
+    color: #111;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
     transform: rotate(-45deg);
     z-index: 9999;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 12px var(--leulit-ribbon-glow, transparent), 0 0 3px rgba(0, 0, 0, 0.3);
     pointer-events: none;
 }
