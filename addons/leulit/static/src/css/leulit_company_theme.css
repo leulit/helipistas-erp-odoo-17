@@ -21,4 +21,9 @@
     z-index: 9999;
     box-shadow: 0 0 12px var(--leulit-ribbon-glow, transparent), 0 0 3px rgba(0, 0, 0, 0.3);
     pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.leulit-company-ribbon.leulit-company-ribbon-hover {
+    opacity: 0;
 }

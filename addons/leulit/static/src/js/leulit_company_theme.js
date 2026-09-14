@@ -34,5 +34,22 @@ registry.category("services").add("leulitCompanyTheme", {
         ribbon.style.setProperty("--leulit-ribbon-glow", color);
         ribbon.textContent = current.name;
         document.body.appendChild(ribbon);
+
+        // ponytail: pointer-events:none en el CSS hace que la cinta nunca reciba sus
+        // propios eventos de ratón (por eso los clics en los menús de debajo ya
+        // funcionaban), así que el fundido al pasar por encima no puede ser un simple
+        // :hover en la propia cinta: hay que vigilar la posición global del cursor.
+        // getBoundingClientRect() en un elemento rotado da el rectángulo que lo
+        // envuelve, algo más grande que el rombo real dibujado — vale como zona de
+        // detección, no hace falta la geometría exacta del rombo.
+        window.addEventListener("mousemove", (ev) => {
+            const rect = ribbon.getBoundingClientRect();
+            const inside =
+                ev.clientX >= rect.left &&
+                ev.clientX <= rect.right &&
+                ev.clientY >= rect.top &&
+                ev.clientY <= rect.bottom;
+            ribbon.classList.toggle("leulit-company-ribbon-hover", inside);
+        });
     },
 });
