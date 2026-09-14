@@ -1,0 +1,11 @@
+// Cabecera fija solo en el pivot "Tareas por semana y estado" (scoping vía
+// clase añadida en pivot_tareas_semana_estado.js, no afecta a otros pivots).
+.o_leulit_tareas_semana_pivot {
+    thead th,
+    thead td {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #fff;
+    }
+}
