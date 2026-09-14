@@ -9,9 +9,14 @@
     top: 30px;
     left: -400px;
     width: 1200px;
-    padding: 8px;
-    text-align: center;
-    line-height: 26px;
+    /* franja (grosor perpendicular a la diagonal) = height, no width: es la altura de
+       la caja antes de rotarla la que se convierte en el ancho visual de la banda.
+       display:flex centra el texto en las dos dimensiones sin depender de cuadrar
+       line-height + padding a mano. */
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     letter-spacing: 1px;
     color: #111;
     font-size: 20px;
