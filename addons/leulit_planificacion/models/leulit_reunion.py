@@ -172,7 +172,7 @@ class leulit_reunion(models.Model):
     fecha_ini = fields.Date('Fecha',required=True,default=fields.Date.context_today)
     duration = fields.Float("Duración",required=True,default=1.00)
     rel_meeting = fields.Many2one('calendar.event','Meeting')
-    acta_reunion = fields.Text("Acta Reunión")
+    acta_reunion = fields.Html("Acta Reunión")
     # work_order = fields.Many2one('leulit.work_order','Work order')
     tipo_reunion = fields.Text(compute='_get_tipo_reunion',string='Tipo de reunión')
     asistentes = fields.One2many('leulit.reunion_asistente', 'reunion_id', 'Asistentes')

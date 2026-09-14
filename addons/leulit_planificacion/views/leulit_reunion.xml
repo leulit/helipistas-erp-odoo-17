@@ -60,7 +60,7 @@
                                 <field name="rel_meeting" readonly="1" invisible="1"/>
                                 <field name="descripcion" string="Orden del dia"/>
                                 <field name="documentos" widget="many2many_binary"/>
-                                <field name="acta_reunion" widget="text_ckeditor4"/>
+                                <field name="acta_reunion" widget="html"/>
                             </group>
                         </group>
                     </sheet>
