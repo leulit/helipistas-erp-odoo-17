@@ -1,13 +1,22 @@
-:root {
-    --leulit-company-color: #546e7a;
-}
-
-/* ponytail: borde en el <html>, no un ::before con position:fixed. muk_web_theme
-   (appsbar/navbar) mete sus propios transforms/pseudo-elementos y se comía la barra
-   fija; un borde es parte de la caja del documento, no depende de stacking context.
-   No tocar .o_main_navbar: sus hijos (secciones de menú) pintan su propio fondo desde
-   muk_web_theme y machacaban el color, dejando la navbar a dos tonos. */
-html {
-    box-sizing: border-box;
-    border-left: 8px solid var(--leulit-company-color);
+/* Cinta diagonal esquina superior izquierda, estilo OCA web_environment_ribbon
+   (addons/web_environment_ribbon/static/src/css/ribbon.css), con el nombre de la
+   compañía activa en vez del entorno. position:fixed en <body>, no en <html>: el
+   borde anterior en <html> se lo comían los transforms/pseudo-elementos de
+   muk_web_theme (appsbar/navbar); un elemento propio con z-index alto no depende
+   de ese stacking context. pointer-events:none para no tapar clicks del navbar. */
+.leulit-company-ribbon {
+    position: fixed;
+    top: 25px;
+    left: -100px;
+    width: 300px;
+    padding: 4px;
+    text-align: center;
+    line-height: 20px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    font-size: 13px;
+    transform: rotate(-45deg);
+    z-index: 9999;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }

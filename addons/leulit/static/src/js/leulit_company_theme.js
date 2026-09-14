@@ -12,14 +12,19 @@ const LEULIT_COMPANY_COLORS = {
 };
 const LEULIT_COMPANY_COLOR_DEFAULT = "#546e7a";
 
-// Servicio sin dependencias: fija el color de marca de la compañía activa como variable
-// CSS en <html> antes de que se pinte el resto del webclient. El cambio de compañía en
-// Odoo siempre recarga la página (company_service.js: setCompanies -> location.reload()),
-// así que no hace falta reaccionar a cambios en caliente.
+// Cinta diagonal esquina superior izquierda con el nombre de la compañía activa,
+// inspirada en OCA web_environment_ribbon. Un <div> pintado directo en <body>, sin
+// componente OWL: no hay estado que reaccione a nada (cambio de compañía = reload).
 registry.category("services").add("leulitCompanyTheme", {
     start() {
         const companyId = session.user_companies.current_company;
+        const company = session.user_companies.allowed_companies[companyId];
         const color = LEULIT_COMPANY_COLORS[companyId] || LEULIT_COMPANY_COLOR_DEFAULT;
-        document.documentElement.style.setProperty("--leulit-company-color", color);
+
+        const ribbon = document.createElement("div");
+        ribbon.className = "leulit-company-ribbon";
+        ribbon.style.backgroundColor = color;
+        ribbon.textContent = company ? company.name : "";
+        document.body.appendChild(ribbon);
     },
 });
