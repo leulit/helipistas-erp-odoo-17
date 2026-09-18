@@ -58,7 +58,7 @@
                             </group>
                             <group>
                                 <field name="rel_meeting" readonly="1" invisible="1"/>
-                                <field name="descripcion" string="Orden del dia"/>
+                                <field name="descripcion" string="Orden del dia" widget="html"/>
                                 <field name="documentos" widget="many2many_binary"/>
                                 <field name="acta_reunion" widget="html"/>
                             </group>
