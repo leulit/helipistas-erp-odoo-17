@@ -83,6 +83,25 @@ class StockMoveLine(models.Model):
     equipment = fields.Many2one(related="maintenance_request_id.equipment_id", comodel_name="maintenance.equipment", string="Equipo Work Order")
     is_rotable = fields.Boolean(string="Movimiento de Componentes Rotables", default=False)
     move_line_component_contrary_id = fields.Many2one(comodel_name="stock.move.line", string="Movimiento de componente contrario")
+    caja_actual_id = fields.Many2one(
+        comodel_name="stock.quant.package", string="Caja actual", compute="_compute_pieza_existente",
+        store=False, help="Caja donde está actualmente esta pieza si el número de serie/lote ya existe en almacén.")
+    estanteria_actual_id = fields.Many2one(
+        comodel_name="stock.location", string="Estantería actual", compute="_compute_pieza_existente",
+        store=False, help="Estantería donde está actualmente esta pieza si el número de serie/lote ya existe en almacén.")
+
+    @api.depends('lot_name', 'product_id', 'company_id')
+    def _compute_pieza_existente(self):
+        for line in self:
+            lot = self.env['stock.lot']
+            if line.lot_name and line.product_id:
+                lot = self.env['stock.lot'].search([
+                    ('name', '=', line.lot_name),
+                    ('product_id', '=', line.product_id.id),
+                    ('company_id', '=', line.company_id.id),
+                ], limit=1)
+            line.caja_actual_id = lot.caja_id
+            line.estanteria_actual_id = lot.estanteria_id
     
 
     def _get_tipo_instalacion(self):

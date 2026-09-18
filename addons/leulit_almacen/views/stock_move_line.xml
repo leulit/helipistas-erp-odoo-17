@@ -77,6 +77,8 @@
                     <field name="ref_origen"/>
                     <field name="revision"/>
                     <field name="fecha_caducidad"/>
+                    <field name="caja_actual_id" readonly="1"/>
+                    <field name="estanteria_actual_id" readonly="1"/>
                 </xpath>
             </field>
         </record>
