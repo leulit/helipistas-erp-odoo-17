@@ -49,3 +49,32 @@ producción vía MCP odoo (solo lectura): `odoo_fields_get` confirma los campos 
 `stock.lot` correspondiente. Desplegado con `./upd_module.sh leulit_almacen prod`.
 
 Commit: `8a7150fa`.
+
+## 2026-09-21 — leulit_tarea: "Tareas por semana y estado" pasa de pivot a tabla custom
+
+**Contexto:** el pivot sobre `project.task` agrupaba por `date_last_stage_update` (semana) y
+`stage_id`, de modo que cada tarea contaba una sola vez, en la semana de su último cambio de
+etapa. No puede dar la foto semanal ("cuántas estaban Pendientes al cierre de la semana X"),
+que es lo que se quiere ver.
+
+**Decisión:** se elimina el pivot (vista, acción, JS/SCSS y los filtros `filter_emilio_pau` y
+`filter_last_12_weeks`, huérfanos) y se sustituye por un `TransientModel`
+`leulit.tarea.semana.estado` (`models/tarea_semana_estado.py`). El menú abre una
+`ir.actions.server` (`leulit_20260921_1101_action`, id nuevo) que llama a `abrir_tabla()`:
+borra las filas previas del usuario, recalcula y devuelve un tree sin create/edit/delete.
+Criterios:
+- Últimas 12 semanas ISO (la actual incluida); corte = domingo 23:59:59, o `now` en la actual.
+- Usuarios fijos 11 (Emilio) y 14 (Pau): ambos -> "Ambos"; solo 11 -> Emilio; solo 14 -> Pau;
+  terceros ignorados. Asignados actuales, una vez por tarea y semana. Incluye archivadas y
+  excluye `project_borrador`; solo tareas creadas antes del corte.
+- Etapa al corte reconstruida desde `mail.tracking.value` de `stage_id` (una sola búsqueda);
+  sin trackings, `stage_id` actual. Pendiente/En proceso/Pospuesta = foto al corte;
+  Realizada = etapa "hecha" al corte y entrada en ella dentro de esa semana. Mapeo por nombre
+  en `ETAPA_A_COLUMNA`; "N/A" y otros se ignoran.
+- Siempre 12 semanas x 3 personas (aunque sea 0).
+- Fechas en UTC (naive) tal como las guarda Odoo; el corte de domingo no aplica huso horario.
+
+**Consecuencias:** modelo nuevo -> `./upd_module.sh leulit_tarea prod --stop` (DDL). Los
+transient se vacían solos (vacuum). El histórico depende de que existan trackings de etapa:
+tareas movidas antes de que se rastreara `stage_id` darían fotos aproximadas. Test en
+`addons/leulit_tarea/tests/`. Sin ejecutar (no hay Odoo local).

@@ -22,12 +22,6 @@
         "views/mail_activity.xml",
         "menu.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "leulit_tarea/static/src/js/pivot_tareas_semana_estado.js",
-            "leulit_tarea/static/src/scss/pivot_tareas_semana_estado.scss",
-        ],
-    },
     "demo": [],
     "css": [],
     "installable": True,

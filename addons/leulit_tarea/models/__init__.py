@@ -4,3 +4,4 @@ from . import hr_timesheet_switch
 from . import sale_order
 from . import unificar_etapas_wizard
 from . import mail_activity
+from . import tarea_semana_estado

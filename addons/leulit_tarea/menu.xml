@@ -43,7 +43,7 @@
             id="leulit_20260914_1531_menuitem"
             name="Tareas por semana y estado"
             parent="leulit_20200907_1307_menuitem"
-            action="leulit_20260914_1531_action"
+            action="leulit_20260921_1101_action"
             sequence="20"
         />
         <menuitem
