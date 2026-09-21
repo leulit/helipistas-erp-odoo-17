@@ -38,6 +38,11 @@ class TareaSemanaEstado(models.TransientModel):
     en_proceso = fields.Integer(string='En proceso')
     pospuesta = fields.Integer(string='Pospuesta')
     realizada = fields.Integer(string='Realizada')
+    # Tareas contadas en cada celda, para poder abrir la fila y ver cuáles son
+    pendiente_ids = fields.Many2many('project.task', 'leulit_tsemana_pendiente_rel', string='Pendiente')
+    en_proceso_ids = fields.Many2many('project.task', 'leulit_tsemana_en_proceso_rel', string='En proceso')
+    pospuesta_ids = fields.Many2many('project.task', 'leulit_tsemana_pospuesta_rel', string='Pospuesta')
+    realizada_ids = fields.Many2many('project.task', 'leulit_tsemana_realizada_rel', string='Realizada')
 
     @api.model
     def abrir_tabla(self, hoy=None):
@@ -48,9 +53,13 @@ class TareaSemanaEstado(models.TransientModel):
             'type': 'ir.actions.act_window',
             'name': 'Tareas por semana y estado',
             'res_model': self._name,
-            'view_mode': 'tree',
-            'views': [(self.env.ref('leulit_tarea.leulit_20260921_1100_tree').id, 'tree')],
+            'view_mode': 'tree,form',
+            'views': [
+                (self.env.ref('leulit_tarea.leulit_20260921_1100_tree').id, 'tree'),
+                (self.env.ref('leulit_tarea.leulit_20260921_1102_form').id, 'form'),
+            ],
             'domain': [('create_uid', '=', self.env.uid)],
+            'context': {'group_by': ['semana_inicio:week']},
             'target': 'current',
             'help': (
                 '<p>Pendiente, En proceso y Pospuesta: foto de las tareas al cierre de la semana '
@@ -71,7 +80,7 @@ class TareaSemanaEstado(models.TransientModel):
             semanas.append((inicio, datetime.combine(inicio, time.min), corte, es_actual))
 
         contadores = {
-            (inicio, persona): dict.fromkeys(ETAPA_A_COLUMNA.values(), 0)
+            (inicio, persona): {col: [] for col in set(ETAPA_A_COLUMNA.values())}
             for inicio, _ini, _corte, _act in semanas
             for persona in PERSONAS
         }
@@ -115,7 +124,7 @@ class TareaSemanaEstado(models.TransientModel):
                         continue
                     if columna == 'realizada' and desde < dt_inicio:
                         continue
-                    contadores[(inicio, persona)][columna] += 1
+                    contadores[(inicio, persona)][columna].append(tarea.id)
 
         filas = []
         for inicio, _ini, _corte, es_actual in semanas:
@@ -127,10 +136,11 @@ class TareaSemanaEstado(models.TransientModel):
             if es_actual:
                 etiqueta += ' · hasta hoy'
             for persona in PERSONAS:
-                filas.append(dict(
-                    contadores[(inicio, persona)],
-                    semana_inicio=inicio, semana=etiqueta, persona=persona,
-                ))
+                fila = dict(semana_inicio=inicio, semana=etiqueta, persona=persona)
+                for col, ids in contadores[(inicio, persona)].items():
+                    fila[col] = len(ids)
+                    fila[col + '_ids'] = [(6, 0, ids)]
+                filas.append(fila)
         return filas
 
     @api.model
