@@ -11,3 +11,5 @@
 claude.md
 !CLAUDE.md
 .DS_Store
+# Credenciales Vertex AI (leulit_ai)
+addons/leulit_ai/vertex_service_account.json
