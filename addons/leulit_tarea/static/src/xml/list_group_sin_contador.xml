@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Igual que web.ListRenderer.GroupRow, pero sin " (n)" tras el nombre del grupo en la tabla semanal.
+         El "(n)" es texto suelto de la plantilla, no se puede quitar con un xpath más fino. -->
+    <t t-inherit="web.ListRenderer.GroupRow" t-inherit-mode="extension">
+        <xpath expr="//th[@tabindex='-1']/div" position="replace">
+            <div class="d-flex align-items-center">
+                <span t-attf-class="o_group_caret fa fa-fw {{group.isFolded ? 'fa-caret-right' : 'fa-caret-down' }} me-1"
+                    t-attf-style="--o-list-group-level: {{getGroupLevel(group)}}"/>
+                <t t-esc="getGroupDisplayName(group)"/>
+                <t t-if="props.list.resModel !== 'leulit.tarea.semana.estado'"> (<t t-esc="group.count"/>)</t>
+                <div t-if="(groupByButtons[group.groupByField.name] and !group.isFolded and group.record.resId)" class="o_group_buttons">
+                    <t t-foreach="groupByButtons[group.groupByField.name]" t-as="button" t-key="button.id">
+                        <t t-if="!evalInvisible(button.invisible, group.record)">
+                            <t t-if="button.clickParams.type === 'edit'">
+                                <button t-att-title="button.title" class="btn" t-on-click="() => this.editGroupRecord(group)" tabindex="-1">
+                                    <i t-attf-class="fa fa-fw {{button.icon}} o_button_icon"/>
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <ViewButton
+                                    className="button.className"
+                                    clickParams="button.clickParams"
+                                    icon="button.icon"
+                                    record="group.record"
+                                    string="button.string"
+                                    title="button.title"
+                                    tabindex="'-1'"
+                                />
+                            </t>
+                        </t>
+                    </t>
+                </div>
+                <div t-if="showGroupPager(group)" t-on-click.stop="" class="ms-auto">
+                    <Pager t-props="getGroupPagerProps(group)"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

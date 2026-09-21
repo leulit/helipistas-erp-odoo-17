@@ -38,11 +38,20 @@ class TareaSemanaEstado(models.TransientModel):
     en_proceso = fields.Integer(string='En proceso')
     pospuesta = fields.Integer(string='Pospuesta')
     realizada = fields.Integer(string='Realizada')
-    # Tareas contadas en cada celda, para poder abrir la fila y ver cuáles son
-    pendiente_ids = fields.Many2many('project.task', 'leulit_tsemana_pendiente_rel', string='Pendiente')
-    en_proceso_ids = fields.Many2many('project.task', 'leulit_tsemana_en_proceso_rel', string='En proceso')
-    pospuesta_ids = fields.Many2many('project.task', 'leulit_tsemana_pospuesta_rel', string='Pospuesta')
-    realizada_ids = fields.Many2many('project.task', 'leulit_tsemana_realizada_rel', string='Realizada')
+    # Ids de las tareas de cada celda ({columna: [ids]}); un m2m almacenado perdía filas al crear
+    tareas_json = fields.Json()
+    pendiente_ids = fields.Many2many('project.task', compute='_compute_tareas', string='Pendiente')
+    en_proceso_ids = fields.Many2many('project.task', compute='_compute_tareas', string='En proceso')
+    pospuesta_ids = fields.Many2many('project.task', compute='_compute_tareas', string='Pospuesta')
+    realizada_ids = fields.Many2many('project.task', compute='_compute_tareas', string='Realizada')
+
+    @api.depends('tareas_json')
+    def _compute_tareas(self):
+        tareas = self.env['project.task'].with_context(active_test=False)
+        for rec in self:
+            datos = rec.tareas_json or {}
+            for col in set(ETAPA_A_COLUMNA.values()):
+                rec[col + '_ids'] = tareas.browse(datos.get(col, [])).exists()
 
     @api.model
     def abrir_tabla(self, hoy=None):
@@ -136,10 +145,10 @@ class TareaSemanaEstado(models.TransientModel):
             if es_actual:
                 etiqueta += ' · hasta hoy'
             for persona in PERSONAS:
-                fila = dict(semana_inicio=inicio, semana=etiqueta, persona=persona)
+                fila = dict(semana_inicio=inicio, semana=etiqueta, persona=persona,
+                            tareas_json=contadores[(inicio, persona)])
                 for col, ids in contadores[(inicio, persona)].items():
                     fila[col] = len(ids)
-                    fila[col + '_ids'] = [(6, 0, ids)]
                 filas.append(fila)
         return filas
 

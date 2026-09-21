@@ -22,6 +22,11 @@
         "views/mail_activity.xml",
         "menu.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "leulit_tarea/static/src/xml/list_group_sin_contador.xml",
+        ],
+    },
     "demo": [],
     "css": [],
     "installable": True,
