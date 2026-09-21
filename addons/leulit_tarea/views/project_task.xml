@@ -207,22 +207,22 @@
                         </group>
                         <notebook>
                             <page string="Pendiente">
-                                <field name="pendiente_ids" nolabel="1" readonly="1" context="{'active_test': False}">
+                                <field name="pendiente_ids" nolabel="1" readonly="1">
                                     <tree default_order="create_date desc"><field name="name"/><field name="create_date"/><field name="project_id"/><field name="user_ids" widget="many2many_tags"/><field name="date_deadline"/></tree>
                                 </field>
                             </page>
                             <page string="En proceso">
-                                <field name="en_proceso_ids" nolabel="1" readonly="1" context="{'active_test': False}">
+                                <field name="en_proceso_ids" nolabel="1" readonly="1">
                                     <tree default_order="create_date desc"><field name="name"/><field name="create_date"/><field name="project_id"/><field name="user_ids" widget="many2many_tags"/><field name="date_deadline"/></tree>
                                 </field>
                             </page>
                             <page string="Pospuesta">
-                                <field name="pospuesta_ids" nolabel="1" readonly="1" context="{'active_test': False}">
+                                <field name="pospuesta_ids" nolabel="1" readonly="1">
                                     <tree default_order="create_date desc"><field name="name"/><field name="create_date"/><field name="project_id"/><field name="user_ids" widget="many2many_tags"/><field name="date_deadline"/></tree>
                                 </field>
                             </page>
                             <page string="Realizada">
-                                <field name="realizada_ids" nolabel="1" readonly="1" context="{'active_test': False}">
+                                <field name="realizada_ids" nolabel="1" readonly="1">
                                     <tree default_order="create_date desc"><field name="name"/><field name="create_date"/><field name="project_id"/><field name="user_ids" widget="many2many_tags"/><field name="date_deadline"/></tree>
                                 </field>
                             </page>

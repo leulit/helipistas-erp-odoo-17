@@ -38,7 +38,7 @@ class TareaSemanaEstado(models.TransientModel):
     en_proceso = fields.Integer(string='En proceso')
     pospuesta = fields.Integer(string='Pospuesta')
     realizada = fields.Integer(string='Realizada')
-    # Las vistas leen estos campos con active_test=False: es un histórico y incluye tareas archivadas
+    # La acción abre la ficha con active_test=False: sin él Odoo omite las tareas archivadas al leer el m2m
     pendiente_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_pendiente_rel', string='Pendiente')
     en_proceso_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_en_proceso_rel', string='En proceso')
     pospuesta_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_pospuesta_rel', string='Pospuesta')
@@ -59,7 +59,8 @@ class TareaSemanaEstado(models.TransientModel):
                 (self.env.ref('leulit_tarea.leulit_20260921_1102_form').id, 'form'),
             ],
             'domain': [('create_uid', '=', self.env.uid)],
-            'context': {'group_by': ['semana_inicio:week']},
+            # active_test=False: es un histórico, la ficha debe leer también las tareas archivadas
+            'context': {'group_by': ['semana_inicio:week'], 'active_test': False},
             'target': 'current',
             'help': (
                 '<p>Pendiente, En proceso y Pospuesta: foto de las tareas al cierre de la semana '
