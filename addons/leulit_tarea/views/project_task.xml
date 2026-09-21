@@ -183,7 +183,7 @@
             <field name="name">leulit_20260921_1100_tree</field>
             <field name="model">leulit.tarea.semana.estado</field>
             <field name="arch" type="xml">
-                <tree string="Tareas por semana y estado" create="0" edit="0" delete="0">
+                <tree string="Tareas por semana y estado" default_order="semana_inicio desc, persona" create="0" edit="0" delete="0">
                     <field name="semana_inicio" column_invisible="1"/>
                     <field name="semana"/>
                     <field name="persona"/>
