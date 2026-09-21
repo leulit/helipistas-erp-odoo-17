@@ -69,7 +69,7 @@ class TestTareaSemanaEstado(TransactionCase):
         self.assertEqual(len(filas), 12 * 3)
         act = self._fila(filas, '2026-09-14', modulo.PERSONA_EMILIO)
         self.assertEqual((act['pendiente'], act['en_proceso'], act['pospuesta'], act['realizada']), (1, 1, 0, 6))
-        self.assertEqual(len(act['tareas_json']['realizada']), act['realizada'])
+        self.assertEqual(len(act['realizada_ids'][0][2]), act['realizada'])
         ant = self._fila(filas, '2026-09-07', modulo.PERSONA_EMILIO)
         self.assertEqual((ant['pendiente'], ant['en_proceso'], ant['pospuesta'], ant['realizada']), (4, 0, 0, 0))
         self.assertIn('hasta hoy', act['semana'])
