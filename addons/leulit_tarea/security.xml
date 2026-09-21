@@ -28,6 +28,17 @@
         <field name="perm_unlink" eval="1"/>
     </record>
     
+    <!-- Tabla "Tareas por semana y estado": sin ACL Odoo oculta el menú (comprueba el modelo de la server action) -->
+    <record id="access_tarea_semana_estado_user" model="ir.model.access">
+        <field name="name">leulit.tarea.semana.estado user</field>
+        <field name="model_id" ref="model_leulit_tarea_semana_estado"/>
+        <field name="group_id" ref="base.group_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
     <!-- Acceso al wizard de normalización de etapas -->
     <record id="access_unificar_etapas_wizard_admin" model="ir.model.access">
         <field name="name">leulit_tarea.unificar_etapas_wizard proyectos_tareas_admin</field>
