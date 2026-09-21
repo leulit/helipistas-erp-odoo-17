@@ -24,7 +24,7 @@ en la columna de notas.
 - [x] leulit_esignature — 2026-09-10: 3 críticos, 9 altos, 8 medios, 4 bajos — firma electrónica rota (OTP comparado con sí mismo, endpoint `hacksignature`). Ver `addons/leulit_esignature/PLAN_REVISION.md`.
 - [x] leulit_groups_manager — 2026-09-10: 0 críticos, 4 altos, 4 medios, 4 bajos. Ver `addons/leulit_groups_manager/PLAN_REVISION.md`.
 - [x] leulit_hide_menus — 2026-09-10: 1 crítico, 1 alto, 1 medio, 2 bajos. Ver `addons/leulit_hide_menus/PLAN_REVISION.md`.
-- [x] leulit_ia — 2026-09-10: 1 crítico, 4 altos, 5 medios, 4 bajos. Sin referencias Enterprise. Ver `addons/leulit_ia/PLAN_REVISION.md`.
+- [x] leulit_ia — 2026-09-10: 1 crítico, 4 altos, 5 medios, 4 bajos. Sin referencias Enterprise. Revisión del antiguo asistente de chat; el módulo se sustituyó el 2026-09-21 por la búsqueda universal (antes `leulit_ai`), así que `PLAN_REVISION.md` ya no existe (recuperable en git).
 - [x] leulit_meteo — 2026-09-10: 1 crítico ⚠️ API KEY DE AEMET EXPUESTA EN CLARO en `aemet-api-key.md` (commit 6c01861d) — ROTAR YA —, 4 altos, 7 medios, 4 bajos. Ver `addons/leulit_meteo/PLAN_REVISION.md`.
 - [x] leulit_nda — 2026-09-10: 0 críticos, 5 altos, 5 medios, 6 bajos. Ver `addons/leulit_nda/PLAN_REVISION.md`.
 - [x] leulit_operaciones — 2026-09-10: 14 críticos, 19 altos, ~24 medios, ~20 bajos. Ver `addons/leulit_operaciones/PLAN_REVISION.md`.

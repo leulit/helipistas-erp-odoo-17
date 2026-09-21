@@ -1,0 +1,97 @@
+.leulit_ia_search_container {
+    display: inline-block;
+    margin-left: 15px;
+    position: relative;
+    width: 300px;
+    vertical-align: middle;
+
+    .leulit_ia_search_bar {
+        display: flex;
+
+        .leulit_ia_search_input {
+            flex: 1;
+            height: 32px;
+            padding: 6px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+
+            &:focus {
+                border-color: #7C7BAD;
+                box-shadow: 0 0 0 0.2rem rgba(124, 123, 173, 0.25);
+            }
+        }
+
+        .leulit_ia_search_button {
+            height: 32px;
+            padding: 6px 12px;
+            background-color: #7C7BAD;
+            border: 1px solid #7C7BAD;
+            border-radius: 0 4px 4px 0;
+            color: white;
+            cursor: pointer;
+
+            &:hover {
+                background-color: darken(#7C7BAD, 10%);
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .leulit_ia_search_results {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+        z-index: 1000;
+        max-height: 400px;
+        overflow-y: auto;
+        display: none;
+
+        .leulit_ia_search_loading, .leulit_ia_search_error {
+            padding: 10px;
+        }
+
+        .leulit_ia_search_error {
+            color: #dc3545;
+        }
+
+        .ai_results_summary {
+            padding: 10px;
+
+            p {
+                margin-bottom: 10px;
+            }
+        }
+
+        .ai_results_records {
+            .ai_result_record {
+                padding: 10px;
+                border-top: 1px solid #f0f0f0;
+
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .ai_result_field {
+                    margin-bottom: 5px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .leulit_ia_search_container {
+        width: 100%;
+        margin: 8px 15px;
+    }
+}

@@ -1,3 +1,3 @@
-# -*- coding: utf-8 -*-
-from . import res_config_settings
-from . import ai_tool
+from . import ai_search
+from . import ai_search_favorite
+from . import ai_search_report

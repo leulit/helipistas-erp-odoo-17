@@ -1,334 +1,405 @@
-# -*- coding: utf-8 -*-
+from odoo import http
+from odoo.http import request
 import json
 import logging
-from datetime import datetime
-
-from odoo import http, _
-from odoo.http import request
+from datetime import datetime, date
 
 _logger = logging.getLogger(__name__)
 
-# Número máximo de rondas de herramientas para evitar bucles infinitos
-MAX_TOOL_ITERATIONS = 5
-
-
-class AiChatController(http.Controller):
-
-    @http.route('/ai/chat', type='json', auth='user', methods=['POST'], csrf=False)
-    def chat(self, prompt, conversation_history=None):
-        """
-        Endpoint principal del asistente IA.
-
-        Recibe el prompt del usuario y el historial de conversación,
-        ejecuta el loop de tool-calling con el LLM configurado y
-        devuelve la respuesta final en texto natural.
-
-        :param prompt: str — Mensaje del usuario
-        :param conversation_history: list — Historial previo de mensajes
-        :return: dict — {'response': str, 'history': list}
-        """
-        if conversation_history is None:
-            conversation_history = []
-
-        config = self._get_config()
-        system_prompt = self._build_system_prompt()
-        tool_definitions = request.env['ai.tool.registry'].get_tool_definitions()
-
-        # Añadir el mensaje del usuario al historial
-        conversation_history.append({'role': 'user', 'content': prompt})
-
-        response_text = ''
-        for _ in range(MAX_TOOL_ITERATIONS):
-            llm_response = self._call_llm(
-                messages=conversation_history,
-                system=system_prompt,
-                tools=tool_definitions,
-                config=config,
-            )
-
-            if llm_response['type'] == 'text':
-                response_text = llm_response['content']
-                conversation_history.append({
-                    'role': 'assistant',
-                    'content': response_text,
-                })
-                break
-
-            if llm_response['type'] == 'tool_use':
-                tool_name = llm_response['tool_name']
-                tool_input = llm_response['tool_input']
-
-                _logger.info('IA solicita herramienta: %s con args: %s', tool_name, tool_input)
-
-                # Añadir la solicitud de herramienta al historial
-                conversation_history.append({
-                    'role': 'assistant',
-                    'content': llm_response.get('raw_content', ''),
-                    'tool_use': {'name': tool_name, 'input': tool_input},
-                })
-
-                # Ejecutar la herramienta con el env del usuario actual (ACLs garantizadas)
-                tool_result = request.env['ai.tool.registry'].execute_tool(
-                    name=tool_name,
-                    arguments=tool_input,
-                    env=request.env,
-                )
-
-                # Añadir el resultado al historial
-                conversation_history.append({
-                    'role': 'tool',
-                    'tool_name': tool_name,
-                    'content': json.dumps(tool_result, ensure_ascii=False, default=str),
-                })
-
-        else:
-            response_text = _('Lo siento, no pude completar la consulta en el número máximo de pasos.')
-
-        return {
-            'response': response_text,
-            'history': conversation_history,
-        }
-
-    # ------------------------------------------------------------------
-    # Configuración
-    # ------------------------------------------------------------------
-
-    def _get_config(self):
-        """Lee los parámetros de configuración de leulit_ia."""
-        ICP = request.env['ir.config_parameter'].sudo()
-        return {
-            'provider': ICP.get_param('leulit_ia.provider', 'claude'),
-            'claude_api_key': ICP.get_param('leulit_ia.claude_api_key', ''),
-            'ollama_url': ICP.get_param('leulit_ia.ollama_url', 'http://localhost:11434'),
-            'ollama_model': ICP.get_param('leulit_ia.ollama_model', 'llama3'),
-            'temperature': float(ICP.get_param('leulit_ia.temperature', '0.3')),
-            'max_tokens': int(ICP.get_param('leulit_ia.max_tokens', '1024')),
-        }
-
-    def _build_system_prompt(self):
-        """Construye el system prompt con el contexto del usuario y la fecha."""
-        user = request.env.user
-        now = datetime.now()
-        return (
-            f"Eres un asistente IA integrado en Odoo para la empresa de helipuertos Leulit. "
-            f"Ayudas al equipo con consultas sobre datos de negocio: proyectos, tareas, "
-            f"cursos, cumplimiento de RRHH y operaciones.\n\n"
-            f"Contexto actual:\n"
-            f"- Usuario: {user.name} ({user.login})\n"
-            f"- Fecha y hora: {now.strftime('%d/%m/%Y %H:%M')}\n"
-            f"- Idioma: Español\n\n"
-            f"Instrucciones:\n"
-            f"- Responde siempre en español.\n"
-            f"- Usa las herramientas disponibles para obtener datos reales de Odoo. "
-            f"No inventes ni asumas datos.\n"
-            f"- Si no encuentras información, indícalo claramente.\n"
-            f"- Formatea las respuestas con Markdown cuando sea útil (listas, tablas, negritas).\n"
-            f"- No ejecutes herramientas si la pregunta es general o de conversación."
-        )
-
-    # ------------------------------------------------------------------
-    # Abstracción de proveedores LLM
-    # ------------------------------------------------------------------
-
-    def _call_llm(self, messages, system, tools, config):
-        """
-        Llama al LLM configurado y retorna una respuesta normalizada.
-
-        :return: dict con keys:
-            - 'type': 'text' | 'tool_use'
-            - 'content': str (si type='text')
-            - 'tool_name': str (si type='tool_use')
-            - 'tool_input': dict (si type='tool_use')
-            - 'raw_content': cualquier contenido bruto del assistant
-        """
-        provider = config.get('provider', 'claude')
-        if provider == 'claude':
-            return self._call_claude(messages, system, tools, config)
-        return self._call_ollama(messages, system, tools, config)
-
-    def _call_claude(self, messages, system, tools, config):
-        """Llama a la API de Anthropic Claude."""
+class AISearchController(http.Controller):
+    
+    @http.route('/leulit_ia/search', type='json', auth='user')
+    def search(self, **kw):
+        """Process a search query"""
         try:
-            import anthropic
-        except ImportError:
-            return {
-                'type': 'text',
-                'content': _('Error: el paquete Python "anthropic" no está instalado en el servidor.'),
-            }
-
-        api_key = config.get('claude_api_key')
-        if not api_key:
-            return {
-                'type': 'text',
-                'content': _('Error: no hay Claude API Key configurada. '
-                             'Ve a Ajustes > Leulit IA para configurarla.'),
-            }
-
-        # Normalizar historial al formato Claude (sin mensajes 'tool' en formato plano)
-        claude_messages = self._normalize_messages_for_claude(messages)
-
-        # Convertir tool definitions al formato Claude
-        claude_tools = [
-            {
-                'name': t['name'],
-                'description': t['description'],
-                'input_schema': t['input_schema'],
-            }
-            for t in tools
-        ]
-
-        client = anthropic.Anthropic(api_key=api_key)
-        response = client.messages.create(
-            model='claude-3-5-haiku-20241022',
-            max_tokens=config['max_tokens'],
-            temperature=config['temperature'],
-            system=system,
-            messages=claude_messages,
-            tools=claude_tools,
-        )
-
-        # Procesar la respuesta
-        if response.stop_reason == 'tool_use':
-            for block in response.content:
-                if block.type == 'tool_use':
-                    return {
-                        'type': 'tool_use',
-                        'tool_name': block.name,
-                        'tool_input': block.input,
-                        'raw_content': response.content,
-                    }
-
-        # Respuesta de texto
-        text = ''.join(
-            block.text for block in response.content
-            if hasattr(block, 'text')
-        )
-        return {'type': 'text', 'content': text}
-
-    def _call_ollama(self, messages, system, tools, config):
-        """Llama a un servidor Ollama local."""
-        import requests
-
-        ollama_url = config.get('ollama_url', 'http://localhost:11434').rstrip('/')
-        model = config.get('ollama_model', 'llama3')
-
-        # Construir mensajes para Ollama (formato OpenAI-compatible)
-        ollama_messages = [{'role': 'system', 'content': system}]
-        for msg in messages:
-            role = msg.get('role', 'user')
-            content = msg.get('content', '')
-            if role == 'tool':
-                ollama_messages.append({
-                    'role': 'tool',
-                    'content': content,
-                })
-            elif role in ('user', 'assistant'):
-                ollama_messages.append({'role': role, 'content': content or ''})
-
-        # Convertir tools al formato Ollama (similar a OpenAI function calling)
-        ollama_tools = [
-            {
-                'type': 'function',
-                'function': {
-                    'name': t['name'],
-                    'description': t['description'],
-                    'parameters': t['input_schema'],
-                },
-            }
-            for t in tools
-        ]
-
-        payload = {
-            'model': model,
-            'messages': ollama_messages,
-            'tools': ollama_tools,
-            'options': {
-                'temperature': config['temperature'],
-                'num_predict': config['max_tokens'],
-            },
-            'stream': False,
-        }
-
-        try:
-            resp = requests.post(
-                f'{ollama_url}/api/chat',
-                json=payload,
-                timeout=60,
-            )
-            resp.raise_for_status()
-            data = resp.json()
+            # Get query text
+            query_text = None
+            if 'query_text' in kw:
+                query_text = kw.get('query_text')
+            elif 'args' in kw and isinstance(kw.get('args'), list) and len(kw.get('args')) > 0:
+                query_text = kw.get('args')[0]
+            elif 'params' in kw and 'query_text' in kw.get('params', {}):
+                query_text = kw.get('params').get('query_text')
+                
+            if not query_text:
+                return {'status': 'error', 'error': 'No query text provided'}
+            
+            try:
+                # Process the search - simplified approach
+                search_engine = request.env['leulit_ia.search.engine'].create({})
+                _logger.info("Starting AI universal search with query: %s", query_text)
+                result = search_engine.process_query(query_text)
+                
+                # Process the result to make it serializable
+                clean_result = self._recursive_serialize(result)
+                return {'status': 'success', 'result': clean_result}
+            except Exception as e:
+                _logger.error("Error in search processing: %s", str(e), exc_info=True)
+                return {'status': 'error', 'error': f"Search processing error: {str(e)}"}
+                
         except Exception as e:
-            _logger.exception('Error al llamar a Ollama')
-            return {'type': 'text', 'content': _('Error al conectar con Ollama: %s') % str(e)}
-
-        message = data.get('message', {})
-
-        # Verificar si hay tool calls
-        tool_calls = message.get('tool_calls', [])
-        if tool_calls:
-            call = tool_calls[0]
-            fn = call.get('function', {})
+            _logger.error("Error in AI search: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
+    @http.route('/leulit_ia/save_favorite', type='json', auth='user')
+    def save_favorite(self, **kw):
+        """Save a search query as favorite"""
+        try:
+            query_text = None
+            if 'query_text' in kw:
+                query_text = kw.get('query_text')
+            elif 'params' in kw and 'query_text' in kw.get('params', {}):
+                query_text = kw.get('params').get('query_text')
+                
+            if not query_text:
+                return {'status': 'error', 'error': 'No query text provided'}
+            
+            _logger.info("Saving search favorite: %s", query_text)
+            
+            # Create favorite
+            favorite = request.env['leulit_ia.search.favorite'].create({
+                'name': query_text,  # Use query text as name
+                'query_text': query_text,
+            })
+            
             return {
-                'type': 'tool_use',
-                'tool_name': fn.get('name', ''),
-                'tool_input': fn.get('arguments', {}),
-                'raw_content': message.get('content', ''),
+                'status': 'success', 
+                'result': {
+                    'id': favorite.id,
+                    'name': favorite.name,
+                    'query_text': favorite.query_text,
+                    'create_date': self._recursive_serialize(favorite.create_date)
+                }
             }
+            
+        except Exception as e:
+            _logger.error("Error saving search favorite: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+        
+    @http.route('/leulit_ia/get_favorites', type='json', auth='user')
+    def get_favorites(self, **kw):
+        """Get user's favorite searches"""
+        try:
+            # Get current user's favorites
+            current_user = request.env.user
+            favorites = request.env['leulit_ia.search.favorite'].search([
+                ('user_id', '=', current_user.id)
+            ], order='create_date desc')
+            
+            result = []
+            
+            for favorite in favorites:
+                result.append({
+                    'id': favorite.id,
+                    'name': favorite.name,
+                    'query_text': favorite.query_text,
+                    'create_date': self._recursive_serialize(favorite.create_date)
+                })
+                
+            return {'status': 'success', 'result': result}
+            
+        except Exception as e:
+            _logger.error("Error getting search favorites: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
 
-        return {'type': 'text', 'content': message.get('content', '')}
+    @http.route('/leulit_ia/delete_favorite', type='json', auth='user')
+    def delete_favorite(self, **kw):
+        """Delete a favorite search"""
+        try:
+            favorite_id = None
+            if 'favorite_id' in kw:
+                favorite_id = kw.get('favorite_id')
+            elif 'params' in kw and 'favorite_id' in kw.get('params', {}):
+                favorite_id = kw.get('params').get('favorite_id')
+                
+            if not favorite_id:
+                return {'status': 'error', 'error': 'No favorite ID provided'}
+                
+            # Find the favorite
+            current_user = request.env.user
+            favorite = request.env['leulit_ia.search.favorite'].search([
+                ('id', '=', int(favorite_id)),
+                ('user_id', '=', current_user.id)
+            ])
+            
+            if not favorite:
+                return {'status': 'error', 'error': 'Favorite not found or access denied'}
+                
+            # Delete the favorite
+            favorite.unlink()
+            return {'status': 'success'}
+            
+        except Exception as e:
+            _logger.error("Error deleting search favorite: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
+    # Report Management API Endpoints
+    @http.route('/leulit_ia/create_report', type='json', auth='user')
+    def create_report(self, name=None, query_text=None, visualization_type=None, config=None, data=None, **kw):
+        """Create a new report from search results"""
+        try:
+            # Log the raw input for debugging
+            _logger.info("Create report raw input - name: %s, query_text: %s, vis_type: %s", name, query_text, visualization_type)
+            _logger.info("Create report kw: %s", kw)
+            
+            # If direct parameters weren't passed, try to get them from kw['params']
+            if (not name or not query_text) and 'params' in kw:
+                params = kw.get('params', {})
+                _logger.info("Getting values from params: %s", params)
+                
+                if not name:
+                    name = params.get('name')
+                if not query_text:
+                    query_text = params.get('query_text')
+                if not visualization_type:
+                    visualization_type = params.get('visualization_type', 'bar')
+                if not config:
+                    config = params.get('config', {})
+                if not data:
+                    data = params.get('data', {})
+            
+            # Force conversion to string
+            if name:
+                name = str(name)
+            if query_text:
+                query_text = str(query_text)
+                
+            _logger.info("Final values: name=%s, query_text=%s", name, query_text)
+            
+            # BYPASS VALIDATION FOR TESTING - CREATE REPORT ANYWAY
+            if not name:
+                name = "Unnamed Report"
+                _logger.warning("Using default name because none was provided")
+            if not query_text:
+                query_text = "No query"
+                _logger.warning("Using default query because none was provided")
+            
+            # Always use a default visualization type
+            if not visualization_type:
+                visualization_type = 'bar'
+            
+            # Create the report
+            report = request.env['leulit_ia.search.report'].create({
+                'name': name,
+                'query_text': query_text,
+                'visualization_type': visualization_type,
+                'config': json.dumps(config),
+                'data': json.dumps(data)
+            })
+            
+            return {
+                'status': 'success',
+                'result': {
+                    'id': report.id,
+                    'name': report.name
+                }
+            }
+            
+        except Exception as e:
+            _logger.error("Error creating report: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
+    @http.route('/leulit_ia/get_reports', type='json', auth='user')
+    def get_reports(self, **kw):
+        """Get user's saved reports"""
+        try:
+            # Get current user's reports
+            current_user = request.env.user
+            reports = request.env['leulit_ia.search.report'].search([
+                ('user_id', '=', current_user.id)
+            ], order='create_date desc')
+            
+            result = []
+            
+            for report in reports:
+                # Get the data as dict 
+                try:
+                    data = json.loads(report.data) if report.data else {}
+                except:
+                    data = {}
+                
+                result.append({
+                    'id': report.id,
+                    'name': report.name,
+                    'query_text': report.query_text,
+                    'visualization_type': report.visualization_type,
+                    'create_date': self._recursive_serialize(report.create_date),
+                    'data': data  # Include the actual data for visualization
+                })
+                
+            return {'status': 'success', 'result': result}
+            
+        except Exception as e:
+            _logger.error("Error getting reports: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
+    @http.route('/leulit_ia/delete_report', type='json', auth='user')
+    def delete_report(self, **kw):
+        """Delete a saved report"""
+        try:
+            report_id = None
+            if 'report_id' in kw:
+                report_id = kw.get('report_id')
+            elif 'params' in kw and 'report_id' in kw.get('params', {}):
+                report_id = kw.get('params').get('report_id')
+                
+            if not report_id:
+                return {'status': 'error', 'error': 'No report ID provided'}
+                
+            # Find the report
+            current_user = request.env.user
+            report = request.env['leulit_ia.search.report'].search([
+                ('id', '=', int(report_id)),
+                ('user_id', '=', current_user.id)
+            ])
+            
+            if not report:
+                return {'status': 'error', 'error': 'Report not found or access denied'}
+                
+            # Delete the report
+            report.unlink()
+            return {'status': 'success'}
+            
+        except Exception as e:
+            _logger.error("Error deleting report: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
 
-    # ------------------------------------------------------------------
-    # Utilidades
-    # ------------------------------------------------------------------
-
-    def _normalize_messages_for_claude(self, messages):
-        """
-        Convierte el historial interno al formato que espera la API de Claude.
-        Los mensajes de tipo 'tool' se transforman en bloques tool_result.
-        """
-        result = []
-        i = 0
-        while i < len(messages):
-            msg = messages[i]
-            role = msg.get('role')
-
-            if role == 'user':
-                result.append({'role': 'user', 'content': msg['content']})
-
-            elif role == 'assistant':
-                tool_use = msg.get('tool_use')
-                if tool_use:
-                    # El siguiente mensaje debería ser el resultado de la herramienta
-                    tool_result_msg = messages[i + 1] if i + 1 < len(messages) else None
-                    tool_result_content = tool_result_msg['content'] if tool_result_msg else ''
-
-                    result.append({
-                        'role': 'assistant',
-                        'content': [
-                            {
-                                'type': 'tool_use',
-                                'id': f"tool_{i}",
-                                'name': tool_use['name'],
-                                'input': tool_use['input'],
-                            }
-                        ],
-                    })
-                    result.append({
-                        'role': 'user',
-                        'content': [
-                            {
-                                'type': 'tool_result',
-                                'tool_use_id': f"tool_{i}",
-                                'content': tool_result_content,
-                            }
-                        ],
-                    })
-                    i += 2  # saltar el mensaje 'tool' que ya procesamos
-                    continue
-                else:
-                    result.append({'role': 'assistant', 'content': msg.get('content', '')})
-
-            # Los mensajes 'tool' ya se procesan junto con el assistant anterior
-            i += 1
-
-        return result
+    @http.route('/leulit_ia/generate_visualization', type='json', auth='user')
+    def generate_visualization(self, **kw):
+        """Generate visualization data from search results"""
+        try:
+            params = kw.get('params', {})
+            
+            # Get the search results - try different parameter names
+            search_results = params.get('searchResults') or params.get('data')
+            report_id = params.get('report_id')
+            
+            # If report ID is provided, fetch data from the report
+            if report_id and not search_results:
+                current_user = request.env.user
+                report = request.env['leulit_ia.search.report'].search([
+                    ('id', '=', int(report_id)),
+                    ('user_id', '=', current_user.id)
+                ], limit=1)
+                if report:
+                    try:
+                        search_results = json.loads(report.data)
+                    except:
+                        _logger.error("Failed to parse report data from report ID %s", report_id)
+                        
+            visualization_type = params.get('visualizationType', 'bar')
+            
+            _logger.info("Generating visualization - type: %s, data: %s", 
+                         visualization_type, 
+                         "Available" if search_results else "Not available")
+            
+            if not search_results:
+                return {'status': 'error', 'error': 'No search results provided'}
+            
+            # Process data for visualization based on visualization type
+            # This is a simplified example - in practice, you would need
+            # more sophisticated data transformation based on the structure
+            # of search_results and the desired visualization
+            
+            # For now, we'll return a simple structure that GraphRenderer can use
+            graph_data = {
+                'labels': [],
+                'datasets': []
+            }
+            
+            # Example data processing for a simple case
+            if visualization_type == 'bar' or visualization_type == 'line':
+                # Process table-like data for bar/line charts
+                if search_results.get('records'):
+                    # Single model results
+                    records = search_results.get('records', [])
+                    if records and len(records) > 0:
+                        # Use first string field for labels and numeric field for values
+                        first_record = records[0]
+                        label_field = None
+                        value_field = None
+                        
+                        # Find suitable fields
+                        for field, value in first_record.items():
+                            if field not in ['id', 'has_linked_data'] and not field.endswith('_info'):
+                                if label_field is None and isinstance(value, str):
+                                    label_field = field
+                                elif value_field is None and (isinstance(value, (int, float)) or 
+                                           (isinstance(value, list) and len(value) > 0 and isinstance(value[0], (int, float)))):
+                                    value_field = field
+                        
+                        if label_field and value_field:
+                            graph_data['labels'] = [record.get(label_field, '') for record in records]
+                            values = []
+                            for record in records:
+                                val = record.get(value_field)
+                                if isinstance(val, list) and len(val) > 0:
+                                    values.append(val[0])
+                                else:
+                                    values.append(val)
+                            
+                            graph_data['datasets'].append({
+                                'label': value_field,
+                                'data': values
+                            })
+            
+            elif visualization_type == 'pie':
+                # Process data for pie chart
+                if search_results.get('records'):
+                    records = search_results.get('records', [])
+                    if records and len(records) > 0:
+                        # Similar logic as above but for pie chart
+                        first_record = records[0]
+                        label_field = None
+                        value_field = None
+                        
+                        for field, value in first_record.items():
+                            if field not in ['id', 'has_linked_data'] and not field.endswith('_info'):
+                                if label_field is None and isinstance(value, str):
+                                    label_field = field
+                                elif value_field is None and (isinstance(value, (int, float)) or 
+                                           (isinstance(value, list) and len(value) > 0 and isinstance(value[0], (int, float)))):
+                                    value_field = field
+                        
+                        if label_field and value_field:
+                            graph_data['labels'] = [record.get(label_field, '') for record in records]
+                            values = []
+                            for record in records:
+                                val = record.get(value_field)
+                                if isinstance(val, list) and len(val) > 0:
+                                    values.append(val[0])
+                                else:
+                                    values.append(val)
+                            
+                            graph_data['datasets'].append({
+                                'data': values
+                            })
+            
+            return {
+                'status': 'success',
+                'result': {
+                    'graphData': graph_data,
+                    'visualizationType': visualization_type
+                }
+            }
+            
+        except Exception as e:
+            _logger.error("Error generating visualization: %s", str(e), exc_info=True)
+            return {'status': 'error', 'error': str(e)}
+    
+    def _recursive_serialize(self, data):
+        """Convert all complex types to simple JSON-serializable values"""
+        if isinstance(data, (datetime, date)):
+            return data.isoformat()
+            
+        elif isinstance(data, dict):
+            return {k: self._recursive_serialize(v) for k, v in data.items()}
+            
+        elif isinstance(data, list):
+            return [self._recursive_serialize(item) for item in data]
+            
+        elif hasattr(data, '_name') and hasattr(data, 'ids'):  # Odoo recordset
+            return {"_record": data._name, "ids": data.ids}
+            
+        return data

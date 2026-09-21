@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- QWeb template for AI Search with Owl Component (Odoo 18.0) -->
+    <record id="leulit_ia_search_bar" model="ir.ui.view">
+        <field name="name">AI Search Bar</field>
+        <field name="type">qweb</field>
+        <field name="key">leulit_ia.leulit_ia_search_bar</field>
+        <field name="arch" type="xml">
+            <div class="leulit_ia_search_container">
+                <div class="leulit_ia_search_bar">
+                    <input type="text" class="leulit_ia_search_input"
+                           t-model="state.query"
+                           t-on-keyup="onKeyup"
+                           placeholder="Ask anything about your data..." />
+                    <button class="leulit_ia_search_button"
+                            t-on-click="onSearch"
+                            t-att-disabled="state.loading">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+                <div class="leulit_ia_search_results">
+                    <div t-if="state.loading" class="leulit_ia_search_loading">Searching...</div>
+                    <div t-if="state.error" class="leulit_ia_search_error" t-out="state.error"></div>
+                    <div t-if="state.results &amp;&amp; !state.error" class="ai_results_summary">
+                        <p t-if="state.results.count === 0">No results found</p>
+                        <t t-if="state.results.count &gt; 0">
+                            <p>Found <t t-out="state.results.count"/> results in <t t-out="state.results.model"/>:</p>
+                            <div class="ai_results_records">
+                                <div t-foreach="state.results.records" t-as="record" class="ai_result_record">
+                                    <div t-foreach="state.results.fields" t-as="field" class="ai_result_field">
+                                        <t t-if="record[field] !== undefined">
+                                            <strong><t t-out="field"/>:</strong>
+                                            <!-- Handling different types of values -->
+                                            <t t-if="typeof record[field] === 'object' &amp;&amp; record[field] !== null">
+                                                <t t-if="Array.isArray(record[field])">
+                                                    <t t-out="record[field][1]"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <t t-out="JSON.stringify(record[field])"/>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-out="record[field]"/>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Template for search results (Common) -->
+    <record id="leulit_ia_search_results_template" model="ir.ui.view">
+        <field name="name">AI Search Results Template</field>
+        <field name="type">qweb</field>
+        <field name="key">leulit_ia.leulit_ia_search_results_template</field>
+        <field name="arch" type="xml">
+            <div class="leulit_ia_search_results_container">
+                <div class="leulit_ia_search_results_header">
+                    <h4>Search Results</h4>
+                    <span class="leulit_ia_search_results_count"></span>
+                </div>
+                <div class="leulit_ia_search_results_body">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>

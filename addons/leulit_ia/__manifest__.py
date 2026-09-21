@@ -1,32 +1,59 @@
-# -*- coding: utf-8 -*-
 {
-    'name': 'Leulit IA Assistant',
-    'version': '17.0.1.0.0',
-    'category': 'Tools',
-    'summary': 'Asistente IA integrado en Odoo via Function Calling (Claude / Ollama)',
+    'name': 'Leulit AI Search',
+    'version': '0.3.2',
+    'category': 'Extra Tools',
+    'summary': 'AI-powered universal search across Odoo 18.0',
+    'description': """
+Leulit AI Search Addon for Odoo 18.0
+===============================================
+This Odoo add-on provides an AI-driven search bar that allows users to query
+any data stored within their Odoo 18.0 instance using natural language.
+
+Key Features:
+- Natural language search across all modules
+- Automatic model and field mapping
+- Secure execution via ORM queries
+- Configuration-based API key management
+    """,
     'author': 'Leulit',
-    'website': 'https://www.leulit.com',
     'license': 'LGPL-3',
-    'depends': [
-        'base',
-        'mail',
-        'web',
-    ],
+    'depends': ['base', 'web'],
+    'external_dependencies': {
+        'python': ['requests', 'google.cloud.aiplatform'],
+    },
+    'images': ['static/description/cover.png', 'static/description/thumbnail.png'],
     'data': [
         'security/ir.model.access.csv',
-        'views/res_config_settings_views.xml',
+        'views/settings_views.xml',
+        'views/search_templates.xml',
+        'views/ai_search_views.xml',
     ],
+    # Assets definition for Odoo 18.0
     'assets': {
         'web.assets_backend': [
-            'leulit_ia/static/src/components/AiChatSidebar/AiChatSidebar.scss',
-            'leulit_ia/static/src/components/AiChatSidebar/AiChatSidebar.js',
-            'leulit_ia/static/src/components/AiChatSidebar/AiChatSidebar.xml',
+            # Component files - search page
+            'leulit_ia/static/src/components/search_page/search_page.scss',
+            'leulit_ia/static/src/components/search_page/search_page.js',
+            'leulit_ia/static/src/components/search_page/search_page.xml',
+
+            # Report dialog component
+            'leulit_ia/static/src/components/report_dialog/report_dialog.js',
+            'leulit_ia/static/src/components/report_dialog/report_dialog.xml',
+
+            # Report visualization component
+            'leulit_ia/static/src/components/report_visualization/report_visualization.js',
+            'leulit_ia/static/src/components/report_visualization/report_visualization.xml',
+
+            # Search menu - adds systray button
+            'leulit_ia/static/src/js/search_menu.js',
+            'leulit_ia/static/src/js/search_menu.xml',
+            'leulit_ia/static/src/js/search_menu.scss',
+
+            # Action registry - registers client action
+            'leulit_ia/static/src/js/action_registry.js',
         ],
     },
-    'external_dependencies': {
-        'python': ['anthropic', 'requests'],
-    },
+    'application': True,
     'installable': True,
-    'application': False,
     'auto_install': False,
 }
