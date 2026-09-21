@@ -59,8 +59,15 @@
             <field name="priority">1</field>
             <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='result_package_id']" position="before">
+                    <field name="estanteria_destino_id" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
                 <xpath expr="//field[@name='result_package_id']" position="attributes">
-                    <attribute name="column_invisible">1</attribute>
+                    <attribute name="column_invisible">0</attribute>
+                    <attribute name="string">Caja</attribute>
+                    <attribute name="domain">[('estanteria_id', '=', estanteria_destino_id)]</attribute>
+                    <attribute name="readonly">not estanteria_destino_id</attribute>
+                    <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='location_dest_id']" position="attributes">
                     <attribute name="column_invisible">1</attribute>
@@ -77,8 +84,6 @@
                     <field name="ref_origen"/>
                     <field name="revision"/>
                     <field name="fecha_caducidad"/>
-                    <field name="caja_actual_id" readonly="1"/>
-                    <field name="estanteria_actual_id" readonly="1"/>
                 </xpath>
             </field>
         </record>

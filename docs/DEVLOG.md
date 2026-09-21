@@ -1,5 +1,25 @@
 # DEVLOG
 
+## 2026-09-21 — leulit_almacen: estantería y caja editables (desplegables encadenados) al recepcionar
+
+**Contexto:** las columnas caja/estantería del diálogo de líneas de S/N-lote (commit `8a7150fa`)
+eran solo lectura. Se pidió poder elegirlas, sin errores de usuario.
+
+**Decisión:** primero estantería, luego caja filtrada por esa estantería. Solo se eligen
+estanterías y cajas existentes (`no_create`); no se mueven cajas desde aquí.
+- `stock.move.line.estanteria_destino_id` (stored, dominio `_domain_estanteria()`), sustituye a
+  los computados `caja_actual_id`/`estanteria_actual_id`.
+- La caja es el `result_package_id` nativo, ahora visible, con dominio
+  `[('estanteria_id','=',estanteria_destino_id)]` y readonly hasta elegir estantería.
+- `onchange(lot_name)`: si el S/N ya existe, propone su caja/estantería actuales; cambiar la
+  estantería vacía la caja si no encaja; aviso (no bloqueo) si la pieza ya existe en otro sitio.
+- `_check_caja_en_estanteria` refuerza la coherencia en servidor.
+- `_action_done`: con caja, propagan los hooks de `stock.quant`; sin caja se escribe
+  `stock.lot.estanteria_id` (salvo que el lote ya esté en una caja: manda la caja).
+
+**Consecuencias:** campo nuevo almacenado → `./upd_module.sh leulit_almacen prod --stop`.
+Sin verificar en Odoo (no hay instancia local).
+
 ## 2026-09-18 — leulit_almacen: caja/estantería actuales al recepcionar (detección de duplicados)
 
 **Contexto:** en el diálogo de líneas de detalle (S/N, Lote, Referencia Origen, Revisión,
