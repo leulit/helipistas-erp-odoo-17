@@ -89,3 +89,24 @@ class TestTareaSemanaEstado(TransactionCase):
         self.assertEqual(self._fila(filas, '2026-09-14', modulo.PERSONA_EMILIO)['pendiente'], 1)
         self.assertEqual(self._fila(filas, '2026-09-14', modulo.PERSONA_AMBOS)['pendiente'], 1)
         self.assertEqual(self._fila(filas, '2026-09-14', modulo.PERSONA_PAU)['pendiente'], 0)
+
+    def test_archivada_no_cuenta(self):
+        t = self._tarea(self.emilio, self.st_pend, SEMANA_ANT)
+        self._tarea(self.emilio, self.st_pend, SEMANA_ANT)
+        t.active = False
+        filas = self.env['leulit.tarea.semana.estado']._calcular_filas(HOY)
+        self.assertEqual(self._fila(filas, '2026-09-07', modulo.PERSONA_EMILIO)['pendiente'], 1)
+
+    def test_actividades_abiertas(self):
+        tarea = self._tarea(self.emilio, self.st_pend, SEMANA_ANT)
+        tipo = self.env.ref('mail.mail_activity_data_todo')
+        act = self.env['mail.activity'].create({
+            'res_id': tarea.id, 'res_model_id': self.env['ir.model']._get_id('project.task'),
+            'activity_type_id': tipo.id, 'user_id': self.emilio.id,
+        })
+        self.env.cr.execute('UPDATE mail_activity SET create_date=%s WHERE id=%s', (SEMANA_ACT, act.id))
+        act.invalidate_recordset()
+        filas = self.env['leulit.tarea.semana.estado']._calcular_filas(HOY)
+        self.assertEqual(self._fila(filas, '2026-09-07', modulo.PERSONA_EMILIO)['actividades'], 0)
+        self.assertEqual(self._fila(filas, '2026-09-14', modulo.PERSONA_EMILIO)['actividades'], 1)
+        self.assertEqual(self._fila(filas, '2026-09-14', modulo.PERSONA_AMBOS)['actividades'], 0)

@@ -191,6 +191,7 @@
                     <field name="en_proceso"/>
                     <field name="pospuesta"/>
                     <field name="realizada"/>
+                    <field name="actividades"/>
                 </tree>
             </field>
         </record>

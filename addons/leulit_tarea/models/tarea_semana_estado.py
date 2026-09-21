@@ -38,7 +38,7 @@ class TareaSemanaEstado(models.TransientModel):
     en_proceso = fields.Integer(string='En proceso')
     pospuesta = fields.Integer(string='Pospuesta')
     realizada = fields.Integer(string='Realizada')
-    # La acción abre la ficha con active_test=False: sin él Odoo omite las tareas archivadas al leer el m2m
+    actividades = fields.Integer(string='Actividades abiertas')
     pendiente_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_pendiente_rel', string='Pendiente')
     en_proceso_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_en_proceso_rel', string='En proceso')
     pospuesta_ids = fields.Many2many('project.task', 'leulit_tarea_semana_estado_pospuesta_rel', string='Pospuesta')
@@ -59,13 +59,13 @@ class TareaSemanaEstado(models.TransientModel):
                 (self.env.ref('leulit_tarea.leulit_20260921_1102_form').id, 'form'),
             ],
             'domain': [('create_uid', '=', self.env.uid)],
-            # active_test=False: es un histórico, la ficha debe leer también las tareas archivadas
-            'context': {'group_by': ['semana_inicio:week'], 'active_test': False},
+            'context': {'group_by': ['semana_inicio:week']},
             'target': 'current',
             'help': (
                 '<p>Pendiente, En proceso y Pospuesta: foto de las tareas al cierre de la semana '
                 '(la semana en curso, hasta hoy).</p>'
                 '<p>Realizada: tareas cerradas durante esa semana que siguen cerradas al cierre de la misma.</p>'
+                '<p>Las tareas archivadas no cuentan. Actividades abiertas: en semanas pasadas solo las que siguen abiertas hoy.</p>'
             ),
         }
 
@@ -86,7 +86,8 @@ class TareaSemanaEstado(models.TransientModel):
             for persona in PERSONAS
         }
 
-        tareas = self.env['project.task'].with_context(active_test=False).search(
+        # Solo tareas activas: las archivadas no cuentan en ninguna semana
+        tareas = self.env['project.task'].search(
             [('user_ids', 'in', [USER_EMILIO, USER_PAU]), ('create_date', '<=', hoy)]
         ).filtered(lambda t: not t.project_borrador)
 
@@ -127,8 +128,11 @@ class TareaSemanaEstado(models.TransientModel):
                         continue
                     contadores[(inicio, persona)][columna].append(tarea.id)
 
+        # Odoo borra la actividad al marcarla hecha: en semanas pasadas solo se ven las que siguen abiertas
+        actividades = self.env['mail.activity'].search([('user_id', 'in', [USER_EMILIO, USER_PAU])])
+
         filas = []
-        for inicio, _ini, _corte, es_actual in semanas:
+        for inicio, _ini, corte, es_actual in semanas:
             fin = inicio + timedelta(days=6)
             etiqueta = 'S%02d %s (%s - %s)' % (
                 inicio.isocalendar()[1], inicio.isocalendar()[0],
@@ -138,6 +142,9 @@ class TareaSemanaEstado(models.TransientModel):
                 etiqueta += ' · hasta hoy'
             for persona in PERSONAS:
                 fila = dict(semana_inicio=inicio, semana=etiqueta, persona=persona)
+                uid = {PERSONA_EMILIO: USER_EMILIO, PERSONA_PAU: USER_PAU}.get(persona)
+                fila['actividades'] = len(actividades.filtered(
+                    lambda a: a.user_id.id == uid and a.create_date <= corte))
                 for col, ids in contadores[(inicio, persona)].items():
                     fila[col] = len(ids)
                     fila[col + '_ids'] = [(6, 0, ids)]
