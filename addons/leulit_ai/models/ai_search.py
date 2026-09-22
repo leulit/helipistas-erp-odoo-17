@@ -12,8 +12,11 @@ try:
         GenerativeModel,
         FunctionDeclaration,
         Tool,
-        AutomaticFunctionCallingResponder,
     )
+    # AutomaticFunctionCallingResponder no se reexporta desde vertexai.generative_models
+    # en ninguna versión pública de google-cloud-aiplatform; solo desde el namespace
+    # preview (misma clase, vertexai.generative_models._generative_models).
+    from vertexai.preview.generative_models import AutomaticFunctionCallingResponder
     from google.oauth2 import service_account
     VERTEX_AI_AVAILABLE = True
 except ImportError:
