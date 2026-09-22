@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_leulit_ai_search_engine_user,leulit_ai.search.engine.user,model_leulit_ai_search_engine,base.group_user,1,1,1,0
+access_leulit_ai_search_engine_system,leulit_ai.search.engine.system,model_leulit_ai_search_engine,base.group_system,1,1,1,1
+access_leulit_ai_search_favorite_user,leulit_ai.search.favorite.user,model_leulit_ai_search_favorite,base.group_user,1,1,1,1
+access_leulit_ai_search_report_user,leulit_ai.search.report.user,model_leulit_ai_search_report,base.group_user,1,1,1,1

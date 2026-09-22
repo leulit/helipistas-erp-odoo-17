@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="leulit_ai.search_page" owl="1">
+        <div class="leulit_ai_search_page h-100 d-flex flex-column">
+            <!-- Page Header -->
+            <div class="p-3 border-bottom bg-light">
+                <h2 class="mb-0">AI Universal Search</h2>
+                <p class="text-muted mb-0">Search across all data in your Odoo instance</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <nav class="nav nav-tabs px-3 pt-2 border-bottom">
+                <a class="nav-link" t-att-class="{ active: isSearchTabActive }" href="#"
+                   t-on-click.prevent="setActiveTab.bind(this, 'search')">
+                    <i class="fa fa-search me-1"/>Search
+                </a>
+                <a class="nav-link" t-att-class="{ active: isReportsTabActive }" href="#"
+                   t-on-click.prevent="setActiveTab.bind(this, 'reports')">
+                    <i class="fa fa-bar-chart me-1"/>Reports
+                </a>
+                <a class="nav-link" t-att-class="{ active: isSavedTabActive }" href="#"
+                   t-on-click.prevent="setActiveTab.bind(this, 'saved')">
+                    <i class="fa fa-star me-1"/>Saved Searches
+                </a>
+            </nav>
+
+            <!-- Tab Content -->
+            <div class="flex-grow-1 overflow-auto">
+                <!-- Search Tab -->
+                <div t-if="isSearchTabActive" class="p-4">
+                    <!-- Search Bar -->
+                    <div class="search-area mb-4">
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                t-model="state.query"
+                                t-on-keyup="onKeyup"
+                                placeholder="Ask anything about your data..."
+                                name="leulit_ai_search_query" />
+                            <button
+                                class="btn btn-primary"
+                                t-on-click="onSearch"
+                                t-att-disabled="state.loading">
+                                <i class="fa fa-search me-1" />Search
+                            </button>
+                        </div>
+                        <div class="form-text mt-1">
+                            Examples: "Find all customers in New York", "Show invoices over $5000", "List recent sales orders"
+                        </div>
+                    </div>
+
+                    <!-- Results Area -->
+                    <div class="results-area">
+                        <!-- Loading indicator -->
+                        <div t-if="state.loading" class="text-center py-5">
+                            <i class="fa fa-circle-o-notch fa-spin fa-3x mb-3"></i>
+                            <p>Processing your query...</p>
+                        </div>
+
+                        <!-- Error message with report link -->
+                        <div t-if="state.error" class="alert alert-danger">
+                            <div class="mb-2" t-out="state.error"></div>
+                            <div class="d-flex justify-content-end">
+                                <a t-att-href="generateMailtoLink()" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa fa-envelope-o me-1"></i>Raportoi virhe
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Vertex AI natural language answer -->
+                        <div t-if="state.vertexAnswer" class="leulit_ai_vertex_answer alert alert-info mb-3">
+                            <t t-esc="state.vertexAnswer"/>
+                        </div>
+
+                        <!-- Search results -->
+                        <div t-if="state.results &amp;&amp; !state.error">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0">Search Results</h4>
+
+                                <div class="d-flex">
+                                    <!-- Create Report button -->
+                                    <button type="button"
+                                            t-on-click="createReport"
+                                            class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="fa fa-bar-chart me-1" />
+                                        Create Report
+                                    </button>
+
+                                    <!-- Save Search button -->
+                                    <button type="button"
+                                            t-on-click="saveCurrentSearch"
+                                            class="btn btn-sm"
+                                            t-att-class="state.currentSearchSaved ? 'btn-success' : 'btn-outline-primary'"
+                                            t-att-disabled="state.currentSearchSaved || state.savingFavorite">
+                                        <i t-attf-class="fa fa-heart{{state.currentSearchSaved ? '' : '-o'}} me-1" />
+                                        <t t-if="state.currentSearchSaved">Saved</t>
+                                        <t t-elif="state.savingFavorite">Saving...</t>
+                                        <t t-else="">Save search</t>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Simple info header -->
+                            <div class="alert alert-info">
+                                <span>
+                                    <t t-if="state.results.multi_model">
+                                        <strong>Multiple Models:</strong>
+                                        <t t-out="state.results.total_count || 0"/> results across
+                                        <t t-out="state.results.results ? state.results.results.length : 0"/> models
+                                    </t>
+                                    <t t-elif="state.results.model">
+                                        <strong>Model:</strong> <t t-out="state.results.model"/> -
+                                        <t t-out="state.results.count || 0"/> results
+                                    </t>
+                                    <t t-else="">
+                                        <strong>Search completed</strong>
+                                    </t>
+                                </span>
+                            </div>
+
+                            <!-- Multi-model results -->
+                            <div t-if="state.results.multi_model &amp;&amp; state.results.results" class="mt-4">
+                                <!-- Check for model relationships -->
+                                <t t-set="modelsWithRelations" t-value="[]"/>
+                                <t t-foreach="state.results.results" t-as="modelData" t-key="modelData_index">
+                                    <t t-if="modelData.records &amp;&amp; modelData.records.length > 0">
+                                        <t t-foreach="modelData.records" t-as="record" t-key="record_index">
+                                            <t t-foreach="Object.keys(record)" t-as="key" t-key="key">
+                                                <t t-if="key.endsWith('_info') &amp;&amp; record[key] &amp;&amp; typeof record[key] === 'object'">
+                                                    <t t-if="!modelsWithRelations.includes(modelData.model)">
+                                                        <t t-set="modelsWithRelations" t-value="[...modelsWithRelations, modelData.model]"/>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                        </t>
+                                    </t>
+                                </t>
+
+                                <!-- Display relationship information if found -->
+                                <!-- Relationship explanation shown when related data is found -->
+                                <t t-if="modelsWithRelations.length > 0">
+                                    <div class="alert alert-primary mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa fa-link me-3 fa-lg"></i>
+                                            <div>
+                                                <strong>AI Found Relationships Between Models</strong>
+                                                <p class="mb-0 small mt-1">
+                                                    The AI has detected relationships between these models and automatically
+                                                    enhanced the results. Tables with <i class="fa fa-link text-info"></i> icons
+                                                    contain joined data from related models.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <!-- Display all models in separate tables, even for models with relationships -->
+                                    <!-- For each model in multi-model results -->
+                                    <div t-foreach="state.results.results" t-as="modelData" t-key="modelData_index"
+                                        class="card mb-4 shadow-sm">
+                                        <!-- Card header with relationship indicator if model has related data -->
+                                        <div t-attf-class="card-header d-flex justify-content-between {{modelsWithRelations.includes(modelData.model) ? 'bg-light-info border-info' : ''}}">
+                                            <h5 class="mb-0">
+                                                <t t-if="modelsWithRelations.includes(modelData.model)">
+                                                    <i class="fa fa-link text-info me-1" title="Contains related data"></i>
+                                                </t>
+                                                <t t-out="modelData.model_label || modelData.model"/>
+                                            </h5>
+                                            <span class="badge bg-primary"><t t-out="modelData.records ? modelData.records.length : 0"/></span>
+                                        </div>
+
+                                        <!-- Generic record display for any model -->
+                                        <div class="card-body p-0">
+                                            <div t-if="!modelData.records || modelData.records.length === 0" class="p-3 text-muted">
+                                                No records found
+                                            </div>
+
+                                            <div t-else="" class="table-responsive">
+                                                <!-- One table for all records of this model -->
+                                                <t t-if="modelData.records.length > 0" t-set="firstModelRecord" t-value="modelData.records[0]"/>
+
+                                                <table class="table table-bordered table-sm">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <!-- Get field names for table headers from first record -->
+                                                            <t t-foreach="Object.keys(firstModelRecord)" t-as="fieldName" t-key="fieldName">
+                                                                <t t-if="fieldName !== 'id' &amp;&amp; fieldName !== 'has_linked_data' &amp;&amp; !fieldName.endsWith('_info')">
+                                                                    <th>
+                                                                        <t t-esc="fieldName"/>
+                                                                        <span class="d-block small text-muted">
+                                                                            <t t-out="modelData.model_label || modelData.model"/>
+                                                                        </span>
+                                                                    </th>
+                                                                </t>
+                                                            </t>
+
+                                                            <!-- Add headers for any related fields -->
+                                                            <t t-if="modelsWithRelations.includes(modelData.model)">
+                                                                <t t-foreach="Object.keys(firstModelRecord)" t-as="infoKey" t-key="infoKey">
+                                                                    <t t-if="infoKey.endsWith('_info') &amp;&amp; firstModelRecord[infoKey] &amp;&amp; typeof firstModelRecord[infoKey] === 'object'">
+                                                                        <!-- Get relation name -->
+                                                                        <t t-set="relationName" t-value="infoKey.replace('_info', '').replace('_', ' ')"/>
+
+                                                                        <!-- Add headers for each related field -->
+                                                                        <t t-foreach="Object.keys(firstModelRecord[infoKey])" t-as="relatedField" t-key="relatedField">
+                                                                            <t t-if="relatedField !== 'id'">
+                                                                                <th class="table-info">
+                                                                                    <t t-esc="relatedField"/>
+                                                                                    <span class="d-block small">
+                                                                                        <t t-esc="relationName"/>
+                                                                                    </span>
+                                                                                </th>
+                                                                            </t>
+                                                                        </t>
+                                                                    </t>
+                                                                </t>
+                                                            </t>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- One row per record -->
+                                                        <t t-foreach="modelData.records" t-as="record" t-key="record_index">
+                                                            <tr>
+                                                                <!-- Display regular field values -->
+                                                                <t t-foreach="Object.keys(record)" t-as="fieldName" t-key="fieldName">
+                                                                    <t t-if="fieldName !== 'id' &amp;&amp; fieldName !== 'has_linked_data' &amp;&amp; !fieldName.endsWith('_info')">
+                                                                        <td>
+                                                                            <t t-if="Array.isArray(record[fieldName]) &amp;&amp; record[fieldName].length >= 2">
+                                                                                <span t-esc="record[fieldName][1]"/>
+                                                                            </t>
+                                                                            <t t-else="">
+                                                                                <span t-esc="record[fieldName]"/>
+                                                                            </t>
+                                                                        </td>
+                                                                    </t>
+                                                                </t>
+
+                                                                <!-- Display any related field values -->
+                                                                <t t-if="modelsWithRelations.includes(modelData.model)">
+                                                                    <t t-foreach="Object.keys(record)" t-as="infoKey" t-key="infoKey">
+                                                                        <t t-if="infoKey.endsWith('_info') &amp;&amp; record[infoKey] &amp;&amp; typeof record[infoKey] === 'object'">
+                                                                            <t t-foreach="Object.keys(record[infoKey])" t-as="relatedField" t-key="relatedField">
+                                                                                <t t-if="relatedField !== 'id'">
+                                                                                    <td class="table-info">
+                                                                                        <span t-esc="record[infoKey][relatedField]"/>
+                                                                                    </td>
+                                                                                </t>
+                                                                            </t>
+                                                                        </t>
+                                                                    </t>
+                                                                </t>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <!-- Single model results - all records in one table -->
+                            <div t-elif="state.results.model &amp;&amp; state.results.records" class="mt-4">
+                                <!-- Check if this single model has related data -->
+                                <t t-set="hasSingleModelRelations" t-value="false"/>
+                                <t t-if="state.results.records &amp;&amp; state.results.records.length > 0">
+                                    <t t-foreach="Object.keys(state.results.records[0])" t-as="key" t-key="key_index">
+                                        <t t-if="key.endsWith('_info') &amp;&amp; state.results.records[0][key] &amp;&amp; typeof state.results.records[0][key] === 'object'">
+                                            <t t-set="hasSingleModelRelations" t-value="true"/>
+                                        </t>
+                                    </t>
+                                </t>
+
+                                <div class="card shadow-sm">
+                                    <!-- Card header with relationship indicator if model has related data -->
+                                    <div t-attf-class="card-header d-flex justify-content-between {{hasSingleModelRelations ? 'bg-light-info border-info' : ''}}">
+                                        <h5 class="mb-0">
+                                            <t t-if="hasSingleModelRelations">
+                                                <i class="fa fa-link text-info me-1" title="Contains related data"></i>
+                                            </t>
+                                            <t t-out="state.results.model_label || state.results.model"/>
+                                        </h5>
+                                        <span class="badge bg-primary"><t t-out="state.results.records ? state.results.records.length : 0"/></span>
+                                    </div>
+
+                                    <!-- Display relationship information if found -->
+                                    <t t-if="hasSingleModelRelations">
+                                        <div class="card-body pt-2 pb-0">
+                                            <div class="alert alert-primary py-2 mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fa fa-link me-2"></i>
+                                                    <div class="small">
+                                                        <strong>AI Found Related Data</strong> -
+                                                        Showing integrated information from related models in <span class="text-info">highlighted columns</span>.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="card-body p-0">
+                                        <div t-if="!state.results.records || state.results.records.length === 0" class="p-3 text-muted">
+                                            No records found
+                                        </div>
+
+                                        <div t-else="" class="table-responsive">
+                                            <!-- One table for all records - we'll build headers from first record -->
+                                            <t t-if="state.results.records.length > 0" t-set="firstRecord" t-value="state.results.records[0]"/>
+
+                                            <table class="table table-bordered table-sm">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <!-- Get field names for table headers from first record -->
+                                                        <t t-foreach="Object.keys(firstRecord)" t-as="fieldName" t-key="fieldName">
+                                                            <t t-if="fieldName !== 'id' &amp;&amp; fieldName !== 'has_linked_data' &amp;&amp; !fieldName.endsWith('_info')">
+                                                                <th>
+                                                                    <t t-esc="fieldName"/>
+                                                                    <span class="d-block small text-muted">
+                                                                        <t t-out="state.results.model_label || state.results.model"/>
+                                                                    </span>
+                                                                </th>
+                                                            </t>
+                                                        </t>
+
+                                                        <!-- Add headers for related fields -->
+                                                        <t t-if="firstRecord">
+                                                            <t t-foreach="Object.keys(firstRecord)" t-as="infoKey" t-key="infoKey">
+                                                                <t t-if="infoKey.endsWith('_info') &amp;&amp; firstRecord[infoKey] &amp;&amp; typeof firstRecord[infoKey] === 'object'">
+                                                                    <!-- Get relation name -->
+                                                                    <t t-set="relationName" t-value="infoKey.replace('_info', '').replace('_', ' ')"/>
+
+                                                                    <!-- Add headers for each related field -->
+                                                                    <t t-foreach="Object.keys(firstRecord[infoKey])" t-as="relatedField" t-key="relatedField">
+                                                                        <t t-if="relatedField !== 'id'">
+                                                                            <th class="table-info">
+                                                                                <t t-esc="relatedField"/>
+                                                                                <span class="d-block small">
+                                                                                    <t t-esc="relationName"/>
+                                                                                </span>
+                                                                            </th>
+                                                                        </t>
+                                                                    </t>
+                                                                </t>
+                                                            </t>
+                                                        </t>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- One row per record -->
+                                                    <t t-foreach="state.results.records" t-as="record" t-key="record_index">
+                                                        <tr>
+                                                            <!-- Display regular field values -->
+                                                            <t t-foreach="Object.keys(record)" t-as="fieldName" t-key="fieldName">
+                                                                <t t-if="fieldName !== 'id' &amp;&amp; fieldName !== 'has_linked_data' &amp;&amp; !fieldName.endsWith('_info')">
+                                                                    <td>
+                                                                        <t t-if="Array.isArray(record[fieldName]) &amp;&amp; record[fieldName].length >= 2">
+                                                                            <span t-esc="record[fieldName][1]"/>
+                                                                        </t>
+                                                                        <t t-else="">
+                                                                            <span t-esc="record[fieldName]"/>
+                                                                        </t>
+                                                                    </td>
+                                                                </t>
+                                                            </t>
+
+                                                            <!-- Display related field values -->
+                                                            <t t-if="record">
+                                                                <t t-foreach="Object.keys(record)" t-as="infoKey" t-key="infoKey">
+                                                                    <t t-if="infoKey.endsWith('_info') &amp;&amp; record[infoKey] &amp;&amp; typeof record[infoKey] === 'object'">
+                                                                        <t t-foreach="Object.keys(record[infoKey])" t-as="relatedField" t-key="relatedField">
+                                                                            <t t-if="relatedField !== 'id'">
+                                                                                <td class="table-info">
+                                                                                    <span t-esc="record[infoKey][relatedField]"/>
+                                                                                </td>
+                                                                            </t>
+                                                                        </t>
+                                                                    </t>
+                                                                </t>
+                                                            </t>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- No results / unknown format -->
+                            <div t-else="" class="alert alert-warning">
+                                No results found or unsupported result format.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div t-if="isReportsTabActive" class="p-4 h-100 d-flex flex-column">
+                    <!-- Loading indicator -->
+                    <div t-if="state.reportsLoading" class="text-center py-3">
+                        <i class="fa fa-circle-o-notch fa-spin fa-2x mb-2"></i>
+                        <p>Loading reports...</p>
+                    </div>
+
+                    <!-- Empty state - no reports -->
+                    <div t-if="!state.reportsLoading &amp;&amp; state.reports.length === 0" class="text-center py-4">
+                        <i class="fa fa-bar-chart fa-3x mb-3 text-muted"></i>
+                        <h5>No reports available</h5>
+                        <p class="text-muted">Create a report from your search results by clicking the "Create Report" button.</p>
+                    </div>
+
+                    <!-- Reports list and visualization view -->
+                    <div t-if="!state.reportsLoading &amp;&amp; state.reports.length > 0" class="h-100 d-flex">
+                        <!-- Reports list sidebar -->
+                        <div class="reports-list border-end flex-shrink-0" style="width: 300px;">
+                            <h5 class="p-3 border-bottom bg-light mb-0">Reports</h5>
+                            <div class="list-group list-group-flush">
+                                <a t-foreach="state.reports" t-as="report" t-key="report.id"
+                                   href="#"
+                                   t-att-class="{'list-group-item list-group-item-action d-flex justify-content-between align-items-center': true, 'active': state.selectedReport &amp;&amp; state.selectedReport.id === report.id}"
+                                   t-on-click.prevent="selectReport.bind(this, report)">
+                                    <div>
+                                        <div class="fw-bold"><t t-out="report.name"/></div>
+                                        <div class="d-flex align-items-center small text-muted">
+                                            <i t-attf-class="fa fa-{{ report.visualization_type === 'bar' ? 'bar-chart' : (report.visualization_type === 'line' ? 'line-chart' : 'pie-chart') }} me-1"></i>
+                                            <t t-out="report.visualization_type"/> chart
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            t-on-click.stop="deleteReport.bind(this, report.id)">
+                                        <i class="fa fa-trash" />
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Report visualization area -->
+                        <div class="report-visualization-area flex-grow-1 p-3">
+                            <div t-if="!state.selectedReport" class="text-center py-5">
+                                <i class="fa fa-hand-pointer-o fa-3x mb-3 text-muted"></i>
+                                <h5>Select a report to view</h5>
+                                <p class="text-muted">Click on a report from the list to view its visualization.</p>
+                            </div>
+
+                            <div t-if="state.selectedReport" class="h-100">
+                                <ReportVisualization report="state.selectedReport" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Searches Tab -->
+                <div t-if="isSavedTabActive" class="p-4">
+                    <h4 class="mb-3">Saved Searches</h4>
+
+                    <!-- Loading indicator -->
+                    <div t-if="state.favoritesLoading" class="text-center py-3">
+                        <i class="fa fa-circle-o-notch fa-spin fa-2x mb-2"></i>
+                        <p>Loading saved searches...</p>
+                    </div>
+
+                    <!-- Empty state - no saved searches -->
+                    <div t-if="!state.favoritesLoading &amp;&amp; state.favorites.length === 0" class="text-center py-4">
+                        <i class="fa fa-star-o fa-3x mb-3 text-muted"></i>
+                        <h5>No saved searches</h5>
+                        <p class="text-muted">Save your searches by clicking the "Save search" button in search results.</p>
+                    </div>
+
+                    <!-- List of saved searches -->
+                    <div t-if="!state.favoritesLoading &amp;&amp; state.favorites.length > 0" class="list-group">
+                        <a t-foreach="state.favorites" t-as="favorite" t-key="favorite.id"
+                           href="#"
+                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                           t-on-click.prevent="executeFavorite.bind(this, favorite.query_text)">
+                            <div>
+                                <div class="fw-bold"><t t-out="favorite.name"/></div>
+                                <small class="text-muted">
+                                    <t t-out="new Date(favorite.create_date).toLocaleString()"/>
+                                </small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    t-on-click.stop="deleteFavorite.bind(this, favorite.id)">
+                                <i class="fa fa-trash" />
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

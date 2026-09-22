@@ -78,7 +78,7 @@ Definidas directamente en `docker-compose.yml` (no hay `.env` en el repo para pr
 
 El volumen `/efs/HELIPISTAS-ODOO-17/odoo/addons/helipistas-erp-odoo-17/addons` en el servidor corresponde a la carpeta [`addons/`](../addons) de este repositorio (checkout de la rama desplegada), montado en `/mnt/extra-addons` dentro del contenedor.
 
-Módulos propios: `leulit`, `leulit_actividad`, `leulit_almacen`, `leulit_calidad`, `leulit_camo`, `leulit_comercial`, `leulit_crm_team`, `leulit_encuestas`, `leulit_escuela`, `leulit_esignature`, `leulit_groups_manager`, `leulit_hide_menus`, `leulit_ia`, `leulit_meteo`, `leulit_nda`, `leulit_operaciones`, `leulit_parte_145`, `leulit_partis`, `leulit_planificacion`, `leulit_seguridad`, `leulit_taller`, `leulit_tarea`, `leulit_trabajador_externo`, `leulit_user_impersonate`, más `maintenance_equipment_changes` y `third-party-addons/`.
+Módulos propios: `leulit`, `leulit_actividad`, `leulit_almacen`, `leulit_calidad`, `leulit_camo`, `leulit_comercial`, `leulit_crm_team`, `leulit_encuestas`, `leulit_escuela`, `leulit_esignature`, `leulit_groups_manager`, `leulit_hide_menus`, `leulit_ai`, `leulit_meteo`, `leulit_nda`, `leulit_operaciones`, `leulit_parte_145`, `leulit_partis`, `leulit_planificacion`, `leulit_seguridad`, `leulit_taller`, `leulit_tarea`, `leulit_trabajador_externo`, `leulit_user_impersonate`, más `maintenance_equipment_changes` y `third-party-addons/`.
 
 ## Configuración de Odoo (`odoo.conf`)
 

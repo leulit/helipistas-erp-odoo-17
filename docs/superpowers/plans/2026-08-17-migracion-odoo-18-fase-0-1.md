@@ -535,7 +535,7 @@ FROM odoo:18.0
 
 USER root
 # CLAUDE.md + external_dependencies de leulit_esignature (pyqrcode/pypng/pyotp),
-# leulit_almacen (pypdf), leulit_ia (anthropic/requests), leulit_partis (dateutil)
+# leulit_almacen (pypdf), leulit_ai (anthropic/requests), leulit_partis (dateutil)
 RUN pip3 install --no-cache-dir --break-system-packages \
         pypdf pyqrcode pypng pyotp anthropic requests python-dateutil
 USER odoo
@@ -878,7 +878,7 @@ for m in leulit_actividad leulit_operaciones leulit_taller leulit_actividad_tall
          leulit_encuestas leulit_tarea leulit_esignature leulit_meteo \
          leulit_groups_manager leulit_hide_menus leulit_trabajador_externo \
          leulit_user_impersonate leulit_crm_team leulit_activity_date_history \
-         maintenance_equipment_changes leulit_partis leulit_nda leulit_ia; do
+         maintenance_equipment_changes leulit_partis leulit_nda leulit_ai; do
   echo "=== $m"
   docker exec helipistas_odoo_18 odoo -d test18 -i "$m" --stop-after-init 2>&1 | tail -6
 done

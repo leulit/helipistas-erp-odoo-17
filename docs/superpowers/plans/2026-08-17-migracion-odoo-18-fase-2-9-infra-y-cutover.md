@@ -60,7 +60,7 @@ Cuatro stacks: `infra` (Traefik + Portainer), `produccion` (Odoo 17 + PG 15), `p
 | `tools/migracion18/metabase_exportar.sh` | Exporta preguntas por la API de Metabase |
 | `tools/migracion18/metabase_analizar.py` | Cruza consultas con los cambios de esquema de OpenUpgrade |
 | `addons/leulit/models/mail_mail.py` + `tests/test_neutralizacion_correo.py` | Cancela envíos si la base está neutralizada |
-| `addons/leulit_ia/data/neutralize.sql`, `addons/leulit_meteo/data/neutralize.sql` | Cortan las llamadas a servicios externos |
+| `addons/leulit_ai/data/neutralize.sql`, `addons/leulit_meteo/data/neutralize.sql` | Cortan las llamadas a servicios externos |
 | `docs/migracion-odoo-18-metabase.md` | Preguntas afectadas, veredicto y arreglo |
 | `docs/metabase/consultas/*.sql` | SQL nativo versionado — Metabase no versiona nada |
 | `docs/cutover-runbook.md` | Runbook con tiempos medidos y puertas |
@@ -806,7 +806,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # CLAUDE.md + external_dependencies de leulit_esignature, leulit_almacen,
-# leulit_ia y leulit_partis
+# leulit_ai y leulit_partis
 RUN pip3 install --no-cache-dir --break-system-packages \
         pypdf pyqrcode pypng pyotp anthropic requests python-dateutil
 
@@ -1311,7 +1311,7 @@ git commit -m "tools: copia del filestore con enlaces duros o rsync"
 
 Una copia con datos reales sin neutralizar manda correos a clientes, dispara webhooks y podría enviar facturas de prueba a la AEAT.
 
-**Files:** Create `tools/migracion18/neutralizar_preproduccion.sh`, `addons/leulit_ia/data/neutralize.sql`, `addons/leulit_meteo/data/neutralize.sql`
+**Files:** Create `tools/migracion18/neutralizar_preproduccion.sh`, `addons/leulit_ai/data/neutralize.sql`, `addons/leulit_meteo/data/neutralize.sql`
 
 - [ ] **Step 1: Qué cubre Odoo de serie**
 
@@ -1328,7 +1328,7 @@ docker exec helipistas18_odoo sh -c \
   'ls /usr/lib/python3/dist-packages/odoo/addons/l10n_es_edi_verifactu/data/neutralize.sql'
 ```
 
-Lo que no cubre: llamadas HTTP directas desde Python (`leulit_ia`, `leulit_meteo`), que se disparan desde acciones de usuario o campos calculados.
+Lo que no cubre: llamadas HTTP directas desde Python (`leulit_ai`, `leulit_meteo`), que se disparan desde acciones de usuario o campos calculados.
 
 - [ ] **Step 2: Nombres REALES de los parámetros**
 
@@ -1336,7 +1336,7 @@ Inventarlos deja la neutralización sin efecto.
 
 ```bash
 grep -rn --include='*.py' -E "ir\.config_parameter|get_param|set_param" \
-  addons/leulit_meteo addons/leulit_ia
+  addons/leulit_meteo addons/leulit_ai
 ```
 
 - [ ] **Step 3: Los `neutralize.sql`**
@@ -1351,12 +1351,12 @@ DELETE FROM ir_config_parameter
          OR key LIKE 'leulit_meteo.%token%';
 ```
 
-`addons/leulit_ia/data/neutralize.sql`:
+`addons/leulit_ai/data/neutralize.sql`:
 
 ```sql
 -- Corta el asistente de IA: sin endpoint ni clave no puede llamar a
 -- ai-service, helipistas-mcp, litellm-proxy ni a la API de Anthropic.
-DELETE FROM ir_config_parameter WHERE key LIKE 'leulit_ia.%';
+DELETE FROM ir_config_parameter WHERE key LIKE 'leulit_ai.%';
 ```
 
 - [ ] **Step 4: Script con confirmación y verificación**
@@ -1388,7 +1388,7 @@ q(){ docker exec "$PG" psql -U odoo -d "$DB" -tAc "$1"; }
 q "SELECT 'servidores de correo activos: '||count(*) FROM ir_mail_server WHERE active;"
 q "SELECT 'crons activos: '||count(*) FROM ir_cron WHERE active;"
 q "SELECT 'params IA/meteo: '||count(*) FROM ir_config_parameter
-     WHERE key LIKE 'leulit_ia.%' OR key LIKE 'leulit_meteo.%key%';"
+     WHERE key LIKE 'leulit_ai.%' OR key LIKE 'leulit_meteo.%key%';"
 q "SELECT 'marca de neutralización: '||coalesce(max(value),'AUSENTE')
      FROM ir_config_parameter WHERE key='database.is_neutralized';"
 q "SELECT 'url base: '||coalesce(max(value),'(sin definir)')
@@ -1407,7 +1407,7 @@ Esperado: `database.is_neutralized` presente y 0 servidores activos. Después, a
 - [ ] **Step 6: Commit**
 
 ```bash
-git add tools/migracion18/neutralizar_preproduccion.sh addons/leulit_ia/data addons/leulit_meteo/data
+git add tools/migracion18/neutralizar_preproduccion.sh addons/leulit_ai/data addons/leulit_meteo/data
 git commit -m "tools: neutralización de preproducción (correo, crons, IA y meteo)"
 ```
 

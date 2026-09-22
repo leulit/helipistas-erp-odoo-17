@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.leulit.ai.search</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="70"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Standard Odoo 18.0 settings approach -->
+            <xpath expr="." position="inside">
+                <!-- app_settings_block for Odoo 18.0 -->
+                <div class="app_settings_block" data-string="Leulit AI Search" string="Leulit AI Search" data-key="leulit_ai">
+                    <h2>Leulit AI Search Settings</h2>
+                    <!-- Version display for tracking changes -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-12 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Module Version</span>
+                                <div class="text-muted">
+                                    Current version: 0.3.2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">AI Provider</span>
+                                <div class="text-muted">
+                                    Choose which AI service processes natural-language queries.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="ai_provider" widget="radio"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box" invisible="ai_provider != 'openrouter'">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">OpenRouter API Key</span>
+                                <div class="text-muted">
+                                    Your API key for OpenRouter AI service.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="openrouter_api_key" password="True"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" invisible="ai_provider != 'openrouter'">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">AI Model</span>
+                                <div class="text-muted">
+                                    Using Claude 3.7 Sonnet for query processing.
+                                </div>
+                                <div class="text-muted">
+                                    <small>Model ID: anthropic/claude-3.7-sonnet</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container" invisible="ai_provider != 'vertex_ai'">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Vertex AI Project</span>
+                                <div class="text-muted">
+                                    Google Cloud Project ID with the Vertex AI API enabled.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="vertex_project_id"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Vertex AI Region</span>
+                                <div class="text-muted">
+                                    Google Cloud region, e.g. europe-west4.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="vertex_region"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container" invisible="ai_provider != 'vertex_ai'">
+                        <div class="col-12 col-lg-12 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Vertex AI Allowed Models</span>
+                                <div class="text-muted">
+                                    Comma-separated list of Odoo technical model names the AI may query, e.g. sale.order,res.partner,product.product. Leave empty to block all queries (fail-safe default).
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="vertex_allowed_models"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-12 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <div class="text-muted">
+                                    <small>Credentials: place the Google Cloud Service Account JSON key at leulit_ai/vertex_service_account.json on the server. Not configurable from this screen.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_leulit_ai_search_configuration" model="ir.actions.act_window">
+        <field name="name">Leulit AI Search Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'leulit_ai'}</field>
+    </record>
+
+    <menuitem id="menu_leulit_ai_search_config" name="Leulit AI Search"
+        parent="base.menu_administration" sequence="10"/>
+
+    <menuitem id="menu_leulit_ai_search_settings" name="Settings"
+        parent="menu_leulit_ai_search_config" action="action_leulit_ai_search_configuration" sequence="10"/>
+</odoo>

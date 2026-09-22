@@ -1,0 +1,13 @@
+.o_leulit_ai_search_menu {
+    cursor: pointer;
+
+    .fa-search {
+        color: #4c4c4c;
+    }
+
+    &:hover {
+        .fa-search {
+            color: #000000;
+        }
+    }
+}
