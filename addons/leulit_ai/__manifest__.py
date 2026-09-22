@@ -19,7 +19,7 @@ Key Features:
     'license': 'LGPL-3',
     'depends': ['base', 'web'],
     'external_dependencies': {
-        'python': ['requests', 'google.cloud.aiplatform'],
+        'python': ['requests'],
     },
     'images': ['static/description/cover.png', 'static/description/thumbnail.png'],
     'data': [
