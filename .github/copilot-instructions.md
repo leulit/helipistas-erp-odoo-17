@@ -550,3 +550,11 @@ Docstrings: Escribe docstrings estilo Google o reStructuredText para todas las c
 README: Incluye un README.md o README.rst en tu módulo explicando qué hace, cómo configurarlo y quién lo mantiene.
 
 Comentarios: Usa # para comentarios en línea que expliquen el por qué de un código complejo, no el qué.
+
+<claude-mem-context>
+# claude-mem: Cross-Session Memory
+
+*No context yet. Complete your first session and context will appear here.*
+
+Use claude-mem's MCP search tools for manual memory queries.
+</claude-mem-context>
