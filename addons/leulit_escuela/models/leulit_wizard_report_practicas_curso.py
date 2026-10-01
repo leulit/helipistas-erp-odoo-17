@@ -59,9 +59,7 @@ class leulit_wizard_report_practicas_curso(models.TransientModel):
                         'silabus': strsilabus,
                         'comentario': parte.comentario,
                         'valoracion': parte.valoracion,
-                        'firmainstructor': '<img %s  src="data:image/%s;base64,%s" />' % ("height='25px'", "jpg", str(parte.vuelo_id.piloto_id.firma)),
                         'instructor': parte.vuelo_id.piloto_id.name,
-                        'firmaalumno': '<img %s  src="data:image/%s;base64,%s" />' % ("height='25px'", "jpg", str(item.alumno.firma)) if verificado else '',
                         'nombrealumno': item.alumno.name,
                     })
                     total_tiempo_servicio += parte.vuelo_id.tiemposervicio

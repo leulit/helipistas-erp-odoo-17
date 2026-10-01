@@ -50,9 +50,7 @@ class leulit_wizard_report_teoricas_curso(models.TransientModel):
                     'silabus': strsilabus,
                     'comentario': parte.comentario,
                     'valoracion': parte.valoracion,
-                    'firmainstructor': '<img %s  src="data:image/%s;base64,%s" />' % ("height='25px'", "jpg", str(parte.profesor.firma)),
                     'instructor': parte.profesor.name,
-                    'firmaalumno': '<img %s  src="data:image/%s;base64,%s" />' % ("height='25px'", "jpg", str(self.alumno.firma)) if verificado else '',
                     'nombrealumno': self.alumno.name,
                 })
             asignaturas = []
