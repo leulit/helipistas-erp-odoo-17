@@ -971,6 +971,7 @@ class MaintenanceRequest(models.Model):
             'logo_ica':self.company_id.logo_reports.decode() if self.company_id.name == 'Icarus Manteniment S.L.' else False,
             'name':self.name,
             'logo_p145':company_p145.logo_reports.decode() if company_p145.logo_reports else False,
+            'organizacion_mant':company_p145[:1].name or '',
             'name_user':self.create_uid.name,
             'fecha_emision':self.request_date,
             'fecha_aceptacion':self.fecha_aceptacion.date() if self.fecha_aceptacion else False,
