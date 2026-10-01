@@ -162,7 +162,6 @@
                                     <th class="centertext tdcolored literal">Modelo</th>
                                     <th class="centertext tdcolored literal">S/N</th>
                                     <th class="centertext tdcolored literal">TSN</th>
-                                    <th class="centertext tdcolored literal">TSO</th>
                                     <th class="centertext tdcolored literal">O.T.</th>
                                 </tr>
                                 <tr>
@@ -171,17 +170,7 @@
                                     <td class="centertext fieldvalue"><span t-esc="item['modelo_aeronave']"/></td>
                                     <td class="centertext fieldvalue"><span t-esc="item['sn_aeronave']"/></td>
                                     <td class="centertext numericfieldvalue"><span t-esc="item['tsn_aeronave']"/></td>
-                                    <td class="centertext numericfieldvalue"><span t-esc="item['tso_aeronave']"/></td>
                                     <td class="centertext fieldvalue"><span t-esc="item['ot']"/></td>
-                                </tr>
-                                <tr>
-                                    <td class="centertext fieldvalue">-</td>
-                                    <td class="centertext fieldvalue"><span t-esc="item['marca_motor']"/></td>
-                                    <td class="centertext fieldvalue"><span t-esc="item['modelo_motor']"/></td>
-                                    <td class="centertext fieldvalue"><span t-esc="item['sn_motor']"/></td>
-                                    <td class="centertext numericfieldvalue"><span t-esc="item['tsn_motor']"/></td>
-                                    <td class="centertext numericfieldvalue"><span t-esc="item['tso_motor']"/></td>
-                                    <td class="centertext fieldvalue">-</td>
                                 </tr>
                             </table>
                             <table class="fullwidth">
