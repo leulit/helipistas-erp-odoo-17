@@ -46,7 +46,6 @@
                             <page name="documentos" string="Documentos">
                                 <field name="documento_ids">
                                     <tree editable="bottom" default_order="date desc">
-                                        <field name="partner_id" column_invisible="1"/>
                                         <field name="name"/>
                                         <field name="date"/>
                                         <field name="expiration_date"/>
