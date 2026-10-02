@@ -57,6 +57,14 @@ class StockUninstall(models.TransientModel):
     rotable_lifelimit = fields.Boolean(related="lot_id.rotable_lifelimit",string="Rotable / Life Limit")
     maintenance_request_id = fields.Many2one(comodel_name="maintenance.request", string="Work Order", domain=[('done','=',False)])
     equipment = fields.Many2one(related="maintenance_request_id.equipment_id", comodel_name="maintenance.equipment", string="Equipo Work Order")
+    estanteria_id = fields.Many2one(
+        comodel_name="stock.location", string="Estantería",
+        domain=lambda self: self.env['stock.quant.package']._domain_estanteria(),
+        help="Estantería donde se deja la pieza desinstalada. Si no hay caja, queda suelta en ella.")
+    caja_id = fields.Many2one(
+        comodel_name="stock.quant.package", string="Caja",
+        domain="[('estanteria_id', '=', estanteria_id)]",
+        help="Caja donde se guarda la pieza desinstalada. Se elige entre las cajas de la estantería.")
 
     @api.model
     def create(self, vals):
@@ -92,6 +100,15 @@ class StockUninstall(models.TransientModel):
         if self.lot_id:
             self.product_id = self.lot_id.product_id.id
             self.uninstall_qty = 0
+            # Se propone el ultimo sitio conocido de la pieza en almacen.
+            self.estanteria_id = self.lot_id.estanteria_id
+            self.caja_id = self.lot_id.caja_id
+
+    @api.onchange('estanteria_id')
+    def _onchange_estanteria_id(self):
+        # La caja tiene que estar en la estanteria elegida: si ya no lo esta, se vacia.
+        if self.caja_id and self.caja_id.estanteria_id != self.estanteria_id:
+            self.caja_id = False
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -156,6 +173,9 @@ class StockUninstall(models.TransientModel):
                 move_line.owner_id = uninstall.owner_id.id
                 move_line.picked = True
                 move_line.quantity = uninstall.uninstall_qty
+                # Caja y estanteria: las aplica stock.move.line._action_done
+                move_line.estanteria_destino_id = uninstall.estanteria_id.id
+                move_line.result_package_id = uninstall.caja_id.id
             # Now mark as done
             move._action_done()
             uninstall.write({'move_id': move.id, 'state': 'done'})
