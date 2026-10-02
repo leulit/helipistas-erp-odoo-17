@@ -13,3 +13,6 @@ claude.md
 .DS_Store
 # Credenciales Vertex AI (leulit_ai)
 addons/leulit_ai/vertex_service_account.json
+
+# Stack docker local de pruebas (cada dev el suyo)
+/docker/

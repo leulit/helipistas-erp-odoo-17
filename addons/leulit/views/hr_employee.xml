@@ -15,7 +15,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
                     <page name="documentos" string="Documentos">
-                        <field name="documento_ids">
+                        <field name="documento_ids" readonly="not user_id">
                             <tree editable="bottom" default_order="date desc">
                                 <field name="partner_id" column_invisible="1"/>
                                 <field name="name"/>
