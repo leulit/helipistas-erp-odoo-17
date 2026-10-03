@@ -55,7 +55,7 @@ class leulit_perfil_formacion_curso_last_done(models.Model):
             oldids.write({'is_last': False})
             item.write({'done_date': fecha, 'is_last': True})
             if item.actualizarTodos == True:
-                cursos = self.env['leulit.perfil_formacion_curso'].search([('curso', '=', item.pf_curso.curso.id), ('alumno', '=', item.pf_curso.alumno.id),('id','!=',item.pf_curso.id)])
+                cursos = self.env['leulit.perfil_formacion_curso'].search([('curso_template_id', '=', item.pf_curso.curso_template_id.id), ('alumno', '=', item.pf_curso.alumno.id),('id','!=',item.pf_curso.id)])
                 for cursoID in cursos:
                     fecha = self._calc_fecha_last_done(item.done_date, cursoID.id)
                     oldids = self.search([('pf_curso', '=', cursoID.id)])
@@ -103,7 +103,7 @@ class leulit_perfil_formacion_curso_last_done(models.Model):
             cursospf.append({
                 'fecha_ini': fecha_ini,
                 'fecha_fin': fecha_fin,
-                'curso': item.pf_curso.curso,
+                'curso': item.pf_curso._get_curso_revision(fecha_fin),
                 'valido_desde': fecha_fin,
                 'valido_hasta': valido_hasta,
             })
@@ -126,7 +126,7 @@ class leulit_perfil_formacion_curso_last_done(models.Model):
                 alumno_id = pfcurso.perfil_formacion.alumno.id
             else:
                 alumno_id = pfcurso.alumno.id
-            parte_search = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('alumno', '=', alumno_id),('rel_curso', '=', pfcurso.curso.id),('fechaparte','<=',item.done_date)])
+            parte_search = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('alumno', '=', alumno_id),('rel_curso', 'in', pfcurso.curso_template_id.revisiones.ids),('fecha','<=',item.done_date)])
             for item2 in parte_search:
                 parte = item2.rel_parte_escuela
                 if parte.estado == 'cerrado' and parte.fecha <= item.done_date:

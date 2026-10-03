@@ -149,8 +149,8 @@ class leulit_perfil_formacion_curso(models.Model):
         ## Recorremos la relación para encontrar los partes por alumno y curso.
         for item in self:
             if item.last_done_date:
-                if ((item.alumno) and (item.curso)):
-                    rel_partes_search = self.env["leulit.rel_parte_escuela_cursos_alumnos"].search([('rel_alumnos', '=', item.alumno.id),('rel_curso', '=', item.curso.id)])
+                if ((item.alumno) and (item.curso_template_id)):
+                    rel_partes_search = self.env["leulit.rel_parte_escuela_cursos_alumnos"].search([('alumno', '=', item.alumno.id),('rel_curso', 'in', item._get_revisiones().ids)])
             ## Buscamos los partes de escuela
                     for rel_parte in rel_partes_search:
                         if rel_parte.rel_parte_escuela:
@@ -190,18 +190,44 @@ class leulit_perfil_formacion_curso(models.Model):
                 raise UserError("No hay registros en el Histórico del curso.")
 
      
-    @api.onchange('curso')
-    def onchange_curso(self):
-        if self.curso:
-            self.descripcion = self.curso.name
+    @api.onchange('curso_template_id')
+    def onchange_curso_template_id(self):
+        if self.curso_template_id:
+            self.descripcion = self.curso_template_id.name
 
 
-    @api.depends('last_done_date','piloto','curso')
+    def _get_revisiones(self):
+        # Todas las ediciones/revisiones (leulit.curso) de la plantilla del curso
+        self.ensure_one()
+        return self.curso_template_id.revisiones
+
+
+    def _get_curso_revision(self, fecha=False):
+        """
+            Revisión (leulit.curso) con la que el alumno ha hecho el curso hasta 'fecha':
+            la del último parte del alumno sobre cualquier revisión de la plantilla.
+            Si no hay partes, la revisión activa más reciente de la plantilla.
+        """
+        self.ensure_one()
+        revisiones = self._get_revisiones()
+        if not revisiones:
+            return self.curso
+        domain = [('alumno', '=', self.alumno.id), ('rel_curso', 'in', revisiones.ids)]
+        if fecha:
+            domain.append(('fecha', '<=', fecha))
+        rel_parte = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search(domain, order='fecha desc, id desc', limit=1)
+        if rel_parte:
+            return rel_parte.rel_curso
+        activas = revisiones.filtered(lambda c: c.estado == 'activo').sorted('id', reverse=True)
+        return activas[:1] or revisiones.sorted('id', reverse=True)[:1]
+
+
+    @api.depends('last_done_date','piloto','curso_template_id')
     def _last_parte(self):
         for item in self:
             last_fecha = False
             if item.last_done_date:
-                partes = self.env["leulit.rel_parte_escuela_cursos_alumnos"].search([('alumno', '=', item.alumno.id),('rel_curso', '=', item.curso.id)])
+                partes = self.env["leulit.rel_parte_escuela_cursos_alumnos"].search([('alumno', '=', item.alumno.id),('rel_curso', 'in', item._get_revisiones().ids)])
                 for parte in partes:
                     parte_escuela = parte.rel_parte_escuela
                     if parte_escuela.estado == 'cerrado' and parte_escuela.fecha <= item.last_done_date:
@@ -210,13 +236,13 @@ class leulit_perfil_formacion_curso(models.Model):
             item.last_parte = last_fecha
 
 
-    @api.depends('last_done_date','piloto','curso')
+    @api.depends('last_done_date','piloto','curso_template_id')
     def _last_parte_id(self):
         for item in self:
             last_fecha = False
             last_id = False
             if item.last_done_date:
-                parte_search = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('alumno', '=', item.alumno.id),('rel_curso', '=', item.curso.id)])
+                parte_search = self.env['leulit.rel_parte_escuela_cursos_alumnos'].search([('alumno', '=', item.alumno.id),('rel_curso', 'in', item._get_revisiones().ids)])
                 for item2 in parte_search:
                     parte = item2.rel_parte_escuela
                     if parte.estado == 'cerrado' and parte.fecha <= item.last_done_date:
@@ -318,8 +344,10 @@ class leulit_perfil_formacion_curso(models.Model):
     remainder_dy = fields.Integer(compute=_get_remainder_dy,string='Remain. (DY)',search=_search_remainder_dy,store=False )
     semaforo_dy = fields.Char(compute=_get_semaforo_dy,string='Semáforo', search=_search_semaforo_dy, store=False)
     finalizado = fields.Boolean('Finalizado',default=False)
-    curso = fields.Many2one(comodel_name='leulit.curso', string='Curso',domain=[('estado','=','activo')])
-    estado = fields.Selection(related="curso.estado", selection=[('activo','Activo'),('inactivo','Inactivo')], string="Estado curso")
+    curso_template_id = fields.Many2one(comodel_name='leulit.curso_template', string='Curso', index=True)
+    # Obsoleto: revisión concreta a la que apuntaba antes el curso del perfil. Se conserva como histórico;
+    # la lógica va siempre por curso_template_id (todas sus revisiones).
+    curso = fields.Many2one(comodel_name='leulit.curso', string='Curso (revisión)')
     last_parte = fields.Char(compute=_last_parte,string='Last parte',store=False)
     last_parte_id = fields.Char(compute=_last_parte_id,string='Last parte id',store=False)
 

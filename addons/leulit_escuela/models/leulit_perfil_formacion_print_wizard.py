@@ -28,7 +28,7 @@ class leulit_perfil_formacion_print_wizard(models.TransientModel):
                         'fecha_fin'     : items[i].done_date,
                         'valido_desde'  : items[i].done_date,
                         'valido_hasta'  : valido_hasta,
-                        'curso'         : pfcurso.curso
+                        'curso'         : pfcurso._get_curso_revision(items[i].done_date)
                     })
             data = self.env['leulit.report_curso_pf'].getDataPdf(idscursos, item.perfil_formacion.alumno, "")
             return self.env.ref('leulit_escuela.report_curso_pf').report_action(self,data=data)

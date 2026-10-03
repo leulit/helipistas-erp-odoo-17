@@ -27,10 +27,15 @@ class leulit_silabus(models.Model):
         #BUCLE PARA ENCONTRAR TODOS LOS CURSOS DEL VUELO EN PARTES ESCUELA Y SUMAR EL TIEMPO
         fecha = fechavuelo
         for curso in self.env['leulit.curso'].browse(cursos):
+            # Los cursos de perfil de formación cuelgan de la plantilla, no de la revisión:
+            # el parte se hace sobre una revisión y actualiza el PF a través de su plantilla.
+            if not curso.template_id:
+                _logger.warning("act_curs_done: el curso %s (id %s) no tiene plantilla, no se actualiza ningún perfil de formación", curso.name, curso.id)
+                continue
             # HACER UN BUCLE PARA CALCULAR EL DONE POR PERFIL
             # PRIMERO OBTENEMOS LOS PERFILES DE FORMACIÓN DEL PILOTO
             fecha_pf = datetime.strptime('2000-01-01', '%Y-%m-%d').date()
-            id_pf_curso = self.env['leulit.perfil_formacion_curso'].search([('is_template','=',False),('alumno','in', [piloto]),('curso','=',curso.id)])
+            id_pf_curso = self.env['leulit.perfil_formacion_curso'].search([('is_template','=',False),('alumno','in', [piloto]),('curso_template_id','=',curso.template_id.id)])
             silabus_in_cursos = []
             for perfil_curso in id_pf_curso:
                 if perfil_curso.last_done_date:

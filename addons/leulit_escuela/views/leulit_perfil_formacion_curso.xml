@@ -11,7 +11,7 @@
                     <field name="is_template"  invisible="1"/>
                     <group col="2">
                         <field name="descripcion" readonly="1"/>
-                        <field name="curso" string="Curso" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
+                        <field name="curso_template_id" string="Curso" options="{'no_create': True, 'edit': False, 'no_open':true}"/>
                         <field name="periodicidad_dy" string="Periodicidad DY"/>
                         <field name="marge_dy"/>
                         <field name="perfil_formacion" readonly="1"/>
@@ -55,7 +55,7 @@
                         <group col="2">
                             <field name="perfil_formacion" readonly="1"/>
                             <field name="descripcion" readonly="1"/>
-                            <field name="curso" readonly="1"/>
+                            <field name="curso_template_id" readonly="1"/>
                             <field name="alumno" readonly="1"/>
                             <field name="notas" readonly="1"/>
                             <field name="periodicidad_dy" readonly="1"/>

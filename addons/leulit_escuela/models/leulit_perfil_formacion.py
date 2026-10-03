@@ -181,7 +181,9 @@ class leulit_perfil_formacion(models.Model):
     def copy_cursos_hechos(self):
         for item in self:
             for curso in item.cursos:
-                cursos_others = self.env['leulit.perfil_formacion_curso'].search([('id','!=',curso.id),('curso','=',curso.curso.id),('alumno','=',curso.alumno.id)],order='id desc')
+                if not curso.curso_template_id:
+                    continue
+                cursos_others = self.env['leulit.perfil_formacion_curso'].search([('id','!=',curso.id),('curso_template_id','=',curso.curso_template_id.id),('alumno','=',curso.alumno.id)],order='id desc')
                 for curso_others in cursos_others:
                     if curso_others:
                         if curso_others.last_done_history:

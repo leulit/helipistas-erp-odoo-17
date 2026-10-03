@@ -71,25 +71,15 @@ class leulit_curso(models.Model):
             item.tiempo = valor
     
     def _get_is_curso_pf(self):
+        templates_pf = self.env['leulit.perfil_formacion_curso'].search([('curso_template_id','in',self.template_id.ids)]).curso_template_id
         for item in self:
-            item.is_curso_pf = False
-            curso_pf = self.env['leulit.perfil_formacion_curso'].search([('curso','=',item.id)])
-            if curso_pf:
-                item.is_curso_pf = True
+            item.is_curso_pf = bool(item.template_id) and item.template_id in templates_pf
 
     def _search_cursos_perfil_formacion(self, operator, value):
-        ids = []
-        for item in self.search([]):
-            curso_pf = self.env['leulit.perfil_formacion_curso'].search([('curso','=',item.id)])
-            if operator == '=' and value == False:
-                if not curso_pf:
-                    ids.append(item.id)
-            if operator == '=' and value == True:
-                if curso_pf:
-                    ids.append(item.id)
-        if ids:
-            return [('id','in',ids)]
-        return  [('id','=','0')]
+        templates_pf = self.env['leulit.perfil_formacion_curso'].search([('curso_template_id','!=',False)]).curso_template_id
+        if (operator == '=' and value) or (operator == '!=' and not value):
+            return [('template_id','in',templates_pf.ids)]
+        return ['|',('template_id','=',False),('template_id','not in',templates_pf.ids)]
 
     def _get_horas_by_tipo_alumno_curso(self, idalumno, idcurso, tipo):
         tiempo = 0

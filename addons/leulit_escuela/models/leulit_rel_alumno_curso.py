@@ -35,7 +35,7 @@ class leulit_rel_alumno_curso(models.Model):
         for item in self:
             pf_cursos = False
             if item.alumno_id.piloto_id and len(item.alumno_id.piloto_id) > 0:
-                pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso', '=', item.curso_id.id), ('piloto', '=', item.alumno_id.piloto_id.id)])
+                pf_cursos = item.curso_id.template_id and self.env['leulit.perfil_formacion_curso'].search([('curso_template_id', '=', item.curso_id.template_id.id), ('piloto', '=', item.alumno_id.piloto_id.id)])
             if not pf_cursos:
                 item.cursos_perfil_formacion = False
             else:
@@ -47,7 +47,7 @@ class leulit_rel_alumno_curso(models.Model):
         for item in self.search([]):
             pf_cursos = False
             if item.alumno_id.piloto_id and len(item.alumno_id.piloto_id) > 0:
-                pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso', '=', item.curso_id.id), ('piloto', '=', item.alumno_id.piloto_id.id)])
+                pf_cursos = item.curso_id.template_id and self.env['leulit.perfil_formacion_curso'].search([('curso_template_id', '=', item.curso_id.template_id.id), ('piloto', '=', item.alumno_id.piloto_id.id)])
             if not pf_cursos:
                 ids.append(item.id)
         if ids:

@@ -23,11 +23,9 @@ class leulit_popup_perfil_formacion(models.TransientModel):
             
             # Ahora crear los cursos referenciando el perfil ya creado
             for item2 in item.master_id.cursos:
-                curso = False
-                if item2.curso:
-                    curso = item2.curso.id
                 curso_vals = {
-                    'curso': curso,
+                    'curso_template_id': item2.curso_template_id.id,
+                    'curso': item2.curso.id,
                     'descripcion': item2.descripcion,
                     'notas': item2.notas,
                     'periodicidad_dy': item2.periodicidad_dy,

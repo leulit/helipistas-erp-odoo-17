@@ -29,7 +29,7 @@ class leulit_perfil_formacion_curso_last_done(models.Model):
             pdf = self.env.ref(report_name)._render_qweb_pdf([],pdfAction)[0]
             report = base64.encodestring(pdf)
 
-            descripcion = "{0}. Curso {1}".format( item.alumno.name, item.pf_curso.curso.name )
+            descripcion = "{0}. Curso {1}".format( item.alumno.name, item.pf_curso.curso_template_id.name )
             
             iddoc = self.env['leulit.alumno'].buildDocPracticasFirmado1Step(item.alumno.id, descripcion, utilitylib.getStrToday(), report, hashcode)
             return self.env['leulit_signaturedoc'].popUpDescargaDocFirmado(iddoc)  

@@ -144,7 +144,7 @@ class leulit_popup_rel_parte_escuela_cursos_alumnos(models.TransientModel):
         if alumnos and self.rel_curso:
             objAllSilabus_ids = Silabus.search([('curso_id','=',self.rel_curso.id)])
             for alumno in alumnos:
-                objPFCurso = PFCurso.search([('curso','=',self.rel_curso.id),('alumno','=',alumno)])
+                objPFCurso = self.rel_curso.template_id and PFCurso.search([('curso_template_id','=',self.rel_curso.template_id.id),('alumno','=',alumno)])
                 if not objPFCurso:
                     objRelCursoAlu = RelCursoAlu.search([('rel_curso','=',self.rel_curso.id),('alumno','=',alumno)])
                     for relCursoAlu in objRelCursoAlu:

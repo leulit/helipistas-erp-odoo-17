@@ -19,12 +19,10 @@ class leulit_popup_replicar_cursos_pf(models.TransientModel):
                 # bucle de los perfiles de formacion seleccionados en el popup
                 for pf in item.perfil_formacion_replica_ids:
                     cont = 0
-                    curso_escuela = False
-                    if curso_tmpl.curso:
-                        curso_escuela = curso_tmpl.curso.id
                     # valores para el perfil_formacion_curso
                     curso_vals = {
-                        'curso': curso_escuela,
+                        'curso_template_id': curso_tmpl.curso_template_id.id,
+                        'curso': curso_tmpl.curso.id,
                         'descripcion': curso_tmpl.descripcion,
                         'notas': curso_tmpl.notas,
                         'periodicidad_dy': curso_tmpl.periodicidad_dy,
@@ -47,7 +45,9 @@ class leulit_popup_replicar_cursos_pf(models.TransientModel):
                         # Busca si hay cursos realizados del alumno y lo realizamos con el ultimo regitro.
                         # pf_curso_creado ya está disponible, no hace falta buscarlo
                         # Buscar otros cursos del mismo alumno para copiar el historial
-                        another_pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso','=',curso_escuela),('perfil_formacion','!=',pf.id),('alumno','=',pf.alumno.id)])
+                        another_pf_cursos = self.env['leulit.perfil_formacion_curso']
+                        if curso_tmpl.curso_template_id:
+                            another_pf_cursos = another_pf_cursos.search([('curso_template_id','=',curso_tmpl.curso_template_id.id),('perfil_formacion','!=',pf.id),('alumno','=',pf.alumno.id)])
                         for a_pf_curso in another_pf_cursos:
                             last_done = self.env['leulit.perfil_formacion_curso_last_done'].search([('pf_curso','=',a_pf_curso.id),('is_last','=',True)])
                             if last_done:

@@ -5,7 +5,7 @@
     "author": "Leulit S.L.",
     "website": "http://www.leulit.com",
     "category": "leulit",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.0.1",
     "depends": [
         "leulit",
         "leulit_planificacion",

@@ -8,7 +8,7 @@ class leulit_report_pf_curso(models.Model):
 
 
     def open_cursos_perfil_formacion(self):
-        pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso','=',self.curso.id),('alumno','=',self.alumno.id)])
+        pf_cursos = self.env['leulit.perfil_formacion_curso'].search([('curso_template_id','=',self.curso_template_id.id),('alumno','=',self.alumno.id)])
         view_ref = self.env['ir.model.data']._xmlid_to_res_model_res_id('leulit_escuela.leulit_20201106_1607_tree')
         view_id = view_ref and view_ref[1] or False
         return {
@@ -21,7 +21,7 @@ class leulit_report_pf_curso(models.Model):
             }
 
 
-    curso = fields.Many2one(comodel_name="leulit.curso",string="Curso")
+    curso_template_id = fields.Many2one(comodel_name="leulit.curso_template",string="Curso")
     pf_curso = fields.Many2one(comodel_name="leulit.perfil_formacion_curso",string="Perfil formación curso")
     alumno = fields.Many2one(comodel_name="leulit.alumno",string="Alumno")
     
@@ -39,11 +39,11 @@ class leulit_report_pf_curso(models.Model):
                     row_number() OVER () AS id,
                     max(leulit_perfil_formacion_curso.id) as pf_curso,
                     leulit_perfil_formacion_curso.alumno,
-					curso
+                    leulit_perfil_formacion_curso.curso_template_id
                 FROM leulit_perfil_formacion_curso
 								JOIN leulit_perfil_formacion
 								ON leulit_perfil_formacion_curso.perfil_formacion = leulit_perfil_formacion.id
                 WHERE leulit_perfil_formacion.inactivo = 'f' and finalizado = 'f' and leulit_perfil_formacion_curso.alumno is not null
-				GROUP BY leulit_perfil_formacion_curso.alumno, curso
+				GROUP BY leulit_perfil_formacion_curso.alumno, leulit_perfil_formacion_curso.curso_template_id
             )""".format(self._table)
         )
