@@ -38,6 +38,28 @@ class leulitDocumento(models.Model):
     date = fields.Date(string="Fecha", default=fields.Date.context_today, required=True)
     expiration_date = fields.Date(string="Fecha de caducidad")
     valid = fields.Boolean(compute=_get_valido, string="Documento vigente")
+    # Esquema de clasificación de la información. De momento solo etiqueta el
+    # documento: todavía no restringe quién puede verlo. Por defecto
+    # "confidencial" porque todo documento de este modelo cuelga de una
+    # persona (datos personales / RGPD).
+    clasificacion = fields.Selection(
+        selection=[
+            ('publica', 'Pública'),
+            ('interna', 'Uso interno'),
+            ('confidencial', 'Confidencial'),
+            ('critica', 'Crítica'),
+        ],
+        string="Clasificación",
+        required=True,
+        default='confidencial',
+        index=True,
+        help="Pública: difusión abierta o comercial, se puede compartir libremente.\n"
+             "Uso interno: documentación operativa solo para el personal; prohibida su difusión externa.\n"
+             "Confidencial: datos personales, contratos, expedientes médicos, auditorías, KML de "
+             "infraestructuras...; acceso restringido por rol, no reenviar a correos o dispositivos personales.\n"
+             "Crítica: esencial para la aeronavegabilidad o la continuidad del negocio (RFM, software de "
+             "aeronaves, accesos a plataformas); solo Sistemas, Jefatura de Vuelo y CAMO.",
+    )
 
     def unlink(self):
         # rel_docs (ir.attachment) no tiene ondelete='cascade' hacia aquí: si no lo

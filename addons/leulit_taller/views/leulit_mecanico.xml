@@ -59,6 +59,7 @@
                                 <field name="documento_ids">
                                     <tree editable="bottom" default_order="date desc">
                                         <field name="name"/>
+                                        <field name="clasificacion" widget="badge" decoration-success="clasificacion == 'publica'" decoration-info="clasificacion == 'interna'" decoration-warning="clasificacion == 'confidencial'" decoration-danger="clasificacion == 'critica'"/>
                                         <field name="date"/>
                                         <field name="expiration_date"/>
                                         <field name="valid"/>
