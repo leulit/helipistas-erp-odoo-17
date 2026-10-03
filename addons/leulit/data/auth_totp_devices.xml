@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Borra los dispositivos de confianza que se crearon antes de quitar el
+         "no volver a preguntar"; ya no sirven para nada (ver
+         models/auth_totp_device.py) y solo ensucian Mis preferencias. -->
+    <function model="auth_totp.device" name="_leulit_purge_browser_devices"/>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Un usuario normal solo ve este botón en "Mis preferencias"
+        (base.view_users_form_simple_modif). El formulario completo de
+        Ajustes > Usuarios (auth_totp.view_totp_form) ya es sólo accesible
+        para quien tiene base.group_system, así que no hace falta tocarlo.
+
+        La restricción real está en el servidor
+        (res_users.action_totp_disable, models/res_users.py); esto es solo
+        para no mostrar un botón que va a dar error si lo pulsan.
+    -->
+    <record id="view_totp_field_hide_disable" model="ir.ui.view">
+        <field name="name">res.users.preferences.totp.hide.disable</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="auth_totp.view_totp_field"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_totp_disable']" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

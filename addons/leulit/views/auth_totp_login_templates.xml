@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Pantalla de alta obligatoria de 2FA en el propio login
+        (controllers/home.py, Home._totp_setup). Se muestra en vez del
+        auth_totp.auth_totp_form estándar cuando el usuario que acaba de
+        meter su contraseña todavía no tiene la app de autenticación
+        configurada: no hay botón para saltarse el paso ni alternativa por
+        email, solo "Cancelar" (cierra el intento de login).
+    -->
+    <!-- El servidor ya ignora "remember" (controllers/home.py); aquí solo se
+         quita el check para que no se ofrezca algo que no hace nada. -->
+    <template id="auth_totp_form_no_remember" inherit_id="auth_totp.auth_totp_form"
+              name="2FA: sin dispositivo de confianza">
+        <xpath expr="//input[@name='remember']/.." position="replace"/>
+    </template>
+
+    <template id="auth_totp_setup_form" name="Alta obligatoria de la autenticación en dos pasos">
+        <t t-call="web.login_layout">
+            <t t-set="disable_footer">1</t>
+            <div class="oe_login_form">
+                <h5 class="card-title">Autenticación en dos pasos obligatoria</h5>
+                <div class="mb-2 mt-2 text-muted">
+                    Tu cuenta todavía no tiene configurada la autenticación en dos pasos (2FA),
+                    y es obligatoria para poder acceder.
+                    <br/>
+                    Instala <strong>Google Authenticator</strong> (u otra app compatible, como
+                    Microsoft Authenticator o Authy) en tu móvil, escanea este código QR y
+                    escribe a continuación el código de 6 dígitos que te muestre la app.
+                </div>
+                <div class="text-center mb-3">
+                    <img t-attf-src="data:image/png;base64,#{qrcode}" alt="Código QR de activación de 2FA"
+                         style="max-width: 200px;"/>
+                </div>
+                <div class="mb-3 text-muted small">
+                    Si no puedes escanear el código, introduce esta clave manualmente en tu app:
+                    <br/>
+                    <code t-esc="secret_groups"/>
+                </div>
+                <form method="POST" action="">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="redirect" t-att-value="redirect"/>
+                    <div class="mb-3">
+                        <label class="fw-bold" for="totp_token">Código de activación</label>
+                        <input id="totp_token" name="totp_token" class="form-control mb-2"
+                                autocomplete="off" inputmode="numeric" autofocus="autofocus"
+                                required="required" placeholder="e.g. 123456"/>
+                    </div>
+                    <div class="text-center py-2 border-top">
+                        <p class="alert alert-danger" t-if="error" role="alert">
+                            <t t-esc="error"/>
+                        </p>
+                        <div t-attf-class="clearfix oe_login_buttons text-center d-grid mb-1">
+                            <button type="submit" class="btn btn-primary">
+                                Activar y entrar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="POST" action="/web/session/logout">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="w-100 text-center">
+                        <button type="submit" class="btn btn-link btn-sm mb-2">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

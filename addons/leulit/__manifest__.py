@@ -9,6 +9,7 @@
     "depends": [
         "base",
         "mail",
+        "auth_totp",
         "hr",
         "purchase",
         "stock",
@@ -33,6 +34,9 @@
         "security.xml",
         "paperformats.xml",
         "views/res_config_settings.xml",
+        "views/res_users_totp.xml",
+        "views/auth_totp_login_templates.xml",
+        "data/auth_totp_devices.xml",
         "views/res_partner.xml",
         "views/hr_expense_sheet.xml",
         "views/res_company.xml",

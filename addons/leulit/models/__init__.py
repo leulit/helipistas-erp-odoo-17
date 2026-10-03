@@ -13,6 +13,7 @@ from . import leulit_checklist_tag
 from . import leulit_historial_circular
 from . import leulit_circular
 from . import res_users
+from . import auth_totp_device
 from . import sale_order
 from . import sale_order_line
 from . import ir_attachment
