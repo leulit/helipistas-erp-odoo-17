@@ -34,7 +34,13 @@ class leulit_curso_template(models.Model):
             }
         }
 
+    @api.depends('revisiones.estado')
+    def _get_estado(self):
+        for item in self:
+            item.estado = 'activo' if any(r.estado == 'activo' for r in item.revisiones) else 'inactivo'
+
     name = fields.Char(string='Descripción', required=True)
+    estado = fields.Selection([('activo','Activo'),('inactivo','Inactivo')], string='Estado', compute=_get_estado, store=True)
     ato_mo = fields.Boolean('ATO MI')
     ato_mi = fields.Boolean('ATO MO')
     nco = fields.Boolean('NCO')

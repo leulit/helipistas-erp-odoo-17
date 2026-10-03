@@ -6,8 +6,9 @@
             <field name="name">Cursos</field>
             <field name="model">leulit.curso_template</field>
             <field name="arch" type="xml">
-                <tree string="Curso plantillas">
+                <tree string="Curso plantillas" decoration-muted="estado == 'inactivo'">
                     <field name="name" />
+                    <field name="estado" widget="badge" decoration-success="estado == 'activo'" decoration-muted="estado == 'inactivo'"/>
                 </tree>
             </field>
         </record>
@@ -17,6 +18,9 @@
             <field name="model">leulit.curso_template</field>
             <field name="arch" type="xml">
                 <form string="Cursos plantilla">
+                    <header>
+                        <field name="estado" widget="statusbar" statusbar_visible="activo,inactivo"/>
+                    </header>
                     <sheet>
                         <group col="2">
                             <field name="name" />
@@ -54,10 +58,27 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="leulit_curso_template_search">
+            <field name="name">leulit_curso_template_search</field>
+            <field name="model">leulit.curso_template</field>
+            <field name="arch" type="xml">
+                <search string="Cursos plantilla">
+                    <field name="name"/>
+                    <filter string="Activos" name="activos" domain="[('estado','=','activo')]"/>
+                    <filter string="Inactivos" name="inactivos" domain="[('estado','=','inactivo')]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Estado" name="group_estado" context="{'group_by': 'estado'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record model="ir.actions.act_window" id="leulit_20240729_1551_action">
             <field name="name">Cursos plantillas</field>
             <field name="res_model">leulit.curso_template</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="leulit_curso_template_search"/>
+            <field name="context">{'search_default_activos': 1}</field>
         </record>
 
     </data>
